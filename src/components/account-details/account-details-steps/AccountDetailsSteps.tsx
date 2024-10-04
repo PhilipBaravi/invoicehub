@@ -2,31 +2,53 @@ import { FC } from "react";
 import ContactSupportIcon from "./ContactSupportIcon";
 import LogOutIcon from "./LogOutIcon";
 
-const AccountDetailsSteps: FC = () => {
+type Step = {
+  number: number;
+  label: string;
+};
+
+type AccountDetailsStepsProps = {
+  steps: Step[];
+};
+
+const AccountDetailsSteps: FC<AccountDetailsStepsProps> = ({ steps }) => {
   return (
-    <div className="w-full mx-auto h-[4.375rem] flex justify-center items-center bg-brightBlue font-georgian">
-      <div className="w-[90%] flex justify-between items-center">
-        <div className="flex items-center gap-[10px]">
-          <h2 className="w-[30px] text-[1.2rem] text-center bg-white border rounded-[50%]">
-            1
-          </h2>
-          <p className="text-white text-[1.3rem] font-[500] leading-normal tracking-wider">
-            პროფილი
-          </p>
+    <div className="relative w-full h-[250px] md:h-screen flex items-center justify-center bg-brightBlue p-4 overflow-hidden font-georgian">
+      
+      {/* Steps Container */}
+      <div className="w-[90%] bg-blue-800 rounded-lg p-8 max-w-md lg:scale-[1.2] xl:scale-[1.35]">
+        <div className="relative z-10 space-y-12">
+          {steps.map((step, index) => (
+            <div 
+              key={step.number} 
+              className={`flex items-start ${index !== 0 ? 'hidden md:flex' : ''}`}
+            >
+              <div className="flex-shrink-0 relative">
+                {index === 1 && (
+                  <div className="absolute top-0 left-1/2 w-0.5 bg-white h-[5rem] -mt-[4.5rem] transform -translate-x-1/2" />
+                )}
+                {index === 2 && (
+                  <div className="absolute top-0 left-1/2 w-0.5 bg-white h-14 -mt-12 transform -translate-x-1/2" />
+                )}
+                <div className="bg-white rounded-full h-8 w-8 flex items-center justify-center text-blue-700 font-bold z-10 relative">
+                  {step.number}
+                </div>
+              </div>
+              <div className="ml-4 mt-1">
+                <p className="text-white font-medium">{step.label}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-[15px]">
-          <div className="flex items-center gap-[8px]">
+        <div className="mt-12 flex justify-between">
+          <button className="text-white flex items-center">
             <ContactSupportIcon />
-            <p className="text-white text-[1rem] font-[400] leading-normal hover:underline cursor-pointer">
-              კონტაქტი
-            </p>
-          </div>
-          <div className="flex items-center gap-[8px]">
+            კონტაქტი
+          </button>
+          <button className="text-white flex items-center">
             <LogOutIcon />
-            <button className="text-white text-[1rem] font-[400] leading-normal border border-none bg-brightBlue hover:underline">
-              გასვლა
-            </button>
-          </div>
+            გასვლა
+          </button>
         </div>
       </div>
     </div>

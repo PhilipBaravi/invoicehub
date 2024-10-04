@@ -20,11 +20,11 @@ const ProfileSetUpForm: FC = () => {
     const fullPhoneNumber = phoneCode + phoneNumber; 
 
     if (!isValidPhoneNumber(fullPhoneNumber, country)) {
-      setErrorMessage("ტელეფონის ნომერი არასწორია არჩეული ქვეყნისთვის."); // Invalid phone number message
+      setErrorMessage("ტელეფონის ნომერი არასწორია არჩეული ქვეყნისთვის.");
       return;
     }
 
-    setErrorMessage(""); // Clear error message
+    setErrorMessage("");
     console.log("ფორმა წარმატებით გაიგზავნა:", { firstName, lastName, country, phoneNumber: fullPhoneNumber, howHeard });
   };
 
@@ -35,7 +35,7 @@ const ProfileSetUpForm: FC = () => {
           type="text"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
-          placeholder="სახელი*" // First name*
+          placeholder="სახელი*"
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         />
@@ -43,7 +43,7 @@ const ProfileSetUpForm: FC = () => {
           type="text"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
-          placeholder="გვარი*" // Last name*
+          placeholder="გვარი*" 
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         />
@@ -64,13 +64,13 @@ const ProfileSetUpForm: FC = () => {
             type="text"
             value={phoneCode}
             readOnly
-            className="w-[70px] p-3 border border-gray-300 rounded-l-lg focus:outline-none text-black bg-gray-200 cursor-not-allowed font-georgian"
+            className="w-[70px] p-3 border border-gray-300 rounded-l-lg focus:outline-none text-white bg-brightBlue cursor-not-allowed font-georgian"
           />
           <input
             type="tel"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
-            placeholder="ტელეფონის ნომერი*" // Phone number*
+            placeholder="ტელეფონის ნომერი*"
             className="w-full p-3 border border-gray-300 rounded-r-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
             required
           />
@@ -82,16 +82,16 @@ const ProfileSetUpForm: FC = () => {
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         >
-          <option value="" className="font-georgian">როგორ გაიგეთ ჩვენზე?</option> {/* How did you hear about us? */}
-          <option value="Web search" className="font-georgian">ვებ ძიება (მაგ., Google)</option> {/* Web search */}
-          <option value="Social media" className="font-georgian">სოციალური მედია</option> {/* Social media */}
-          <option value="Friend" className="font-georgian">მეგობარი</option> {/* Friend */}
-          <option value="Advertisement" className="font-georgian">რეკლამა</option> {/* Advertisement */}
+          <option value="" className="font-georgian">როგორ გაიგეთ ჩვენზე?</option>
+          <option value="Web search" className="font-georgian">ვებ ძიება (მაგ., Google)</option>
+          <option value="Social media" className="font-georgian">სოციალური მედია</option>
+          <option value="Friend" className="font-georgian">მეგობარი</option> 
+          <option value="Advertisement" className="font-georgian">რეკლამა</option>
         </select>
 
-        {errorMessage && <p className="text-red-500 text-sm mt-2 w-[75%] font-georgian">{errorMessage}</p>} {/* Error message for phone number */}
+        {errorMessage && <p className="text-red-500 text-sm mt-2 w-[75%] font-georgian">{errorMessage}</p>}
         
-        <AuthButton authButtonText="შემდეგი" /> {/* Next in Georgian */}
+        <AuthButton authButtonText="შემდეგი" />
       </form>
     </div>
   );
