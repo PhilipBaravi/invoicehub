@@ -21,8 +21,6 @@ const RegisterPageForm: FC = () => {
     return passwordRegex.test(password);
   };
 
-
-  //Form Validation
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -53,8 +51,12 @@ const RegisterPageForm: FC = () => {
         const errorData = await response.json();
         setErrorMessage(errorData.message || "Something went wrong.");
       }
-    } catch (error) {
-      setErrorMessage("Network error, please try again later.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Network error, please try again later.");
+      }
     }
   };
 
