@@ -26,7 +26,7 @@ const LoginPageForm: FC = () => {
     if (loginEmail === correctEmail && loginPassword === correctPassword) {
       setErrorMessage("");
       console.log("Login successful!");
-      navigate("/success");
+      navigate("/account-details");
     } else {
       setErrorMessage("Invalid email or password.");
     }

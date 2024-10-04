@@ -27,7 +27,7 @@ const EmailVerification: FC = () => {
 
     // Check if the entered code matches "1,2,3,4"
     if (verificationCode === "1234") {
-      navigate("/success"); // Navigate to the success page
+      navigate("/account-details"); // Navigate to the success page
     } else {
       setErrorMessage("The code is incorrect. Please try again.");
     }
