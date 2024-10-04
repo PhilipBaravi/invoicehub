@@ -3,17 +3,17 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "../AuthForm";
 
 const RegisterPageForm: FC = () => {
-  const [registerName, setRegisterName] = useState<string>("");
-  const [registerPassword, setRegisterPassword] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
   const navigate = useNavigate();
 
-  const getRegisterNameDetails = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRegisterName(e.target.value);
+  const getUsernameDetails = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUsername(e.target.value);
   };
 
-  const getRegisterPasswordDetails = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRegisterPassword(e.target.value);
+  const getPasswordDetails = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
   };
 
   const validatePassword = (password: string) => {
@@ -21,10 +21,12 @@ const RegisterPageForm: FC = () => {
     return passwordRegex.test(password);
   };
 
+
+  //Form Validation
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!validatePassword(registerPassword)) {
+    if (!validatePassword(password)) {
       setErrorMessage(
         "პაროლი უნდა შედგებოდეს მინიმუმ 8 სიმბოლოსგან, შეიცავდეს ერთ დიდ ასოს, ერთ პატარა ასოს, ერთ ციფრს და ერთ სპეციალურ სიმბოლოს."
       );
@@ -40,8 +42,8 @@ const RegisterPageForm: FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: registerName,
-          password: registerPassword,
+          name: username,
+          password: password,
         }),
       });
 
@@ -60,10 +62,10 @@ const RegisterPageForm: FC = () => {
     <div className="w-[100%] mt-[30px] flex flex-col justify-center items-center">
       <AuthForm
         onSubmitFunction={handleSubmit}
-        onChangeFunctionName={getRegisterNameDetails}
-        onChangeFunctionPassword={getRegisterPasswordDetails}
-        inputNameValue={registerName}
-        inputPasswordValue={registerPassword}
+        onChangeFunctionName={getUsernameDetails}
+        onChangeFunctionPassword={getPasswordDetails}
+        inputNameValue={username}
+        inputPasswordValue={password}
         errorMessage={errorMessage}
         showTerms={true}
         authButtonText="რეგისტრაცია"
