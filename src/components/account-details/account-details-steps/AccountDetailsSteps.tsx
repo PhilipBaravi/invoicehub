@@ -1,6 +1,7 @@
 import { FC } from "react";
 import ContactSupportIcon from "./ContactSupportIcon";
 import LogOutIcon from "./LogOutIcon";
+import { useNavigate } from "react-router-dom";
 
 type Step = {
   number: number;
@@ -12,6 +13,11 @@ type AccountDetailsStepsProps = {
 };
 
 const AccountDetailsSteps: FC<AccountDetailsStepsProps> = ({ steps }) => {
+  const navigate = useNavigate(); 
+
+  const handleMain = () => {
+    navigate("/");
+};
   return (
     <div className="relative w-full h-[250px] md:h-screen flex items-center justify-center bg-brightBlue p-4 overflow-hidden font-georgian">
       
@@ -45,7 +51,7 @@ const AccountDetailsSteps: FC<AccountDetailsStepsProps> = ({ steps }) => {
             <ContactSupportIcon />
             კონტაქტი
           </button>
-          <button className="text-white flex items-center">
+          <button className="text-white flex items-center" onClick={handleMain}>
             <LogOutIcon />
             გასვლა
           </button>

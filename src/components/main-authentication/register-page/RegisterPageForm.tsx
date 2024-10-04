@@ -6,7 +6,8 @@ const RegisterPageForm: FC = () => {
   const [registerName, setRegisterName] = useState<string>("");
   const [registerPassword, setRegisterPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
   const getRegisterNameDetails = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRegisterName(e.target.value);
   };
@@ -20,7 +21,7 @@ const RegisterPageForm: FC = () => {
     return passwordRegex.test(password);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validatePassword(registerPassword)) {
@@ -30,13 +31,29 @@ const RegisterPageForm: FC = () => {
       return;
     }
 
-    setErrorMessage(""); 
+    setErrorMessage("");
 
-    // Mock successful registration and redirect to the EmailVerification page
-    console.log("Register Name:", registerName);
-    console.log("Register Password:", registerPassword);
+    try {
+      const response = await fetch("http://localhost:9090/api/v1/user/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: registerName,
+          password: registerPassword,
+        }),
+      });
 
-    navigate("/email-verification");
+      if (response.ok) {
+        navigate("/email-verification");
+      } else {
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "Something went wrong.");
+      }
+    } catch (error) {
+      setErrorMessage("Network error, please try again later.");
+    }
   };
 
   return (
@@ -47,7 +64,7 @@ const RegisterPageForm: FC = () => {
         onChangeFunctionPassword={getRegisterPasswordDetails}
         inputNameValue={registerName}
         inputPasswordValue={registerPassword}
-        errorMessage={errorMessage} 
+        errorMessage={errorMessage}
         showTerms={true}
         authButtonText="რეგისტრაცია"
       />
