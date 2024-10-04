@@ -2,8 +2,8 @@ import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const EmailVerification: FC = () => {
-  const [code, setCode] = useState<string[]>(["", "", "", ""]); // Holds the 4-digit code
-  const [errorMessage, setErrorMessage] = useState<string>(""); // Error message
+  const [code, setCode] = useState<string[]>(["", "", "", ""]); 
+  const [errorMessage, setErrorMessage] = useState<string>(""); 
   const navigate = useNavigate();
 
   // Handle input change for each field
@@ -11,40 +11,40 @@ const EmailVerification: FC = () => {
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
-    setErrorMessage(""); // Reset the error message when user starts typing again
+    setErrorMessage(""); 
   };
 
   // Handle form submission for verification
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const verificationCode = code.join(""); // Combine the 4 digits into a single string
+    const verificationCode = code.join(""); 
 
     // Ensure all digits are filled
     if (code.some((digit) => digit === "")) {
-      setErrorMessage("Please fill in all the fields.");
+      setErrorMessage("გთხოვთ შეავსოთ ყველა ველი.");
       return;
     }
 
     // Check if the entered code matches "1,2,3,4"
     if (verificationCode === "1234") {
-      navigate("/account-details"); // Navigate to the success page
+      navigate("/account-details"); 
     } else {
-      setErrorMessage("The code is incorrect. Please try again.");
+      setErrorMessage("კოდი არასწორია. სცადეთ თავიდან.");
     }
   };
 
   // Handle resend verification logic (for future backend integration)
   const handleResendVerification = () => {
-    console.log("Resend verification email clicked");
+    console.log("ელ.ფოსტის გადაგზავნის მოთხოვნა");
     // Future logic to resend email
   };
 
   return (
-    <div className="w-full h-screen bg-brightBlue flex flex-col justify-center items-center">
+    <div className="w-full h-screen bg-brightBlue flex flex-col justify-center items-center font-georgian">
       <div className="w-[90%] md:w-[70%] lg:w-[50%] xl:w-[35%] border rounded-lg bg-white flex flex-col items-center p-8 shadow-lg">
-        <h2 className="text-2xl font-bold">Verify Your Email</h2>
+        <h2 className="text-2xl font-bold">ელ.ფოსტის ვალიდაცია</h2>
         <p className="text-gray-700 mt-2 mb-4 text-center">
-          We’ve sent a verification code to <strong>your-email@example.com</strong>. Enter the code to continue your setup.
+          კოდი გაიგზავნა <strong>your-email@example.com</strong>. შეიყვანეთ კოდი, რათა დაასრულოთ თქვენი დაყენება.
         </p>
         <form onSubmit={handleSubmit} className="flex flex-col items-center">
           <div className="flex gap-2 mb-4">
@@ -59,19 +59,18 @@ const EmailVerification: FC = () => {
               />
             ))}
           </div>
-          {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>} {/* Display error message if any */}
+          {errorMessage && <p className="text-red-500 mb-4 font-georgian">{errorMessage}</p>} 
           <button
-  type="submit"
-  className="bg-brightBlue text-white py-2 px-6 rounded-lg font-semibold hover:bg-white hover:text-brightBlue hover:border-brightBlue"
->
-  Verify Email
-</button>
-
+            type="submit"
+            className="bg-brightBlue text-white py-2 px-6 rounded-lg font-semibold hover:bg-white hover:text-brightBlue hover:border-brightBlue font-georgian"
+          >
+            ელ.ფოსტის ვალიდაცია
+          </button>
         </form>
         <p className="text-gray-700 mt-4">
-          Didn’t Receive Email?{" "}
+          ელ.ფოსტა არ მიგიღიათ?{" "}
           <button onClick={handleResendVerification} className="text-brightBlue hover:underline">
-            Resend Email Verification
+            ხელახლა გაგზავნა
           </button>
         </p>
       </div>

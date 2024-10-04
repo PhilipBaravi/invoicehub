@@ -25,15 +25,15 @@ const LoginPageForm: FC = () => {
 
     if (loginEmail === correctEmail && loginPassword === correctPassword) {
       setErrorMessage("");
-      console.log("Login successful!");
+      console.log("შესვლა წარმატებით დასრულდა!");
       navigate("/account-details");
     } else {
-      setErrorMessage("Invalid email or password.");
+      setErrorMessage("არასწორი ელ-ფოსტა ან პაროლი.");
     }
   };
 
   return (
-    <div className="w-[100%] mt-[30px] flex flex-col justify-center items-center">
+    <div className="w-[100%] mt-[30px] flex flex-col justify-center items-center font-georgian">
       <AuthForm
         onSubmitFunction={handleSubmit}
         onChangeFunctionName={getEmailDetails}
