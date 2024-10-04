@@ -1,5 +1,6 @@
 import { FC } from "react";
 import TermsAndConditions from "./TermsAndConditions";
+import AuthButton from "./AuthButton";
 
 type AuthFormProps = {
   onSubmitFunction: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -9,7 +10,7 @@ type AuthFormProps = {
   inputPasswordValue: string;
   errorMessage: string;
   showTerms: boolean;
-  authButtonText: string;
+  authButtonText: string
 };
 
 const AuthForm: FC<AuthFormProps> = ({
@@ -20,7 +21,7 @@ const AuthForm: FC<AuthFormProps> = ({
   inputPasswordValue,
   errorMessage,
   showTerms,
-  authButtonText,
+  authButtonText
 }) => {
   return (
     <form className="flex flex-col justify-center items-center gap-[0.5rem]" onSubmit={onSubmitFunction}>
@@ -43,13 +44,8 @@ const AuthForm: FC<AuthFormProps> = ({
       {errorMessage && <p className="text-red-500 text-sm mt-2 w-[75%]">{errorMessage}</p>} {/* Error message for invalid password */}
       
       {showTerms && <TermsAndConditions />}
+      <AuthButton authButtonText={authButtonText}/>
       
-      <button
-        type="submit"
-        className="mt-[15px] w-[250px] md:w-[60%] p-3 bg-brightBlue text-white border border-transparent rounded-lg font-georgian text-lg transition-all duration-300 hover:bg-white hover:text-brightBlue hover:border-black"
-      >
-        {authButtonText}
-      </button>
     </form>
   );
 };

@@ -1,9 +1,12 @@
 import { FC } from "react";
+import AccountDetailsSteps from "./account-details-steps/AccountDetailsSteps";
+import ProfileForm from "./profile-form/ProfileForm";
 
 const AccountDetails : FC = () => {
     return(
-        <div>
-            <h1>Succesfull</h1>
+        <div className="w-full h-screen bg-white flex flex-col">
+            <AccountDetailsSteps />
+            <ProfileForm />
         </div>
     )
 }
