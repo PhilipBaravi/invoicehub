@@ -8,18 +8,32 @@ import {
 import countryList from "../../account-details/profile-form/CountryCodes";
 
 const RegisterPageForm: FC = () => {
-  const [username, setUsername] = useState<string>(""); 
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+  const [formValues, setFormValues] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+  });
   const [country, setCountry] = useState<CountryCode>("GE");
-  const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errors, setErrors] = useState({
+    username: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
+    phoneNumber: "",
+  });
 
   const navigate = useNavigate();
 
   const phoneCode = `+${getCountryCallingCode(country)}`;
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^\S+@\S+\.\S+$/;
+    return emailRegex.test(email);
+  };
 
   const validatePassword = (password: string) => {
     const passwordRegex =
@@ -27,39 +41,123 @@ const RegisterPageForm: FC = () => {
     return passwordRegex.test(password);
   };
 
-  //Form Validation
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+
+    // Real-time validation
+    switch (name) {
+      case "username":
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          username: validateEmail(value)
+            ? ""
+            : "გთხოვთ, მიუთითოთ სწორი ელ.ფოსტის მისამართი.",
+        }));
+        break;
+      case "password":
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          password: validatePassword(value)
+            ? ""
+            : "პაროლი უნდა შედგებოდეს მინიმუმ 8 სიმბოლოსგან, შეიცავდეს ერთ დიდ ასოს, ერთ პატარა ასოს, ერთ ციფრს და ერთ სპეციალურ სიმბოლოს.",
+        }));
+        // Also check confirm password match when password changes
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          confirmPassword:
+            formValues.confirmPassword === value
+              ? ""
+              : "პაროლები არ ემთხვევა.",
+        }));
+        break;
+      case "confirmPassword":
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          confirmPassword:
+            value === formValues.password
+              ? ""
+              : "პაროლები არ ემთხვევა.",
+        }));
+        break;
+      case "phoneNumber":
+        const fullPhoneNumber = phoneCode + value;
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          phoneNumber: isValidPhoneNumber(fullPhoneNumber, country)
+            ? ""
+            : "ტელეფონის ნომერი არასწორია არჩეული ქვეყნისთვის.",
+        }));
+        break;
+      default:
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: value ? "" : "ველი სავალდებულოა.",
+        }));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    // Final validation before submission
+    const { username, password, confirmPassword, firstName, lastName, phoneNumber } = formValues;
+    let valid = true;
+    const newErrors: any = {};
+
+    if (!validateEmail(username)) {
+      newErrors.username = "გთხოვთ, მიუთითოთ სწორი ელ.ფოსტის მისამართი.";
+      valid = false;
+    }
+
     if (!validatePassword(password)) {
-      setErrorMessage(
-        "პაროლი უნდა შედგებოდეს მინიმუმ 8 სიმბოლოსგან, შეიცავდეს ერთ დიდ ასოს, ერთ პატარა ასოს, ერთ ციფრს და ერთ სპეციალურ სიმბოლოს."
-      );
-      return;
+      newErrors.password =
+        "პაროლი უნდა შედგებოდეს მინიმუმ 8 სიმბოლოსგან, შეიცავდეს ერთ დიდ ასოს, ერთ პატარა ასოს, ერთ ციფრს და ერთ სპეციალურ სიმბოლოს.";
+      valid = false;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage("პაროლები არ ემთხვევა.");
-      return;
+      newErrors.confirmPassword = "პაროლები არ ემთხვევა.";
+      valid = false;
     }
 
-    const emailRegex = /^\S+@\S+\.\S+$/;
-    if (!emailRegex.test(username)) {
-      setErrorMessage("გთხოვთ, მიუთითოთ სწორი ელ.ფოსტის მისამართი.");
-      return;
+    if (!firstName) {
+      newErrors.firstName = "სახელი სავალდებულოა.";
+      valid = false;
+    }
+
+    if (!lastName) {
+      newErrors.lastName = "გვარი სავალდებულოა.";
+      valid = false;
     }
 
     const fullPhoneNumber = phoneCode + phoneNumber;
     if (!isValidPhoneNumber(fullPhoneNumber, country)) {
-      setErrorMessage("ტელეფონის ნომერი არასწორია არჩეული ქვეყნისთვის.");
+      newErrors.phoneNumber = "ტელეფონის ნომერი არასწორია არჩეული ქვეყნისთვის.";
+      valid = false;
+    }
+
+    if (!valid) {
+      setErrors(newErrors);
       return;
     }
 
-    setErrorMessage("");
+    setErrors({
+      username: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+      phoneNumber: "",
+    });
 
-    //Send data to back
-
+    // Send data to backend
     try {
       const response = await fetch(
         "http://localhost:9090/api/v1/user/register",
@@ -83,47 +181,66 @@ const RegisterPageForm: FC = () => {
         navigate("/email-verification");
       } else {
         const errorData = await response.json();
-        setErrorMessage(errorData.message || "სერვერული შეცდომა მოხდა.");
+        // Handle server-side validation errors if provided
+        const serverErrors = errorData.errors || {};
+        setErrors((prevErrors) => ({ ...prevErrors, ...serverErrors }));
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("ქსელური შეცდომა, გთხოვთ სცადოთ მოგვიანებით.");
-      }
+      console.error("Network error:", error);
     }
   };
 
   return (
-    <div className="w-[100%] mt-[30px] flex flex-col justify-center items-center">
+    <div className="w-[100%] mt-[30px] flex flex-col justify-center items-center py-[30px]">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col items-start gap-[0.5rem] w-[90%]"
       >
         <input
           type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          name="firstName"
+          value={formValues.firstName}
+          onChange={handleChange}
           placeholder="სახელი*"
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         />
+        {errors.firstName && (
+          <p className="text-red-500 text-sm mt-1 font-georgian">
+            {errors.firstName}
+          </p>
+        )}
+
         <input
           type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          name="lastName"
+          value={formValues.lastName}
+          onChange={handleChange}
           placeholder="გვარი*"
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         />
+        {errors.lastName && (
+          <p className="text-red-500 text-sm mt-1 font-georgian">
+            {errors.lastName}
+          </p>
+        )}
+
         <input
           type="email"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="ელ.ფოსტა"
+          name="username"
+          value={formValues.username}
+          onChange={handleChange}
+          placeholder="ელ.ფოსტა*"
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         />
+        {errors.username && (
+          <p className="text-red-500 text-sm mt-1 font-georgian">
+            {errors.username}
+          </p>
+        )}
+
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value as CountryCode)}
@@ -136,43 +253,62 @@ const RegisterPageForm: FC = () => {
             </option>
           ))}
         </select>
-        <div className="w-full flex items-center">
-          <input
-            type="text"
-            value={phoneCode}
-            readOnly
-            className="w-[70px] p-3 border border-gray-300 rounded-l-lg focus:outline-none text-white bg-brightBlue cursor-not-allowed font-georgian"
-          />
-          <input
-            type="tel"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            placeholder="ტელეფონის ნომერი*"
-            className="w-full p-3 border border-gray-300 rounded-r-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
-            required
-          />
+
+        <div className="w-full flex flex-col">
+          <div className="flex items-center">
+            <input
+              type="text"
+              value={phoneCode}
+              readOnly
+              className="w-[70px] p-3 border border-gray-300 rounded-l-lg focus:outline-none text-white bg-brightBlue cursor-not-allowed font-georgian"
+            />
+            <input
+              type="tel"
+              name="phoneNumber"
+              value={formValues.phoneNumber}
+              onChange={handleChange}
+              placeholder="ტელეფონის ნომერი*"
+              className="w-full p-3 border border-gray-300 rounded-r-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
+              required
+            />
+          </div>
+          {errors.phoneNumber && (
+            <p className="text-red-500 text-sm mt-1 font-georgian">
+              {errors.phoneNumber}
+            </p>
+          )}
         </div>
+
         <input
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
+          value={formValues.password}
+          onChange={handleChange}
           placeholder="პაროლი*"
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         />
+        {errors.password && (
+          <p className="text-red-500 text-sm mt-1 font-georgian">
+            {errors.password}
+          </p>
+        )}
+
         <input
           type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          name="confirmPassword"
+          value={formValues.confirmPassword}
+          onChange={handleChange}
           placeholder="დაადასტურეთ პაროლი*"
           className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-brightBlue transition-all duration-300 text-black font-georgian text-lg"
           required
         />
-        {errorMessage && (
-          <p className="text-red-500 text-sm mt-2 w-full font-georgian">
-            {errorMessage}
+        {errors.confirmPassword && (
+          <p className="text-red-500 text-sm mt-1 font-georgian">
+            {errors.confirmPassword}
           </p>
         )}
+
         <button
           type="submit"
           className="w-full p-3 bg-brightBlue text-white rounded-lg mt-4 font-georgian text-lg"
