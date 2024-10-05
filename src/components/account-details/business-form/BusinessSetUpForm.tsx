@@ -46,7 +46,7 @@ const BusinessSetUpForm: FC = () => {
 
     return (
         <div className="w-[90%] flex flex-col items-start mt-[1.5rem]">
-            <form className="flex flex-col items-start gap-[0.5rem] w-full">
+            <form className="flex flex-col items-start gap-[1.2rem] w-full">
                 <input
                     type="text"
                     value={companyName}
@@ -139,7 +139,7 @@ const BusinessSetUpForm: FC = () => {
 
                 {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
 
-                <div className="flex flex-col items-start w-full mt-4">
+                <div className="flex md:flex-col items-start w-full mt-4 gap-[20px] pb-[30px]">
                 <AuthButton authButtonText="შემდეგი" navigatePage={handleNext} />
                     <AuthButton authButtonText="უკან" navigatePage={handlePrev} />
                 </div>

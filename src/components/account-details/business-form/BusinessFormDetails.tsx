@@ -5,9 +5,9 @@ import BusinessSetUpForm from "./BusinessSetUpForm";
 
 const BusinessFormDetails:FC = () => {
     const steps = [
-        { number: 1, label: 'შეიყვანეთ თქვენი პროფილის ინფორმაცია' },
-        { number: 2, label: 'გვიამბეთ თქვენს ბიზნესზე' },
-        { number: 3, label: 'გვიამბეთ რა მიზნით ხართ აქ' },
+        { number: 1, label: 'შეიყვანეთ თქვენი პროფილის ინფორმაცია', check: true },
+        { number: 2, label: 'გვიამბეთ თქვენს ბიზნესზე', check: false },
+        { number: 3, label: 'გვიამბეთ რა მიზნით ხართ აქ', check: false },
       ];
     return(
         
