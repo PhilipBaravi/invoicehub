@@ -40,8 +40,13 @@ const EmailVerification: FC = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-brightBlue flex flex-col justify-center items-center font-georgian">
-      <div className="w-[90%] md:w-[70%] lg:w-[50%] xl:w-[35%] border rounded-lg bg-white flex flex-col items-center p-8 shadow-lg">
+    <div className="relative w-full h-screen bg-brightBlue flex flex-col lg:flex-row justify-center items-center font-georgian overflow-hidden">
+      {/* Background shapes */}
+      <div className="absolute top-0 left-0 w-[60%] h-[60%] bg-blue-700 rounded-full translate-x-[-25%] translate-y-[-25%] z-0"></div>
+      <div className="absolute bottom-0 right-0 w-[70%] h-[70%] bg-blue-600 rounded-full translate-x-[25%] translate-y-[25%] z-0"></div>
+      
+      {/* Main content */}
+      <div className="relative z-10 w-[90%] md:w-[70%] lg:w-[50%] xl:w-[35%] border rounded-lg bg-white flex flex-col items-center p-8 shadow-lg">
         <h2 className="text-2xl font-bold">ელ.ფოსტის ვალიდაცია</h2>
         <p className="text-gray-700 mt-2 mb-4 text-center">
           კოდი გაიგზავნა <strong>your-email@example.com</strong>. შეიყვანეთ კოდი, რათა დაასრულოთ თქვენი დაყენება.
@@ -73,6 +78,11 @@ const EmailVerification: FC = () => {
             ხელახლა გაგზავნა
           </button>
         </p>
+      </div>
+
+      {/* Verification illustration on the right */}
+      <div className="relative hidden lg:flex w-[90%] md:w-[60%] lg:w-[50%] xl:w-[35%] justify-center items-center lg:ml-[30px]">
+        <img src="/images/person-verification.png" alt="Verification Illustration" className="w-auto h-auto" />
       </div>
     </div>
   );

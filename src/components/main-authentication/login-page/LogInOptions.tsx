@@ -7,7 +7,7 @@ const LogInnOptions: FC = () => {
     <>
       <AuthOptions googleIconText="შესვლა Google-ის გამოყენებით" appleIconText="შესვლა Apple-ის გამოყენებით" showHelpOptions={true} />
       <Link to="/register" className="text-brightBlue hover:underline mt-[30px] font-medium font-georgian">
-        დარეგისტრირება
+        რეგისტრაცია
       </Link>
     </>
   );
