@@ -2,7 +2,6 @@ import { FC } from "react";
 import { ThemeProvider } from "../ThemeProvider";
 import Header from "./header/Header";
 import DashboardDefault from "./dashboarddefault/DashboardDefault";
-import DashboardCharts from "./dashboarddefault/DashboardCharts";
 
 const Dashboard: FC = () => {
     return(
@@ -11,7 +10,6 @@ const Dashboard: FC = () => {
             <Header />
             <div className="w-full h-screen">
             <DashboardDefault />
-            <DashboardCharts />
             </div>
             
         </div>
