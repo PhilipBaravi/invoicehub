@@ -6,6 +6,7 @@ import EmailVerification from "./components/main-authentication/EmailVerificatio
 import AccountDetails from "./components/account-details/AccountDetails";
 import BusinessForm from "./components/account-details/business-form/BusinessFormDetails";
 import IntentFormDetails from "./components/account-details/IntentForm.tsx/IntentFormDetails";
+import Dashboard from "./components/dashboard/Dashboard";
 
 
 const App: React.FC = () => {
@@ -19,6 +20,7 @@ const App: React.FC = () => {
         <Route path="/account-details" element={<AccountDetails />} />
         <Route path="/business-details" element={<BusinessForm />} />
         <Route path="/intent-details" element={<IntentFormDetails />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );

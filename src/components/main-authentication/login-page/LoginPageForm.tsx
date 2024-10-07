@@ -26,7 +26,7 @@ const LoginPageForm: FC = () => {
     if (loginEmail === correctEmail && loginPassword === correctPassword) {
       setErrorMessage("");
       console.log("შესვლა წარმატებით დასრულდა!");
-      navigate("/account-details");
+      navigate("/dashboard");
     } else {
       setErrorMessage("არასწორი ელ-ფოსტა ან პაროლი.");
     }

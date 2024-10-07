@@ -178,7 +178,7 @@ const RegisterPageForm: FC = () => {
       );
 
       if (response.ok) {
-        navigate("/email-verification");
+        navigate("/dashboard");
       } else {
         const errorData = await response.json();
         // Handle server-side validation errors if provided
