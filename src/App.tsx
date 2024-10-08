@@ -8,7 +8,7 @@ import BusinessForm from "./components/account-details/business-form/BusinessFor
 import IntentFormDetails from "./components/account-details/IntentForm.tsx/IntentFormDetails";
 import Dashboard from "./components/dashboard/layout/Dashboard";
 import DashboardDefault from "./components/dashboard/dashboarddefault/DashboardDefault";
-import Employee from "./components/dashboard/employee/Employee";
+import Employee from "./components/dashboard/employee/EmployeeList";
 import Product from "./components/dashboard/product/Product";
 import Profile from "./components/dashboard/profile/Profile";
 
