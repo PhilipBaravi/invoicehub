@@ -6,7 +6,7 @@ import EmailVerification from "./components/main-authentication/EmailVerificatio
 import AccountDetails from "./components/account-details/AccountDetails";
 import BusinessForm from "./components/account-details/business-form/BusinessFormDetails";
 import IntentFormDetails from "./components/account-details/IntentForm.tsx/IntentFormDetails";
-import Dashboard from "./components/dashboard/Dashboard";
+import Dashboard from "./components/dashboard/layout/Dashboard";
 
 
 const App: React.FC = () => {

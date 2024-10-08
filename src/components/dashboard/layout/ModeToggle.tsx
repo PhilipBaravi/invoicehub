@@ -1,5 +1,5 @@
-import { useTheme } from "../ThemeProvider"
-import { Switch } from "@/components/ui/switch" // Import your custom Switch component
+import { useTheme } from "./ThemeProvider"
+import { Switch } from "@/components/ui/switch" 
 import { useState, useEffect } from "react"
 
 export function ModeToggle() {
