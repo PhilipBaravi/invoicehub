@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { PanelRightOpen, LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn } from 'lucide-react';
 import { motion } from "framer-motion";
 
@@ -8,14 +9,26 @@ interface SideBarProps {
 }
 
 const menuItems = [
-  { name: 'Dashboard', icon: LayoutDashboard },
-  { name: 'Employee', icon: UserSearch },
-  { name: 'Product', icon: FolderKanban },
-  { name: 'Profile', icon: UserPen },
-  { name: 'Login', icon: LogIn },
+  { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+  { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
+  { name: 'Product', icon: FolderKanban, path: '/dashboard/product' },
+  { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
+  { name: 'Login', icon: LogIn, path: '/login' }, // Login navigates outside dashboard
 ];
 
 const SideBar: FC<SideBarProps> = ({ onClose }) => {
+  const navigate = useNavigate(); // Create navigate instance for redirection
+
+  const handleItemClick = (path: string) => {
+    if (path === '/login') {
+      // If login is clicked, navigate outside the dashboard
+      navigate(path);
+      onClose();
+    } else {
+      navigate(path);
+    }
+  };
+
   return (
     <motion.div
       initial={{ x: '-100%' }}
@@ -29,7 +42,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
         onClick={onClose}
       />
       <div className="flex flex-col items-start gap-[20px] p-6">
-        <h1 className="scroll-m-20 text-2xl font-extrabold tracking-tight lg:text-5xl text-stone-50 dark:text-stone-950">
+        <h1 className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-5xl text-stone-50 dark:text-stone-950">
           Overview
         </h1>
         <ul className="w-full">
@@ -38,10 +51,11 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
             return (
               <li
                 key={item.name}
-                className="leading-7 [&:not(:first-child)]:mt-2 text-lg flex items-center gap-[10px] px-2 py-2 rounded-md transition-all cursor-pointer text-stone-50 dark:text-stone-950 hover:bg-stone-600 dark:hover:bg-stone-200"
+                className="leading-7 [&:not(:first-child)]:mt-2 text-lg flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-50 dark:text-stone-950 hover:bg-stone-600 dark:hover:bg-stone-200 hover:text-accent"
+                onClick={() => handleItemClick(item.path)} 
               >
-                <Icon className="text-stone-50 dark:text-stone-950" />
-                {item.name}
+                <Icon className="text-xl" />
+                <span className="font-medium">{item.name}</span>
               </li>
             );
           })}

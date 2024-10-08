@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Link } from "react-router-dom";  // Use Link from react-router-dom
+import { Link } from "react-router-dom";
 import {
   Activity,
   ArrowUpRight,
@@ -152,7 +152,6 @@ const DashboardDefault: FC = () => {
                 </div>
                 <div className="ml-auto font-medium">+$1,999.00</div>
               </div>
-              {/* Repeat similar sales blocks */}
             </CardContent>
           </Card>
         </div>

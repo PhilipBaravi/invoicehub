@@ -14,7 +14,6 @@ type HeaderProps = {
 const Header: FC<HeaderProps> = ({ toggleLargeSidebar }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Detect if the screen width is larger than 1024px
   const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' });
 
   const toggleSidebar = () => {
