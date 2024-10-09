@@ -10,7 +10,7 @@ import AppleIcon from '../AppleIcon';
 import { CountryCode, isValidPhoneNumber, getCountryCallingCode } from "libphonenumber-js";
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { quotes } from '../new-login-page/quotes';
-import LanguageSelector from '../login-page/LanguageSelector';
+import LanguageSelector from '../new-login-page/LanguageSelector';
 
 const NewRegisterPage = () => {
   const [formValues, setFormValues] = useState({
