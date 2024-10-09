@@ -15,7 +15,7 @@ const HeaderAvatar: FC = () => {
     const navigate = useNavigate();
 
     const logOut = () => {
-        navigate('/login')
+        navigate('/new-login')
     }
   return (
     <DropdownMenu>

@@ -1,5 +1,4 @@
 import { FC, useState } from "react";
-import { ThemeProvider } from "./ThemeProvider";
 import Header from "./header/Header";
 import { Outlet, Link } from "react-router-dom";
 import LargeScreenSidebar from "./sidebar/LargeScreenSidebar";
@@ -17,7 +16,6 @@ const Dashboard: FC = () => {
   };
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="w-full h-screen bg-stone-50 dark:bg-stone-950 flex">
         
         {isLargeScreen && (
@@ -43,7 +41,6 @@ const Dashboard: FC = () => {
           </div>
         </div>
       </div>
-    </ThemeProvider>
   );
 };
 

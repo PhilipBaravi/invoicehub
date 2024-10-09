@@ -13,7 +13,7 @@ const menuItems = [
   { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
   { name: 'Product', icon: FolderKanban, path: '/dashboard/product' },
   { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
-  { name: 'Login', icon: LogIn, path: '/login' }, // Login navigates outside dashboard
+  { name: 'Login', icon: LogIn, path: '/new-login' },
 ];
 
 const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) => {
@@ -21,7 +21,7 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
   const navigate = useNavigate();
 
   const handleItemClick = (path: string) => {
-    if (path === '/login') {
+    if (path === '/new-login') {
       navigate(path);
       onClose(); // Close only for login
     } else {

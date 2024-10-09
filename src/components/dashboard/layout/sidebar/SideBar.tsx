@@ -13,14 +13,14 @@ const menuItems = [
   { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
   { name: 'Product', icon: FolderKanban, path: '/dashboard/product' },
   { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
-  { name: 'Login', icon: LogIn, path: '/login' }, // Login navigates outside dashboard
+  { name: 'Login', icon: LogIn, path: '/new-login' }, // Login navigates outside dashboard
 ];
 
 const SideBar: FC<SideBarProps> = ({ onClose }) => {
   const navigate = useNavigate(); // Create navigate instance for redirection
 
   const handleItemClick = (path: string) => {
-    if (path === '/login') {
+    if (path === '/new-login') {
       // If login is clicked, navigate outside the dashboard
       navigate(path);
       onClose();

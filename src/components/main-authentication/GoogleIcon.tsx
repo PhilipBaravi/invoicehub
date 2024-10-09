@@ -2,7 +2,7 @@ import { FC } from "react";
 
 const GoogleIcon: FC = () => {
     return(
-        <svg width="30px" height="30px" viewBox="-0.5 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+        <svg width="20px" height="20px" viewBox="-0.5 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" className="mr-2">
     
     <g id="Icons" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <g id="Color-" transform="translate(-401.000000, -860.000000)">

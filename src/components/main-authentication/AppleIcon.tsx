@@ -2,7 +2,7 @@ import { FC } from "react";
 
 const AppleIcon: FC = () => {
     return(
-        <svg width="30px" height="30px" viewBox="-1.5 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+        <svg width="20px" height="20px" viewBox="-1.5 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" className="mr-2">
     
     <title>apple [#173]</title>
     <desc>Created with Sketch.</desc>
