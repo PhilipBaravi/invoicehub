@@ -2,10 +2,10 @@ import { FC, useState } from "react";
 import { Menu } from "lucide-react";
 import SideBar from "../sidebar/SideBar";
 import { ModeToggle } from "../ModeToggle";
-import HeaderSearch from "./HeaderSearch";
 import { AnimatePresence } from "framer-motion";
 import HeaderAvatar from "./HeaderAvatar";
 import { useMediaQuery } from 'react-responsive';
+import LanguageSelector from "@/components/main-authentication/new-login-page/LanguageSelector";
 
 type HeaderProps = {
   toggleLargeSidebar: () => void;
@@ -32,7 +32,7 @@ const Header: FC<HeaderProps> = ({ toggleLargeSidebar }) => {
         )}
       </div>
       <div className="flex items-center gap-[20px] pr-[20px]">
-        <HeaderSearch />
+        <LanguageSelector />
         <ModeToggle />
         <HeaderAvatar />
       </div>

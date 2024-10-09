@@ -10,6 +10,7 @@ import AppleIcon from '../AppleIcon';
 import { CountryCode, isValidPhoneNumber, getCountryCallingCode } from "libphonenumber-js";
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { quotes } from '../new-login-page/quotes';
+import LanguageSelector from '../login-page/LanguageSelector';
 
 const NewRegisterPage = () => {
   const [formValues, setFormValues] = useState({
@@ -21,7 +22,6 @@ const NewRegisterPage = () => {
     phoneNumber: "",
   });
   const [country, setCountry] = useState<CountryCode>("US"); // Default to US
-  const [language, setLanguage] = useState("en");
   const [errors, setErrors] = useState({
     username: "",
     password: "",
@@ -247,16 +247,7 @@ const NewRegisterPage = () => {
       <div className="w-[40%] bg-white dark:bg-stone-900 p-10 flex flex-col justify-center relative">
         <div className="absolute top-4 right-4 flex items-center space-x-4">
           {/* Language Selector */}
-          <Select onValueChange={setLanguage}>
-            <SelectTrigger className="w-[120px] bg-white dark:bg-stone-800">
-              <SelectValue placeholder={language === "en" ? "English" : language} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="es">Español</SelectItem>
-              <SelectItem value="fr">Français</SelectItem>
-            </SelectContent>
-          </Select>
+         <LanguageSelector />
           <ModeToggle />
         </div>
         <h1 className="text-3xl font-bold mb-2">Create a New Account</h1>

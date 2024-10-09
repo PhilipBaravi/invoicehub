@@ -9,6 +9,7 @@ import GoogleIcon from '../GoogleIcon';
 import AppleIcon from '../AppleIcon';
 import { quotes } from './quotes';
 import { Link } from 'react-router-dom';
+import LanguageSelector from './LanguageSelector';
 
 export default function LoginPage() {
   const [loginEmail, setLoginEmail] = useState<string>('');
@@ -88,16 +89,7 @@ export default function LoginPage() {
       {/* Right side - 40% width */}
       <div className="w-[40%] bg-white dark:bg-stone-900 p-10 flex flex-col justify-center relative">
         <div className="absolute top-4 right-4 flex items-center space-x-4">
-          <Select>
-            <SelectTrigger className="w-[120px] bg-white dark:bg-stone-800">
-              <SelectValue placeholder="Language" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="en">English</SelectItem>
-              <SelectItem value="es">Español</SelectItem>
-              <SelectItem value="fr">Français</SelectItem>
-            </SelectContent>
-          </Select>
+          <LanguageSelector />
           <ModeToggle />
         </div>
         <h1 className="text-3xl font-bold mb-2">Login to your account</h1>
