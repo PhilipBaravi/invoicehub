@@ -14,6 +14,9 @@ import { ThemeProvider } from "./components/dashboard/layout/ThemeProvider";
 import CompanyRegistrationForm from "./components/main-authentication/new-register-page/CompanyRegistrationForm";
 import LoginRegisterLayout from "./components/main-authentication/LoginRegisterLayout";
 import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
+import { ReactKeycloakProvider } from '@react-keycloak/web';
+import Keycloak from 'keycloak-js';
+import KeyCloakConfig from "./components/main-authentication/new-login-page/keycloak";
 
 // Define the type for user details
 interface UserDetails {
@@ -24,45 +27,50 @@ interface UserDetails {
   phone: string;
 }
 
+// Instantiate Keycloak
+const keycloak = new Keycloak(KeyCloakConfig);
+
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <Router>
-        <Routes>
-          <Route path="/new-login" element={<NewLoginPage />} />
-          <Route
-            path="new-register"
-            element={<NewRegisterPage setUserDetails={setUserDetails} />}
-          />
-          <Route path="/" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
-          <Route path="/account-details" element={<AccountDetails />} />
-          <Route path="/business-details" element={<BusinessForm />} />
-          <Route path="/intent-details" element={<IntentFormDetails />} />
-          <Route
-            path="/company-registration"
-            element={
-              <LoginRegisterLayout
-                title="Register Your Company"
-                subtitle="Enter your company details to register"
-              >
-                <CompanyRegistrationForm userDetails={userDetails} />
-              </LoginRegisterLayout>
-            }
-          />
+    <ReactKeycloakProvider authClient={keycloak}>
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+        <Router>
+          <Routes>
+            <Route path="/new-login" element={<NewLoginPage />} />
+            <Route
+              path="new-register"
+              element={<NewRegisterPage setUserDetails={setUserDetails} />}
+            />
+            <Route path="/" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
+            <Route path="/account-details" element={<AccountDetails />} />
+            <Route path="/business-details" element={<BusinessForm />} />
+            <Route path="/intent-details" element={<IntentFormDetails />} />
+            <Route
+              path="/company-registration"
+              element={
+                <LoginRegisterLayout
+                  title="Register Your Company"
+                  subtitle="Enter your company details to register"
+                >
+                  <CompanyRegistrationForm userDetails={userDetails} />
+                </LoginRegisterLayout>
+              }
+            />
 
-          {/* Main dashboard route with nested routes */}
-          <Route path="/dashboard" element={<Dashboard />}>
-            <Route index element={<DashboardDefault />} />
-            <Route path="employee" element={<Employee />} />
-            <Route path="clients" element={<ClientVendorList />} />
-            <Route path="product" element={<Product />} />
-            <Route path="profile" element={<Profile />} />
-          </Route>
-        </Routes>
-      </Router>
-    </ThemeProvider>
+            {/* Main dashboard route with nested routes */}
+            <Route path="/dashboard" element={<Dashboard />}>
+              <Route index element={<DashboardDefault />} />
+              <Route path="employee" element={<Employee />} />
+              <Route path="clients" element={<ClientVendorList />} />
+              <Route path="product" element={<Product />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </ReactKeycloakProvider>
   );
 };
 

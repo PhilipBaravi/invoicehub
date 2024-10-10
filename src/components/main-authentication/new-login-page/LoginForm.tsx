@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useKeycloak } from '@react-keycloak/web';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
@@ -9,27 +10,18 @@ import AppleIcon from '../AppleIcon';
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { keycloak } = useKeycloak();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const correctEmail = "bob@gmail.com";
-    const correctPassword = "Bobishere123!";
-
-    if (loginEmail === correctEmail && loginPassword === correctPassword) {
-      setErrorMessage('');
-      console.log("Login successful!");
-      navigate("/dashboard");
-    } else {
-      setErrorMessage("Incorrect email or password.");
+  const handleKeycloakLogin = () => {
+    if (keycloak) {
+      navigate('/dashboard')
     }
   };
 
   return (
     <>
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-1">
             Email
@@ -65,14 +57,15 @@ const LoginForm = () => {
             I agree to the terms of service and privacy policy
           </label>
         </div>
-        {errorMessage && (
-          <p className="text-red-600 text-sm">{errorMessage}</p>
-        )}
-        <Button className="w-full">Login</Button>
+        <Button className="w-full" onClick={handleKeycloakLogin}>
+          Login
+        </Button>
       </form>
+
       <div className="mt-6 pb-6 text-center text-sm text-stone-500 dark:text-stone-400">
         OR CONTINUE WITH
       </div>
+      
       <Button className="w-full mb-4">
         <GoogleIcon />
         Login with Google
@@ -83,12 +76,11 @@ const LoginForm = () => {
       </Button>
 
       <p className="mt-6 text-center text-xs text-stone-500 dark:text-stone-400">
-  Don't have an account?{' '}
-  <Link to='/new-register' className="underline hover:text-stone-300">
-    Sign up
-  </Link>
-</p>
-
+        Don't have an account?{' '}
+        <Link to='/new-register' className="underline hover:text-stone-300">
+          Sign up
+        </Link>
+      </p>
     </>
   );
 };
