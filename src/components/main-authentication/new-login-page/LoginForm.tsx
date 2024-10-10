@@ -13,9 +13,18 @@ const LoginForm = () => {
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
 
-  const handleKeycloakLogin = () => {
+  const handleKeycloakLogin = async () => {
     if (keycloak) {
-      navigate('/dashboard')
+      try {
+        await keycloak.login(); // This redirects to the Keycloak login page
+        navigate('/dashboard'); // Navigate to dashboard after successful login
+      } catch (error) {
+        console.error("Keycloak login failed", error);
+        navigate('/404'); // Navigate to error page if login fails
+      }
+    } else {
+      console.error("Keycloak instance not found");
+      navigate('/404'); // Navigate to error page if Keycloak is not initialized
     }
   };
 
@@ -58,7 +67,7 @@ const LoginForm = () => {
           </label>
         </div>
         <Button className="w-full" onClick={handleKeycloakLogin}>
-          Login
+          Login with Keycloak
         </Button>
       </form>
 

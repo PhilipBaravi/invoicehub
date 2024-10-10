@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ReactKeycloakProvider } from '@react-keycloak/web';
+import keycloak from "./components/main-authentication/new-login-page/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
 import BusinessForm from "./components/account-details/business-form/BusinessFormDetails";
 import IntentFormDetails from "./components/account-details/IntentForm.tsx/IntentFormDetails";
@@ -14,9 +16,6 @@ import { ThemeProvider } from "./components/dashboard/layout/ThemeProvider";
 import CompanyRegistrationForm from "./components/main-authentication/new-register-page/CompanyRegistrationForm";
 import LoginRegisterLayout from "./components/main-authentication/LoginRegisterLayout";
 import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
-import { ReactKeycloakProvider } from '@react-keycloak/web';
-import Keycloak from 'keycloak-js';
-import KeyCloakConfig from "./components/main-authentication/new-login-page/keycloak";
 
 // Define the type for user details
 interface UserDetails {
@@ -26,9 +25,6 @@ interface UserDetails {
   lastName: string;
   phone: string;
 }
-
-// Instantiate Keycloak
-const keycloak = new Keycloak(KeyCloakConfig);
 
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
