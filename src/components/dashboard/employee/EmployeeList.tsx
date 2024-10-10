@@ -7,32 +7,8 @@ import Pagination from './Pagination';
 import SearchAndFilter from './SearchAndFilter';
 
 export default function EmployeeList() {
-  const [employees, setEmployees] = useState<Employee[]>([
-    {
-      id: '1',
-      username: 'john.doe@example.com',
-      password: 'password123',
-      firstName: 'John',
-      lastName: 'Doe',
-      phone: '+1 234 567 8901',
-      role: 'Manager',
-      dateOfEmployment: new Date('2022-01-15'),
-      status: 'Active',
-    },
-    {
-      id: '2',
-      username: 'jane.smith@example.com',
-      password: 'password456',
-      firstName: 'Jane',
-      lastName: 'Smith',
-      phone: '+1 234 567 8902',
-      role: 'Admin',
-      dateOfEmployment: new Date('2022-02-20'),
-      status: 'Active',
-    },
-  ]);
-
-  const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>(employees);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,27 +18,54 @@ export default function EmployeeList() {
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [filterCategory, setFilterCategory] = useState<keyof Employee>('firstName');
 
+  const filterOptions: Array<{ value: keyof Employee; label: string }> = [
+    { value: 'firstName', label: 'First Name' },
+    { value: 'lastName', label: 'Last Name' },
+    { value: 'username', label: 'Email' },
+    { value: 'phone', label: 'Phone' },
+    { value: 'role', label: 'Role' },
+    { value: 'status', label: 'Status' },
+  ];
+
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
   useEffect(() => {
     const filtered = employees.filter((employee) => {
       const value = employee[filterCategory]?.toString().toLowerCase() ?? '';
-
-      if (filterCategory === 'phone') {
-        return employee.phone.replace(/[^0-9]/g, '').includes(searchTerm.replace(/[^0-9]/g, ''));
-      }
-
-      if (filterCategory === 'status') {
-        return employee.status.toLowerCase().includes(searchTerm.toLowerCase());
-      }
-
       return value.includes(searchTerm.toLowerCase());
     });
 
     setFilteredEmployees(filtered);
-    setCurrentPage(1); // Reset to page 1 after filtering
+    setCurrentPage(1);
   }, [searchTerm, employees, filterCategory]);
 
-  const deleteEmployee = (id: string) => {
-    setEmployees(employees.filter((emp) => emp.id !== id));
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('http://localhost:9090/api/v1/user/list');
+      if (!response.ok) {
+        throw new Error('Failed to fetch employees');
+      }
+      const data = await response.json();
+      setEmployees(data);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  const deleteEmployee = async (id: string) => {
+    try {
+      const response = await fetch(`http://localhost:9090/api/v1/user/delete/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete employee');
+      }
+      setEmployees(employees.filter((emp) => emp.id !== id));
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    }
   };
 
   const handleSelectEmployee = (id: string) => {
@@ -97,13 +100,14 @@ export default function EmployeeList() {
           }}
         />
       </div>
-      <SearchAndFilter
+      <SearchAndFilter<Employee>
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
         filterCategory={filterCategory}
         setFilterCategory={setFilterCategory}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
+        filterOptions={filterOptions}
       />
       <EmployeeTable
         paginatedEmployees={paginatedEmployees}
@@ -120,7 +124,7 @@ export default function EmployeeList() {
         totalPages={totalPages}
         setCurrentPage={setCurrentPage}
         rowsPerPage={rowsPerPage}
-        filteredEmployeesLength={filteredEmployees.length}
+        totalItems={filteredEmployees.length}
       />
       {editingEmployee && (
         <EditEmployeeSheet

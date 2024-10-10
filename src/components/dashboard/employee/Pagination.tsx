@@ -5,7 +5,7 @@ interface PaginationProps {
   totalPages: number
   setCurrentPage: React.Dispatch<React.SetStateAction<number>>
   rowsPerPage: number
-  filteredEmployeesLength: number
+  totalItems: number
 }
 
 export default function Pagination({
@@ -13,12 +13,12 @@ export default function Pagination({
   totalPages,
   setCurrentPage,
   rowsPerPage,
-  filteredEmployeesLength,
+  totalItems,
 }: PaginationProps) {
   return (
     <div className="flex items-center justify-between space-x-2 py-4">
       <div className="text-sm text-muted-foreground">
-        Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, filteredEmployeesLength)} of {filteredEmployeesLength} entries
+        Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, totalItems)} of {totalItems} entries
       </div>
       <div className="space-x-2">
         <Button

@@ -1,49 +1,49 @@
 import { Input } from "@/components/ui/input";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
 import { Search } from 'lucide-react';
-import { Employee } from "./employeeTypes";
 
-interface SearchAndFilterProps {
+interface SearchAndFilterProps<T> {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  filterCategory: keyof Employee;
-  setFilterCategory: (category: keyof Employee) => void;
+  filterCategory: keyof T;
+  setFilterCategory: (category: keyof T) => void;
   rowsPerPage: number;
   setRowsPerPage: (rows: number) => void;
+  filterOptions: Array<{ value: keyof T; label: string }>;
 }
 
-export default function SearchAndFilter({
+export default function SearchAndFilter<T>({
   searchTerm,
   setSearchTerm,
   filterCategory,
   setFilterCategory,
   rowsPerPage,
   setRowsPerPage,
-}: SearchAndFilterProps) {
+  filterOptions,
+}: SearchAndFilterProps<T>) {
   return (
     <div className="flex justify-between items-center mb-4">
       <div className="flex items-center space-x-2">
         <div className="relative">
           <Input
             type="text"
-            placeholder="Search employees..."
+            placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 w-64"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         </div>
-        <Select value={filterCategory} onValueChange={(value) => setFilterCategory(value as keyof Employee)}>
+        <Select value={filterCategory as string} onValueChange={(value) => setFilterCategory(value as keyof T)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filter by" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="firstName">First Name</SelectItem>
-            <SelectItem value="lastName">Last Name</SelectItem>
-            <SelectItem value="username">Email</SelectItem>
-            <SelectItem value="phone">Phone</SelectItem>
-            <SelectItem value="role">Role</SelectItem>
-            <SelectItem value="status">Status</SelectItem>
+            {filterOptions.map((option) => (
+              <SelectItem key={option.value as string} value={option.value as string}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

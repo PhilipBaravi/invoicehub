@@ -13,6 +13,7 @@ import NewRegisterPage from "./components/main-authentication/new-register-page/
 import { ThemeProvider } from "./components/dashboard/layout/ThemeProvider";
 import CompanyRegistrationForm from "./components/main-authentication/new-register-page/CompanyRegistrationForm";
 import LoginRegisterLayout from "./components/main-authentication/LoginRegisterLayout";
+import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
 
 // Define the type for user details
 interface UserDetails {
@@ -55,6 +56,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<DashboardDefault />} />
             <Route path="employee" element={<Employee />} />
+            <Route path="clients" element={<ClientVendorList />} />
             <Route path="product" element={<Product />} />
             <Route path="profile" element={<Profile />} />
           </Route>

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { PanelRightOpen, LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn } from 'lucide-react';
+import { PanelRightOpen, LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn, Building2 } from 'lucide-react';
 import { motion } from "framer-motion";
 
 interface SideBarProps {
@@ -11,6 +11,7 @@ interface SideBarProps {
 const menuItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
+  {name: 'Clients', icon: Building2, path:'/dashboard/clients'},
   { name: 'Product', icon: FolderKanban, path: '/dashboard/product' },
   { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
   { name: 'Login', icon: LogIn, path: '/new-login' }, // Login navigates outside dashboard
