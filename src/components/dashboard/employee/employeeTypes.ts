@@ -1,13 +1,11 @@
 export interface Employee {
-    id: string
-    name: string
-    email: string
-    phone: string
-    role: string
-    department: string
-    employeeId: string
-    dateOfEmployment: Date
-    accessPermissions: string
-    status: 'Active' | 'Inactive'
-  }
-  
+  id: string;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  role: 'Admin' | 'Manager' | 'Employee';
+  dateOfEmployment: Date;
+  status: 'Active' | 'Inactive';
+}

@@ -1,15 +1,16 @@
-import { useState, useEffect } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon } from 'lucide-react'
-import { Calendar } from "@/components/ui/calendar"
-import { format } from 'date-fns'
-import { cn } from "@/lib/utils"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Employee } from './employeeTypes'
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
+import countryList from '@/components/account-details/profile-form/CountryCodes';
+import { Employee } from './employeeTypes';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
 export default function EditEmployeeSheet({
   isOpen,
@@ -17,30 +18,79 @@ export default function EditEmployeeSheet({
   employee,
   onEditEmployee,
 }: {
-  isOpen: boolean
-  onOpenChange: (open: boolean) => void
-  employee: Employee
-  onEditEmployee: (employee: Employee) => void
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  employee: Employee;
+  onEditEmployee: (employee: Employee) => void;
 }) {
-  const [editedEmployee, setEditedEmployee] = useState<Employee>(employee)
+  const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
+  const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
+  const [errors, setErrors] = useState({
+    username: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    password: '',
+  });
 
-  // Ensuring that the employee data is refreshed whenever the component is opened
   useEffect(() => {
     if (isOpen) {
-      setEditedEmployee(employee)  // Reset the edited employee data when the modal opens
+      setEditedEmployee(employee);
     }
-  }, [isOpen, employee])
+  }, [isOpen, employee]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setEditedEmployee(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setEditedEmployee(prev => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+    const newErrors: any = {};
+    let valid = true;
+
+    if (!editedEmployee.username || !/\S+@\S+\.\S+/.test(editedEmployee.username)) {
+      newErrors.username = 'Please enter a valid email.';
+      valid = false;
+    }
+
+    if (!editedEmployee.firstName) {
+      newErrors.firstName = 'First name is required.';
+      valid = false;
+    }
+
+    if (!editedEmployee.lastName) {
+      newErrors.lastName = 'Last name is required.';
+      valid = false;
+    }
+
+    const fullPhoneNumber = phoneCode + editedEmployee.phone;
+    if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
+      newErrors.phone = 'Invalid phone number.';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onEditEmployee(editedEmployee)
-    onOpenChange(false) // Close the sheet after saving
-  }
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    const fullPhoneNumber = phoneCode + editedEmployee.phone;
+
+    const updatedEmployeeData = {
+      ...editedEmployee,
+      phone: fullPhoneNumber,
+    };
+
+    console.log('Edited Employee data submitted:', updatedEmployeeData);
+
+    onEditEmployee(updatedEmployeeData);
+    onOpenChange(false);
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -51,81 +101,93 @@ export default function EditEmployeeSheet({
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="username">Email</Label>
             <Input
-              id="name"
-              name="name"
-              value={editedEmployee.name}
+              id="username"
+              name="username"
+              value={editedEmployee.username}
               onChange={handleInputChange}
               required
             />
+            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
           </div>
-          <div>
-            <Label htmlFor="email">Email</Label>
+          <div className="relative">
+            <Label htmlFor="password">Password</Label>
             <Input
-              id="email"
-              name="email"
-              type="email"
-              value={editedEmployee.email}
+              id="password"
+              name="password"
+              type='text'
+              value={editedEmployee.password}
               onChange={handleInputChange}
               required
             />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
           <div>
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              name="firstName"
+              value={editedEmployee.firstName}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+          </div>
+          <div>
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              value={editedEmployee.lastName}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+          </div>
+          <div className="flex space-x-2">
+            <Select onValueChange={(value) => setPhoneCountry(value as CountryCode)}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder={countryList.find(c => c.code === phoneCountry)?.name || 'Select country'} />
+              </SelectTrigger>
+              <SelectContent>
+                {countryList.map(c => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Input
               id="phone"
               name="phone"
               value={editedEmployee.phone}
               onChange={handleInputChange}
+              placeholder={phoneCode}
               required
             />
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
-            <Input
-              id="role"
-              name="role"
-              value={editedEmployee.role}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="department">Department</Label>
-            <Input
-              id="department"
-              name="department"
-              value={editedEmployee.department}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="employeeId">Employee ID</Label>
-            <Input
-              id="employeeId"
-              name="employeeId"
-              value={editedEmployee.employeeId}
-              onChange={handleInputChange}
-              required
-            />
+            <Select value={editedEmployee.role} onValueChange={value => setEditedEmployee(prev => ({ ...prev, role: value as 'Admin' | 'Manager' | 'Employee' }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="Manager">Manager</SelectItem>
+                <SelectItem value="Employee">Employee</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label htmlFor="dateOfEmployment">Date of Employment</Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !editedEmployee.dateOfEmployment && "text-muted-foreground"
-                  )}
-                >
+                <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {editedEmployee.dateOfEmployment
-                    ? format(editedEmployee.dateOfEmployment, "PPP")
-                    : <span>Pick a date</span>}
+                  {editedEmployee.dateOfEmployment ? format(editedEmployee.dateOfEmployment, 'PPP') : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -138,40 +200,9 @@ export default function EditEmployeeSheet({
               </PopoverContent>
             </Popover>
           </div>
-          <div>
-            <Label htmlFor="accessPermissions">Access Permissions</Label>
-            <Input
-              id="accessPermissions"
-              name="accessPermissions"
-              value={editedEmployee.accessPermissions}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="status">Status</Label>
-            <Select
-              name="status"
-              value={editedEmployee.status}
-              onValueChange={(value) =>
-                setEditedEmployee((prev) => ({
-                  ...prev,
-                  status: value as 'Active' | 'Inactive',
-                }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           <Button type="submit">Save Changes</Button>
         </form>
       </SheetContent>
     </Sheet>
-  )
+  );
 }

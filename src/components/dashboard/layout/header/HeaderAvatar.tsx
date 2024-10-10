@@ -49,6 +49,9 @@ const HeaderAvatar: FC = () => {
         <DropdownMenuItem>
           Subscription
         </DropdownMenuItem>
+        <DropdownMenuItem>
+          Settings
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logOut} className="cursor-pointer">
           Log out

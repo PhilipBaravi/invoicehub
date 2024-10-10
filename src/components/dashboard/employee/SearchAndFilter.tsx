@@ -1,15 +1,15 @@
-import { Input } from "@/components/ui/input"
-import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select"
-import { Search } from 'lucide-react'
-import { Employee } from "./employeeTypes"
+import { Input } from "@/components/ui/input";
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
+import { Search } from 'lucide-react';
+import { Employee } from "./employeeTypes";
 
 interface SearchAndFilterProps {
-  searchTerm: string
-  setSearchTerm: (term: string) => void
-  filterCategory: keyof Employee
-  setFilterCategory: (category: keyof Employee) => void
-  rowsPerPage: number
-  setRowsPerPage: (rows: number) => void
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  filterCategory: keyof Employee;
+  setFilterCategory: (category: keyof Employee) => void;
+  rowsPerPage: number;
+  setRowsPerPage: (rows: number) => void;
 }
 
 export default function SearchAndFilter({
@@ -34,19 +34,18 @@ export default function SearchAndFilter({
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         </div>
         <Select value={filterCategory} onValueChange={(value) => setFilterCategory(value as keyof Employee)}>
-  <SelectTrigger className="w-[180px]">
-    <SelectValue placeholder="Filter by" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="name">Name</SelectItem>
-    <SelectItem value="email">Email</SelectItem>
-    <SelectItem value="phone">Phone</SelectItem> 
-    <SelectItem value="role">Role</SelectItem>
-    <SelectItem value="department">Department</SelectItem>
-    <SelectItem value="status">Status</SelectItem>
-  </SelectContent>
-</Select>
-
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="firstName">First Name</SelectItem>
+            <SelectItem value="lastName">Last Name</SelectItem>
+            <SelectItem value="username">Email</SelectItem>
+            <SelectItem value="phone">Phone</SelectItem>
+            <SelectItem value="role">Role</SelectItem>
+            <SelectItem value="status">Status</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <Select value={rowsPerPage.toString()} onValueChange={(value) => setRowsPerPage(Number(value))}>
         <SelectTrigger className="w-[180px]">
@@ -59,5 +58,5 @@ export default function SearchAndFilter({
         </SelectContent>
       </Select>
     </div>
-  )
+  );
 }

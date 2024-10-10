@@ -1,20 +1,21 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { format } from "date-fns"
-import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Trash2, User } from 'lucide-react'
-import { Employee } from "./employeeTypes"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreHorizontal, Trash2, User, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { Employee } from './employeeTypes';
 
 interface EmployeeTableProps {
-  paginatedEmployees: Employee[]
-  selectedEmployees: string[]
-  handleSelectEmployee: (id: string) => void
-  handleSelectAll: () => void
-  deleteEmployee: (id: string) => void
-  setEditingEmployee: (employee: Employee) => void
-  setIsEditEmployeeOpen: (open: boolean) => void
-  filteredEmployees: Employee[]
+  paginatedEmployees: Employee[];
+  selectedEmployees: string[];
+  handleSelectEmployee: (id: string) => void;
+  handleSelectAll: () => void;
+  deleteEmployee: (id: string) => void;
+  setEditingEmployee: (employee: Employee) => void;
+  setIsEditEmployeeOpen: (open: boolean) => void;
+  filteredEmployees: Employee[];
 }
 
 export default function EmployeeTable({
@@ -27,6 +28,15 @@ export default function EmployeeTable({
   setIsEditEmployeeOpen,
   filteredEmployees,
 }: EmployeeTableProps) {
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
+
+  const togglePasswordVisibility = (id: string) => {
+    setVisiblePasswords((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
   return (
     <div className="border rounded-md">
       <Table>
@@ -40,12 +50,10 @@ export default function EmployeeTable({
             </TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead>Password</TableHead>
             <TableHead>Phone</TableHead>
             <TableHead>Role</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Employee ID</TableHead>
             <TableHead>Date of Employment</TableHead>
-            <TableHead>Access Permissions</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -59,14 +67,20 @@ export default function EmployeeTable({
                   onCheckedChange={() => handleSelectEmployee(employee.id)}
                 />
               </TableCell>
-              <TableCell>{employee.name}</TableCell>
-              <TableCell>{employee.email}</TableCell>
+              <TableCell>{employee.firstName} {employee.lastName}</TableCell>
+              <TableCell>{employee.username}</TableCell>
+              <TableCell className="relative flex items-center">
+                {visiblePasswords[employee.id] ? employee.password : '••••••••'}
+                <button
+                  className=""
+                  onClick={() => togglePasswordVisibility(employee.id)}
+                >
+                  {visiblePasswords[employee.id] ? <Eye className="w-4 h-4 ml-4" /> : <EyeOff className="w-4 h-4 ml-4" />}
+                </button>
+              </TableCell>
               <TableCell>{employee.phone}</TableCell>
               <TableCell>{employee.role}</TableCell>
-              <TableCell>{employee.department}</TableCell>
-              <TableCell>{employee.employeeId}</TableCell>
               <TableCell>{format(employee.dateOfEmployment, 'PP')}</TableCell>
-              <TableCell>{employee.accessPermissions}</TableCell>
               <TableCell>{employee.status}</TableCell>
               <TableCell>
                 <DropdownMenu>
@@ -82,8 +96,8 @@ export default function EmployeeTable({
                       Delete
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => {
-                      setEditingEmployee(employee)
-                      setIsEditEmployeeOpen(true)
+                      setEditingEmployee(employee);
+                      setIsEditEmployeeOpen(true);
                     }}>
                       <User className="mr-2 h-4 w-4" />
                       Edit
@@ -96,5 +110,5 @@ export default function EmployeeTable({
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }

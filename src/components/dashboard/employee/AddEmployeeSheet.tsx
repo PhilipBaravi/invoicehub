@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Sheet,
   SheetContent,
@@ -9,145 +9,227 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { CalendarIcon, UserPlus } from 'lucide-react'
-import { Calendar } from "@/components/ui/calendar"
-import { format } from 'date-fns'
-import { cn } from "@/lib/utils"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Employee } from './employeeTypes'
+} from '@/components/ui/sheet';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
+import countryList from '@/components/account-details/profile-form/CountryCodes';
+import { Employee } from './employeeTypes';
 
 export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }: {
-  isOpen: boolean
-  onOpenChange: (open: boolean) => void
-  onAddEmployee: (employee: Omit<Employee, 'id'>) => void
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  onAddEmployee: (employee: Omit<Employee, 'id'>) => void;
 }) {
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id'>>({
-    name: '',
-    email: '',
+    username: '',
+    password: '',
+    firstName: '',
+    lastName: '',
     phone: '',
-    role: '',
-    department: '',
-    employeeId: '',
+    role: 'Employee',
     dateOfEmployment: new Date(),
-    accessPermissions: 'Admin',
-    status: 'Active',
-  })
+    status: 'Inactive',
+  });
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
+  const [errors, setErrors] = useState({
+    username: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+  });
+  const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setNewEmployee(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setNewEmployee(prev => ({ ...prev, [name]: value }));
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Employee data submitted:', newEmployee)
-    onAddEmployee(newEmployee)
-    onOpenChange(false)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    let valid = true;
+    const newErrors: any = {};
+
+    // Validation
+    if (!newEmployee.username) {
+      newErrors.username = 'Email is required.';
+      valid = false;
+    }
+    if (!newEmployee.password) {
+      newErrors.password = 'Password is required.';
+      valid = false;
+    }
+    if (!newEmployee.firstName) {
+      newErrors.firstName = 'First name is required.';
+      valid = false;
+    }
+    if (!newEmployee.lastName) {
+      newErrors.lastName = 'Last name is required.';
+      valid = false;
+    }
+    const fullPhoneNumber = phoneCode + newEmployee.phone;
+    if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
+      newErrors.phone = 'Invalid phone number for the selected country.';
+      valid = false;
+    }
+
+    if (!valid) {
+      setErrors(newErrors);
+      return;
+    }
+
+    const completeEmployeeData = {
+      ...newEmployee,
+      phone: fullPhoneNumber,
+    };
+
+    console.log('Employee Data to Submit:', completeEmployeeData);
+
+    // Send the data via POST request
+    await fetch('http://localhost:9090/api/v1/user/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(completeEmployeeData),
+    });
+
+    onAddEmployee(completeEmployeeData);
+    onOpenChange(false);
+
     setNewEmployee({
-      name: '',
-      email: '',
+      username: '',
+      password: '',
+      firstName: '',
+      lastName: '',
       phone: '',
-      role: '',
-      department: '',
-      employeeId: '',
+      role: 'Employee',
       dateOfEmployment: new Date(),
-      accessPermissions: 'Admin',
-      status: 'Active',
-    })
-  }
+      status: 'Inactive',
+    });
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <Button>
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add Employee
-        </Button>
+        <Button>Add Employee</Button>
       </SheetTrigger>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Add New Employee</SheetTitle>
-          <SheetDescription>
-            Enter the details of the new employee below.
-          </SheetDescription>
+          <SheetDescription>Enter the details of the new employee below.</SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" value={newEmployee.name} onChange={handleInputChange} required />
+            <Label htmlFor="username">Email</Label>
+            <Input
+              id="username"
+              name="username"
+              type="email"
+              value={newEmployee.username}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+          </div>
+          <div className="relative">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              name="password"
+              type='text'
+              value={newEmployee.password}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
           <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" value={newEmployee.email} onChange={handleInputChange} required />
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              name="firstName"
+              value={newEmployee.firstName}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
           </div>
           <div>
-            <Label htmlFor="phone">Phone</Label>
-            <Input id="phone" name="phone" value={newEmployee.phone} onChange={handleInputChange} required />
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              value={newEmployee.lastName}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+          </div>
+          <div className="flex space-x-2">
+            <Select onValueChange={(value) => setPhoneCountry(value as CountryCode)}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder={countryList.find((c) => c.code === phoneCountry)?.name || 'Select country'} />
+              </SelectTrigger>
+              <SelectContent>
+                {countryList.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              id="phone"
+              name="phone"
+              value={newEmployee.phone}
+              onChange={handleInputChange}
+              placeholder={phoneCode}
+              className="w-full"
+              required
+            />
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
-            <Input id="role" name="role" value={newEmployee.role} onChange={handleInputChange} required />
-          </div>
-          <div>
-            <Label htmlFor="department">Department</Label>
-            <Input id="department" name="department" value={newEmployee.department} onChange={handleInputChange} required />
-          </div>
-          <div>
-            <Label htmlFor="employeeId">Employee ID</Label>
-            <Input id="employeeId" name="employeeId" value={newEmployee.employeeId} onChange={handleInputChange} required />
+            <Select value={newEmployee.role} onValueChange={(value) => setNewEmployee((prev) => ({ ...prev, role: value as 'Admin' | 'Manager' | 'Employee' }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Admin">Admin</SelectItem>
+                <SelectItem value="Manager">Manager</SelectItem>
+                <SelectItem value="Employee">Employee</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <Label htmlFor="dateOfEmployment">Date of Employment</Label>
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !newEmployee.dateOfEmployment && "text-muted-foreground"
-                  )}
-                >
+                <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {newEmployee.dateOfEmployment ? format(newEmployee.dateOfEmployment, "PPP") : <span>Pick a date</span>}
+                  {newEmployee.dateOfEmployment ? format(newEmployee.dateOfEmployment, 'PPP') : <span>Pick a date</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
                   selected={newEmployee.dateOfEmployment}
-                  onSelect={(date) => setNewEmployee(prev => ({ ...prev, dateOfEmployment: date || new Date() }))}
+                  onSelect={(date) => setNewEmployee((prev) => ({ ...prev, dateOfEmployment: date || new Date() }))}
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
           </div>
-          <Select name="accessPermisions" value={newEmployee.accessPermissions} onValueChange={(value) => setNewEmployee(prev => ({ ...prev, accessPermissions: value as 'Admin' | 'Employee' | 'Vendor' }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select access permission" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Active">Admin</SelectItem>
-                <SelectItem value="Inactive">Employee</SelectItem>
-                <SelectItem value="Vendor">Vendor</SelectItem>
-              </SelectContent>
-            </Select>
-          <div>
-            <Label htmlFor="status">Status</Label>
-            <Select name="status" value={newEmployee.status} onValueChange={(value) => setNewEmployee(prev => ({ ...prev, status: value as 'Active' | 'Inactive' }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           <Button type="submit">Add Employee</Button>
         </form>
       </SheetContent>
     </Sheet>
-  )
+  );
 }
