@@ -31,7 +31,7 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
     department: '',
     employeeId: '',
     dateOfEmployment: new Date(),
-    accessPermissions: '',
+    accessPermissions: 'Admin',
     status: 'Active',
   })
 
@@ -53,7 +53,7 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
       department: '',
       employeeId: '',
       dateOfEmployment: new Date(),
-      accessPermissions: '',
+      accessPermissions: 'Admin',
       status: 'Active',
     })
   }
@@ -123,10 +123,16 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
               </PopoverContent>
             </Popover>
           </div>
-          <div>
-            <Label htmlFor="accessPermissions">Access Permissions</Label>
-            <Input id="accessPermissions" name="accessPermissions" value={newEmployee.accessPermissions} onChange={handleInputChange} required />
-          </div>
+          <Select name="accessPermisions" value={newEmployee.accessPermissions} onValueChange={(value) => setNewEmployee(prev => ({ ...prev, accessPermissions: value as 'Admin' | 'Employee' | 'Vendor' }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select access permission" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Active">Admin</SelectItem>
+                <SelectItem value="Inactive">Employee</SelectItem>
+                <SelectItem value="Vendor">Vendor</SelectItem>
+              </SelectContent>
+            </Select>
           <div>
             <Label htmlFor="status">Status</Label>
             <Select name="status" value={newEmployee.status} onValueChange={(value) => setNewEmployee(prev => ({ ...prev, status: value as 'Active' | 'Inactive' }))}>

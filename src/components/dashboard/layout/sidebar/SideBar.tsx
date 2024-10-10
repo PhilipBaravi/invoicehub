@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { PanelRightOpen, LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn } from 'lucide-react';
 import { motion } from "framer-motion";
 
