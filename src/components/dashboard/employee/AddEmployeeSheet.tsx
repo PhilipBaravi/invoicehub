@@ -30,9 +30,9 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
     firstName: '',
     lastName: '',
     phone: '',
-    role: 'Employee',
+    role: { description: 'Employee' },
     dateOfEmployment: new Date(),
-    status: 'Inactive',
+    status: 'INACTIVE',
   });
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
   const [errors, setErrors] = useState({
@@ -108,9 +108,9 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
       firstName: '',
       lastName: '',
       phone: '',
-      role: 'Employee',
+      role: { description: 'Employee' },
       dateOfEmployment: new Date(),
-      status: 'Inactive',
+      status: 'INACTIVE',
     });
   };
 
@@ -146,6 +146,7 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
               value={newEmployee.password}
               onChange={handleInputChange}
               required
+              className="pr-10"
             />
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
@@ -197,7 +198,9 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
-            <Select value={newEmployee.role} onValueChange={(value) => setNewEmployee((prev) => ({ ...prev, role: value as 'Admin' | 'Manager' | 'Employee' }))}>
+            <Select 
+              value={newEmployee.role.description} 
+              onValueChange={(value) => setNewEmployee(prev => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}>
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -221,7 +224,7 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
                 <Calendar
                   mode="single"
                   selected={newEmployee.dateOfEmployment}
-                  onSelect={(date) => setNewEmployee((prev) => ({ ...prev, dateOfEmployment: date || new Date() }))}
+                  onSelect={(date) => setNewEmployee((prev) => ({ ...prev, dateOfEmployment: date || new Date() }))} 
                   initialFocus
                 />
               </PopoverContent>

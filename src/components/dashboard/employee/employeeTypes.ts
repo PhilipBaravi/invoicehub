@@ -5,7 +5,7 @@ export interface Employee {
   firstName: string;
   lastName: string;
   phone: string;
-  role: 'Admin' | 'Manager' | 'Employee';
+  role: { description: 'Admin' | 'Manager' | 'Employee' }; 
   dateOfEmployment: Date;
-  status: 'Active' | 'Inactive';
+  status: 'ACTIVE' | 'INACTIVE';
 }

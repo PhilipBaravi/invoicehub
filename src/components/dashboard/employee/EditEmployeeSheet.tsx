@@ -120,6 +120,7 @@ export default function EditEmployeeSheet({
               value={editedEmployee.password}
               onChange={handleInputChange}
               required
+              className="pr-10"
             />
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
@@ -170,7 +171,7 @@ export default function EditEmployeeSheet({
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
-            <Select value={editedEmployee.role} onValueChange={value => setEditedEmployee(prev => ({ ...prev, role: value as 'Admin' | 'Manager' | 'Employee' }))}>
+            <Select value={editedEmployee.role.description} onValueChange={value => setEditedEmployee(prev => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}>
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -194,7 +195,7 @@ export default function EditEmployeeSheet({
                 <Calendar
                   mode="single"
                   selected={editedEmployee.dateOfEmployment}
-                  onSelect={(date) => setEditedEmployee(prev => ({ ...prev, dateOfEmployment: date || new Date() }))}
+                  onSelect={(date) => setEditedEmployee(prev => ({ ...prev, dateOfEmployment: date || new Date() }))} 
                   initialFocus
                 />
               </PopoverContent>

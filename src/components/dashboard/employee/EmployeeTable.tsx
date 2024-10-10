@@ -79,7 +79,7 @@ export default function EmployeeTable({
                 </button>
               </TableCell>
               <TableCell>{employee.phone}</TableCell>
-              <TableCell>{employee.role}</TableCell>
+              <TableCell>{employee.role.description}</TableCell>
               <TableCell>{format(employee.dateOfEmployment, 'PP')}</TableCell>
               <TableCell>{employee.status}</TableCell>
               <TableCell>
