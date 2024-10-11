@@ -18,6 +18,7 @@ import LoginRegisterLayout from "./components/main-authentication/LoginRegisterL
 import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
 import NotFound from "./NotFound";
 import CompanyDetails from "./components/dashboard/company-settings/CompanyDetails";
+import Invoice from "./components/dashboard/invoice/Invoice";
 
 // Define the type for user details
 interface UserDetails {
@@ -63,6 +64,7 @@ const App: React.FC = () => {
               <Route index element={<DashboardDefault />} />
               <Route path="employee" element={<Employee />} />
               <Route path="clients" element={<ClientVendorList />} />
+              <Route path="invoice" element={<Invoice />} />
               <Route path="product" element={<Product />} />
               <Route path="profile" element={<Profile />} />
               <Route path="company-details" element={<CompanyDetails />} />

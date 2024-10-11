@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef } from "react";
 import {  useNavigate } from "react-router-dom";
-import { LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn, Building2 } from 'lucide-react';
+import { LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn, Building2, FileText } from 'lucide-react';
 import { motion } from "framer-motion";
 
 interface LargeScreenSidebarProps {
@@ -12,6 +12,7 @@ const menuItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
   {name: 'Clients', icon: Building2, path:'/dashboard/clients'},
+  {name: 'Invoice', icon: FileText, path:'/dashboard/invoice'},
   { name: 'Product', icon: FolderKanban, path: '/dashboard/product' },
   { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
   { name: 'Login', icon: LogIn, path: '/new-login' },
