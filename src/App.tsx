@@ -20,7 +20,6 @@ import NotFound from "./NotFound";
 import CompanyDetails from "./components/dashboard/company-settings/CompanyDetails";
 import Invoice from "./components/dashboard/invoice/Invoice";
 
-// Define the type for user details
 interface UserDetails {
   username: string;
   password: string;

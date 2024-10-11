@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input";
+import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import GoogleIcon from '../GoogleIcon';
 import AppleIcon from '../AppleIcon';
+import qs from 'qs';
 
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState<string>('');
@@ -16,14 +17,43 @@ const LoginForm = () => {
   const handleKeycloakLogin = async () => {
     if (keycloak) {
       try {
-        await keycloak.login();
-        navigate('/dashboard'); // Navigate to dashboard after successful login
+        const data = qs.stringify({
+          'grant_type': 'password',
+          'client_id': 'invoicing-app',
+          'client_secret': 'vSiPmpIX6MK9OZGJlCUkOI5Pu881YNsv',
+          'username': loginEmail,
+          'password': loginPassword,
+        });
+
+        await fetch('http://localhost:8080/auth/realms/e-invoices/protocol/openid-connect/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: data,
+        })
+          .then((response) => response.json())
+          .then((result) => {
+            if (result.access_token) {
+              // Store access token in local storage for future use
+              localStorage.setItem('access_token', result.access_token);
+              localStorage.setItem('refresh_token', result.refresh_token);
+              navigate('/dashboard');
+            } else {
+              console.error('Login failed: ', result);
+              navigate('*'); // Navigate to error page if login fails
+            }
+          })
+          .catch((error) => {
+            console.error('Error logging in with Keycloak: ', error);
+            navigate('*'); // Navigate to error page if Keycloak login fails
+          });
       } catch (error) {
-        console.error("Keycloak login failed", error);
-        navigate('*'); // Navigate to error page if login fails
+        console.error('Login error: ', error);
+        navigate('*'); // Navigate to error page on catch error
       }
     } else {
-      console.error("Keycloak instance not found");
+      console.error('Keycloak instance not found');
       navigate('*'); // Navigate to error page if Keycloak is not initialized
     }
   };
@@ -74,7 +104,7 @@ const LoginForm = () => {
       <div className="mt-6 pb-6 text-center text-sm text-stone-500 dark:text-stone-400">
         OR CONTINUE WITH
       </div>
-      
+
       <Button className="w-full mb-4">
         <GoogleIcon />
         Login with Google
