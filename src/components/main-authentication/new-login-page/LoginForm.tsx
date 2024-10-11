@@ -16,21 +16,18 @@ const LoginForm = () => {
   const handleKeycloakLogin = async () => {
     if (keycloak) {
       try {
-        await keycloak.login({
-         
-        });
-  
-        
-        navigate('/dashboard');
+        await keycloak.login();
+        navigate('/dashboard'); // Navigate to dashboard after successful login
       } catch (error) {
-        console.error('Keycloak login failed', error);
-        navigate('*'); 
+        console.error("Keycloak login failed", error);
+        navigate('*'); // Navigate to error page if login fails
       }
     } else {
-      console.error('Keycloak instance not found');
-      navigate('*'); 
+      console.error("Keycloak instance not found");
+      navigate('*'); // Navigate to error page if Keycloak is not initialized
     }
   };
+
   return (
     <>
       <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>

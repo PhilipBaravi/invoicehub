@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { ReactKeycloakProvider } from '@react-keycloak/web';
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { ReactKeycloakProvider, useKeycloak } from '@react-keycloak/web';
 import keycloak from "./components/main-authentication/new-login-page/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
 import BusinessForm from "./components/account-details/business-form/BusinessFormDetails";
@@ -32,6 +32,17 @@ interface UserDetails {
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
+  // Protect the dashboard route based on authentication
+  const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
+    const { keycloak } = useKeycloak();
+
+    if (!keycloak.authenticated) {
+      return <Navigate to="/new-login" />;
+    }
+
+    return element;
+  };
+
   return (
     <ReactKeycloakProvider authClient={keycloak}>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -59,8 +70,11 @@ const App: React.FC = () => {
               }
             />
 
-            {/* Main dashboard route with nested routes */}
-            <Route path="/dashboard" element={<Dashboard />}>
+            {/* Protected main dashboard route with nested routes */}
+            <Route
+              path="/dashboard"
+              element={<ProtectedRoute element={<Dashboard />} />}
+            >
               <Route index element={<DashboardDefault />} />
               <Route path="employee" element={<Employee />} />
               <Route path="clients" element={<ClientVendorList />} />
