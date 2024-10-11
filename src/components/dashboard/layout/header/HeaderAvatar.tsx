@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -49,9 +50,11 @@ const HeaderAvatar: FC = () => {
         <DropdownMenuItem>
           Subscription
         </DropdownMenuItem>
+        <Link to="company-details">
         <DropdownMenuItem>
           Settings
         </DropdownMenuItem>
+        </Link>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logOut} className="cursor-pointer">
           Log out

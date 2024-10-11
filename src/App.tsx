@@ -16,6 +16,8 @@ import { ThemeProvider } from "./components/dashboard/layout/ThemeProvider";
 import CompanyRegistrationForm from "./components/main-authentication/new-register-page/CompanyRegistrationForm";
 import LoginRegisterLayout from "./components/main-authentication/LoginRegisterLayout";
 import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
+import NotFound from "./NotFound";
+import CompanyDetails from "./components/dashboard/company-settings/CompanyDetails";
 
 // Define the type for user details
 interface UserDetails {
@@ -43,6 +45,7 @@ const App: React.FC = () => {
             <Route path="/account-details" element={<AccountDetails />} />
             <Route path="/business-details" element={<BusinessForm />} />
             <Route path="/intent-details" element={<IntentFormDetails />} />
+            <Route path="*" element={<NotFound />} />
             <Route
               path="/company-registration"
               element={
@@ -62,6 +65,7 @@ const App: React.FC = () => {
               <Route path="clients" element={<ClientVendorList />} />
               <Route path="product" element={<Product />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="company-details" element={<CompanyDetails />} />
             </Route>
           </Routes>
         </Router>

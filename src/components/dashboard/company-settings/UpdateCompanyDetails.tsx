@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import  { useState, FC } from 'react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
+import { Button } from '@/components/ui/button';
 
-interface CompanyRegistrationFormProps {
-  userDetails?: UserFormValues | null;
+interface UpdateCompanyDetailsProps {
+  initialValues?: {
+    title: string;
+    addressLine1: string;
+    addressLine2: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    phone: string;
+    website: string;
+  };
 }
 
-interface UserFormValues {
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-}
-
-const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userDetails }) => {
+const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) => {
   const [formValues, setFormValues] = useState({
-    title: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    phone: '',
-    website: '',
+    title: initialValues?.title || '',
+    addressLine1: initialValues?.addressLine1 || '',
+    addressLine2: initialValues?.addressLine2 || '',
+    city: initialValues?.city || '',
+    state: initialValues?.state || '',
+    zipCode: initialValues?.zipCode || '',
+    phone: initialValues?.phone || '',
+    website: initialValues?.website || '',
   });
   const [companyCountry, setCompanyCountry] = useState<CountryCode>('US');
   const [errors, setErrors] = useState({
@@ -38,99 +38,60 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     zipCode: '',
     phone: '',
   });
-  const navigate = useNavigate();
+
   const companyPhoneCode = `+${getCountryCallingCode(companyCountry)}`;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const { title, addressLine1, addressLine2, city, state, zipCode, phone, website } = formValues;
-
-    if (!userDetails) {
-      console.error('User details are missing');
-      return;
+  const handleSubmit = (e?: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+    if (e) {
+      e.preventDefault();
     }
-
+  
+    const { title, addressLine1, addressLine2, city, state, zipCode, phone, website } = formValues;
+  
     let valid = true;
     const newErrors: any = {};
-
+  
     // Validations
     if (!title) {
       newErrors.title = 'Company name is required.';
       valid = false;
     }
-
+  
     const fullCompanyPhoneNumber = companyPhoneCode + phone;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
       newErrors.phone = 'Invalid company phone number for the selected country.';
       valid = false;
     }
-
+  
     if (!addressLine1) {
       newErrors.addressLine1 = 'Company address is required.';
       valid = false;
     }
-
+  
     if (!city) {
       newErrors.city = 'City is required.';
       valid = false;
     }
-
+  
     if (!state) {
       newErrors.state = 'State is required.';
       valid = false;
     }
-
+  
     if (!zipCode) {
       newErrors.zipCode = 'Zip code is required.';
       valid = false;
     }
-
+  
     if (!valid) {
       setErrors(newErrors);
       return;
     }
-
-    // Combine user details and company details
-    const completeRegistrationData = {
-      ...userDetails,
-      company: {
-        title,
-        phone: fullCompanyPhoneNumber,
-        website,
-        address: {
-          addressLine1,
-          addressLine2,
-          city,
-          state,
-          country: companyCountry,
-          zipCode,
-        },
-      },
-    };
-    // Post Data to endpoint
-    try {
-      const response = await fetch('http://localhost:9090/api/v1/user/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(completeRegistrationData),
-      });
-
-      if (response.ok) {
-        console.log('Registration successful!');
-        // Redirect to the dashboard after successful registration
-        navigate('/dashboard');
-      } else {
-        const errorData = await response.json();
-        console.error('Registration failed:', errorData);
-        alert('Registration failed. Please try again.');
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-      alert('Network error. Please try again.');
-    }
+  
+    // API endpoint will be added later
+    console.log('Form is valid, ready for submission.');
   };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -261,10 +222,9 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           className="w-full"
         />
       </div>
-            <Button className="w-full">Submit</Button>
-     
+      <Button onClick={handleSubmit}>Save</Button>
     </form>
   );
 };
 
-export default CompanyRegistrationForm;
+export default UpdateCompanyDetails;

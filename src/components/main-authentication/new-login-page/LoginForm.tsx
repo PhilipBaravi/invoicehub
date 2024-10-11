@@ -20,11 +20,11 @@ const LoginForm = () => {
         navigate('/dashboard'); // Navigate to dashboard after successful login
       } catch (error) {
         console.error("Keycloak login failed", error);
-        navigate('/404'); // Navigate to error page if login fails
+        navigate('*'); // Navigate to error page if login fails
       }
     } else {
       console.error("Keycloak instance not found");
-      navigate('/404'); // Navigate to error page if Keycloak is not initialized
+      navigate('*'); // Navigate to error page if Keycloak is not initialized
     }
   };
 
