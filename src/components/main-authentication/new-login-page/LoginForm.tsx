@@ -16,8 +16,9 @@ const LoginForm = () => {
   const handleKeycloakLogin = async () => {
     if (keycloak) {
       try {
-        await keycloak.login();
-        navigate('/dashboard'); // Navigate to dashboard after successful login
+        await keycloak.login({
+          redirectUri: window.location.origin + '/dashboard',
+        });
       } catch (error) {
         console.error("Keycloak login failed", error);
         navigate('*'); // Navigate to error page if login fails
