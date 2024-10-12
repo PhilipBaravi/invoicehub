@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
+import axios from 'axios';
 
 interface RegisterFormProps {
   setUserDetails: (details: UserFormValues) => void;
@@ -46,7 +47,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { username, password, confirmPassword, firstName, lastName, phone } = formValues;
     let valid = true;
@@ -90,17 +91,35 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
       return;
     }
 
-    // Pass user details to parent state and navigate to company registration form
-    setUserDetails({
-      username,
-      password,
-      confirmPassword,
-      firstName,
-      lastName,
-      phone: fullPhoneNumber,
-    });
+    // If valid, send data using axios
+    try {
+      const response = await axios.post('http://localhost:9090/api/v1/user/register', {
+        username,
+        password,
+        firstName,
+        lastName,
+        phone: fullPhoneNumber,
+      });
 
-    navigate("/company-registration");
+      if (response.status === 201) {
+        // Pass user details to parent state and navigate to company registration form
+        setUserDetails({
+          username,
+          password,
+          confirmPassword,
+          firstName,
+          lastName,
+          phone: fullPhoneNumber,
+        });
+        navigate("/company-registration");
+      }
+    } catch (error) {
+      console.error('Error submitting the form:', error);
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        username: 'There was an error submitting the form. Please try again later.',
+      }));
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

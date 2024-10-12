@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClientVendor } from './CliendVendorTypes';
+import axios from 'axios';
 
 export default function AddClientVendorSheet({
   isOpen,
@@ -52,35 +53,41 @@ export default function AddClientVendorSheet({
     e.preventDefault();
     console.log('Client/Vendor Data to Submit:', newClientVendor);
 
-    // Send the data via POST request
-    await fetch('http://localhost:9090/api/v1/client-vendor/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newClientVendor),
-    });
+    try {
+      // Send the data via POST request using axios
+      const response = await axios.post('http://localhost:9090/api/v1/client-vendor/create', newClientVendor, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    onAddClientVendor(newClientVendor);
-    onOpenChange(false);
+      // Log the response for confirmation (optional)
+      console.log('Server Response:', response.data);
 
-    // Reset the form
-    setNewClientVendor({
-      name: '',
-      phone: '',
-      website: '',
-      email: '',
-      clientVendorType: 'CLIENT',
-      address: {
-        id: 0,
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        state: '',
-        country: '',
-        zipCode: '',
-      },
-    });
+      // Call the onAddClientVendor callback to update the parent component's state
+      onAddClientVendor(newClientVendor);
+      onOpenChange(false);
+
+      // Reset the form
+      setNewClientVendor({
+        name: '',
+        phone: '',
+        website: '',
+        email: '',
+        clientVendorType: 'CLIENT',
+        address: {
+          id: 0,
+          addressLine1: '',
+          addressLine2: '',
+          city: '',
+          state: '',
+          country: '',
+          zipCode: '',
+        },
+      });
+    } catch (error) {
+      console.error('Error submitting client/vendor data:', error);
+    }
   };
 
   return (

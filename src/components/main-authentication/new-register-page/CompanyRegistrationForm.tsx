@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
+import axios from 'axios';
 
 interface CompanyRegistrationFormProps {
   userDetails?: UserFormValues | null;
@@ -107,23 +108,21 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         },
       },
     };
-    // Post Data to endpoint
+
+    // Post Data to endpoint using axios
     try {
-      const response = await fetch('http://localhost:9090/api/v1/user/register', {
-        method: 'POST',
+      const response = await axios.post('http://localhost:9090/api/v1/user/register', completeRegistrationData, {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(completeRegistrationData),
       });
 
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         console.log('Registration successful!');
         // Redirect to the dashboard after successful registration
         navigate('/dashboard');
       } else {
-        const errorData = await response.json();
-        console.error('Registration failed:', errorData);
+        console.error('Registration failed:', response.data);
         alert('Registration failed. Please try again.');
       }
     } catch (error) {
@@ -261,8 +260,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           className="w-full"
         />
       </div>
-            <Button className="w-full">Submit</Button>
-     
+      <Button className="w-full">Submit</Button>
     </form>
   );
 };

@@ -18,8 +18,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from '@/components/account-details/profile-form/CountryCodes';
 import { Employee } from './employeeTypes';
+import axios from 'axios';
 
-export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }: {
+export default function AddEmployeeSheet({
+  isOpen,
+  onOpenChange,
+  onAddEmployee,
+}: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onAddEmployee: (employee: Omit<Employee, 'id'>) => void;
@@ -46,12 +51,12 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewEmployee(prev => ({ ...prev, [name]: value }));
+    setNewEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     let valid = true;
     const newErrors: any = {};
 
@@ -90,28 +95,32 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
 
     console.log('Employee Data to Submit:', completeEmployeeData);
 
-    // Send the data via POST request
-    await fetch('http://localhost:9090/api/v1/user/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(completeEmployeeData),
-    });
+    // Send the data via POST request using axios
+    try {
+      await axios.post('http://localhost:9090/api/v1/user/create', completeEmployeeData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    onAddEmployee(completeEmployeeData);
-    onOpenChange(false);
+      // Add employee to the list
+      onAddEmployee(completeEmployeeData);
+      onOpenChange(false);
 
-    setNewEmployee({
-      username: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      phone: '',
-      role: { description: 'Employee' },
-      dateOfEmployment: new Date(),
-      status: 'INACTIVE',
-    });
+      // Reset form fields
+      setNewEmployee({
+        username: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        role: { description: 'Employee' },
+        dateOfEmployment: new Date(),
+        status: 'INACTIVE',
+      });
+    } catch (error) {
+      console.error('Error submitting employee data:', error);
+    }
   };
 
   return (
@@ -142,7 +151,7 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
             <Input
               id="password"
               name="password"
-              type='text'
+              type="text"
               value={newEmployee.password}
               onChange={handleInputChange}
               required
@@ -198,9 +207,10 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
-            <Select 
-              value={newEmployee.role.description} 
-              onValueChange={(value) => setNewEmployee(prev => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}>
+            <Select
+              value={newEmployee.role.description}
+              onValueChange={(value) => setNewEmployee((prev) => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -224,7 +234,7 @@ export default function AddEmployeeSheet({ isOpen, onOpenChange, onAddEmployee }
                 <Calendar
                   mode="single"
                   selected={newEmployee.dateOfEmployment}
-                  onSelect={(date) => setNewEmployee((prev) => ({ ...prev, dateOfEmployment: date || new Date() }))} 
+                  onSelect={(date) => setNewEmployee((prev) => ({ ...prev, dateOfEmployment: date || new Date() }))}
                   initialFocus
                 />
               </PopoverContent>

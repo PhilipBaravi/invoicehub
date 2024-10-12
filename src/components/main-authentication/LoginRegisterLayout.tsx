@@ -2,6 +2,7 @@ import { FC, ReactNode, useEffect, useState } from 'react';
 import { ModeToggle } from '@/components/dashboard/layout/ModeToggle';
 import LanguageSelector from './new-login-page/LanguageSelector';
 import { quotes } from './new-login-page/quotes';
+import axios from 'axios';
 
 interface LoginRegisterLayoutProps {
   children: ReactNode;
@@ -14,14 +15,17 @@ const LoginRegisterLayout: FC<LoginRegisterLayoutProps> = ({ children, title, su
   const [randomQuote, setRandomQuote] = useState<{ quote: string; name: string } | null>(null);
 
   useEffect(() => {
-    // Fetch a random nature image from Unsplash
+    // Fetch a random nature image from Unsplash using axios
     const fetchRandomImage = async () => {
       try {
-        const response = await fetch(
-          'https://api.unsplash.com/photos/random?query=nature&orientation=landscape&client_id=YOUR_UNSPLASH_API_KEY'
-        );
-        const data = await response.json();
-        setImageUrl(data.urls.regular);
+        const response = await axios.get('https://api.unsplash.com/photos/random', {
+          params: {
+            query: 'nature',
+            orientation: 'landscape',
+            client_id: 'YOUR_UNSPLASH_API_KEY',
+          },
+        });
+        setImageUrl(response.data.urls.regular);
       } catch (error) {
         console.error('Error fetching the image:', error);
       }

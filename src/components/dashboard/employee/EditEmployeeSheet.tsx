@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import axios from 'axios';
 
 export default function EditEmployeeSheet({
   isOpen,
@@ -42,7 +43,7 @@ export default function EditEmployeeSheet({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditedEmployee(prev => ({ ...prev, [name]: value }));
+    setEditedEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
   const validateForm = () => {
@@ -74,7 +75,7 @@ export default function EditEmployeeSheet({
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -88,8 +89,18 @@ export default function EditEmployeeSheet({
 
     console.log('Edited Employee data submitted:', updatedEmployeeData);
 
-    onEditEmployee(updatedEmployeeData);
-    onOpenChange(false);
+    try {
+      await axios.put(`http://localhost:9090/api/v1/user/update/${editedEmployee.id}`, updatedEmployeeData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      onEditEmployee(updatedEmployeeData);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error updating employee data:', error);
+    }
   };
 
   return (
@@ -116,7 +127,7 @@ export default function EditEmployeeSheet({
             <Input
               id="password"
               name="password"
-              type='text'
+              type="text"
               value={editedEmployee.password}
               onChange={handleInputChange}
               required
@@ -149,10 +160,10 @@ export default function EditEmployeeSheet({
           <div className="flex space-x-2">
             <Select onValueChange={(value) => setPhoneCountry(value as CountryCode)}>
               <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder={countryList.find(c => c.code === phoneCountry)?.name || 'Select country'} />
+                <SelectValue placeholder={countryList.find((c) => c.code === phoneCountry)?.name || 'Select country'} />
               </SelectTrigger>
               <SelectContent>
-                {countryList.map(c => (
+                {countryList.map((c) => (
                   <SelectItem key={c.code} value={c.code}>
                     {c.name}
                   </SelectItem>
@@ -171,7 +182,15 @@ export default function EditEmployeeSheet({
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
-            <Select value={editedEmployee.role.description} onValueChange={value => setEditedEmployee(prev => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}>
+            <Select
+              value={editedEmployee.role.description}
+              onValueChange={(value) =>
+                setEditedEmployee((prev) => ({
+                  ...prev,
+                  role: { description: value as 'Admin' | 'Manager' | 'Employee' },
+                }))
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
@@ -195,7 +214,12 @@ export default function EditEmployeeSheet({
                 <Calendar
                   mode="single"
                   selected={editedEmployee.dateOfEmployment}
-                  onSelect={(date) => setEditedEmployee(prev => ({ ...prev, dateOfEmployment: date || new Date() }))} 
+                  onSelect={(date) =>
+                    setEditedEmployee((prev) => ({
+                      ...prev,
+                      dateOfEmployment: date || new Date(),
+                    }))
+                  }
                   initialFocus
                 />
               </PopoverContent>

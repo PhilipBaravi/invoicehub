@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import GoogleIcon from '../GoogleIcon';
 import AppleIcon from '../AppleIcon';
+import axios from 'axios';
 import qs from 'qs';
 
 const LoginForm = () => {
@@ -25,32 +26,28 @@ const LoginForm = () => {
           'password': loginPassword,
         });
 
-        await fetch('http://localhost:8080/auth/realms/e-invoices/protocol/openid-connect/token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: data,
-        })
-          .then((response) => response.json())
-          .then((result) => {
-            if (result.access_token) {
-              // Store access token in local storage for future use
-              localStorage.setItem('access_token', result.access_token);
-              localStorage.setItem('refresh_token', result.refresh_token);
-              navigate('/dashboard');
-            } else {
-              console.error('Login failed: ', result);
-              navigate('*'); // Navigate to error page if login fails
-            }
-          })
-          .catch((error) => {
-            console.error('Error logging in with Keycloak: ', error);
-            navigate('*'); // Navigate to error page if Keycloak login fails
-          });
+        const response = await axios.post(
+          'http://localhost:8080/auth/realms/e-invoices/protocol/openid-connect/token',
+          data,
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          }
+        );
+
+        if (response.data.access_token) {
+          // Store access token in local storage for future use
+          localStorage.setItem('access_token', response.data.access_token);
+          localStorage.setItem('refresh_token', response.data.refresh_token);
+          navigate('/dashboard');
+        } else {
+          console.error('Login failed: ', response.data);
+          navigate('*'); // Navigate to error page if login fails
+        }
       } catch (error) {
-        console.error('Login error: ', error);
-        navigate('*'); // Navigate to error page on catch error
+        console.error('Error logging in with Keycloak: ', error);
+        navigate('*'); // Navigate to error page if Keycloak login fails
       }
     } else {
       console.error('Keycloak instance not found');

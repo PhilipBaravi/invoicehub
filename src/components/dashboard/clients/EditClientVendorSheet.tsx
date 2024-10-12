@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClientVendor } from './CliendVendorTypes';
+import axios from 'axios';
 
 export default function EditClientVendorSheet({
   isOpen,
@@ -45,17 +46,22 @@ export default function EditClientVendorSheet({
     e.preventDefault();
     console.log('Edited Client/Vendor data submitted:', editedClientVendor);
 
-    // Send the data via PUT request
-    await fetch(`http://localhost:9090/api/v1/client-vendor/update/${editedClientVendor.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(editedClientVendor),
-    });
+    try {
+      // Send the data via PUT request using axios
+      const response = await axios.put(`http://localhost:9090/api/v1/client-vendor/update/${editedClientVendor.id}`, editedClientVendor, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    onEditClientVendor(editedClientVendor);
-    onOpenChange(false);
+      console.log('Server Response:', response.data);
+
+      // Update the parent component with the edited client/vendor data
+      onEditClientVendor(editedClientVendor);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error updating client/vendor data:', error);
+    }
   };
 
   return (

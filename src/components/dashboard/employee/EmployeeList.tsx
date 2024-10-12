@@ -5,6 +5,7 @@ import EditEmployeeSheet from './EditEmployeeSheet';
 import EmployeeTable from './EmployeeTable';
 import Pagination from './Pagination';
 import SearchAndFilter from './SearchAndFilter';
+import axios from 'axios';
 
 export default function EmployeeList() {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -43,12 +44,8 @@ export default function EmployeeList() {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/user/list');
-      if (!response.ok) {
-        throw new Error('Failed to fetch employees');
-      }
-      const data = await response.json();
-      setEmployees(data);
+      const response = await axios.get('http://localhost:9090/api/v1/user/list');
+      setEmployees(response.data);
     } catch (error) {
       console.error('Error fetching employees:', error);
     }
@@ -56,12 +53,7 @@ export default function EmployeeList() {
 
   const deleteEmployee = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:9090/api/v1/user/delete/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete employee');
-      }
+      await axios.delete(`http://localhost:9090/api/v1/user/delete/${id}`);
       setEmployees(employees.filter((emp) => emp.id !== id));
     } catch (error) {
       console.error('Error deleting employee:', error);
