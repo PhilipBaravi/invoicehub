@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -15,39 +15,71 @@ const LoginForm = () => {
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
 
-  const handleKeycloakLogin = async () => {
-    if (keycloak) {
-      try {
-        const data = qs.stringify({
-          'grant_type': 'password',
-          'client_id': 'invoicing-app-react-login',
-          'username': loginEmail,
-          'password': loginPassword,
-        });
 
-        const response = await axios.post(
-          'http://localhost:8080/auth/realms/e-invoices/protocol/openid-connect/token',
-          data,
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          }
-        );
+  useEffect(() => {
+    keycloak.init({
+      onLoad: 'login-required', // Automatic login
+      checkLoginIframe: true, 
+      pkceMethod: 'S256', 
+    }).then((authenticated) => {
+      if (!authenticated) {
+        window.location.reload(); // Reload page if not auth
+      } else {
+        console.info('Authenticated:', keycloak.authenticated);
+        console.log('Keycloak:', keycloak);
+        console.log('Access Token:', keycloak.token);
 
-        if (response.data.access_token) {
-          keycloak.login() //Dashboardze gadasvil
-        } else {
-          console.error('Login failed: ', response.data);
-          navigate('*'); // Navigate to error page if login fails
-        }
-      } catch (error) {
-        console.error('Error logging in with Keycloak: ', error);
-        navigate('*'); // Navigate to error page if Keycloak login fails
+        // Use token in HTTP client headers for all requests (Don't thins is necessary at all)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${keycloak.token}`;
+
+        // Handle token expiration and refresh automatically (Also this not necessary too)
+        keycloak.onTokenExpired = () => {
+          keycloak.updateToken(10).then((refreshed) => {
+            if (refreshed) {
+              console.info('Token successfully refreshed');
+            } else {
+              console.warn('Token is still valid');
+            }
+          }).catch(() => {
+            console.error('Failed to refresh token');
+            keycloak.logout(); // Logout if token refresh fails
+          });
+        };
       }
-    } else {
-      console.error('Keycloak instance not found');
-      navigate('*'); // Navigate to error page if Keycloak is not initialized
+    }).catch(() => {
+      console.error('Authentication Failed');
+    });
+  }, [keycloak]);
+
+  const handleKeycloakLogin = async () => {
+    try {
+      const data = qs.stringify({
+        'grant_type': 'password',
+        'client_id': 'invoicing-app-react-login',
+        'username': loginEmail,
+        'password': loginPassword,
+      });
+
+      const response = await axios.post(
+        'http://localhost:8080/auth/realms/e-invoices/protocol/openid-connect/token',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
+
+      if (response.data.access_token) {
+        console.log('Login successful');
+        keycloak.login(); // After successful login, you can redirect to the dashboard or desired page
+      } else {
+        console.error('Login failed: ', response.data);
+        navigate('*'); // Navigate to error page if login fails
+      }
+    } catch (error) {
+      console.error('Error logging in with Keycloak: ', error);
+      navigate('*'); // Navigate to error page if Keycloak login fails
     }
   };
 
