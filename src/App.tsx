@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./components/main-authentication/new-login-page/keycloak";
@@ -31,9 +30,8 @@ interface UserDetails {
 
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const navigate = useNavigate();
 
-  // Protect the dashboard route based on authentication
+  // Moved useNavigate inside the component rendered by Router
   const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
     const { keycloak } = useKeycloak();
 
@@ -44,18 +42,8 @@ const App: React.FC = () => {
     return element;
   };
 
-  // Event handler for keycloak login/logout events
-  const handleKeycloakEvent = (event: string) => {
-    if (event === "onAuthSuccess") {
-      navigate("/dashboard"); // Navigate to dashboard after successful login
-    }
-  };
-
   return (
-    <ReactKeycloakProvider
-      authClient={keycloak}
-      onEvent={(event) => handleKeycloakEvent(event)}
-    >
+    <ReactKeycloakProvider authClient={keycloak}>
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Router>
           <Routes>
