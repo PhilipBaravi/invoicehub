@@ -66,6 +66,9 @@ const App: React.FC = () => {
         if (event === "onAuthError") {
           console.error("Authentication error", error);
         }
+        if (event === "onInitError") {
+          console.error("Initialization error", error);
+        }
         if (event === "onAuthLogout") {
           console.log("User logged out");
         }
@@ -73,6 +76,7 @@ const App: React.FC = () => {
       initOptions={{
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+        pkceMethod: 'S256', // Use 'S256' to enable PKCE, or 'none' to disable
       }}
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
