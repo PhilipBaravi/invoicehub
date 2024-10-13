@@ -31,12 +31,18 @@ interface UserDetails {
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
-  // Protected route based on keycloak authentication
+  // Protected route component that logs the user's authentication status
   const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
     const { keycloak } = useKeycloak();
 
-    // Debugging authentication status
     useEffect(() => {
+      console.log("Keycloak Authenticated:", keycloak.authenticated);
+      if (keycloak.tokenParsed) {
+        console.log("Token Parsed:", keycloak.tokenParsed);
+      } else {
+        console.log("Token not available");
+      }
+
       if (keycloak.authenticated) {
         console.log("User is authenticated");
       } else {
@@ -60,7 +66,10 @@ const App: React.FC = () => {
           console.log("Authentication successful");
         }
         if (event === "onAuthError") {
-          console.error("Authentication failed", error);
+          console.error("Authentication error", error);
+        }
+        if (event === "onAuthLogout") {
+          console.log("User logged out");
         }
       }}
     >

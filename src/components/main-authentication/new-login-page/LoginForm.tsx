@@ -36,14 +36,15 @@ const LoginForm = () => {
         );
 
         if (response.data.access_token) {
-          console.log("Access token:", response.data.access_token);
+          console.log("Access token received:", response.data.access_token);
+          console.log("Keycloak Authenticated:", keycloak.authenticated);
           navigate('/dashboard');
         } else {
-          console.error('Login failed: ', response.data);
+          console.error('Login failed:', response.data);
           navigate('*'); // Navigate to error page if login fails
         }
       } catch (error) {
-        console.error('Error logging in with Keycloak: ', error);
+        console.error('Error logging in with Keycloak:', error);
         navigate('*'); // Navigate to error page if Keycloak login fails
       }
     } else {
