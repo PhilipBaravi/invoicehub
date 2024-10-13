@@ -21,7 +21,7 @@ const LoginForm = () => {
       try {
         // Trigger the Keycloak login method with explicit redirect to /dashboard
         await keycloak.login({
-          redirectUri: `${window.location.origin}/dashboard`,  // Redirect to /dashboard after login
+          redirectUri: `${window.location.origin}/dashboard`, // Redirect to /dashboard after login
         });
       } catch (error) {
         console.error('Error logging in with Keycloak:', error);
@@ -32,8 +32,8 @@ const LoginForm = () => {
   };
 
   // Debugging statements
-  console.log("LoginForm - Keycloak initialized:", initialized);
-  console.log("LoginForm - Keycloak authenticated:", keycloak.authenticated);
+  console.log('LoginForm - Keycloak initialized:', initialized);
+  console.log('LoginForm - Keycloak authenticated:', keycloak.authenticated);
 
   return (
     <>
@@ -93,7 +93,7 @@ const LoginForm = () => {
 
       <p className="mt-6 text-center text-xs text-stone-500 dark:text-stone-400">
         Don't have an account?{' '}
-        <Link to='/new-register' className="underline hover:text-stone-300">
+        <Link to="/new-register" className="underline hover:text-stone-300">
           Sign up
         </Link>
       </p>

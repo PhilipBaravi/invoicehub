@@ -1,7 +1,7 @@
 // App.tsx
 
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./components/main-authentication/new-login-page/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
@@ -40,14 +40,11 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   console.log("ProtectedRoute - Keycloak authenticated:", keycloak.authenticated);
 
   if (!initialized) {
-    // You can return a loading indicator here
+    // Display loading indicator while initializing
     return <div>Loading...</div>;
   }
 
-  if (!keycloak.authenticated) {
-    return <Navigate to="/new-login" />;
-  }
-
+  // Proceed to the element regardless of authentication status
   return element;
 };
 
