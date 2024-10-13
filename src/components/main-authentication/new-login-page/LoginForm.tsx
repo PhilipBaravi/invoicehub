@@ -36,7 +36,8 @@ const LoginForm = () => {
         );
 
         if (response.data.access_token) {
-          navigate('/dashboard')
+          console.log("Access token:", response.data.access_token);
+          navigate('/dashboard');
         } else {
           console.error('Login failed: ', response.data);
           navigate('*'); // Navigate to error page if login fails

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./components/main-authentication/new-login-page/keycloak";
@@ -31,9 +31,18 @@ interface UserDetails {
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
-  // Moved useNavigate inside the component rendered by Router
+  // Protected route based on keycloak authentication
   const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
     const { keycloak } = useKeycloak();
+
+    // Debugging authentication status
+    useEffect(() => {
+      if (keycloak.authenticated) {
+        console.log("User is authenticated");
+      } else {
+        console.log("User is NOT authenticated");
+      }
+    }, [keycloak.authenticated]);
 
     if (!keycloak.authenticated) {
       return <Navigate to="/new-login" />;
@@ -43,7 +52,18 @@ const App: React.FC = () => {
   };
 
   return (
-    <ReactKeycloakProvider authClient={keycloak}>
+    <ReactKeycloakProvider
+      authClient={keycloak}
+      onEvent={(event, error) => {
+        console.log("Keycloak event:", event);
+        if (event === "onAuthSuccess") {
+          console.log("Authentication successful");
+        }
+        if (event === "onAuthError") {
+          console.error("Authentication failed", error);
+        }
+      }}
+    >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Router>
           <Routes>
