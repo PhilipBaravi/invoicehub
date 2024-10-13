@@ -20,8 +20,7 @@ const LoginForm = () => {
       try {
         const data = qs.stringify({
           'grant_type': 'password',
-          'client_id': 'invoicing-app',
-          'client_secret': 'vSiPmpIX6MK9OZGJlCUkOI5Pu881YNsv',
+          'client_id': 'invoicing-app-react-login',
           'username': loginEmail,
           'password': loginPassword,
         });
@@ -37,10 +36,7 @@ const LoginForm = () => {
         );
 
         if (response.data.access_token) {
-          // Store access token in local storage for future use
-          localStorage.setItem('access_token', response.data.access_token);
-          localStorage.setItem('refresh_token', response.data.refresh_token);
-          navigate('/dashboard');
+          keycloak.login() //Dashboardze gadasvil
         } else {
           console.error('Login failed: ', response.data);
           navigate('*'); // Navigate to error page if login fails
