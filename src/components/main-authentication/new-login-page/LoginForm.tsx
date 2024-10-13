@@ -19,7 +19,7 @@ const LoginForm = () => {
       try {
         // Trigger the Keycloak login method with explicit redirect to /dashboard
         await keycloak.login({
-          redirectUri: `${window.location.origin}/dashboard`,  // Explicitly redirect to /dashboard after login
+          redirectUri: `${window.location.origin}/dashboard`,  // Redirect to /dashboard after login
         });
       } catch (error) {
         console.error('Error logging in with Keycloak:', error);

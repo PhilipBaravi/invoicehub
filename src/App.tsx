@@ -20,6 +20,7 @@ import NotFound from "./NotFound";
 import CompanyDetails from "./components/dashboard/company-settings/CompanyDetails";
 import Invoice from "./components/dashboard/invoice/Invoice";
 
+// UserDetails interface
 interface UserDetails {
   username: string;
   password: string;
@@ -28,10 +29,36 @@ interface UserDetails {
   phone: string;
 }
 
+// Main App Component
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [keycloakInitialized, setKeycloakInitialized] = useState(false);
 
-  // Protected route component that logs the user's authentication status
+  // Initialize Keycloak when the app loads
+  useEffect(() => {
+    keycloak.init({
+      onLoad: 'check-sso',  // Silent session check
+      pkceMethod: 'S256',
+      checkLoginIframe: true,  // Use iframe to track login session
+    }).then(authenticated => {
+      setKeycloakInitialized(true);  // Set initialization flag
+      if (!authenticated) {
+        console.log("User not authenticated. Redirecting to login...");
+        keycloak.login();  // Redirect to Keycloak login if not authenticated
+      } else {
+        console.log("User authenticated");
+      }
+    }).catch(err => {
+      console.error("Error during Keycloak initialization:", err);
+    });
+  }, []);
+
+  // Render loading state while Keycloak is initializing
+  if (!keycloakInitialized) {
+    return <div>Loading...</div>;
+  }
+
+  // ProtectedRoute Component
   const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
     const { keycloak } = useKeycloak();
 
