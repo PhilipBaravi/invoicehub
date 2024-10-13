@@ -1,3 +1,5 @@
+// LoginForm.tsx
+
 import { useState } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 import { useNavigate, Link } from 'react-router-dom';
@@ -10,7 +12,7 @@ import AppleIcon from '../AppleIcon';
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
-  const { keycloak } = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
   const navigate = useNavigate();
 
   // Use Keycloak's built-in login method to handle authentication
@@ -28,6 +30,10 @@ const LoginForm = () => {
       console.error('Keycloak instance not found');
     }
   };
+
+  // Debugging statements
+  console.log("LoginForm - Keycloak initialized:", initialized);
+  console.log("LoginForm - Keycloak authenticated:", keycloak.authenticated);
 
   return (
     <>

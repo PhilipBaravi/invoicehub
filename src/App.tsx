@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+// App.tsx
+
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./components/main-authentication/new-login-page/keycloak";
@@ -29,35 +31,29 @@ interface UserDetails {
   phone: string;
 }
 
+// ProtectedRoute Component
+const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
+  const { keycloak, initialized } = useKeycloak();
+
+  // Debugging statements
+  console.log("ProtectedRoute - Keycloak initialized:", initialized);
+  console.log("ProtectedRoute - Keycloak authenticated:", keycloak.authenticated);
+
+  if (!initialized) {
+    // You can return a loading indicator here
+    return <div>Loading...</div>;
+  }
+
+  if (!keycloak.authenticated) {
+    return <Navigate to="/new-login" />;
+  }
+
+  return element;
+};
+
 // Main App Component
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-
-  // ProtectedRoute Component
-  const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
-    const { keycloak } = useKeycloak();
-
-    useEffect(() => {
-      console.log("Keycloak Authenticated:", keycloak.authenticated);
-      if (keycloak.tokenParsed) {
-        console.log("Token Parsed:", keycloak.tokenParsed);
-      } else {
-        console.log("Token not available");
-      }
-
-      if (keycloak.authenticated) {
-        console.log("User is authenticated");
-      } else {
-        console.log("User is NOT authenticated");
-      }
-    }, [keycloak.authenticated]);
-
-    if (!keycloak.authenticated) {
-      return <Navigate to="/new-login" />;
-    }
-
-    return element;
-  };
 
   return (
     <ReactKeycloakProvider
@@ -74,13 +70,17 @@ const App: React.FC = () => {
           console.log("User logged out");
         }
       }}
+      initOptions={{
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+      }}
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Router>
           <Routes>
             <Route path="/new-login" element={<NewLoginPage />} />
             <Route
-              path="new-register"
+              path="/new-register"
               element={<NewRegisterPage setUserDetails={setUserDetails} />}
             />
             <Route path="/" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
@@ -102,7 +102,7 @@ const App: React.FC = () => {
 
             {/* Protected main dashboard route with nested routes */}
             <Route
-              path="/dashboard"
+              path="/dashboard/*"
               element={<ProtectedRoute element={<Dashboard />} />}
             >
               <Route index element={<DashboardDefault />} />
