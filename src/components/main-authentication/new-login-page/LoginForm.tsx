@@ -6,8 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import GoogleIcon from '../GoogleIcon';
 import AppleIcon from '../AppleIcon';
-import axios from 'axios';
-import qs from 'qs';
 
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState<string>('');
@@ -15,41 +13,19 @@ const LoginForm = () => {
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
 
+  // Use Keycloak's built-in login method to handle authentication
   const handleKeycloakLogin = async () => {
     if (keycloak) {
       try {
-        const data = qs.stringify({
-          'grant_type': 'password',
-          'client_id': 'invoicing-app-react-login',
-          'username': loginEmail,
-          'password': loginPassword,
+        // Trigger the Keycloak login method with explicit redirect to /dashboard
+        await keycloak.login({
+          redirectUri: `${window.location.origin}/dashboard`,  // Explicitly redirect to /dashboard after login
         });
-
-        const response = await axios.post(
-          'http://localhost:8080/auth/realms/e-invoices/protocol/openid-connect/token',
-          data,
-          {
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-          }
-        );
-
-        if (response.data.access_token) {
-          console.log("Access token received:", response.data.access_token);
-          console.log("Keycloak Authenticated:", keycloak.authenticated);
-          navigate('/dashboard');
-        } else {
-          console.error('Login failed:', response.data);
-          navigate('*'); // Navigate to error page if login fails
-        }
       } catch (error) {
         console.error('Error logging in with Keycloak:', error);
-        navigate('*'); // Navigate to error page if Keycloak login fails
       }
     } else {
       console.error('Keycloak instance not found');
-      navigate('*'); // Navigate to error page if Keycloak is not initialized
     }
   };
 
