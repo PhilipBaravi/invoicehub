@@ -1,7 +1,7 @@
 // App.tsx
 
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./components/main-authentication/new-login-page/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
@@ -44,7 +44,12 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
     return <div>Loading...</div>;
   }
 
-  // Proceed to the element regardless of authentication status
+  if (!keycloak.authenticated) {
+    // Redirect to login page if not authenticated
+    return <Navigate to="/new-login" replace />;
+  }
+
+  // User is authenticated, render the protected component
   return element;
 };
 
@@ -73,7 +78,7 @@ const App: React.FC = () => {
       initOptions={{
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-        pkceMethod: 'S256', // Use 'S256' to enable PKCE, or 'none' to disable
+        pkceMethod: 'S256', // Use 'S256' to enable PKCE
       }}
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
