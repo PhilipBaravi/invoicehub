@@ -6,8 +6,10 @@ import EmployeeTable from './EmployeeTable';
 import Pagination from './Pagination';
 import SearchAndFilter from './SearchAndFilter';
 import axios from 'axios';
+import { useKeycloak } from '@react-keycloak/web'; // Import useKeycloak
 
 export default function EmployeeList() {
+  const { keycloak } = useKeycloak(); // Access Keycloak instance
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -44,8 +46,16 @@ export default function EmployeeList() {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get('http://localhost:9090/api/v1/user/list');
-      setEmployees(response.data);
+      if (keycloak.token) {  // Ensure the token is available
+        const response = await axios.get('http://localhost:9090/api/v1/user/list', {
+          headers: {
+            'Authorization': `Bearer ${keycloak.token}`,  // Add the token to the Authorization header
+          },
+        });
+        setEmployees(response.data);
+      } else {
+        console.error('User is not authenticated or token is not available');
+      }
     } catch (error) {
       console.error('Error fetching employees:', error);
     }
@@ -53,8 +63,14 @@ export default function EmployeeList() {
 
   const deleteEmployee = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:9090/api/v1/user/delete/${id}`);
-      setEmployees(employees.filter((emp) => emp.id !== id));
+      if (keycloak.token) {
+        await axios.delete(`http://localhost:9090/api/v1/user/delete/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${keycloak.token}`,  // Add token for delete request
+          },
+        });
+        setEmployees(employees.filter((emp) => emp.id !== id));
+      }
     } catch (error) {
       console.error('Error deleting employee:', error);
     }
