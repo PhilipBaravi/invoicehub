@@ -1,13 +1,13 @@
 import { FC, useRef, useState, useEffect } from "react";
 import { useReactToPrint } from "react-to-print";
 import { Button } from "@/components/ui/button";
-import type { InvoiceData, Invoice as InvoiceType } from "./invoicetypes";
+import { InvoiceData, Invoice } from "./invoicetypes";
 import InvoiceForm from "./InvoiceForm";
 import InvoicePreview from "./InvoicePreview";
 import InvoiceHistory from "./InvoiceHistory";
-import { v4 as uuidv4} from 'uuid'
+import { v4 as uuidv4 } from "uuid"; 
 
-const Invoice: FC = () => {
+const EnhancedInvoiceGenerator: FC = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [invoiceData, setInvoiceData] = useState<InvoiceData>({
     invoiceNumber: "",
@@ -39,7 +39,7 @@ const Invoice: FC = () => {
     pdfUrl: "",
   });
 
-  const [invoices, setInvoices] = useState<InvoiceType[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
 
   useEffect(() => {
     const savedInvoices = localStorage.getItem("invoices");
@@ -89,7 +89,7 @@ const Invoice: FC = () => {
       localStorage.getItem("invoices") || "[]"
     );
 
-    const newInvoice: InvoiceType = {
+    const newInvoice: Invoice = {
       id: uuidv4(), // Generate a unique ID
       invoiceNumber: invoice.invoiceNumber,
       sellerName: invoice.sellerName,
@@ -120,38 +120,37 @@ const Invoice: FC = () => {
   });
 
   type ExtendedViewMode = "form" | "preview" | "history";
-  const [currentViewMode, setCurrentViewMode] =
-    useState<ExtendedViewMode>("form");
+  const [viewMode, setViewMode] = useState<ExtendedViewMode>("form");
 
   return (
     <div className="container mx-auto p-4 min-h-screen flex flex-col">
       <div className="mb-6 flex justify-between items-center space-x-4">
         <div className="flex gap-[20px]">
           <Button
-            onClick={() => setCurrentViewMode("form")}
-            variant={currentViewMode === "form" ? "default" : "outline"}
+            onClick={() => setViewMode("form")}
+            variant={viewMode === "form" ? "default" : "outline"}
           >
             Fill Form
           </Button>
           <Button
-            onClick={() => setCurrentViewMode("preview")}
-            variant={currentViewMode === "preview" ? "default" : "outline"}
+            onClick={() => setViewMode("preview")}
+            variant={viewMode === "preview" ? "default" : "outline"}
           >
             Preview
           </Button>
           <Button
-            onClick={() => setCurrentViewMode("history")}
-            variant={currentViewMode === "history" ? "default" : "outline"}
+            onClick={() => setViewMode("history")}
+            variant={viewMode === "history" ? "default" : "outline"}
           >
             Invoice History
           </Button>
         </div>
-        {currentViewMode !== "history" && (
+        {viewMode !== "history" && (
           <Button onClick={() => handlePrint()}>Generate PDF</Button>
         )}
       </div>
 
-      {currentViewMode !== "history" && (
+      {viewMode !== "history" && (
         <div className="hidden">
           <div ref={contentRef}>
             <InvoicePreview
@@ -162,11 +161,11 @@ const Invoice: FC = () => {
         </div>
       )}
 
-      {currentViewMode === "history" ? (
+      {viewMode === "history" ? (
         <InvoiceHistory invoices={invoices} setInvoices={setInvoices} />
       ) : (
         <div className="flex-grow">
-          {currentViewMode === "form" ? (
+          {viewMode === "form" ? (
             <InvoiceForm
               invoiceData={invoiceData}
               handleInputChange={handleInputChange}
@@ -187,4 +186,4 @@ const Invoice: FC = () => {
   );
 }
 
-export default Invoice
+export default EnhancedInvoiceGenerator
