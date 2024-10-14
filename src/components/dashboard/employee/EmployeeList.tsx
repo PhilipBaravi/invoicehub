@@ -30,10 +30,12 @@ export default function EmployeeList() {
     { value: 'status', label: 'Status' },
   ];
 
+  // Fetch employees when the component mounts
   useEffect(() => {
     fetchEmployees();
   }, []);
 
+  // Re-filter employees when search term, employee list, or filter category changes
   useEffect(() => {
     const filtered = employees.filter((employee) => {
       const value = employee[filterCategory]?.toString().toLowerCase() ?? '';
@@ -44,6 +46,7 @@ export default function EmployeeList() {
     setCurrentPage(1);
   }, [searchTerm, employees, filterCategory]);
 
+  // Fetch employees from the backend
   const fetchEmployees = async () => {
     try {
       if (keycloak.token) {  // Ensure the token is available
@@ -52,7 +55,13 @@ export default function EmployeeList() {
             'Authorization': `Bearer ${keycloak.token}`,  // Add the token to the Authorization header
           },
         });
-        setEmployees(response.data);
+
+        console.log(response.data.data); 
+
+        setEmployees(response.data.data.map((employee: { dateOfEmployment: string | number | Date; }) => ({
+          ...employee,
+          dateOfEmployment: employee.dateOfEmployment ? new Date(employee.dateOfEmployment) : 'N/A'
+        })));
       } else {
         console.error('User is not authenticated or token is not available');
       }
@@ -61,6 +70,7 @@ export default function EmployeeList() {
     }
   };
 
+  // Delete employee by ID
   const deleteEmployee = async (id: string) => {
     try {
       if (keycloak.token) {
@@ -76,12 +86,14 @@ export default function EmployeeList() {
     }
   };
 
+  // Handle selecting an individual employee
   const handleSelectEmployee = (id: string) => {
     setSelectedEmployees((prev) =>
       prev.includes(id) ? prev.filter((empId) => empId !== id) : [...prev, id]
     );
   };
 
+  // Handle selecting all employees
   const handleSelectAll = () => {
     if (selectedEmployees.length === filteredEmployees.length) {
       setSelectedEmployees([]);
@@ -90,7 +102,10 @@ export default function EmployeeList() {
     }
   };
 
+  // Calculate total pages for pagination
   const totalPages = Math.ceil(filteredEmployees.length / rowsPerPage);
+  
+  // Slice the employees array for pagination
   const paginatedEmployees = filteredEmployees.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
