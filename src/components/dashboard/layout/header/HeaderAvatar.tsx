@@ -44,12 +44,16 @@ const HeaderAvatar: FC = () => {
         <DropdownMenuItem>
           Billing
         </DropdownMenuItem>
+        <Link to="employee">
         <DropdownMenuItem>
           Team
         </DropdownMenuItem>
+        </Link>
+        <Link to="profile-subscription">
         <DropdownMenuItem>
           Subscription
         </DropdownMenuItem>
+        </Link>
         <Link to="company-details">
         <DropdownMenuItem>
           Settings

@@ -37,14 +37,14 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
       animate={{ x: 0 }}
       exit={{ x: '-100%' }}
       transition={{ duration: 0.6 }}
-      className="fixed top-0 left-0 w-[23.75rem] h-screen bg-stone-950 dark:bg-stone-50 flex flex-col border-r dark:border-stone-400 border-stone-700 z-50"
+      className="fixed top-0 left-0 w-[23.75rem] h-screen bg-stone-50 dark:bg-stone-950 flex flex-col border-r dark:border-stone-100 border-stone-900 z-50"
     >
       <PanelRightOpen
-        className="ml-auto cursor-pointer text-stone-50 dark:text-stone-950 mt-[20px] mr-[20px]"
+        className="ml-auto cursor-pointer text-stone-950 dark:text-stone-50 mt-[20px] mr-[20px]"
         onClick={onClose}
       />
       <div className="flex flex-col items-start gap-[20px] p-6">
-        <h1 className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-5xl text-stone-50 dark:text-stone-950">
+        <h1 className="scroll-m-20 text-3xl font-bold tracking-tight lg:text-5xl text-stone-950 dark:text-stone-50">
           Overview
         </h1>
         <ul className="w-full">
@@ -53,7 +53,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
             return (
               <li
                 key={item.name}
-                className="leading-7 [&:not(:first-child)]:mt-2 text-lg flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-50 dark:text-stone-950 hover:bg-stone-600 dark:hover:bg-stone-200 hover:text-accent"
+                className="leading-7 [&:not(:first-child)]:mt-2 text-lg flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-950 dark:text-stone-50 hover:bg-stone-300 dark:hover:bg-stone-600 hover:text-accent"
                 onClick={() => handleItemClick(item.path)} 
               >
                 <Icon className="text-xl" />

@@ -55,16 +55,16 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
       initial={{ width: '80px' }}
       animate={{ width: isOpen ? '250px' : '80px' }}
       transition={{ duration: 0.6 }}
-      className="fixed top-0 left-0 h-screen bg-stone-950 dark:bg-stone-50 flex flex-col border-r border-stone-700 dark:border-stone-400 z-50"
+      className="fixed top-0 left-0 h-screen bg-stone-50 dark:bg-stone-950 flex flex-col border-r border-stone-700 dark:border-stone-400 z-50"
     >
       <div
-        className="absolute top-[20px] -right-[15px] h-8 w-8 rounded-full flex items-center justify-center cursor-pointer transition-all border bg-stone-50 dark:bg-stone-950 hover:bg-stone-100 dark:hover:bg-stone-900 border-stone-950 dark:border-stone-50"
+        className="absolute top-[20px] -right-[15px] h-8 w-8 rounded-full flex items-center justify-center cursor-pointer transition-all border bg-stone-950 dark:bg-stone-50 hover:bg-stone-900 dark:hover:bg-stone-100 border-stone-50 dark:border-stone-950"
         onClick={onClose}
       >
         {isOpen ? (
-          <span className="text-stone-950 dark:text-stone-50 text-lg">{'←'}</span>
+          <span className="text-stone-50 dark:text-stone-950 text-lg">{'←'}</span>
         ) : (
-          <span className="text-stone-950 dark:text-stone-50 text-lg">{'→'}</span>
+          <span className="text-stone-50 dark:text-stone-950 text-lg">{'→'}</span>
         )}
       </div>
 
@@ -74,7 +74,7 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
           return (
             <li
               key={item.name}
-              className="flex items-center gap-[10px] px-2 py-2 rounded-md hover:bg-stone-600 dark:hover:bg-stone-200 text-stone-50 dark:text-stone-950 transition-all cursor-pointer"
+              className="flex items-center gap-[10px] px-2 py-2 rounded-md hover:bg-stone-300 dark:hover:bg-stone-400 text-stone-950 dark:text-stone-50 transition-all cursor-pointer"
               onClick={() => handleItemClick(item.path)}
             >
               <Icon className="text-xl" />

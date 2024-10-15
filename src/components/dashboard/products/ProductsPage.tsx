@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Search, Filter, Download, Plus } from "lucide-react";
+import { Search, Download, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProductTable from "./ProductTable";

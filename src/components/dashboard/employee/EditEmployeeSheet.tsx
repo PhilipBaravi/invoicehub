@@ -79,32 +79,35 @@ export default function EditEmployeeSheet({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!validateForm()) return;
-
+  
     const fullPhoneNumber = phoneCode + editedEmployee.phone;
-
-    const updatedEmployeeData = {
-      ...editedEmployee,
-      phone: fullPhoneNumber,
+  
+    // complete updated employee object
+    const updatedEmployeeData: Employee = {
+      ...editedEmployee,  
+      phone: fullPhoneNumber, 
+      dateOfEmployment: editedEmployee.dateOfEmployment ? new Date(editedEmployee.dateOfEmployment) : new Date(), 
     };
-
-    console.log('Edited Employee data submitted:', updatedEmployeeData);
-
-    // Add the bearer token to the request
+  
+  console.log('Edited Employee data submitted:', updatedEmployeeData);
+  
+    // Ensure the user is authenticated before sending data
     if (keycloak.token) {
       try {
+        
         await axios.put(
           `http://localhost:9090/api/v1/user/update/${editedEmployee.id}`,
-          updatedEmployeeData,
+          updatedEmployeeData,  // Whole Data
           {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${keycloak.token}`, // Send token in Authorization header
+              'Authorization': `Bearer ${keycloak.token}`,  // Add the token to Authorization header
             },
           }
         );
-
+  
+        // Callback to update parent component and close the form
         onEditEmployee(updatedEmployeeData);
         onOpenChange(false);
       } catch (error) {
@@ -114,6 +117,8 @@ export default function EditEmployeeSheet({
       console.error('User is not authenticated or token is not available');
     }
   };
+  
+
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>

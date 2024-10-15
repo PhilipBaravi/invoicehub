@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,7 +13,6 @@ const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
   const { keycloak, initialized } = useKeycloak();
-  const navigate = useNavigate();
 
   // Use Keycloak's built-in login method to handle authentication
   const handleKeycloakLogin = async () => {

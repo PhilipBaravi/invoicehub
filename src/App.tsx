@@ -1,5 +1,3 @@
-// App.tsx
-
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
@@ -21,6 +19,7 @@ import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
 import NotFound from "./NotFound";
 import CompanyDetails from "./components/dashboard/company-settings/CompanyDetails";
 import Invoice from "./components/dashboard/invoice/Invoice";
+import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
 
 // UserDetails interface
 interface UserDetails {
@@ -113,11 +112,12 @@ const App: React.FC = () => {
               <Route path="products" element={<ProductsPage />} />
               <Route path="profile" element={<Profile />} />
               <Route path="company-details" element={<CompanyDetails />} />
+              <Route path="profile-subscription" element={<ProfileSubscription />} />
             </Route>
           </Routes>
         </Router>
       </ThemeProvider>
-    </ReactKeycloakProvider>
+    // </ReactKeycloakProvider>
   );
 };
 
