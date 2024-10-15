@@ -12,6 +12,7 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import axios from 'axios';
+import { useKeycloak } from '@react-keycloak/web';
 
 export default function EditEmployeeSheet({
   isOpen,
@@ -24,6 +25,7 @@ export default function EditEmployeeSheet({
   employee: Employee;
   onEditEmployee: (employee: Employee) => void;
 }) {
+  const { keycloak } = useKeycloak(); // Use keycloak object to get the token
   const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
@@ -89,17 +91,27 @@ export default function EditEmployeeSheet({
 
     console.log('Edited Employee data submitted:', updatedEmployeeData);
 
-    try {
-      await axios.put(`http://localhost:9090/api/v1/user/update/${editedEmployee.id}`, updatedEmployeeData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    // Add the bearer token to the request
+    if (keycloak.authenticated && keycloak.token) {
+      try {
+        await axios.put(
+          `http://localhost:9090/api/v1/user/update/${editedEmployee.id}`,
+          updatedEmployeeData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${keycloak.token}`, // Send token in Authorization header
+            },
+          }
+        );
 
-      onEditEmployee(updatedEmployeeData);
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Error updating employee data:', error);
+        onEditEmployee(updatedEmployeeData);
+        onOpenChange(false);
+      } catch (error) {
+        console.error('Error updating employee data:', error);
+      }
+    } else {
+      console.error('User is not authenticated or token is not available');
     }
   };
 

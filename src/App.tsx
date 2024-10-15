@@ -10,7 +10,7 @@ import IntentFormDetails from "./components/account-details/IntentForm.tsx/Inten
 import Dashboard from "./components/dashboard/layout/Dashboard";
 import DashboardDefault from "./components/dashboard/dashboarddefault/DashboardDefault";
 import Employee from "./components/dashboard/employee/EmployeeList";
-import Product from "./components/dashboard/product/Product";
+import ProductsPage from "./components/dashboard/products/ProductsPage";
 import Profile from "./components/dashboard/profile/Profile";
 import NewLoginPage from "./components/main-authentication/new-login-page/NewLoginPage";
 import NewRegisterPage from "./components/main-authentication/new-register-page/NewRegisterPage";
@@ -110,7 +110,7 @@ const App: React.FC = () => {
               <Route path="employee" element={<Employee />} />
               <Route path="clients" element={<ClientVendorList />} />
               <Route path="invoice" element={<Invoice />} />
-              <Route path="product" element={<Product />} />
+              <Route path="products" element={<ProductsPage />} />
               <Route path="profile" element={<Profile />} />
               <Route path="company-details" element={<CompanyDetails />} />
             </Route>

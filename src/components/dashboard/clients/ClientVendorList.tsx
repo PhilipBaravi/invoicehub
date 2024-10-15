@@ -5,8 +5,11 @@ import EditClientVendorSheet from './EditClientVendorSheet';
 import ClientVendorTable from './ClientVendorTable';
 import Pagination from '../employee/Pagination';
 import SearchAndFilter from '../employee/SearchAndFilter';
+import { useKeycloak } from '@react-keycloak/web';
+import axios from 'axios';
 
 export default function ClientVendorList() {
+  const { keycloak } = useKeycloak();
   const [clientVendors, setClientVendors] = useState<ClientVendor[]>([]);
   const [filteredClientVendors, setFilteredClientVendors] = useState<ClientVendor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,12 +45,17 @@ export default function ClientVendorList() {
 
   const fetchClientVendors = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/clientVendor/list');
-      if (!response.ok) {
-        throw new Error('Failed to fetch client/vendors');
+      if (keycloak.token) {  
+        const response = await axios.get('http://localhost:9090/api/v1/clientVendor/list', {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`, 
+          },
+        });
+
+        setClientVendors(response.data);  
+      } else {
+        console.error('User is not authenticated or token is not available');
       }
-      const data = await response.json();
-      setClientVendors(data);
     } catch (error) {
       console.error('Error fetching client/vendors:', error);
     }
@@ -55,13 +63,16 @@ export default function ClientVendorList() {
 
   const deleteClientVendor = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:9090/api/v1/client-vendor/delete/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Failed to delete client/vendor');
+      if (keycloak.token) {
+        await axios.delete(`http://localhost:9090/api/v1/client-vendor/delete/${id}`, {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
+        setClientVendors(clientVendors.filter((cv) => cv.id !== id));
+      } else {
+        console.error('User is not authenticated or token is not available');
       }
-      setClientVendors(clientVendors.filter((cv) => cv.id !== id));
     } catch (error) {
       console.error('Error deleting client/vendor:', error);
     }

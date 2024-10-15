@@ -19,6 +19,7 @@ import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphone
 import countryList from '@/components/account-details/profile-form/CountryCodes';
 import { Employee } from './employeeTypes';
 import axios from 'axios';
+import { useKeycloak } from '@react-keycloak/web';
 
 export default function AddEmployeeSheet({
   isOpen,
@@ -29,6 +30,7 @@ export default function AddEmployeeSheet({
   onOpenChange: (open: boolean) => void;
   onAddEmployee: (employee: Omit<Employee, 'id'>) => void;
 }) {
+  const { keycloak } = useKeycloak(); // Fix: Use keycloak object correctly here
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id'>>({
     username: '',
     password: '',
@@ -96,30 +98,36 @@ export default function AddEmployeeSheet({
     console.log('Employee Data to Submit:', completeEmployeeData);
 
     // Send the data via POST request using axios
-    try {
-      await axios.post('http://localhost:9090/api/v1/user/create', completeEmployeeData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    if (keycloak.authenticated && keycloak.token) {  // Ensure token exists and user is authenticated
+      try {
+        await axios.post('http://localhost:9090/api/v1/user/create', completeEmployeeData, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${keycloak.token}`,  // Send the token correctly
+          },
+        });
+        console.log('Employee created successfully');
 
-      // Add employee to the list
-      onAddEmployee(completeEmployeeData);
-      onOpenChange(false);
+        // Add employee to the list
+        onAddEmployee(completeEmployeeData);
+        onOpenChange(false);
 
-      // Reset form fields
-      setNewEmployee({
-        username: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        phone: '',
-        role: { description: 'Employee' },
-        dateOfEmployment: new Date(),
-        status: 'INACTIVE',
-      });
-    } catch (error) {
-      console.error('Error submitting employee data:', error);
+        // Reset form fields
+        setNewEmployee({
+          username: '',
+          password: '',
+          firstName: '',
+          lastName: '',
+          phone: '',
+          role: { description: 'Employee' },
+          dateOfEmployment: new Date(),
+          status: 'INACTIVE',
+        });
+      } catch (error) {
+        console.error('Error submitting employee data:', error);
+      }
+    } else {
+      console.error('User is not authenticated or token is not available');
     }
   };
 

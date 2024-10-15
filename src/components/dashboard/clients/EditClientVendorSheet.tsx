@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClientVendor } from './CliendVendorTypes';
 import axios from 'axios';
+import { useKeycloak } from '@react-keycloak/web';
 
 export default function EditClientVendorSheet({
   isOpen,
@@ -18,6 +19,7 @@ export default function EditClientVendorSheet({
   clientVendor: ClientVendor;
   onEditClientVendor: (clientVendor: ClientVendor) => void;
 }) {
+  const { keycloak } = useKeycloak(); // Use keycloak to access the token
   const [editedClientVendor, setEditedClientVendor] = useState<ClientVendor>(clientVendor);
 
   useEffect(() => {
@@ -46,21 +48,30 @@ export default function EditClientVendorSheet({
     e.preventDefault();
     console.log('Edited Client/Vendor data submitted:', editedClientVendor);
 
-    try {
-      // Send the data via PUT request using axios
-      const response = await axios.put(`http://localhost:9090/api/v1/client-vendor/update/${editedClientVendor.id}`, editedClientVendor, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    if (keycloak.authenticated && keycloak.token) {
+      try {
+        // Send the data via PUT request using axios
+        const response = await axios.put(
+          `http://localhost:9090/api/v1/client-vendor/update/${editedClientVendor.id}`,
+          editedClientVendor,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${keycloak.token}`, // Add the bearer token in the Authorization header
+            },
+          }
+        );
 
-      console.log('Server Response:', response.data);
+        console.log('Server Response:', response.data);
 
-      // Update the parent component with the edited client/vendor data
-      onEditClientVendor(editedClientVendor);
-      onOpenChange(false);
-    } catch (error) {
-      console.error('Error updating client/vendor data:', error);
+        // Update the parent component with the edited client/vendor data
+        onEditClientVendor(editedClientVendor);
+        onOpenChange(false);
+      } catch (error) {
+        console.error('Error updating client/vendor data:', error);
+      }
+    } else {
+      console.error('User is not authenticated or token is not available');
     }
   };
 

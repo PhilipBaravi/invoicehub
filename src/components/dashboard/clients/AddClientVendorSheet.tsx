@@ -6,6 +6,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClientVendor } from './CliendVendorTypes';
 import axios from 'axios';
+import { useKeycloak } from '@react-keycloak/web';
 
 export default function AddClientVendorSheet({
   isOpen,
@@ -16,6 +17,7 @@ export default function AddClientVendorSheet({
   onOpenChange: (open: boolean) => void;
   onAddClientVendor: (clientVendor: Omit<ClientVendor, 'id'>) => void;
 }) {
+  const { keycloak } = useKeycloak(); // Use keycloak to access token
   const [newClientVendor, setNewClientVendor] = useState<Omit<ClientVendor, 'id'>>({
     name: '',
     phone: '',
@@ -53,40 +55,45 @@ export default function AddClientVendorSheet({
     e.preventDefault();
     console.log('Client/Vendor Data to Submit:', newClientVendor);
 
-    try {
-      // Send the data via POST request using axios
-      const response = await axios.post('http://localhost:9090/api/v1/client-vendor/create', newClientVendor, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+    if (keycloak.authenticated && keycloak.token) {
+      try {
+        // Send the data via POST request using axios with the bearer token
+        const response = await axios.post('http://localhost:9090/api/v1/client-vendor/create', newClientVendor, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${keycloak.token}`, // Send token in Authorization header
+          },
+        });
 
-      // Log the response for confirmation (optional)
-      console.log('Server Response:', response.data);
+        // Log the response for confirmation (optional)
+        console.log('Server Response:', response.data);
 
-      // Call the onAddClientVendor callback to update the parent component's state
-      onAddClientVendor(newClientVendor);
-      onOpenChange(false);
+        // Call the onAddClientVendor callback to update the parent component's state
+        onAddClientVendor(newClientVendor);
+        onOpenChange(false);
 
-      // Reset the form
-      setNewClientVendor({
-        name: '',
-        phone: '',
-        website: '',
-        email: '',
-        clientVendorType: 'CLIENT',
-        address: {
-          id: 0,
-          addressLine1: '',
-          addressLine2: '',
-          city: '',
-          state: '',
-          country: '',
-          zipCode: '',
-        },
-      });
-    } catch (error) {
-      console.error('Error submitting client/vendor data:', error);
+        // Reset the form
+        setNewClientVendor({
+          name: '',
+          phone: '',
+          website: '',
+          email: '',
+          clientVendorType: 'CLIENT',
+          address: {
+            id: 0,
+            addressLine1: '',
+            addressLine2: '',
+            city: '',
+            state: '',
+            country: '',
+            zipCode: '',
+          },
+        });
+      } catch (error) {
+        console.error('Error submitting client/vendor data:', error);
+      }
+    } else {
+      console.error('User is not authenticated or token is not available');
     }
   };
 
