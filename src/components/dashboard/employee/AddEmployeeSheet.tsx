@@ -98,7 +98,7 @@ export default function AddEmployeeSheet({
     console.log('Employee Data to Submit:', completeEmployeeData);
 
     // Send the data via POST request using axios
-    if (keycloak.token) {  // Ensure token exists and user is authenticated
+    if (keycloak.authenticated && keycloak.token) {  // Ensure token exists and user is authenticated
       try {
         await axios.post('http://localhost:9090/api/v1/user/create', completeEmployeeData, {
           headers: {
