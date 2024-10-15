@@ -49,7 +49,6 @@ const ProductTable : FC<ProductTableProps> = ({ products, openEditDialog }: Prod
             <TableRow key={product.id}>
               <TableCell className="font-medium">
                 <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 bg-stone-200 dark:bg-stone-700 rounded" />
                   <span>{product.name}</span>
                 </div>
               </TableCell>

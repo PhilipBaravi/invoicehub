@@ -92,7 +92,7 @@ export default function EditEmployeeSheet({
     console.log('Edited Employee data submitted:', updatedEmployeeData);
 
     // Add the bearer token to the request
-    if (keycloak.authenticated && keycloak.token) {
+    if (keycloak.token) {
       try {
         await axios.put(
           `http://localhost:9090/api/v1/user/update/${editedEmployee.id}`,
