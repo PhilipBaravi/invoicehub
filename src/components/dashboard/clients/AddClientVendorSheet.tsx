@@ -25,7 +25,6 @@ export default function AddClientVendorSheet({
     email: '',
     clientVendorType: 'CLIENT',
     address: {
-      id: 0,
       addressLine1: '',
       addressLine2: '',
       city: '',
@@ -121,7 +120,6 @@ export default function AddClientVendorSheet({
           email: '',
           clientVendorType: 'CLIENT',
           address: {
-            id: 0,
             addressLine1: '',
             addressLine2: '',
             city: '',
