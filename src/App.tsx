@@ -1,7 +1,9 @@
+// App.tsx
+
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
-// import keycloak from "./components/main-authentication/new-login-page/keycloak";
+import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
+import keycloak from "./components/main-authentication/new-login-page/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
 import BusinessForm from "./components/account-details/business-form/BusinessFormDetails";
 import IntentFormDetails from "./components/account-details/IntentForm.tsx/IntentFormDetails";
@@ -31,16 +33,16 @@ interface UserDetails {
 
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
-  // const { keycloak, initialized } = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
 
   // Debugging statements
-  // console.log("ProtectedRoute - Keycloak initialized:", initialized);
-  // console.log("ProtectedRoute - Keycloak authenticated:", keycloak.authenticated);
+  console.log("ProtectedRoute - Keycloak initialized:", initialized);
+  console.log("ProtectedRoute - Keycloak authenticated:", keycloak.authenticated);
 
-  // if (!initialized) {
-  //   // Display loading indicator while initializing
-  //   return <div>Loading...</div>;
-  // }
+  if (!initialized) {
+    // Display loading indicator while initializing
+    return <div>Loading...</div>;
+  }
 
   // Proceed to the element regardless of authentication status
   return element;
@@ -51,29 +53,29 @@ const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
   return (
-    // <ReactKeycloakProvider
-    //   authClient={keycloak}
-    //   onEvent={(event, error) => {
-    //     console.log("Keycloak event:", event);
-    //     if (event === "onAuthSuccess") {
-    //       console.log("Authentication successful");
-    //     }
-    //     if (event === "onAuthError") {
-    //       console.error("Authentication error", error);
-    //     }
-    //     if (event === "onInitError") {
-    //       console.error("Initialization error", error);
-    //     }
-    //     if (event === "onAuthLogout") {
-    //       console.log("User logged out");
-    //     }
-    //   }}
-    //   initOptions={{
-    //     onLoad: 'check-sso',
-    //     silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-    //     pkceMethod: 'S256', // Use 'S256' to enable PKCE, or 'none' to disable
-    //   }}
-    // >
+    <ReactKeycloakProvider
+      authClient={keycloak}
+      onEvent={(event, error) => {
+        console.log("Keycloak event:", event);
+        if (event === "onAuthSuccess") {
+          console.log("Authentication successful");
+        }
+        if (event === "onAuthError") {
+          console.error("Authentication error", error);
+        }
+        if (event === "onInitError") {
+          console.error("Initialization error", error);
+        }
+        if (event === "onAuthLogout") {
+          console.log("User logged out");
+        }
+      }}
+      initOptions={{
+        onLoad: 'check-sso',
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+        pkceMethod: 'S256', // Use 'S256' to enable PKCE, or 'none' to disable
+      }}
+    >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Router>
           <Routes>
@@ -115,7 +117,7 @@ const App: React.FC = () => {
           </Routes>
         </Router>
       </ThemeProvider>
-    // </ReactKeycloakProvider>
+    </ReactKeycloakProvider>
   );
 };
 
