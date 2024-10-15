@@ -20,6 +20,7 @@ import NotFound from "./NotFound";
 import CompanyDetails from "./components/dashboard/company-settings/CompanyDetails";
 import Invoice from "./components/dashboard/invoice/Invoice";
 import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
+import ManagePaymentMethods from "./components/dashboard/subscription/ManagePaymentMethods";
 
 // UserDetails interface
 interface UserDetails {
@@ -113,6 +114,7 @@ const App: React.FC = () => {
               <Route path="profile" element={<Profile />} />
               <Route path="company-details" element={<CompanyDetails />} />
               <Route path="profile-subscription" element={<ProfileSubscription />} />
+              <Route path="payment-methods" element={<ManagePaymentMethods />} />
             </Route>
           </Routes>
         </Router>

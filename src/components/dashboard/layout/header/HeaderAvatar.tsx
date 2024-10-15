@@ -42,7 +42,7 @@ const HeaderAvatar: FC = () => {
           Profile
         </DropdownMenuItem>
         <DropdownMenuItem>
-          Billing
+          Payment Method
         </DropdownMenuItem>
         <Link to="employee">
         <DropdownMenuItem>

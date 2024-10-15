@@ -1,4 +1,5 @@
 import { FC, useState } from "react"
+import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -39,7 +40,9 @@ const ProfileSubscription: FC = () => {
           </div>
         </CardContent>
         <CardFooter>
+          <Link to="/dashboard/payment-methods">
           <Button variant="outline" className="w-full sm:w-auto">Manage Payment Method</Button>
+          </Link>
         </CardFooter>
       </Card>
 

@@ -35,11 +35,18 @@ export default function AddClientVendorSheet({
     },
   });
 
+  const [errors, setErrors] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    website: '',
+  });
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name.startsWith('address.')) {
       const addressField = name.split('.')[1];
-      setNewClientVendor(prev => ({
+      setNewClientVendor((prev) => ({
         ...prev,
         address: {
           ...prev.address,
@@ -47,28 +54,59 @@ export default function AddClientVendorSheet({
         },
       }));
     } else {
-      setNewClientVendor(prev => ({ ...prev, [name]: value }));
+      setNewClientVendor((prev) => ({ ...prev, [name]: value }));
     }
+  };
+
+  const validateForm = () => {
+    const newErrors: any = {};
+    let valid = true;
+
+    if (!newClientVendor.name) {
+      newErrors.name = 'Name is required.';
+      valid = false;
+    }
+
+    if (!newClientVendor.email || !/\S+@\S+\.\S+/.test(newClientVendor.email)) {
+      newErrors.email = 'Please enter a valid email.';
+      valid = false;
+    }
+
+    if (!newClientVendor.phone) {
+      newErrors.phone = 'Phone number is required.';
+      valid = false;
+    }
+
+    if (!newClientVendor.website) {
+      newErrors.website = 'Website is required.';
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) return;
+
     console.log('Client/Vendor Data to Submit:', newClientVendor);
 
     if (keycloak.token) {
       try {
-        // Send the data via POST request using axios, wrapping it inside 'data'
-        const response = await axios.post('http://localhost:9090/api/v1/clientVendor/create', 
-          { data: newClientVendor }, // The data is now sent under the 'data' key
+        // Send the data via POST request using axios
+        const response = await axios.post(
+          'http://localhost:9090/api/v1/clientVendor/create',
+          newClientVendor,
           {
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${keycloak.token}`, // Send token in Authorization header
+              Authorization: `Bearer ${keycloak.token}`, // Send token in Authorization header
             },
           }
         );
 
-        // Log the response for confirmation (optional)
         console.log('Server Response:', response.data);
 
         // Call the onAddClientVendor callback to update the parent component's state
@@ -120,6 +158,7 @@ export default function AddClientVendorSheet({
               onChange={handleInputChange}
               required
             />
+            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
           </div>
           <div>
             <Label htmlFor="email">Email</Label>
@@ -131,6 +170,7 @@ export default function AddClientVendorSheet({
               onChange={handleInputChange}
               required
             />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
           <div>
             <Label htmlFor="phone">Phone</Label>
@@ -141,6 +181,7 @@ export default function AddClientVendorSheet({
               onChange={handleInputChange}
               required
             />
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
           </div>
           <div>
             <Label htmlFor="website">Website</Label>
@@ -151,12 +192,19 @@ export default function AddClientVendorSheet({
               onChange={handleInputChange}
               required
             />
+            {errors.website && <p className="text-red-500 text-sm">{errors.website}</p>}
           </div>
           <div>
             <Label htmlFor="clientVendorType">Type</Label>
-            <Select 
-              value={newClientVendor.clientVendorType} 
-              onValueChange={(value) => setNewClientVendor(prev => ({ ...prev, clientVendorType: value as 'CLIENT' | 'VENDOR' }))}>
+            <Select
+              value={newClientVendor.clientVendorType}
+              onValueChange={(value) =>
+                setNewClientVendor((prev) => ({
+                  ...prev,
+                  clientVendorType: value as 'CLIENT' | 'VENDOR',
+                }))
+              }
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
