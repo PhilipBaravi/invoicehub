@@ -58,7 +58,7 @@ export default function AddClientVendorSheet({
     if (keycloak.token) {
       try {
         // Send the data via POST request using axios, wrapping it inside 'data'
-        const response = await axios.post('http://localhost:9090/api/v1/client-vendor/create', 
+        const response = await axios.post('http://localhost:9090/api/v1/clientVendor/create', 
           { data: newClientVendor }, // The data is now sent under the 'data' key
           {
             headers: {

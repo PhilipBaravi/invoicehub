@@ -100,7 +100,7 @@ export default function EditClientVendorSheet({
     if (keycloak.token) {
       try {
         await axios.put(
-          `http://localhost:9090/api/v1/client-vendor/update/${editedClientVendor.id}`,
+          `http://localhost:9090/api/v1/clientVendor/update/${editedClientVendor.id}`,
           updatedClientVendorData,
           {
             headers: {
@@ -149,6 +149,7 @@ export default function EditClientVendorSheet({
               value={editedClientVendor.email}
               onChange={handleInputChange}
               required
+              readOnly
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>

@@ -70,7 +70,7 @@ export default function ClientVendorList() {
   const deleteClientVendor = async (id: string) => {
     try {
       if (keycloak.token) {
-        await axios.delete(`http://localhost:9090/api/v1/client-vendor/delete/${id}`, {
+        await axios.delete(`http://localhost:9090/api/v1/clientVendor/delete/${id}`, {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,  // Add token for delete request
           },
