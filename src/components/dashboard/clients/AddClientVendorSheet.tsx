@@ -55,15 +55,18 @@ export default function AddClientVendorSheet({
     e.preventDefault();
     console.log('Client/Vendor Data to Submit:', newClientVendor);
 
-    if (keycloak.authenticated && keycloak.token) {
+    if (keycloak.token) {
       try {
-        // Send the data via POST request using axios with the bearer token
-        const response = await axios.post('http://localhost:9090/api/v1/client-vendor/create', newClientVendor, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${keycloak.token}`, // Send token in Authorization header
-          },
-        });
+        // Send the data via POST request using axios, wrapping it inside 'data'
+        const response = await axios.post('http://localhost:9090/api/v1/client-vendor/create', 
+          { data: newClientVendor }, // The data is now sent under the 'data' key
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${keycloak.token}`, // Send token in Authorization header
+            },
+          }
+        );
 
         // Log the response for confirmation (optional)
         console.log('Server Response:', response.data);

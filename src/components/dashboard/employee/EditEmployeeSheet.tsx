@@ -135,7 +135,7 @@ export default function EditEmployeeSheet({
               name="username"
               value={editedEmployee.username}
               onChange={handleInputChange}
-              required
+              readOnly
             />
             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
           </div>

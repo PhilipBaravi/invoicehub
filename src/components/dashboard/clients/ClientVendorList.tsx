@@ -29,10 +29,12 @@ export default function ClientVendorList() {
     { value: 'clientVendorType', label: 'Type' },
   ];
 
+  // Fetch client/vendors when the component mounts
   useEffect(() => {
     fetchClientVendors();
   }, []);
 
+  // Re-filter client/vendors when search term, client vendor list, or filter category changes
   useEffect(() => {
     const filtered = clientVendors.filter((clientVendor) => {
       const value = clientVendor[filterCategory]?.toString().toLowerCase() ?? '';
@@ -43,16 +45,19 @@ export default function ClientVendorList() {
     setCurrentPage(1);
   }, [searchTerm, clientVendors, filterCategory]);
 
+  // Fetch client/vendors from the backend
   const fetchClientVendors = async () => {
     try {
-      if (keycloak.token) {  
+      if (keycloak.token) {  // Ensure the token is available
         const response = await axios.get('http://localhost:9090/api/v1/clientVendor/list', {
           headers: {
-            Authorization: `Bearer ${keycloak.token}`, 
+            Authorization: `Bearer ${keycloak.token}`,  // Add the token to the Authorization header
           },
         });
 
-        setClientVendors(response.data);  
+        console.log(response.data.data); // Log the data to ensure it's correct
+
+        setClientVendors(response.data.data); // Update the state with response.data.data
       } else {
         console.error('User is not authenticated or token is not available');
       }
@@ -61,29 +66,30 @@ export default function ClientVendorList() {
     }
   };
 
+  // Delete client/vendor by ID
   const deleteClientVendor = async (id: string) => {
     try {
       if (keycloak.token) {
         await axios.delete(`http://localhost:9090/api/v1/client-vendor/delete/${id}`, {
           headers: {
-            Authorization: `Bearer ${keycloak.token}`,
+            Authorization: `Bearer ${keycloak.token}`,  // Add token for delete request
           },
         });
         setClientVendors(clientVendors.filter((cv) => cv.id !== id));
-      } else {
-        console.error('User is not authenticated or token is not available');
       }
     } catch (error) {
       console.error('Error deleting client/vendor:', error);
     }
   };
 
+  // Handle selecting an individual client/vendor
   const handleSelectClientVendor = (id: string) => {
     setSelectedClientVendors((prev) =>
       prev.includes(id) ? prev.filter((cvId) => cvId !== id) : [...prev, id]
     );
   };
 
+  // Handle selecting all client/vendors
   const handleSelectAll = () => {
     if (selectedClientVendors.length === filteredClientVendors.length) {
       setSelectedClientVendors([]);
@@ -92,7 +98,10 @@ export default function ClientVendorList() {
     }
   };
 
+  // Calculate total pages for pagination
   const totalPages = Math.ceil(filteredClientVendors.length / rowsPerPage);
+
+  // Slice the clientVendors array for pagination
   const paginatedClientVendors = filteredClientVendors.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
