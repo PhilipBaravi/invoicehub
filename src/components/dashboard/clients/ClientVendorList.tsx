@@ -127,9 +127,11 @@ export default function ClientVendorList() {
   isOpen={isAddClientVendorOpen}
   onOpenChange={setIsAddClientVendorOpen}
   onAddClientVendor={(clientVendor) => {
-    setClientVendors([...clientVendors, clientVendor]); // Use the correct ID from backend
+    setClientVendors((prevClientVendors) => [...prevClientVendors, clientVendor]); 
+    fetchClientVendors(); 
   }}
 />
+
       </div>
       <SearchAndFilter<ClientVendor>
         searchTerm={searchTerm}
