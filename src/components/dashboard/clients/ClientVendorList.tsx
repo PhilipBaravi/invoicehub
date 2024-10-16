@@ -54,10 +54,20 @@ export default function ClientVendorList() {
             Authorization: `Bearer ${keycloak.token}`,  // Add the token to the Authorization header
           },
         });
-
-        console.log(response.data.data); // Log the data to ensure it's correct
-
-        setClientVendors(response.data.data); // Update the state with response.data.data
+  
+        const fetchedClientVendors = response.data.data.map((clientVendor: ClientVendor) => ({
+          ...clientVendor,
+          address: clientVendor.address || {
+            addressLine1: '',
+            addressLine2: '',
+            city: '',
+            state: '',
+            country: '',
+            zipCode: '',
+          }, // Fallback for missing address
+        }));
+  
+        setClientVendors(fetchedClientVendors); // Update the state with client vendors
       } else {
         console.error('User is not authenticated or token is not available');
       }
@@ -65,6 +75,7 @@ export default function ClientVendorList() {
       console.error('Error fetching client/vendors:', error);
     }
   };
+  
 
   // Delete client/vendor by ID
   const deleteClientVendor = async (id: string) => {

@@ -104,7 +104,17 @@ export default function AddClientVendorSheet({
           }
         );
   
-        const createdClientVendor = response.data; // The response should include the ID
+        const createdClientVendor = {
+          ...response.data,
+          address: response.data.address || {
+            addressLine1: '',
+            addressLine2: '',
+            city: '',
+            state: '',
+            country: '',
+            zipCode: '',
+          }, // Fallback in case address is missing
+        };
         onAddClientVendor(createdClientVendor); // Pass the full ClientVendor object including ID
         onOpenChange(false);
   
@@ -131,6 +141,7 @@ export default function AddClientVendorSheet({
       console.error('User is not authenticated or token is not available');
     }
   };
+  
   
 
   return (
