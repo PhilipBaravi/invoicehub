@@ -1,26 +1,77 @@
-import { FC } from "react";
+import { FC, useState } from "react";
+import { Link } from "react-router-dom";
+import AddCategoryBtn from "./AddCategoryBtn";
+import { Card, CardContent } from "@/components/ui/card";
+import { productCategories as initialCategories, productCategoriesProps } from "./productCategories";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import { Pencil, Trash2 } from "lucide-react"
 
 const Categories: FC = () => {
-    return(
-        <div className="w-full p-6 mx-auto flex flex-col items-start">
-            <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">
-      Categories
-            </h1>
-            <div className="flex flex-col lg:flex-row gap-[25px] ">
-                <div className="w-[300px] h-[300px] flex justify-center items-center">
-                    <div className="flex gap-[20px]">
-                        <div className="w-[80px] h-[80px] rounded-[50%] bg-black">
+  const [productCategories, setProductCategories] = useState<productCategoriesProps[]>(initialCategories);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-                        </div>
-                        <div className="flex flex-col items-start gap-[15px]">
-                                <h3 className="text-lg font-bold text-stone-950 dark:text-stone-50">Accesorries</h3>
-                                <p className="text-sm font-bold text-stone-700 dark:text-stone-300">1 Product</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
+  const handleAddCategory = (newCategory: productCategoriesProps) => {
+    setProductCategories((prevCategories) => [...prevCategories, newCategory]);
+  };
 
-export default Categories
+  const handleEditCategory = (categoryName: string) => {
+    // Implement edit functionality here
+    console.log(`Edit category: ${categoryName}`);
+  };
+
+  const handleDeleteCategory = (categoryName: string) => {
+    setProductCategories((prevCategories) => 
+      prevCategories.filter((category) => category.name !== categoryName)
+    );
+  };
+
+  return (
+    <div className="container mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Categories ({productCategories.length})</h1>
+        <AddCategoryBtn onAddCategory={handleAddCategory} />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {productCategories.map((category) => {
+          const Icon = category.icon;
+
+          return (
+            <ContextMenu key={category.name}>
+              <ContextMenuTrigger>
+                <Link to="/dashboard/products">
+                  <Card
+                    className={`cursor-pointer transition-colors ${
+                      selectedCategory === category.name
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-secondary"
+                    }`}
+                    onClick={() => setSelectedCategory(category.name)}
+                  >
+                    <CardContent className="flex flex-col items-center justify-center p-6">
+                      <Icon className="h-6 w-6" />
+                      <h2 className="mt-2 font-semibold">{category.name}</h2>
+                      <p className="text-sm">{category.count} Product{category.count !== 1 ? 's' : ''}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuItem onClick={() => handleDeleteCategory(category.name)}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default Categories;

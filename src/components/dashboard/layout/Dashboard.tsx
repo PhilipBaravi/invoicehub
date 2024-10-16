@@ -3,6 +3,7 @@ import Header from "./header/Header";
 import { Outlet } from "react-router-dom";
 import LargeScreenSidebar from "./sidebar/LargeScreenSidebar";
 import { useMediaQuery } from 'react-responsive';
+import GlobalContextMenu from "../GlobalContextMenu";
 
 const Dashboard: FC = () => {
   const [isLargeSidebarOpen, setIsLargeSidebarOpen] = useState(false);
@@ -16,7 +17,8 @@ const Dashboard: FC = () => {
   };
 
   return (
-      <div className="w-full h-screen bg-stone-50 dark:bg-stone-950 indigo:bg-indigo-950 sky:bg-sky-700 teal:bg-teal-700 orange:bg-orange-700 flex">
+    <GlobalContextMenu>
+      <div className="w-full h-screen bg-stone-50 dark:bg-stone-950 indigo:bg-indigo-400 sky:bg-sky-700 teal:bg-teal-700 orange:bg-orange-700 flex">
         
         {isLargeScreen && (
           <LargeScreenSidebar
@@ -41,6 +43,7 @@ const Dashboard: FC = () => {
           </div>
         </div>
       </div>
+    </GlobalContextMenu>
   );
 };
 

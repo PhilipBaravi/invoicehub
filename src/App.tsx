@@ -21,8 +21,8 @@ import Settings from "./components/dashboard/company-settings/Settings";
 import Invoice from "./components/dashboard/invoice/Invoice";
 import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
 import ManagePaymentMethods from "./components/dashboard/subscription/ManagePaymentMethods";
+import Categories from "./components/dashboard/products/Categories";
 
-// UserDetails interface
 interface UserDetails {
   username: string;
   password: string;
@@ -31,24 +31,20 @@ interface UserDetails {
   phone: string;
 }
 
-// ProtectedRoute Component
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   const { keycloak, initialized } = useKeycloak();
 
-  // Debugging statements
-  console.log("ProtectedRoute - Keycloak initialized:", initialized);
-  console.log("ProtectedRoute - Keycloak authenticated:", keycloak.authenticated);
-
   if (!initialized) {
-    // Display loading indicator while initializing
     return <div>Loading...</div>;
   }
 
-  // Proceed to the element regardless of authentication status
+  if (!keycloak.authenticated) {
+    return <NewLoginPage />;
+  }
+
   return element;
 };
 
-// Main App Component
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
@@ -73,7 +69,7 @@ const App: React.FC = () => {
       initOptions={{
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-        pkceMethod: 'S256', // Use 'S256' to enable PKCE, or 'none' to disable
+        pkceMethod: 'S256',
       }}
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -100,8 +96,6 @@ const App: React.FC = () => {
                 </LoginRegisterLayout>
               }
             />
-
-            {/* Protected main dashboard route with nested routes */}
             <Route
               path="/dashboard/*"
               element={<ProtectedRoute element={<Dashboard />} />}
@@ -115,11 +109,12 @@ const App: React.FC = () => {
               <Route path="settings" element={<Settings />} />
               <Route path="profile-subscription" element={<ProfileSubscription />} />
               <Route path="payment-methods" element={<ManagePaymentMethods />} />
+              <Route path="categories" element={<Categories />} />
             </Route>
           </Routes>
         </Router>
       </ThemeProvider>
-    // </ReactKeycloakProvider>
+    </ReactKeycloakProvider>
   );
 };
 
