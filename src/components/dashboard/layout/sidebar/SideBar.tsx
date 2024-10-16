@@ -37,7 +37,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
       animate={{ x: 0 }}
       exit={{ x: '-100%' }}
       transition={{ duration: 0.6 }}
-      className="fixed top-0 left-0 w-[23.75rem] h-screen bg-stone-50 dark:bg-stone-950 flex flex-col border-r dark:border-stone-100 border-stone-900 z-50"
+      className="fixed top-0 left-0 w-[23.75rem] h-screen bg-slate-50 dark:bg-stone-950 flex flex-col border-r dark:border-stone-100 border-stone-900 z-50"
     >
       <PanelRightOpen
         className="ml-auto cursor-pointer text-stone-950 dark:text-stone-50 mt-[20px] mr-[20px]"

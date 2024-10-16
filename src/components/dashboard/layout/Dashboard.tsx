@@ -18,7 +18,7 @@ const Dashboard: FC = () => {
 
   return (
     <GlobalContextMenu>
-      <div className="w-full h-screen bg-stone-50 dark:bg-stone-950 indigo:bg-indigo-400 sky:bg-sky-700 teal:bg-teal-700 orange:bg-orange-700 flex">
+      <div className="w-full h-screen bg-slate-50 dark:bg-stone-950 indigo:bg-indigo-400 sky:bg-sky-700 teal:bg-teal-700 orange:bg-orange-700 flex">
         
         {isLargeScreen && (
           <LargeScreenSidebar

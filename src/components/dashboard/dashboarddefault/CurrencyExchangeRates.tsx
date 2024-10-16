@@ -49,7 +49,7 @@ const CurrencyExchangeRates: FC = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
       {rates.map((rate) => (
-        <Card key={rate.code}>
+        <Card key={rate.code} >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{rate.code} to GEL</CardTitle>
             {rate.icon}

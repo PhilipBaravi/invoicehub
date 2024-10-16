@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
   	extend: {
+		// boxShadow: {
+		// 	'white': '0 1px 2px rgba(255, 255, 255, 0.1)'
+		//   },
   		colors: {
   			brightBlue: '#4169E1',
   			background: 'hsl(var(--background))',
