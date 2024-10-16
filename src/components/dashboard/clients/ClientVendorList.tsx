@@ -76,6 +76,7 @@ export default function ClientVendorList() {
           },
         });
         setClientVendors(clientVendors.filter((cv) => cv.id !== id));
+        console.log(id)
       }
     } catch (error) {
       console.error('Error deleting client/vendor:', error);
@@ -112,12 +113,12 @@ export default function ClientVendorList() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Client/Vendor List ({filteredClientVendors.length})</h1>
         <AddClientVendorSheet
-          isOpen={isAddClientVendorOpen}
-          onOpenChange={setIsAddClientVendorOpen}
-          onAddClientVendor={(clientVendor) => {
-            setClientVendors([...clientVendors, { ...clientVendor, id: Date.now().toString() }]);
-          }}
-        />
+  isOpen={isAddClientVendorOpen}
+  onOpenChange={setIsAddClientVendorOpen}
+  onAddClientVendor={(clientVendor) => {
+    setClientVendors([...clientVendors, clientVendor]); // Use the correct ID from backend
+  }}
+/>
       </div>
       <SearchAndFilter<ClientVendor>
         searchTerm={searchTerm}

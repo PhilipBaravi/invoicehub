@@ -13,9 +13,9 @@ const menuItems = [
   { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
   {name: 'Clients', icon: Building2, path:'/dashboard/clients'},
   {name: 'Invoice', icon: FileText, path:'/dashboard/invoice'},
-  { name: 'Products', icon: FolderKanban, path: '/dashboard/products' },
+  { name: 'Categories', icon: FolderKanban, path: '/dashboard/categories' },
   { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
-  { name: 'Login', icon: LogIn, path: '/new-login' }, // Login navigates outside dashboard
+  { name: 'Login', icon: LogIn, path: '/new-login' }, 
 ];
 
 const SideBar: FC<SideBarProps> = ({ onClose }) => {

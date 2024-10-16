@@ -41,9 +41,12 @@ const HeaderAvatar: FC = () => {
         <DropdownMenuItem>
           Profile
         </DropdownMenuItem>
+        <Link to="payment-methods">
         <DropdownMenuItem>
           Payment Method
         </DropdownMenuItem>
+        </Link>
+        
         <Link to="employee">
         <DropdownMenuItem>
           Team
@@ -54,7 +57,7 @@ const HeaderAvatar: FC = () => {
           Subscription
         </DropdownMenuItem>
         </Link>
-        <Link to="company-details">
+        <Link to="settings">
         <DropdownMenuItem>
           Settings
         </DropdownMenuItem>

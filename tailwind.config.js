@@ -59,5 +59,14 @@ module.exports = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // function to create custom themes
+    function ({ addVariant }) {
+      const themes = ['indigo', 'sky', 'teal', 'orange'];
+      themes.forEach((theme) => {
+        addVariant(theme, `.${theme} &`);
+      });
+    },
+  ],
 };

@@ -11,32 +11,32 @@ interface Product {
   name: string;
   status: "Active" | "Draft";
   price: number;
-  totalSales: number;
+  quantityInStock: number;
   createdAt: string;
 }
 
 const initialProducts: Product[] = [
-  { id: "1", name: "Laser Lemonade Machine", status: "Draft", price: 499.99, totalSales: 25, createdAt: "2023-07-12 10:42 AM" },
-  { id: "2", name: "Hypernova Headphones", status: "Active", price: 129.99, totalSales: 100, createdAt: "2023-10-18 03:21 PM" },
-  { id: "3", name: "AeroGlow Desk Lamp", status: "Active", price: 39.99, totalSales: 50, createdAt: "2023-11-29 08:15 AM" },
-  { id: "4", name: "TechTonic Energy Drink", status: "Draft", price: 2.99, totalSales: 0, createdAt: "2023-12-25 11:59 PM" },
-  { id: "5", name: "Gamer Gear Pro Controller", status: "Active", price: 59.99, totalSales: 75, createdAt: "2024-01-01 12:00 AM" },
-  { id: "6", name: "Luminous VR Headset", status: "Active", price: 199.99, totalSales: 30, createdAt: "2024-02-14 02:14 PM" },
+  { id: "1", name: "Laser Lemonade Machine", status: "Draft", price: 499.99, quantityInStock: 25, createdAt: "2023-07-12 10:42 AM" },
+  { id: "2", name: "Hypernova Headphones", status: "Active", price: 129.99, quantityInStock: 100, createdAt: "2023-10-18 03:21 PM" },
+  { id: "3", name: "AeroGlow Desk Lamp", status: "Active", price: 39.99, quantityInStock: 50, createdAt: "2023-11-29 08:15 AM" },
+  { id: "4", name: "TechTonic Energy Drink", status: "Draft", price: 2.99, quantityInStock: 0, createdAt: "2023-12-25 11:59 PM" },
+  { id: "5", name: "Gamer Gear Pro Controller", status: "Active", price: 59.99, quantityInStock: 75, createdAt: "2024-01-01 12:00 AM" },
+  { id: "6", name: "Luminous VR Headset", status: "Active", price: 199.99, quantityInStock: 30, createdAt: "2024-02-14 02:14 PM" },
 ];
 
-const ProductsPage : FC = () => {
+const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState(initialProducts);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'totalSales' | 'createdAt'>>({
+  const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'createdAt'>>({
     name: '',
     status: 'Draft',
     price: 0,
+    quantityInStock: 0,
   });
 
-  // Define isFilterOpen and setIsFilterOpen here:
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
@@ -59,12 +59,11 @@ const ProductsPage : FC = () => {
     const product: Product = {
       ...newProduct,
       id: (products.length + 1).toString(),
-      totalSales: 0,
       createdAt: new Date().toLocaleString(),
     };
     setProducts([...products, product]);
     setIsDialogOpen(false);
-    setNewProduct({ name: '', status: 'Draft', price: 0 });
+    setNewProduct({ name: '', status: 'Draft', price: 0, quantityInStock: 0 });
   };
 
   const handleEditProduct = () => {
@@ -75,7 +74,7 @@ const ProductsPage : FC = () => {
       setProducts(updatedProducts);
       setIsDialogOpen(false);
       setEditingProduct(null);
-      setNewProduct({ name: '', status: 'Draft', price: 0 });
+      setNewProduct({ name: '', status: 'Draft', price: 0, quantityInStock: 0 });
     }
   };
 
@@ -85,16 +84,17 @@ const ProductsPage : FC = () => {
       name: product.name,
       status: product.status,
       price: product.price,
+      quantityInStock: product.quantityInStock,
     });
     setIsDialogOpen(true);
   };
 
   const handleExport = () => {
-    const headers = ["Name", "Status", "Price", "Total Sales", "Created At"];
+    const headers = ["Name", "Status", "Price", "Quantity in Stock", "Created At"];
     const csvContent = [
       headers.join(","),
       ...filteredProducts.map(product =>
-        [product.name, product.status, product.price, product.totalSales, product.createdAt].join(",")
+        [product.name, product.status, product.price, product.quantityInStock, product.createdAt].join(",")
       )
     ].join("\n");
 
@@ -116,7 +116,7 @@ const ProductsPage : FC = () => {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Products</h1>
-          <p className="text-sm text-stone-500 dark:text-stone-400">Manage your products and view their sales performance.</p>
+          <p className="text-sm text-stone-500 dark:text-stone-400">Manage your products and view their stock levels.</p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)}>
           <Plus className="mr-2 h-4 w-4" /> Add Product
@@ -180,6 +180,6 @@ const ProductsPage : FC = () => {
       />
     </div>
   );
-}
+};
 
-export default ProductsPage
+export default ProductsPage;

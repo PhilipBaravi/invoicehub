@@ -8,18 +8,18 @@ import {
 } from "@/components/ui/card"
 import UpdateCompanyDetails from "./UpdateCompanyDetails"
 
-const CompanyDetails: FC = () => {
+const Settings: FC = () => {
 
   return (
     <div className="container mx-auto py-10">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">System Settings</h1>
+        <h1 className="text-3xl font-bold">Settings</h1>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[180px_1fr] lg:grid-cols-[250px_1fr]">
         {/* Sidebar */}
         <nav className="space-y-4 flex flex-col">
-          <Link to="/company-settings" className="hover:underline">Company Settings</Link>
+          <Link to="/settings" className="hover:underline">Company Settings</Link>
           <Link to="/dashboard" className="hover:underline">Admin Settings</Link>
           <Link to="/dashboard" className="hover:underline">Support</Link>
           <Link to="/dashboard" className="hover:underline">Organizations</Link>
@@ -42,4 +42,4 @@ const CompanyDetails: FC = () => {
   )
 }
 
-export default CompanyDetails;
+export default Settings;

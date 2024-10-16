@@ -21,7 +21,7 @@ interface Product {
   name: string;
   status: "Active" | "Draft";
   price: number;
-  totalSales: number;
+  quantityInStock: number;
   createdAt: string;
 }
 
@@ -30,41 +30,43 @@ interface ProductTableProps {
   openEditDialog: (product: Product) => void;
 }
 
-const ProductTable : FC<ProductTableProps> = ({ products, openEditDialog }: ProductTableProps) => {
+const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog }: ProductTableProps) => {
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[300px]">Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Total Sales</TableHead>
-            <TableHead>Created at</TableHead>
-            <TableHead className="w-[50px]"></TableHead>
+            <TableHead className="w-[300px] text-center">Name</TableHead>
+            <TableHead className="text-center">Status</TableHead>
+            <TableHead className="text-center">Price</TableHead>
+            <TableHead className="text-center">Quantity in Stock</TableHead>
+            <TableHead className="text-center">Created at</TableHead>
+            <TableHead className="w-[50px] text-center"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
-              <TableCell className="font-medium">
-                <div className="flex items-center space-x-3">
+              <TableCell className="text-center">
+                <div className="flex items-center justify-center space-x-3">
                   <span>{product.name}</span>
                 </div>
               </TableCell>
-              <TableCell>
-                <span className={`px-2 py-1 rounded-full text-xs ${
-                  product.status === "Active"
-                    ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
-                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
-                }`}>
+              <TableCell className="text-center">
+                <span
+                  className={`px-2 py-1 rounded-full text-xs text-center ${
+                    product.status === "Active"
+                      ? "bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100"
+                      : "bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100"
+                  }`}
+                >
                   {product.status}
                 </span>
               </TableCell>
-              <TableCell>${product.price.toFixed(2)}</TableCell>
-              <TableCell>{product.totalSales}</TableCell>
-              <TableCell>{product.createdAt}</TableCell>
-              <TableCell>
+              <TableCell className="text-center">${product.price.toFixed(2)}</TableCell>
+              <TableCell className="text-center">{product.quantityInStock}</TableCell>
+              <TableCell className="text-center">{product.createdAt}</TableCell>
+              <TableCell className="text-center">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="h-8 w-8 p-0">
@@ -87,6 +89,6 @@ const ProductTable : FC<ProductTableProps> = ({ products, openEditDialog }: Prod
       </div>
     </>
   );
-}
+};
 
-export default ProductTable
+export default ProductTable;

@@ -17,7 +17,7 @@ import CompanyRegistrationForm from "./components/main-authentication/new-regist
 import LoginRegisterLayout from "./components/main-authentication/LoginRegisterLayout";
 import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
 import NotFound from "./NotFound";
-import CompanyDetails from "./components/dashboard/company-settings/CompanyDetails";
+import Settings from "./components/dashboard/company-settings/Settings";
 import Invoice from "./components/dashboard/invoice/Invoice";
 import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
 import ManagePaymentMethods from "./components/dashboard/subscription/ManagePaymentMethods";
@@ -112,7 +112,7 @@ const App: React.FC = () => {
               <Route path="invoice" element={<Invoice />} />
               <Route path="products" element={<ProductsPage />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="company-details" element={<CompanyDetails />} />
+              <Route path="settings" element={<Settings />} />
               <Route path="profile-subscription" element={<ProfileSubscription />} />
               <Route path="payment-methods" element={<ManagePaymentMethods />} />
             </Route>

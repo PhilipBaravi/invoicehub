@@ -8,14 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 interface ProductFormDialogProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
-  newProduct: { name: string; status: "Active" | "Draft"; price: number };
-  setNewProduct: (product: { name: string; status: "Active" | "Draft"; price: number }) => void;
+  newProduct: { name: string; status: "Active" | "Draft"; price: number; quantityInStock: number };
+  setNewProduct: (product: { name: string; status: "Active" | "Draft"; price: number; quantityInStock: number }) => void;
   handleAddProduct: () => void;
   handleEditProduct: () => void;
-  editingProduct: { id: string; name: string; status: "Active" | "Draft"; price: number } | null;
+  editingProduct: { id: string; name: string; status: "Active" | "Draft"; price: number; quantityInStock: number } | null;
 }
 
-const ProductFormDialog : FC<ProductFormDialogProps> = ({
+const ProductFormDialog: FC<ProductFormDialogProps> = ({
   isDialogOpen,
   setIsDialogOpen,
   newProduct,
@@ -68,6 +68,16 @@ const ProductFormDialog : FC<ProductFormDialogProps> = ({
               required
             />
           </div>
+          <div>
+            <Label htmlFor="quantity">Quantity in Stock</Label>
+            <Input
+              id="quantity"
+              type="number"
+              value={newProduct.quantityInStock}
+              onChange={(e) => setNewProduct({ ...newProduct, quantityInStock: parseInt(e.target.value) })}
+              required
+            />
+          </div>
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
             <Button type="submit">{editingProduct ? 'Update Product' : 'Add Product'}</Button>
@@ -78,4 +88,4 @@ const ProductFormDialog : FC<ProductFormDialogProps> = ({
   );
 }
 
-export default ProductFormDialog
+export default ProductFormDialog;

@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import Header from "./header/Header";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import LargeScreenSidebar from "./sidebar/LargeScreenSidebar";
 import { useMediaQuery } from 'react-responsive';
 
@@ -16,7 +16,7 @@ const Dashboard: FC = () => {
   };
 
   return (
-      <div className="w-full h-screen bg-stone-50 dark:bg-stone-950 flex">
+      <div className="w-full h-screen bg-stone-50 dark:bg-stone-950 indigo:bg-indigo-950 sky:bg-sky-700 teal:bg-teal-700 orange:bg-orange-700 flex">
         
         {isLargeScreen && (
           <LargeScreenSidebar

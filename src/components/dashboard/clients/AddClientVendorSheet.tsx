@@ -15,7 +15,7 @@ export default function AddClientVendorSheet({
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddClientVendor: (clientVendor: Omit<ClientVendor, 'id'>) => void;
+  onAddClientVendor: (clientVendor: ClientVendor) => void;
 }) {
   const { keycloak } = useKeycloak(); // Use keycloak to access token
   const [newClientVendor, setNewClientVendor] = useState<Omit<ClientVendor, 'id'>>({
@@ -87,11 +87,9 @@ export default function AddClientVendorSheet({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!validateForm()) return;
-
-    console.log('Client/Vendor Data to Submit:', newClientVendor);
-
+  
     if (keycloak.token) {
       try {
         // Send the data via POST request using axios
@@ -101,17 +99,15 @@ export default function AddClientVendorSheet({
           {
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Bearer ${keycloak.token}`, // Send token in Authorization header
+              Authorization: `Bearer ${keycloak.token}`,
             },
           }
         );
-
-        console.log('Server Response:', response.data);
-
-        // Call the onAddClientVendor callback to update the parent component's state
-        onAddClientVendor(newClientVendor);
+  
+        const createdClientVendor = response.data; // The response should include the ID
+        onAddClientVendor(createdClientVendor); // Pass the full ClientVendor object including ID
         onOpenChange(false);
-
+  
         // Reset the form
         setNewClientVendor({
           name: '',
@@ -135,6 +131,7 @@ export default function AddClientVendorSheet({
       console.error('User is not authenticated or token is not available');
     }
   };
+  
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
