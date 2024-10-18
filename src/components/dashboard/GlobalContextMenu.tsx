@@ -6,7 +6,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import { ArrowLeft, ArrowRight, Home, LayoutDashboard, ShoppingCart, Settings, ScrollText, UserPen, CircleUserRound, UserPlus, IdCard, UserRoundSearch } from 'lucide-react'
+import { ArrowLeft, ArrowRight, LayoutDashboard, ShoppingCart, Settings, ScrollText, UserPen, CircleUserRound, UserPlus, IdCard, UserRoundSearch, RotateCcw } from 'lucide-react'
 
 interface GlobalContextMenuProps {
   children: React.ReactNode
@@ -40,6 +40,10 @@ const GlobalContextMenu: FC<GlobalContextMenuProps> = ({ children }) => {
         <ContextMenuItem onClick={() => navigate(1)}>
           <ArrowRight className="mr-2 h-4 w-4" />
           Go Forward
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => window.location.reload()}>
+          <RotateCcw className="mr-2 h-4 w-4" />
+          Reload
         </ContextMenuItem>
         {menuItems.map((item) => (
           <ContextMenuItem key={item.path} onClick={() => navigate(item.path)}>

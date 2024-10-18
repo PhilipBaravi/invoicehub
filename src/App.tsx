@@ -18,11 +18,12 @@ import LoginRegisterLayout from "./components/main-authentication/LoginRegisterL
 import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
 import NotFound from "./NotFound";
 import Settings from "./components/dashboard/company-settings/Settings";
-import Invoice from "./components/dashboard/invoice/Invoice";
+import InvoiceCreator from "./components/dashboard/invoice/InvoiceCreator";
 import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
 import ManagePaymentMethods from "./components/dashboard/subscription/ManagePaymentMethods";
 import Categories from "./components/dashboard/products/Categories";
 
+// UserDetails interface
 interface UserDetails {
   username: string;
   password: string;
@@ -31,20 +32,24 @@ interface UserDetails {
   phone: string;
 }
 
+// ProtectedRoute Component
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   const { keycloak, initialized } = useKeycloak();
 
+  // Debugging statements
+  console.log("ProtectedRoute - Keycloak initialized:", initialized);
+  console.log("ProtectedRoute - Keycloak authenticated:", keycloak.authenticated);
+
   if (!initialized) {
+    // Display loading indicator while initializing
     return <div>Loading...</div>;
   }
 
-  if (!keycloak.authenticated) {
-    return <NewLoginPage />;
-  }
-
+  // Proceed to the element regardless of authentication status
   return element;
 };
 
+// Main App Component
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
@@ -69,7 +74,7 @@ const App: React.FC = () => {
       initOptions={{
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-        pkceMethod: 'S256',
+        pkceMethod: 'S256', // Use 'S256' to enable PKCE, or 'none' to disable
       }}
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -96,6 +101,8 @@ const App: React.FC = () => {
                 </LoginRegisterLayout>
               }
             />
+
+            {/* Protected main dashboard route with nested routes */}
             <Route
               path="/dashboard/*"
               element={<ProtectedRoute element={<Dashboard />} />}
@@ -103,7 +110,7 @@ const App: React.FC = () => {
               <Route index element={<DashboardDefault />} />
               <Route path="employee" element={<Employee />} />
               <Route path="clients" element={<ClientVendorList />} />
-              <Route path="invoice" element={<Invoice />} />
+              <Route path="invoice" element={<InvoiceCreator />} />
               <Route path="products" element={<ProductsPage />} />
               <Route path="profile" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
@@ -114,7 +121,7 @@ const App: React.FC = () => {
           </Routes>
         </Router>
       </ThemeProvider>
-    </ReactKeycloakProvider>
+    // </ReactKeycloakProvider>
   );
 };
 

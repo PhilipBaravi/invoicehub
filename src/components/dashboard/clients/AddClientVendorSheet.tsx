@@ -115,6 +115,7 @@ export default function AddClientVendorSheet({
             zipCode: '',
           }, // Fallback in case address is missing
         };
+        
         onAddClientVendor(createdClientVendor); // Pass the full ClientVendor object including ID
         onOpenChange(false);
   

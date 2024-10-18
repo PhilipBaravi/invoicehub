@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -28,9 +28,10 @@ interface Product {
 interface ProductTableProps {
   products: Product[];
   openEditDialog: (product: Product) => void;
+  handleDeleteProduct: (productId: string) => void; // Add delete handler prop
 }
 
-const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog }: ProductTableProps) => {
+const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleDeleteProduct }: ProductTableProps) => {
   return (
     <>
       <Table>
@@ -75,7 +76,9 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog }: Produ
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => openEditDialog(product)}>Edit</DropdownMenuItem>
-                    <DropdownMenuItem>Delete</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDeleteProduct(product.id)}>
+                      <Trash className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

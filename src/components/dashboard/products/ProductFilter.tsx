@@ -14,7 +14,7 @@ interface ProductFilterProps {
   setPriceRange: (range: { min: number; max: number }) => void;
 }
 
-const ProductFilter : FC<ProductFilterProps> = ({
+const ProductFilter: FC<ProductFilterProps> = ({
   isFilterOpen,
   setIsFilterOpen,
   dateRange,
@@ -22,6 +22,16 @@ const ProductFilter : FC<ProductFilterProps> = ({
   priceRange,
   setPriceRange,
 }: ProductFilterProps) => {
+  
+  // Define default values for clearing filters
+  const defaultDateRange = { from: undefined, to: undefined };
+  const defaultPriceRange = { min: 0, max: 1000 }; // Update the price range to be more inclusive
+
+  const handleClearFilters = () => {
+    setDateRange(defaultDateRange);  // Reset date range
+    setPriceRange(defaultPriceRange);  // Reset price range
+  };
+
   return (
     <Popover open={isFilterOpen} onOpenChange={setIsFilterOpen}>
       <PopoverTrigger asChild>
@@ -65,10 +75,16 @@ const ProductFilter : FC<ProductFilterProps> = ({
               />
             </div>
           </div>
+          {/* Clear Filters Button */}
+          <div className="flex justify-end">
+            <Button variant="outline" onClick={handleClearFilters}>
+              Clear Filters
+            </Button>
+          </div>
         </div>
       </PopoverContent>
     </Popover>
   );
-}
+};
 
-export default ProductFilter
+export default ProductFilter;

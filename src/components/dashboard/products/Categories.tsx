@@ -9,7 +9,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import { Pencil, Trash2 } from "lucide-react"
+import { Trash2 } from "lucide-react"
 
 const Categories: FC = () => {
   const [productCategories, setProductCategories] = useState<productCategoriesProps[]>(initialCategories);
@@ -17,11 +17,6 @@ const Categories: FC = () => {
 
   const handleAddCategory = (newCategory: productCategoriesProps) => {
     setProductCategories((prevCategories) => [...prevCategories, newCategory]);
-  };
-
-  const handleEditCategory = (categoryName: string) => {
-    // Implement edit functionality here
-    console.log(`Edit category: ${categoryName}`);
   };
 
   const handleDeleteCategory = (categoryName: string) => {

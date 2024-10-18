@@ -48,20 +48,23 @@ const ProductsPage: FC = () => {
   const filteredProducts = products.filter((product) => {
     const matchesTab = activeTab === "All" || product.status === activeTab;
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDateRange = dateRange.from && dateRange.to
-      ? new Date(product.createdAt) >= dateRange.from && new Date(product.createdAt) <= dateRange.to
-      : true;
+
+    const matchesDateRange = (dateRange.from === undefined && dateRange.to === undefined)
+      || (dateRange.from && dateRange.to && new Date(product.createdAt) >= dateRange.from && new Date(product.createdAt) <= dateRange.to);
+
     const matchesPriceRange = product.price >= priceRange.min && product.price <= priceRange.max;
+
     return matchesTab && matchesSearch && matchesDateRange && matchesPriceRange;
   });
 
   const handleAddProduct = () => {
     const product: Product = {
       ...newProduct,
-      id: (products.length + 1).toString(),
-      createdAt: new Date().toLocaleString(),
+      id: (products.length + 1).toString(), // Generate new id
+      createdAt: new Date().toLocaleString(), // Set current date and time
     };
-    setProducts([...products, product]);
+
+    setProducts((prevProducts) => [...prevProducts, product]);
     setIsDialogOpen(false);
     setNewProduct({ name: '', status: 'Draft', price: 0, quantityInStock: 0 });
   };
@@ -76,6 +79,10 @@ const ProductsPage: FC = () => {
       setEditingProduct(null);
       setNewProduct({ name: '', status: 'Draft', price: 0, quantityInStock: 0 });
     }
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    setProducts((prevProducts) => prevProducts.filter(product => product.id !== productId));
   };
 
   const openEditDialog = (product: Product) => {
@@ -112,7 +119,7 @@ const ProductsPage: FC = () => {
   };
 
   return (
-    <div className="w-full  mx-auto p-6 space-y-8">
+    <div className="w-full mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Products</h1>
@@ -167,6 +174,7 @@ const ProductsPage: FC = () => {
       <ProductTable
         products={filteredProducts}
         openEditDialog={openEditDialog}
+        handleDeleteProduct={handleDeleteProduct} // Pass delete handler to table
       />
 
       <ProductFormDialog
