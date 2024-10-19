@@ -2,24 +2,15 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from '@/components/account-details/profile-form/CountryCodes';
 import { Employee } from './employeeTypes';
-import axios from 'axios';
-import { useKeycloak } from '@react-keycloak/web';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
 
 export default function AddEmployeeSheet({
   isOpen,
@@ -30,17 +21,34 @@ export default function AddEmployeeSheet({
   onOpenChange: (open: boolean) => void;
   onAddEmployee: (employee: Omit<Employee, 'id'>) => void;
 }) {
-  const { keycloak } = useKeycloak(); // Fix: Use keycloak object correctly here
+  // Set the initial state for newEmployee
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id'>>({
     username: '',
     password: '',
+    confirmPassword: null,
     firstName: '',
     lastName: '',
     phone: '',
-    role: { description: 'Employee' },
-    dateOfEmployment: new Date(),
-    status: 'INACTIVE',
+    role: { description: 'Employee' },  // Initialize role with default value
+    dateOfEmployment: new Date(),  // Default to current date
+    enabled: true, // Default enabled status
+    status: 'INACTIVE',  // Default status
+    company: {
+      title: '',
+      phone: '',
+      website: '',
+      address: {
+        id: 0, // Default to 0 or an appropriate number if required
+        addressLine1: '',
+        addressLine2: '',
+        city: '',
+        state: '',
+        country: '',
+        zipCode: '',
+      },
+    },
   });
+
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
   const [errors, setErrors] = useState({
     username: '',
@@ -56,7 +64,7 @@ export default function AddEmployeeSheet({
     setNewEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     let valid = true;
@@ -95,40 +103,37 @@ export default function AddEmployeeSheet({
       phone: fullPhoneNumber,
     };
 
-    console.log('Employee Data to Submit:', completeEmployeeData);
+    // Add employee to the list
+    onAddEmployee(completeEmployeeData);
+    onOpenChange(false);
 
-    // Send the data via POST request using axios
-    if (keycloak.token) {  // Ensure token exists and user is authenticated
-      try {
-        await axios.post('http://localhost:9090/api/v1/user/create', completeEmployeeData, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${keycloak.token}`,  // Send the token correctly
-          },
-        });
-        console.log('Employee created successfully');
-
-        // Add employee to the list
-        onAddEmployee(completeEmployeeData);
-        onOpenChange(false);
-
-        // Reset form fields
-        setNewEmployee({
-          username: '',
-          password: '',
-          firstName: '',
-          lastName: '',
-          phone: '',
-          role: { description: 'Employee' },
-          dateOfEmployment: new Date(),
-          status: 'INACTIVE',
-        });
-      } catch (error) {
-        console.error('Error submitting employee data:', error);
-      }
-    } else {
-      console.error('User is not authenticated or token is not available');
-    }
+    // Reset form fields
+    setNewEmployee({
+      username: '',
+      password: '',
+      confirmPassword: null,
+      firstName: '',
+      lastName: '',
+      phone: '',
+      role: { description: 'Employee' },  // Reset role to default value
+      dateOfEmployment: new Date(),  // Reset date to current date
+      enabled: true,  // Reset enabled status
+      status: 'INACTIVE',  // Reset status
+      company: {
+        title: '',
+        phone: '',
+        website: '',
+        address: {
+          id: 0,
+          addressLine1: '',
+          addressLine2: '',
+          city: '',
+          state: '',
+          country: '',
+          zipCode: '',
+        },
+      },
+    });
   };
 
   return (

@@ -4,11 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
-import countryList from '@/components/account-details/profile-form/CountryCodes';
 import { ClientVendor } from './CliendVendorTypes';
-import axios from 'axios';
-import { useKeycloak } from '@react-keycloak/web';
 
 export default function EditClientVendorSheet({
   isOpen,
@@ -21,10 +17,7 @@ export default function EditClientVendorSheet({
   clientVendor: ClientVendor;
   onEditClientVendor: (clientVendor: ClientVendor) => void;
 }) {
-  const { keycloak } = useKeycloak(); // Use keycloak to access the token
   const [editedClientVendor, setEditedClientVendor] = useState<ClientVendor>(clientVendor);
-  const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
-  const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
   const [errors, setErrors] = useState({
     name: '',
     email: '',
@@ -68,9 +61,8 @@ export default function EditClientVendorSheet({
       valid = false;
     }
 
-    const fullPhoneNumber = phoneCode + editedClientVendor.phone;
-    if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
-      newErrors.phone = 'Invalid phone number for the selected country.';
+    if (!editedClientVendor.phone) {
+      newErrors.phone = 'Phone number is required.';
       valid = false;
     }
 
@@ -83,42 +75,13 @@ export default function EditClientVendorSheet({
     return valid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    const fullPhoneNumber = phoneCode + editedClientVendor.phone;
-
-    // complete updated client/vendor object
-    const updatedClientVendorData: ClientVendor = {
-      ...editedClientVendor,
-      phone: fullPhoneNumber,
-    };
-
-    console.log('Edited Client/Vendor data submitted:', updatedClientVendorData);
-
-    if (keycloak.token) {
-      try {
-        await axios.put(
-          `http://localhost:9090/api/v1/clientVendor/update/${editedClientVendor.id}`,
-          updatedClientVendorData,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${keycloak.token}`, // Add the token to Authorization header
-            },
-          }
-        );
-
-        // Callback to update parent component and close the form
-        onEditClientVendor(updatedClientVendorData);
-        onOpenChange(false);
-      } catch (error) {
-        console.error('Error updating client/vendor data:', error);
-      }
-    } else {
-      console.error('User is not authenticated or token is not available');
-    }
+    // Pass the edited client/vendor back to the parent component
+    onEditClientVendor(editedClientVendor);
+    onOpenChange(false);
   };
 
   return (
@@ -153,25 +116,13 @@ export default function EditClientVendorSheet({
             />
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
-          <div className="flex space-x-2">
-            <Select onValueChange={(value) => setPhoneCountry(value as CountryCode)}>
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder={countryList.find((c) => c.code === phoneCountry)?.name || 'Select country'} />
-              </SelectTrigger>
-              <SelectContent>
-                {countryList.map((c) => (
-                  <SelectItem key={c.code} value={c.code}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div>
+            <Label htmlFor="phone">Phone</Label>
             <Input
               id="phone"
               name="phone"
               value={editedClientVendor.phone}
               onChange={handleInputChange}
-              placeholder={phoneCode}
               required
             />
             {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}

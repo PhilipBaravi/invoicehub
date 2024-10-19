@@ -72,7 +72,6 @@ export default function EmployeeTable({
               <TableCell className="relative flex items-center">
                 {visiblePasswords[employee.id] ? employee.password : '••••••••'}
                 <button
-                  className=""
                   onClick={() => togglePasswordVisibility(employee.id)}
                 >
                   {visiblePasswords[employee.id] ? <Eye className="w-4 h-4 ml-4" /> : <EyeOff className="w-4 h-4 ml-4" />}
@@ -80,7 +79,7 @@ export default function EmployeeTable({
               </TableCell>
               <TableCell>{employee.phone}</TableCell>
               <TableCell>{employee.role.description}</TableCell>
-              <TableCell>{format(employee.dateOfEmployment, 'PP')}</TableCell>
+              <TableCell>{format(new Date(employee.dateOfEmployment), 'PP')}</TableCell>
               <TableCell>{employee.status}</TableCell>
               <TableCell>
                 <DropdownMenu>

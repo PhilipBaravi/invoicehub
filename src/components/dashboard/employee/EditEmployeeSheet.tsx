@@ -11,8 +11,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
-import axios from 'axios';
-import { useKeycloak } from '@react-keycloak/web';
 
 export default function EditEmployeeSheet({
   isOpen,
@@ -25,7 +23,6 @@ export default function EditEmployeeSheet({
   employee: Employee;
   onEditEmployee: (employee: Employee) => void;
 }) {
-  const { keycloak } = useKeycloak(); // Use keycloak object to get the token
   const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
@@ -77,48 +74,25 @@ export default function EditEmployeeSheet({
     return valid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
-    const fullPhoneNumber = phoneCode + editedEmployee.phone;
-  
-    // complete updated employee object
-    const updatedEmployeeData: Employee = {
-      ...editedEmployee,  
-      phone: fullPhoneNumber, 
-      dateOfEmployment: editedEmployee.dateOfEmployment ? new Date(editedEmployee.dateOfEmployment) : new Date(), 
-    };
-  
-  console.log('Edited Employee data submitted:', updatedEmployeeData);
-  
-    // Ensure the user is authenticated before sending data
-    if (keycloak.token) {
-      try {
-        
-        await axios.put(
-          `http://localhost:9090/api/v1/user/update/${editedEmployee.id}`,
-          updatedEmployeeData,  // Whole Data
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${keycloak.token}`,  // Add the token to Authorization header
-            },
-          }
-        );
-  
-        // Callback to update parent component and close the form
-        onEditEmployee(updatedEmployeeData);
-        onOpenChange(false);
-      } catch (error) {
-        console.error('Error updating employee data:', error);
-      }
-    } else {
-      console.error('User is not authenticated or token is not available');
-    }
-  };
-  
 
+    const fullPhoneNumber = phoneCode + editedEmployee.phone;
+
+    // Update employee locally
+    const updatedEmployeeData: Employee = {
+      ...editedEmployee,
+      phone: fullPhoneNumber,
+      dateOfEmployment: editedEmployee.dateOfEmployment
+        ? new Date(editedEmployee.dateOfEmployment)
+        : new Date(),
+    };
+
+    // Pass updated employee back to parent
+    onEditEmployee(updatedEmployeeData);
+    onOpenChange(false);
+  };
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -177,7 +151,9 @@ export default function EditEmployeeSheet({
           <div className="flex space-x-2">
             <Select onValueChange={(value) => setPhoneCountry(value as CountryCode)}>
               <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder={countryList.find((c) => c.code === phoneCountry)?.name || 'Select country'} />
+                <SelectValue
+                  placeholder={countryList.find((c) => c.code === phoneCountry)?.name || 'Select country'}
+                />
               </SelectTrigger>
               <SelectContent>
                 {countryList.map((c) => (
@@ -224,7 +200,9 @@ export default function EditEmployeeSheet({
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {editedEmployee.dateOfEmployment ? format(editedEmployee.dateOfEmployment, 'PPP') : <span>Pick a date</span>}
+                  {editedEmployee.dateOfEmployment
+                    ? format(editedEmployee.dateOfEmployment, 'PPP')
+                    : 'Pick a date'}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">

@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
-  currentPage: number
-  totalPages: number
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
-  rowsPerPage: number
-  totalItems: number
+  currentPage: number;
+  totalPages: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  rowsPerPage: number;
+  totalItems: number;
 }
 
 export default function Pagination({
@@ -24,7 +24,7 @@ export default function Pagination({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
           Previous
@@ -32,12 +32,12 @@ export default function Pagination({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
         >
           Next
         </Button>
       </div>
     </div>
-  )
+  );
 }

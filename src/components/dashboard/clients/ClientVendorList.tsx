@@ -5,11 +5,9 @@ import EditClientVendorSheet from './EditClientVendorSheet';
 import ClientVendorTable from './ClientVendorTable';
 import Pagination from '../employee/Pagination';
 import SearchAndFilter from '../employee/SearchAndFilter';
-import { useKeycloak } from '@react-keycloak/web';
-import axios from 'axios';
+import testClientVendorListData from './test-clientvendor-list-data'; // Import the local data
 
 export default function ClientVendorList() {
-  const { keycloak } = useKeycloak();
   const [clientVendors, setClientVendors] = useState<ClientVendor[]>([]);
   const [filteredClientVendors, setFilteredClientVendors] = useState<ClientVendor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -29,9 +27,9 @@ export default function ClientVendorList() {
     { value: 'clientVendorType', label: 'Type' },
   ];
 
-  // Fetch client/vendors when the component mounts
+  // Load client/vendors from the local data file
   useEffect(() => {
-    fetchClientVendors();
+    setClientVendors(testClientVendorListData.data);
   }, []);
 
   // Re-filter client/vendors when search term, client vendor list, or filter category changes
@@ -45,53 +43,9 @@ export default function ClientVendorList() {
     setCurrentPage(1);
   }, [searchTerm, clientVendors, filterCategory]);
 
-  // Fetch client/vendors from the backend
-  const fetchClientVendors = async () => {
-    try {
-      if (keycloak.token) {  // Ensure the token is available
-        const response = await axios.get('http://localhost:9090/api/v1/clientVendor/list', {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,  // Add the token to the Authorization header
-          },
-        });
-  
-        const fetchedClientVendors = response.data.data.map((clientVendor: ClientVendor) => ({
-          ...clientVendor,
-          address: clientVendor.address || {
-            addressLine1: '',
-            addressLine2: '',
-            city: '',
-            state: '',
-            country: '',
-            zipCode: '',
-          }, // Fallback for missing address
-        }));
-  
-        setClientVendors(fetchedClientVendors); // Update the state with client vendors
-      } else {
-        console.error('User is not authenticated or token is not available');
-      }
-    } catch (error) {
-      console.error('Error fetching client/vendors:', error);
-    }
-  };
-  
-
   // Delete client/vendor by ID
-  const deleteClientVendor = async (id: string) => {
-    try {
-      if (keycloak.token) {
-        await axios.delete(`http://localhost:9090/api/v1/clientVendor/delete/${id}`, {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,  // Add token for delete request
-          },
-        });
-        setClientVendors(clientVendors.filter((cv) => cv.id !== id));
-        console.log(id)
-      }
-    } catch (error) {
-      console.error('Error deleting client/vendor:', error);
-    }
+  const deleteClientVendor = (id: number) => {
+    setClientVendors(clientVendors.filter((cv) => cv.id !== id));
   };
 
   // Handle selecting an individual client/vendor
@@ -106,7 +60,7 @@ export default function ClientVendorList() {
     if (selectedClientVendors.length === filteredClientVendors.length) {
       setSelectedClientVendors([]);
     } else {
-      setSelectedClientVendors(filteredClientVendors.map((cv) => cv.id));
+      setSelectedClientVendors(filteredClientVendors.map((cv) => cv.id.toString()));
     }
   };
 
@@ -124,14 +78,12 @@ export default function ClientVendorList() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Client/Vendor List ({filteredClientVendors.length})</h1>
         <AddClientVendorSheet
-  isOpen={isAddClientVendorOpen}
-  onOpenChange={setIsAddClientVendorOpen}
-  onAddClientVendor={(clientVendor) => {
-    setClientVendors((prevClientVendors) => [...prevClientVendors, clientVendor]); 
-    fetchClientVendors(); 
-  }}
-/>
-
+          isOpen={isAddClientVendorOpen}
+          onOpenChange={setIsAddClientVendorOpen}
+          onAddClientVendor={(clientVendor) => {
+            setClientVendors([...clientVendors, { ...clientVendor, id: Date.now() }]);
+          }}
+        />
       </div>
       <SearchAndFilter<ClientVendor>
         searchTerm={searchTerm}

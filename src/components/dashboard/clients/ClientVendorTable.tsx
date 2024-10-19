@@ -10,7 +10,7 @@ interface ClientVendorTableProps {
   selectedClientVendors: string[];
   handleSelectClientVendor: (id: string) => void;
   handleSelectAll: () => void;
-  deleteClientVendor: (id: string) => void;
+  deleteClientVendor: (id: number) => void;
   setEditingClientVendor: (clientVendor: ClientVendor) => void;
   setIsEditClientVendorOpen: (open: boolean) => void;
   filteredClientVendors: ClientVendor[];
@@ -51,8 +51,8 @@ export default function ClientVendorTable({
             <TableRow key={clientVendor.id}>
               <TableCell>
                 <Checkbox
-                  checked={selectedClientVendors.includes(clientVendor.id)}
-                  onCheckedChange={() => handleSelectClientVendor(clientVendor.id)}
+                  checked={selectedClientVendors.includes(clientVendor.id.toString())}
+                  onCheckedChange={() => handleSelectClientVendor(clientVendor.id.toString())}
                 />
               </TableCell>
               <TableCell>{clientVendor.name}</TableCell>

@@ -5,11 +5,9 @@ import EditEmployeeSheet from './EditEmployeeSheet';
 import EmployeeTable from './EmployeeTable';
 import Pagination from './Pagination';
 import SearchAndFilter from './SearchAndFilter';
-import axios from 'axios';
-import { useKeycloak } from '@react-keycloak/web'; // Import useKeycloak
+import testUserListData from './test-user-list-data'; // Import the test data
 
 export default function EmployeeList() {
-  const { keycloak } = useKeycloak(); // Access Keycloak instance
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -30,9 +28,16 @@ export default function EmployeeList() {
     { value: 'status', label: 'Status' },
   ];
 
-  // Fetch employees when the component mounts
+  // Load test data when the component mounts
   useEffect(() => {
-    fetchEmployees();
+    // Convert the test data to match the Employee type
+    const users = testUserListData.data.map((user) => ({
+      ...user,
+      id: user.id.toString(), // Convert id to string as expected by Employee type
+      dateOfEmployment: new Date(user.dateOfEmployment), // Ensure dateOfEmployment is a Date object
+    }));
+  
+    setEmployees(users);
   }, []);
 
   // Re-filter employees when search term, employee list, or filter category changes
@@ -46,44 +51,9 @@ export default function EmployeeList() {
     setCurrentPage(1);
   }, [searchTerm, employees, filterCategory]);
 
-  // Fetch employees from the backend
-  const fetchEmployees = async () => {
-    try {
-      if (keycloak.token) {  // Ensure the token is available
-        const response = await axios.get('http://localhost:9090/api/v1/user/list', {
-          headers: {
-            'Authorization': `Bearer ${keycloak.token}`,  // Add the token to the Authorization header
-          },
-        });
-
-        console.log(response.data.data); 
-
-        setEmployees(response.data.data.map((employee: { dateOfEmployment: string | number | Date; }) => ({
-          ...employee,
-          dateOfEmployment: employee.dateOfEmployment ? new Date(employee.dateOfEmployment) : 'N/A'
-        })));
-      } else {
-        console.error('User is not authenticated or token is not available');
-      }
-    } catch (error) {
-      console.error('Error fetching employees:', error);
-    }
-  };
-
   // Delete employee by ID
-  const deleteEmployee = async (id: string) => {
-    try {
-      if (keycloak.token) {
-        await axios.delete(`http://localhost:9090/api/v1/user/delete/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${keycloak.token}`,  // Add token for delete request
-          },
-        });
-        setEmployees(employees.filter((emp) => emp.id !== id));
-      }
-    } catch (error) {
-      console.error('Error deleting employee:', error);
-    }
+  const deleteEmployee = (id: string) => {
+    setEmployees(employees.filter((emp) => emp.id !== id));
   };
 
   // Handle selecting an individual employee

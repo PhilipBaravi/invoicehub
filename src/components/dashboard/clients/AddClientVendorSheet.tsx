@@ -5,8 +5,6 @@ import { Label } from '@/components/ui/label';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ClientVendor } from './CliendVendorTypes';
-import axios from 'axios';
-import { useKeycloak } from '@react-keycloak/web';
 
 export default function AddClientVendorSheet({
   isOpen,
@@ -15,9 +13,8 @@ export default function AddClientVendorSheet({
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddClientVendor: (clientVendor: ClientVendor) => void;
+  onAddClientVendor: (clientVendor: Omit<ClientVendor, 'id'>) => void;
 }) {
-  const { keycloak } = useKeycloak(); // Use keycloak to access token
   const [newClientVendor, setNewClientVendor] = useState<Omit<ClientVendor, 'id'>>({
     name: '',
     phone: '',
@@ -25,12 +22,27 @@ export default function AddClientVendorSheet({
     email: '',
     clientVendorType: 'CLIENT',
     address: {
+      id: 0,
       addressLine1: '',
       addressLine2: '',
       city: '',
       state: '',
       country: '',
       zipCode: '',
+    },
+    company: {
+      title: '',
+      phone: '',
+      website: '',
+      address: {
+        id: 0,
+        addressLine1: '',
+        addressLine2: '',
+        city: '',
+        state: '',
+        country: '',
+        zipCode: '',
+      },
     },
   });
 
@@ -43,6 +55,7 @@ export default function AddClientVendorSheet({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     if (name.startsWith('address.')) {
       const addressField = name.split('.')[1];
       setNewClientVendor((prev) => ({
@@ -50,6 +63,27 @@ export default function AddClientVendorSheet({
         address: {
           ...prev.address,
           [addressField]: value,
+        },
+      }));
+    } else if (name.startsWith('company.')) {
+      const companyField = name.split('.')[1];
+      setNewClientVendor((prev) => ({
+        ...prev,
+        company: {
+          ...prev.company,
+          [companyField]: value,
+        },
+      }));
+    } else if (name.startsWith('company.address.')) {
+      const companyAddressField = name.split('.')[2];
+      setNewClientVendor((prev) => ({
+        ...prev,
+        company: {
+          ...prev.company,
+          address: {
+            ...prev.company.address,
+            [companyAddressField]: value,
+          },
         },
       }));
     } else {
@@ -85,65 +119,45 @@ export default function AddClientVendorSheet({
     return valid;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-  
     if (!validateForm()) return;
-  
-    if (keycloak.token) {
-      try {
-        // Send the data via POST request using axios
-        const response = await axios.post(
-          'http://localhost:9090/api/v1/clientVendor/create',
-          newClientVendor,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
-  
-        const createdClientVendor = {
-          ...response.data,
-          address: response.data.address || {
-            addressLine1: '',
-            addressLine2: '',
-            city: '',
-            state: '',
-            country: '',
-            zipCode: '',
-          }, // Fallback in case address is missing
-        };
-        
-        onAddClientVendor(createdClientVendor); // Pass the full ClientVendor object including ID
-        onOpenChange(false);
-  
-        // Reset the form
-        setNewClientVendor({
-          name: '',
-          phone: '',
-          website: '',
-          email: '',
-          clientVendorType: 'CLIENT',
-          address: {
-            addressLine1: '',
-            addressLine2: '',
-            city: '',
-            state: '',
-            country: '',
-            zipCode: '',
-          },
-        });
-      } catch (error) {
-        console.error('Error submitting client/vendor data:', error);
-      }
-    } else {
-      console.error('User is not authenticated or token is not available');
-    }
+
+    onAddClientVendor(newClientVendor);
+    onOpenChange(false);
+
+    // Reset the form
+    setNewClientVendor({
+      name: '',
+      phone: '',
+      website: '',
+      email: '',
+      clientVendorType: 'CLIENT',
+      address: {
+        id: 0,
+        addressLine1: '',
+        addressLine2: '',
+        city: '',
+        state: '',
+        country: '',
+        zipCode: '',
+      },
+      company: {
+        title: '',
+        phone: '',
+        website: '',
+        address: {
+          id: 0,
+          addressLine1: '',
+          addressLine2: '',
+          city: '',
+          state: '',
+          country: '',
+          zipCode: '',
+        },
+      },
+    });
   };
-  
-  
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
@@ -221,61 +235,33 @@ export default function AddClientVendorSheet({
               </SelectContent>
             </Select>
           </div>
+          {/* Company Fields */}
           <div>
-            <Label htmlFor="address.addressLine1">Address Line 1</Label>
+            <Label htmlFor="company.title">Company Title</Label>
             <Input
-              id="address.addressLine1"
-              name="address.addressLine1"
-              value={newClientVendor.address.addressLine1}
+              id="company.title"
+              name="company.title"
+              value={newClientVendor.company.title}
               onChange={handleInputChange}
               required
             />
           </div>
           <div>
-            <Label htmlFor="address.addressLine2">Address Line 2</Label>
+            <Label htmlFor="company.phone">Company Phone</Label>
             <Input
-              id="address.addressLine2"
-              name="address.addressLine2"
-              value={newClientVendor.address.addressLine2}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <Label htmlFor="address.city">City</Label>
-            <Input
-              id="address.city"
-              name="address.city"
-              value={newClientVendor.address.city}
+              id="company.phone"
+              name="company.phone"
+              value={newClientVendor.company.phone}
               onChange={handleInputChange}
               required
             />
           </div>
           <div>
-            <Label htmlFor="address.state">State</Label>
+            <Label htmlFor="company.website">Company Website</Label>
             <Input
-              id="address.state"
-              name="address.state"
-              value={newClientVendor.address.state}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="address.country">Country</Label>
-            <Input
-              id="address.country"
-              name="address.country"
-              value={newClientVendor.address.country}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="address.zipCode">Zip Code</Label>
-            <Input
-              id="address.zipCode"
-              name="address.zipCode"
-              value={newClientVendor.address.zipCode}
+              id="company.website"
+              name="company.website"
+              value={newClientVendor.company.website}
               onChange={handleInputChange}
               required
             />
