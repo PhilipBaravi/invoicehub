@@ -21,7 +21,7 @@ import Settings from "./components/dashboard/company-settings/Settings";
 import InvoiceCreator from "./components/dashboard/invoice/InvoiceCreator";
 import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
 import ManagePaymentMethods from "./components/dashboard/subscription/ManagePaymentMethods";
-import Categories from "./components/dashboard/products/Categories";
+import Categories from "./components/dashboard/products/categories/Categories";
 
 // UserDetails interface
 interface UserDetails {

@@ -27,7 +27,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import { productCategoriesProps } from "./productCategories";
+import { CategoryList } from "./test-category-list-data";
 
 const categoryIcons: LucideIcon[] = [
   ShoppingBag,
@@ -45,7 +45,7 @@ const categoryIcons: LucideIcon[] = [
   Utensils,
 ];
 
-const AddCategoryBtn: FC<{ onAddCategory: (newCategory: productCategoriesProps) => void }> = ({ onAddCategory }) => {
+const AddCategoryBtn: FC<{ onAddCategory: (newCategory: CategoryList) => void }> = ({ onAddCategory }) => {
   const [categoryName, setCategoryName] = useState<string>('');
   const [selectedIcon, setSelectedIcon] = useState<LucideIcon | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -65,15 +65,32 @@ const AddCategoryBtn: FC<{ onAddCategory: (newCategory: productCategoriesProps) 
       setError("Please choose a category icon");
       return;
     }
-    
-    const newCategory: productCategoriesProps = {
-      name: categoryName,
-      icon: selectedIcon,
-      count: 0,
+
+    const newCategory: CategoryList = {
+      id: Math.random(), // Temporary id, replace with real one when implementing backend
+      description: categoryName,
+      icon: selectedIcon.name, // Store the name of the icon as a string, just like in testCategoryListData
+      company: { // Only need to write here because of TS
+        id: 1,
+        title: "red tech",
+        phone: "345",
+        website: "redtech@email.com",
+        address: {
+          id: 1,
+          addressLine1: "red street",
+          addressLine2: "red avenue 23",
+          city: "Tbilisi",
+          state: "Tbilisi",
+          country: "Georgia",
+          zipCode: "0163",
+        },
+      },
+      hasProduct: false, // Default value
     };
 
     onAddCategory(newCategory);
 
+    // Reset dialog fields
     setIsDialogOpen(false);
     setCategoryName('');
     setSelectedIcon(null);
