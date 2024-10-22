@@ -22,6 +22,7 @@ import InvoiceCreator from "./components/dashboard/invoice/InvoiceCreator";
 import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
 import ManagePaymentMethods from "./components/dashboard/subscription/ManagePaymentMethods";
 import Categories from "./components/dashboard/products/categories/Categories";
+import UpdateCompanyDetails from "./components/dashboard/company-settings/UpdateCompanyDetails";
 
 // UserDetails interface
 interface UserDetails {
@@ -77,50 +78,47 @@ const App: React.FC = () => {
     //     pkceMethod: 'S256', // Use 'S256' to enable PKCE, or 'none' to disable
     //   }}
     // >
-      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <Router>
-          <Routes>
-            <Route path="/new-login" element={<NewLoginPage />} />
-            <Route
-              path="/new-register"
-              element={<NewRegisterPage setUserDetails={setUserDetails} />}
-            />
-            <Route path="/" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
-            <Route path="/account-details" element={<AccountDetails />} />
-            <Route path="/business-details" element={<BusinessForm />} />
-            <Route path="/intent-details" element={<IntentFormDetails />} />
-            <Route path="*" element={<NotFound />} />
-            <Route
-              path="/company-registration"
-              element={
-                <LoginRegisterLayout
-                  title="Register Your Company"
-                  subtitle="Enter your company details to register"
-                >
-                  <CompanyRegistrationForm userDetails={userDetails} />
-                </LoginRegisterLayout>
-              }
-            />
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+  <Router>
+    <Routes>
+      <Route path="/new-login" element={<NewLoginPage />} />
+      <Route path="/new-register" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
+      <Route path="/" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
+      <Route path="/account-details" element={<AccountDetails />} />
+      <Route path="/business-details" element={<BusinessForm />} />
+      <Route path="/intent-details" element={<IntentFormDetails />} />
+      <Route path="*" element={<NotFound />} />
+      <Route
+        path="/company-registration"
+        element={
+          <LoginRegisterLayout title="Register Your Company" subtitle="Enter your company details to register">
+            <CompanyRegistrationForm userDetails={userDetails} />
+          </LoginRegisterLayout>
+        }
+      />
 
-            {/* Protected main dashboard route with nested routes */}
-            <Route
-              path="/dashboard/*"
-              element={<ProtectedRoute element={<Dashboard />} />}
-            >
-              <Route index element={<DashboardDefault />} />
-              <Route path="employee" element={<Employee />} />
-              <Route path="clients" element={<ClientVendorList />} />
-              <Route path="invoice" element={<InvoiceCreator />} />
-              <Route path="products" element={<ProductsPage />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="settings" element={<Settings />} />
-              <Route path="profile-subscription" element={<ProfileSubscription />} />
-              <Route path="payment-methods" element={<ManagePaymentMethods />} />
-              <Route path="categories" element={<Categories />} />
-            </Route>
-          </Routes>
-        </Router>
-      </ThemeProvider>
+      {/* Protected main dashboard route with nested routes */}
+      <Route path="/dashboard/*" element={<ProtectedRoute element={<Dashboard />} />}>
+        <Route index element={<DashboardDefault />} />
+        <Route path="employee" element={<Employee />} />
+        <Route path="clients" element={<ClientVendorList />} />
+        <Route path="invoice" element={<InvoiceCreator />} />
+        
+        <Route path="settings" element={<Settings />}> 
+          <Route index element={<UpdateCompanyDetails />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="profile-subscription" element={<ProfileSubscription />} />
+          <Route path="payment-methods" element={<ManagePaymentMethods />} />
+        </Route>
+        
+        <Route path="categories" element={<Categories />}>
+          <Route path="products" element={<ProductsPage />} />
+        </Route>
+      </Route>
+    </Routes>
+  </Router>
+</ThemeProvider>
+
     // </ReactKeycloakProvider>
   );
 };

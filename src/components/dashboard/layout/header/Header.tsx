@@ -6,6 +6,7 @@ import { AnimatePresence } from "framer-motion";
 import HeaderAvatar from "./HeaderAvatar";
 import { useMediaQuery } from 'react-responsive';
 import LanguageSelector from "@/components/main-authentication/new-login-page/LanguageSelector";
+import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 
 type HeaderProps = {
   toggleLargeSidebar: () => void;
@@ -31,6 +32,9 @@ const Header: FC<HeaderProps> = ({ toggleLargeSidebar }) => {
           />
         )}
       </div>
+      <div className="flex-grow flex items-center pl-[20px] pt-[20px] hidden lg:block">
+        <HeaderBreadcrumbs />
+        </div>
       <div className="flex items-center gap-[20px] pr-[20px]">
         <LanguageSelector />
         <ModeToggle />

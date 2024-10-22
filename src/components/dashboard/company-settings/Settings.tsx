@@ -1,14 +1,14 @@
-import { Link } from "react-router-dom"
-import { FC } from "react"
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { FC } from "react";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import UpdateCompanyDetails from "./UpdateCompanyDetails"
+} from "@/components/ui/card";
 
 const Settings: FC = () => {
+  const location = useLocation();
 
   return (
     <div className="container mx-auto py-10">
@@ -20,26 +20,31 @@ const Settings: FC = () => {
         {/* Sidebar */}
         <nav className="space-y-4 flex flex-col">
           <Link to="/settings" className="hover:underline">Company Settings</Link>
-          <Link to="/dashboard" className="hover:underline">Admin Settings</Link>
-          <Link to="/dashboard" className="hover:underline">Support</Link>
-          <Link to="/dashboard" className="hover:underline">Organizations</Link>
-          <Link to="/dashboard" className="hover:underline">Advanced</Link>
+          <Link to="/settings/profile" className="hover:underline">Profile</Link>
+          <Link to="/settings/profile-subscription" className="hover:underline">Profile Subscription</Link>
+          <Link to="/settings/payment-methods" className="hover:underline">Payment Methods</Link>
         </nav>
 
         {/* Main content */}
         <div className="grid gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Update your company details</CardTitle>
-            </CardHeader>
-            <CardContent>
-            <UpdateCompanyDetails />
-            </CardContent>
-          </Card>
+          {/* Only render UpdateCompanyDetails if the current path is exactly /settings */}
+          {location.pathname === "/settings" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Update your company details</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* The component for updating company details */}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* The Outlet will render nested routes such as Profile, ProfileSubscription, etc. */}
+          <Outlet />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Settings;

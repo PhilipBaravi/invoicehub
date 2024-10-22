@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { MoreHorizontal, Trash } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -16,22 +16,32 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+interface Category {
+  id: number;
+  description: string;
+  icon: string;
+}
+
 interface Product {
-  id: string;
+  id: number;
   name: string;
   status: "Active" | "Draft";
   price: number;
   quantityInStock: number;
+  lowLimitAlert: number;
+  productUnit: string;
   createdAt: string;
+  category: Category;
 }
 
 interface ProductTableProps {
   products: Product[];
   openEditDialog: (product: Product) => void;
-  handleDeleteProduct: (productId: string) => void; // Add delete handler prop
+  handleDeleteProduct: (productId: number) => void;
+  lowStockProducts: Product[]; // Pass the list of low stock products to highlight them
 }
 
-const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleDeleteProduct }: ProductTableProps) => {
+const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleDeleteProduct, lowStockProducts }) => {
   return (
     <>
       <Table>
@@ -47,7 +57,10 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
         </TableHeader>
         <TableBody>
           {products.map((product) => (
-            <TableRow key={product.id}>
+            <TableRow
+              key={product.id}
+              className={lowStockProducts.includes(product) ? 'bg-red-100 dark:bg-red-900' : ''} // Highlight rows with low stock
+            >
               <TableCell className="text-center">
                 <div className="flex items-center justify-center space-x-3">
                   <span>{product.name}</span>
@@ -75,7 +88,9 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => openEditDialog(product)}>Edit</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => openEditDialog(product)}>
+                      <Pencil className="mr-2 h-4 w-4"/>
+                      Edit</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleDeleteProduct(product.id)}>
                       <Trash className="mr-2 h-4 w-4" /> Delete
                     </DropdownMenuItem>

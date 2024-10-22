@@ -1,35 +1,14 @@
 import { FC, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Airplay,
-  Aperture,
-  Book,
-  Box,
-  Cake,
-  Car,
-  Coffee,
-  Droplet,
-  Home,
-  Laptop,
-  Leaf,
-  ShoppingBag,
-  Utensils,
-  LucideIcon,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { CategoryList } from "./test-category-list-data";
+import { ShoppingBag, Airplay, Aperture, Book, Box, Cake, Car, Coffee, Droplet, Home, Laptop, Leaf, Utensils, LucideIcon } from "lucide-react";
 
-const categoryIcons: LucideIcon[] = [
+// Map of string icon names to actual Lucide icons
+const iconMap: Record<string, LucideIcon> = {
   ShoppingBag,
   Airplay,
   Aperture,
@@ -43,11 +22,28 @@ const categoryIcons: LucideIcon[] = [
   Laptop,
   Leaf,
   Utensils,
+};
+
+// Define string icon names
+const categoryIcons = [
+  "ShoppingBag",
+  "Airplay",
+  "Aperture",
+  "Book",
+  "Box",
+  "Cake",
+  "Car",
+  "Coffee",
+  "Droplet",
+  "Home",
+  "Laptop",
+  "Leaf",
+  "Utensils",
 ];
 
 const AddCategoryBtn: FC<{ onAddCategory: (newCategory: CategoryList) => void }> = ({ onAddCategory }) => {
   const [categoryName, setCategoryName] = useState<string>('');
-  const [selectedIcon, setSelectedIcon] = useState<LucideIcon | null>(null);
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -55,7 +51,7 @@ const AddCategoryBtn: FC<{ onAddCategory: (newCategory: CategoryList) => void }>
     setCategoryName(e.target.value);
   };
 
-  const handleIconSelect = (icon: LucideIcon) => {
+  const handleIconSelect = (icon: string) => {
     setSelectedIcon(icon);
     setError(null);
   };
@@ -67,30 +63,12 @@ const AddCategoryBtn: FC<{ onAddCategory: (newCategory: CategoryList) => void }>
     }
 
     const newCategory: CategoryList = {
-      id: Math.random(), // Temporary id, replace with real one when implementing backend
+      id: Math.random(),
       description: categoryName,
-      icon: selectedIcon.name, // Store the name of the icon as a string, just like in testCategoryListData
-      company: { // Only need to write here because of TS
-        id: 1,
-        title: "red tech",
-        phone: "345",
-        website: "redtech@email.com",
-        address: {
-          id: 1,
-          addressLine1: "red street",
-          addressLine2: "red avenue 23",
-          city: "Tbilisi",
-          state: "Tbilisi",
-          country: "Georgia",
-          zipCode: "0163",
-        },
-      },
-      hasProduct: false, // Default value
+      icon: selectedIcon, // Store the selected icon as a string
     };
 
     onAddCategory(newCategory);
-
-    // Reset dialog fields
     setIsDialogOpen(false);
     setCategoryName('');
     setSelectedIcon(null);
@@ -133,18 +111,19 @@ const AddCategoryBtn: FC<{ onAddCategory: (newCategory: CategoryList) => void }>
           <h3 className="mb-2 text-sm font-medium">Choose category icon:</h3>
           <Card>
             <CardContent className="grid grid-cols-4 gap-2 p-2">
-              {categoryIcons.map((Icon, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  className={`p-2 hover:bg-secondary ${
-                    selectedIcon === Icon ? 'bg-primary text-primary-foreground' : ''
-                  }`}
-                  onClick={() => handleIconSelect(Icon)}
-                >
-                  <Icon className="h-6 w-6" />
-                </Button>
-              ))}
+              {categoryIcons.map((icon, index) => {
+                const Icon = iconMap[icon]; // Use iconMap to get the actual Lucide icon
+                return (
+                  <Button
+                    key={index}
+                    variant="ghost"
+                    className={`p-2 hover:bg-secondary ${selectedIcon === icon ? 'bg-primary text-primary-foreground' : ''}`}
+                    onClick={() => handleIconSelect(icon)}
+                  >
+                    {Icon && <Icon className="h-6 w-6" />} {/* Render icon dynamically */}
+                  </Button>
+                );
+              })}
             </CardContent>
           </Card>
         </div>

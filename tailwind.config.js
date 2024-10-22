@@ -53,7 +53,7 @@ module.exports = {
   			}
   		},
   		fontFamily: {
-  			georgian: ['Noto Serif Georgian"', 'serif']
+  			georgian: ['Noto Serif Georgian"', 'serif'],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

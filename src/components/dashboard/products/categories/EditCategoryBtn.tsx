@@ -1,35 +1,13 @@
 import { FC, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Airplay,
-  Aperture,
-  Book,
-  Box,
-  Cake,
-  Car,
-  Coffee,
-  Droplet,
-  Home,
-  Laptop,
-  Leaf,
-  ShoppingBag,
-  Utensils,
-  LucideIcon,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Pencil } from "lucide-react";
-import { CategoryList } from "./test-category-list-data"; // Importing the Category type
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CategoryList } from "./test-category-list-data";
+import { ShoppingBag, Airplay, Aperture, Book, Box, Cake, Car, Coffee, Droplet, Home, Laptop, Leaf, Utensils, LucideIcon } from "lucide-react";
 
-const categoryIcons: LucideIcon[] = [
+// Map of string icon names to actual Lucide icons
+const iconMap: Record<string, LucideIcon> = {
   ShoppingBag,
   Airplay,
   Aperture,
@@ -43,21 +21,38 @@ const categoryIcons: LucideIcon[] = [
   Laptop,
   Leaf,
   Utensils,
+};
+
+const categoryIcons = [
+  "ShoppingBag",
+  "Airplay",
+  "Aperture",
+  "Book",
+  "Box",
+  "Cake",
+  "Car",
+  "Coffee",
+  "Droplet",
+  "Home",
+  "Laptop",
+  "Leaf",
+  "Utensils",
 ];
 
 interface EditCategoryBtnProps {
   category: CategoryList;
   onEditCategory: (updatedCategory: CategoryList) => void;
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory }) => {
+const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, isOpen, setIsOpen }) => {
   const [categoryName, setCategoryName] = useState<string>(category.description);
-  const [selectedIcon, setSelectedIcon] = useState<LucideIcon | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
 
   useEffect(() => {
-    // Set the selected icon based on the icon string from the category
-    const icon = categoryIcons.find((Icon) => Icon.name === category.icon);
+    // Initialize the selectedIcon with the existing category icon (mapped from string)
+    const icon = categoryIcons.find((iconName) => iconName === category.icon);
     setSelectedIcon(icon || null);
   }, [category.icon]);
 
@@ -65,7 +60,7 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory })
     setCategoryName(e.target.value);
   };
 
-  const handleIconSelect = (icon: LucideIcon) => {
+  const handleIconSelect = (icon: string) => {
     setSelectedIcon(icon);
   };
 
@@ -75,21 +70,14 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory })
     const updatedCategory: CategoryList = {
       ...category,
       description: categoryName,
-      icon: selectedIcon.name, // Store the updated icon as a string
+      icon: selectedIcon, // Save the selected icon name as a string
     };
 
     onEditCategory(updatedCategory);
-
-    setIsDialogOpen(false);
   };
 
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Pencil className="mr-2 h-4 w-4" /> Edit Category
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit Category</DialogTitle>
@@ -118,18 +106,19 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory })
           <h3 className="mb-2 text-sm font-medium">Choose category icon:</h3>
           <Card>
             <CardContent className="grid grid-cols-4 gap-2 p-2">
-              {categoryIcons.map((Icon, index) => (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  className={`p-2 hover:bg-secondary ${
-                    selectedIcon === Icon ? 'bg-primary text-primary-foreground' : ''
-                  }`}
-                  onClick={() => handleIconSelect(Icon)}
-                >
-                  <Icon className="h-6 w-6" />
-                </Button>
-              ))}
+              {categoryIcons.map((icon, index) => {
+                const IconComponent = iconMap[icon]; // Get the Lucide icon component
+                return (
+                  <Button
+                    key={index}
+                    variant="ghost"
+                    className={`p-2 hover:bg-secondary ${selectedIcon === icon ? 'bg-primary text-primary-foreground' : ''}`}
+                    onClick={() => handleIconSelect(icon)}
+                  >
+                    {IconComponent && <IconComponent className="h-6 w-6" />} {/* Render the icon */}
+                  </Button>
+                );
+              })}
             </CardContent>
           </Card>
         </div>

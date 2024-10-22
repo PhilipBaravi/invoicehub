@@ -351,7 +351,7 @@ export default function InvoiceCreator() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full ">
       <div className="flex justify-end space-x-2 mb-4">
         <Button variant="outline">Cancel</Button>
         <Button variant="secondary">Save</Button>

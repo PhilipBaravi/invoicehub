@@ -53,7 +53,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
             return (
               <li
                 key={item.name}
-                className="leading-7 [&:not(:first-child)]:mt-2 text-lg flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-950 dark:text-stone-50 hover:bg-stone-300 dark:hover:bg-stone-600 hover:text-accent"
+                className="leading-7 [&:not(:first-child)]:mt-2 text-lg flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-950 dark:text-stone-50 hover:bg-stone-200 dark:hover:bg-stone-800 hover:text-accent"
                 onClick={() => handleItemClick(item.path)} 
               >
                 <Icon className="text-xl" />

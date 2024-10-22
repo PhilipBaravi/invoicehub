@@ -23,9 +23,8 @@ const ProductFilter: FC<ProductFilterProps> = ({
   setPriceRange,
 }: ProductFilterProps) => {
   
-  // Define default values for clearing filters
   const defaultDateRange = { from: undefined, to: undefined };
-  const defaultPriceRange = { min: 0, max: 1000 }; // Update the price range to be more inclusive
+  const defaultPriceRange = { min: 0, max: 1000 };
 
   const handleClearFilters = () => {
     setDateRange(defaultDateRange);  // Reset date range
@@ -49,10 +48,10 @@ const ProductFilter: FC<ProductFilterProps> = ({
                 selected={dateRange}
                 onSelect={(range) => {
                   const newRange = {
-                    from: range?.from ?? undefined, // ensure 'from' is either a Date or undefined
-                    to: range?.to ?? undefined,     // ensure 'to' is either a Date or undefined
+                    from: range?.from ?? undefined,
+                    to: range?.to ?? undefined,
                   };
-                  setDateRange(newRange);            // safely update the date range
+                  setDateRange(newRange);
                 }}
                 className="rounded-md border"
               />
@@ -75,7 +74,6 @@ const ProductFilter: FC<ProductFilterProps> = ({
               />
             </div>
           </div>
-          {/* Clear Filters Button */}
           <div className="flex justify-end">
             <Button variant="outline" onClick={handleClearFilters}>
               Clear Filters

@@ -22,9 +22,9 @@ const GlobalContextMenu: FC<GlobalContextMenuProps> = ({ children }) => {
     { label: 'Clients', path: '/dashboard/clients', icon: UserRoundSearch }, 
     { label: 'Categories', path: '/dashboard/categories', icon: ShoppingCart },
     { label: 'Invoices', path: '/dashboard/invoice', icon: ScrollText },
-    { label: 'Profile', path: '/dashboard/profile', icon: CircleUserRound }, 
-    { label: 'Profile Subscription', path: '/dashboard/profile-subscription', icon: UserPlus }, 
-    { label: 'Payment Methods', path: '/dashboard/payment-methods', icon: IdCard },
+    { label: 'Profile', path: '/dashboard/settings/profile', icon: CircleUserRound }, 
+    { label: 'Profile Subscription', path: '/dashboard/settings/profile-subscription', icon: UserPlus }, 
+    { label: 'Payment Methods', path: '/dashboard/settings/payment-methods', icon: IdCard },
     { label: 'Settings', path: '/dashboard/settings', icon: Settings },
     
   ];
