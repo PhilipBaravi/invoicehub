@@ -46,7 +46,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
       e.preventDefault();
     }
   
-    const { title, addressLine1, addressLine2, city, state, zipCode, phone, website } = formValues;
+    const { title, addressLine1, city, state, zipCode, phone} = formValues;
   
     let valid = true;
     const newErrors: any = {};

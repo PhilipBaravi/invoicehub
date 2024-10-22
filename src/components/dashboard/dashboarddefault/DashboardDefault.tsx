@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import CurrencyExchangeRates from "./CurrencyExchangeRates";
+import ProductSalesChart from "./ProductSalesChart";
 import { ArrowUpRight, TrendingUp, Users, ShoppingBag, GripVertical } from "lucide-react";
 
 import {
@@ -31,8 +32,9 @@ import { DropResult } from "react-beautiful-dnd";
 const DashboardDefault: FC = () => {
   const [components, setComponents] = useState([
     { id: "currency", title: "Currency Exchange Rates", component: <CurrencyExchangeRates />, width: "col-span-full" },
+    { id: "productSales", title: "Product Sales Chart", component: <ProductSalesChart />, width: "col-span-full" },
     { id: "stats", title: "Statistics", component: <StatisticsGrid />, width: "col-span-full" },
-    { id: "transactions", title: "Transactions", component: <TransactionsCard />, width: "col-span-1 md:col-span-2" }, // Adjusted span
+    { id: "transactions", title: "Transactions", component: <TransactionsCard />, width: "col-span-1 md:col-span-2" },
     { id: "recentSales", title: "Recent Sales", component: <RecentSalesCard />, width: "col-span-1" },
   ]);
 
@@ -63,7 +65,7 @@ const DashboardDefault: FC = () => {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className={`bg-background rounded-lg shadow-md p-4 ${component.width} overflow-hidden w-full`} // Added w-full
+                        className={`bg-background rounded-lg shadow-md p-4 ${component.width} overflow-hidden w-full`}
                       >
                         <div className="flex items-center justify-between mb-4">
                           <h2 className="text-xl font-semibold">{component.title}</h2>
