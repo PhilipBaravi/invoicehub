@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState, FC } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Euro, PoundSterling, JapaneseYen } from "lucide-react";
