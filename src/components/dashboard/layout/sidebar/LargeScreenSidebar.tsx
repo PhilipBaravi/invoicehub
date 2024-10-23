@@ -1,7 +1,6 @@
-import { FC, useEffect, useRef } from "react";
-import {  useNavigate } from "react-router-dom";
+import { FC, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn, Building2, FileText } from 'lucide-react';
-import { motion } from "framer-motion";
 
 interface LargeScreenSidebarProps {
   isOpen: boolean;
@@ -21,6 +20,7 @@ const menuItems = [
 const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [sidebarWidth, setSidebarWidth] = useState(isOpen ? '250px' : '80px');
 
   const handleItemClick = (path: string) => {
     if (path === '/new-login') {
@@ -49,12 +49,17 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     };
   }, [isOpen, onClose]);
 
+  useEffect(() => {
+    setSidebarWidth(isOpen ? '250px' : '80px');
+  }, [isOpen]);
+
   return (
-    <motion.div
+    <div
       ref={sidebarRef}
-      initial={{ width: '80px' }}
-      animate={{ width: isOpen ? '250px' : '80px' }}
-      transition={{ duration: 0.6 }}
+      style={{
+        width: sidebarWidth,
+        transition: 'width 0.6s ease',
+      }}
       className="fixed top-0 left-0 h-screen bg-slate-50 dark:bg-stone-950 flex flex-col border-r border-stone-200 dark:border-stone-700 z-50"
     >
       <div
@@ -83,7 +88,7 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
           );
         })}
       </ul>
-    </motion.div>
+    </div>
   );
 };
 

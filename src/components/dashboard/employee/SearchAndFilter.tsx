@@ -26,11 +26,14 @@ export default function SearchAndFilter<T>({
       <div className="flex items-center space-x-2">
         <div className="relative">
           <Input
+            id="searchTerm"
+            name="searchTerm"
             type="text"
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 w-64"
+            autoComplete="off"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         </div>

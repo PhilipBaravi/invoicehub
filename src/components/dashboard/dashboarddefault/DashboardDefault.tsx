@@ -1,6 +1,19 @@
 import { FC, useState } from "react";
 import { Link } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import {
+  DndContext,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  closestCenter,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import CurrencyExchangeRates from "./CurrencyExchangeRates";
 import ProductSalesChart from "./ProductSalesChart";
 import { ArrowUpRight, TrendingUp, Users, ShoppingBag, GripVertical } from "lucide-react";
@@ -27,7 +40,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DropResult } from "react-beautiful-dnd";
 
 const DashboardDefault: FC = () => {
   const [components, setComponents] = useState([
@@ -38,13 +50,17 @@ const DashboardDefault: FC = () => {
     { id: "recentSales", title: "Recent Sales", component: <RecentSalesCard />, width: "col-span-1" },
   ]);
 
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
-    if (!destination) return;
-    const items = [...components];
-    const [reorderedItem] = items.splice(source.index, 1);
-    items.splice(destination.index, 0, reorderedItem);
-    setComponents(items);
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      setComponents((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
   };
 
   return (
@@ -54,38 +70,48 @@ const DashboardDefault: FC = () => {
       </h1>
 
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="dashboard">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
-                {components.map((component, index) => (
-                  <Draggable key={component.id} draggableId={component.id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className={`bg-background rounded-lg shadow-md p-4 ${component.width} overflow-hidden w-full`}
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <h2 className="text-xl font-semibold">{component.title}</h2>
-                          <GripVertical className="text-muted-foreground cursor-move" />
-                        </div>
-                        {component.component}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={components.map((component) => component.id)} strategy={verticalListSortingStrategy}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
+              {components.map((component) => (
+                <SortableComponent key={component.id} id={component.id}  title={component.title} width={component.width}>
+                  {component.component}
+                </SortableComponent>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       </main>
     </>
   );
 };
 
+interface SortableComponentProps {
+  id: string;
+  title: string;
+  width: string;
+  children: React.ReactNode;
+}
+
+const SortableComponent: FC<SortableComponentProps> = ({ id, title, width, children }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners} className={`bg-background rounded-lg shadow-md p-4 ${width} overflow-hidden w-full`}>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">{title}</h2>
+        <GripVertical className="text-muted-foreground cursor-move" />
+      </div>
+      {children}
+    </div>
+  );
+};
+
+// StatisticsGrid component
 const StatisticsGrid: FC = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 auto-rows-min">
@@ -121,6 +147,7 @@ const StatisticsGrid: FC = () => {
   );
 };
 
+// TransactionsCard component
 const TransactionsCard: FC = () => {
   return (
     <Card className="h-full">
@@ -171,6 +198,7 @@ const TransactionsCard: FC = () => {
   );
 };
 
+// RecentSalesCard component
 const RecentSalesCard: FC = () => {
   return (
     <Card className="h-full">
@@ -194,6 +222,7 @@ const RecentSalesCard: FC = () => {
   );
 };
 
+// StatCard component
 interface StatCardProps {
   title: string;
   value: string;

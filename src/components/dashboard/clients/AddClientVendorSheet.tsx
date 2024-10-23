@@ -226,7 +226,7 @@ export default function AddClientVendorSheet({
                 }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="clientVendorType">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>

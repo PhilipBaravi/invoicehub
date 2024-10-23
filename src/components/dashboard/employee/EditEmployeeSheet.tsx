@@ -101,7 +101,7 @@ export default function EditEmployeeSheet({
           <SheetTitle>Edit Employee</SheetTitle>
           <SheetDescription>Edit the details of the employee below.</SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} id='editEmployeeForm' className="space-y-4 mt-4">
           <div>
             <Label htmlFor="username">Email</Label>
             <Input
@@ -109,6 +109,7 @@ export default function EditEmployeeSheet({
               name="username"
               value={editedEmployee.username}
               onChange={handleInputChange}
+              autoComplete="email"
               readOnly
             />
             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
@@ -118,9 +119,10 @@ export default function EditEmployeeSheet({
             <Input
               id="password"
               name="password"
-              type="text"
+              type="password"
               value={editedEmployee.password}
               onChange={handleInputChange}
+              autoComplete="new-password"
               required
               className="pr-10"
             />
@@ -133,6 +135,7 @@ export default function EditEmployeeSheet({
               name="firstName"
               value={editedEmployee.firstName}
               onChange={handleInputChange}
+              autoComplete="given-name"
               required
             />
             {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
@@ -144,6 +147,7 @@ export default function EditEmployeeSheet({
               name="lastName"
               value={editedEmployee.lastName}
               onChange={handleInputChange}
+              autoComplete="family-name"
               required
             />
             {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
@@ -163,15 +167,18 @@ export default function EditEmployeeSheet({
                 ))}
               </SelectContent>
             </Select>
-            <Input
-              id="phone"
-              name="phone"
-              value={editedEmployee.phone}
-              onChange={handleInputChange}
-              placeholder={phoneCode}
-              required
-            />
-            {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+            <div className="flex flex-col">
+              <Input
+                id="phone"
+                name="phone"
+                value={editedEmployee.phone}
+                onChange={handleInputChange}
+                placeholder={phoneCode}
+                autoComplete="tel"
+                required
+              />
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+            </div>
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
@@ -184,7 +191,7 @@ export default function EditEmployeeSheet({
                 }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id='role'>
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
@@ -197,7 +204,7 @@ export default function EditEmployeeSheet({
           <div>
             <Label htmlFor="dateOfEmployment">Date of Employment</Label>
             <Popover>
-              <PopoverTrigger asChild>
+              <PopoverTrigger asChild id='dateOfEmployment'>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {editedEmployee.dateOfEmployment

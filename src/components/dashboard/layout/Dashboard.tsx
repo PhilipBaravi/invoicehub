@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import LargeScreenSidebar from "./sidebar/LargeScreenSidebar";
 import { useMediaQuery } from 'react-responsive';
 import GlobalContextMenu from "../GlobalContextMenu";
+import AIChatbot from "../dashboarddefault/AIChatBot";
 
 const Dashboard: FC = () => {
   const [isLargeSidebarOpen, setIsLargeSidebarOpen] = useState(false);
@@ -37,12 +38,14 @@ const Dashboard: FC = () => {
           <Header toggleLargeSidebar={toggleLargeSidebar} />
 
           {/* Main layout where the nested routes will render */}
-          <div id="main-layout" className="flex-1 h-full p-4 overflow-auto">
+          <div id="main-layout" className="flex-1 h-full p-4 overflow-auto relative">
             {/* Use <Outlet /> to render the nested routes here */}
             <Outlet />
+
           </div>
         </div>
       </div>
+      <AIChatbot />
     </GlobalContextMenu>
   );
 };

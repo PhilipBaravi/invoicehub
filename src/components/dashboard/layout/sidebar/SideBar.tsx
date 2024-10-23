@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { PanelRightOpen, LayoutDashboard, UserSearch, FolderKanban, UserPen, LogIn, Building2, FileText } from 'lucide-react';
-import { motion } from "framer-motion";
 
 interface SideBarProps {
   isOpen: boolean;
@@ -11,8 +10,8 @@ interface SideBarProps {
 const menuItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
-  {name: 'Clients', icon: Building2, path:'/dashboard/clients'},
-  {name: 'Invoice', icon: FileText, path:'/dashboard/invoice'},
+  { name: 'Clients', icon: Building2, path: '/dashboard/clients' },
+  { name: 'Invoice', icon: FileText, path: '/dashboard/invoice' },
   { name: 'Categories', icon: FolderKanban, path: '/dashboard/categories' },
   { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
   { name: 'Login', icon: LogIn, path: '/new-login' }, 
@@ -21,7 +20,8 @@ const menuItems = [
 const SideBar: FC<SideBarProps> = ({ onClose }) => {
   const navigate = useNavigate(); // Create navigate instance for redirection
 
-  const handleItemClick = (path: string) => {
+  const handleItemClick = (path: string, event: React.MouseEvent) => {
+    event.preventDefault(); // Prevent default link behavior
     if (path === '/new-login') {
       // If login is clicked, navigate outside the dashboard
       navigate(path);
@@ -32,11 +32,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
   };
 
   return (
-    <motion.div
-      initial={{ x: '-100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '-100%' }}
-      transition={{ duration: 0.6 }}
+    <div
       className="fixed top-0 left-0 w-[23.75rem] h-screen bg-slate-50 dark:bg-stone-950 flex flex-col border-r dark:border-stone-100 border-stone-900 z-50"
     >
       <PanelRightOpen
@@ -54,7 +50,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
               <li
                 key={item.name}
                 className="leading-7 [&:not(:first-child)]:mt-2 text-lg flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-950 dark:text-stone-50 hover:bg-stone-200 dark:hover:bg-stone-800 hover:text-accent"
-                onClick={() => handleItemClick(item.path)} 
+                onClick={(event) => handleItemClick(item.path, event)}  // Pass event to handler
               >
                 <Icon className="text-xl" />
                 <span className="font-medium">{item.name}</span>
@@ -63,7 +59,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
           })}
         </ul>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

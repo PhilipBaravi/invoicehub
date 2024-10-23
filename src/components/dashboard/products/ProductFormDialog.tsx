@@ -75,7 +75,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
                 setNewProduct({ ...newProduct, status: value as "Active" | "Draft" })
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id='status'>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>

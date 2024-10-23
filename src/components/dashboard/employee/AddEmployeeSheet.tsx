@@ -21,7 +21,6 @@ export default function AddEmployeeSheet({
   onOpenChange: (open: boolean) => void;
   onAddEmployee: (employee: Omit<Employee, 'id'>) => void;
 }) {
-  // Set the initial state for newEmployee
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id'>>({
     username: '',
     password: '',
@@ -29,16 +28,16 @@ export default function AddEmployeeSheet({
     firstName: '',
     lastName: '',
     phone: '',
-    role: { description: 'Employee' },  // Initialize role with default value
-    dateOfEmployment: new Date(),  // Default to current date
-    enabled: true, // Default enabled status
-    status: 'INACTIVE',  // Default status
+    role: { description: 'Employee' },
+    dateOfEmployment: new Date(),
+    enabled: true,
+    status: 'INACTIVE',
     company: {
       title: '',
       phone: '',
       website: '',
       address: {
-        id: 0, // Default to 0 or an appropriate number if required
+        id: 0,
         addressLine1: '',
         addressLine2: '',
         city: '',
@@ -115,10 +114,10 @@ export default function AddEmployeeSheet({
       firstName: '',
       lastName: '',
       phone: '',
-      role: { description: 'Employee' },  // Reset role to default value
-      dateOfEmployment: new Date(),  // Reset date to current date
-      enabled: true,  // Reset enabled status
-      status: 'INACTIVE',  // Reset status
+      role: { description: 'Employee' },
+      dateOfEmployment: new Date(),
+      enabled: true,
+      status: 'INACTIVE',
       company: {
         title: '',
         phone: '',
@@ -146,7 +145,7 @@ export default function AddEmployeeSheet({
           <SheetTitle>Add New Employee</SheetTitle>
           <SheetDescription>Enter the details of the new employee below.</SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} id='addEmployeeForm' className="space-y-4 mt-4">
           <div>
             <Label htmlFor="username">Email</Label>
             <Input
@@ -156,6 +155,7 @@ export default function AddEmployeeSheet({
               value={newEmployee.username}
               onChange={handleInputChange}
               required
+              autoComplete="email"
             />
             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
           </div>
@@ -164,10 +164,11 @@ export default function AddEmployeeSheet({
             <Input
               id="password"
               name="password"
-              type="text"
+              type="password"
               value={newEmployee.password}
               onChange={handleInputChange}
               required
+              autoComplete="new-password"
               className="pr-10"
             />
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
@@ -180,6 +181,7 @@ export default function AddEmployeeSheet({
               value={newEmployee.firstName}
               onChange={handleInputChange}
               required
+              autoComplete="given-name"
             />
             {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
           </div>
@@ -191,6 +193,7 @@ export default function AddEmployeeSheet({
               value={newEmployee.lastName}
               onChange={handleInputChange}
               required
+              autoComplete="family-name"
             />
             {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
           </div>
@@ -207,16 +210,19 @@ export default function AddEmployeeSheet({
                 ))}
               </SelectContent>
             </Select>
-            <Input
-              id="phone"
-              name="phone"
-              value={newEmployee.phone}
-              onChange={handleInputChange}
-              placeholder={phoneCode}
-              className="w-full"
-              required
-            />
-            {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+            <div className='flex flex-col items-center'>
+              <Input
+                id="phone"
+                name="phone"
+                value={newEmployee.phone}
+                onChange={handleInputChange}
+                placeholder={phoneCode}
+                className="w-full"
+                required
+                autoComplete="tel"
+              />
+              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+            </div>
           </div>
           <div>
             <Label htmlFor="role">Role</Label>
@@ -224,7 +230,7 @@ export default function AddEmployeeSheet({
               value={newEmployee.role.description}
               onValueChange={(value) => setNewEmployee((prev) => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}
             >
-              <SelectTrigger>
+              <SelectTrigger id='role'>
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
@@ -237,7 +243,7 @@ export default function AddEmployeeSheet({
           <div>
             <Label htmlFor="dateOfEmployment">Date of Employment</Label>
             <Popover>
-              <PopoverTrigger asChild>
+              <PopoverTrigger asChild id='dateOfEmployment'>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {newEmployee.dateOfEmployment ? format(newEmployee.dateOfEmployment, 'PPP') : <span>Pick a date</span>}

@@ -2,7 +2,6 @@ import { FC, useState } from "react";
 import { Menu } from "lucide-react";
 import SideBar from "../sidebar/SideBar";
 import { ModeToggle } from "../ModeToggle";
-import { AnimatePresence } from "framer-motion";
 import HeaderAvatar from "./HeaderAvatar";
 import { useMediaQuery } from 'react-responsive';
 import LanguageSelector from "@/components/main-authentication/new-login-page/LanguageSelector";
@@ -12,7 +11,7 @@ type HeaderProps = {
   toggleLargeSidebar: () => void;
 };
 
-const Header: FC<HeaderProps> = ({ toggleLargeSidebar }) => {
+const Header: FC<HeaderProps> = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' });
@@ -34,7 +33,7 @@ const Header: FC<HeaderProps> = ({ toggleLargeSidebar }) => {
       </div>
       <div className="flex-grow flex items-center pl-[20px] pt-[20px] hidden lg:block">
         <HeaderBreadcrumbs />
-        </div>
+      </div>
       <div className="flex items-center gap-[20px] pr-[20px]">
         <LanguageSelector />
         <ModeToggle />
@@ -42,12 +41,8 @@ const Header: FC<HeaderProps> = ({ toggleLargeSidebar }) => {
       </div>
 
       {/* Sidebar for small screens */}
-      {!isLargeScreen && (
-        <AnimatePresence>
-          {isSidebarOpen && (
-            <SideBar isOpen={isSidebarOpen} onClose={toggleSidebar} />
-          )}
-        </AnimatePresence>
+      {!isLargeScreen && isSidebarOpen && (
+        <SideBar isOpen={isSidebarOpen} onClose={toggleSidebar} />
       )}
     </div>
   );

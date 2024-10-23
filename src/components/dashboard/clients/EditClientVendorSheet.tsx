@@ -149,7 +149,7 @@ export default function EditClientVendorSheet({
                 }))
               }
             >
-              <SelectTrigger>
+              <SelectTrigger id="clientVendorType">
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
