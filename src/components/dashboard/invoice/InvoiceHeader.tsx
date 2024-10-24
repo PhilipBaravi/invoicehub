@@ -1,6 +1,5 @@
 import { FC, useRef } from "react"
 import { BusinessInfo } from "./invoicetypes"
-import BusinessInfoDialog from "./BusinessInfoDialog"
 
 interface InvoiceHeaderProps {
   logo: string | null
@@ -51,7 +50,6 @@ const InvoiceHeader: FC<InvoiceHeaderProps> = ({
         <p>{businessInfo.name}</p>
         {businessInfo.showPhone && <p>{businessInfo.phone}</p>}
         <p>{businessInfo.country}</p>
-        <BusinessInfoDialog businessInfo={businessInfo} setBusinessInfo={setBusinessInfo} />
       </div>
     </div>
   )

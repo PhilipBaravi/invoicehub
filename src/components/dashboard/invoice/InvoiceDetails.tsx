@@ -52,10 +52,10 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({
         </div>
       </div>
       <div>
-        <Label htmlFor="dueDate">Due Date</Label>
+        {/* <Label htmlFor="dueDate">Due Date</Label>
         <div className="relative">
           <Calendar />
-        </div>
+        </div> */}
       </div>
       <div>
         <Label htmlFor="invoiceNumber">Invoice Number</Label>

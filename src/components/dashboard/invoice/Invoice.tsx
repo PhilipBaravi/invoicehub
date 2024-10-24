@@ -161,139 +161,7 @@ export default function InvoiceCreator() {
     link.click()
   }
 
-  const BusinessInfoDialog = () => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [localBusinessInfo, setLocalBusinessInfo] = useState<BusinessInfo>(businessInfo)
-
-    const handleApplyChanges = () => {
-      setBusinessInfo(localBusinessInfo)
-      setIsOpen(false)
-    }
-
-    return (
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button variant="link" className="text-blue-500 p-0">
-            Edit Business Information
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Business Information</DialogTitle>
-          </DialogHeader>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <div>
-              <Label htmlFor="businessName">Business Name</Label>
-              <Input
-                id="businessName"
-                value={localBusinessInfo.name}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, name: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input
-                id="phoneNumber"
-                value={localBusinessInfo.phone}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, phone: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="showPhone"
-                checked={localBusinessInfo.showPhone}
-                onCheckedChange={(checked) => setLocalBusinessInfo({ ...localBusinessInfo, showPhone: checked as boolean })}
-              />
-              <Label htmlFor="showPhone">Show phone number</Label>
-            </div>
-            <div>
-              <Label htmlFor="country">Country</Label>
-              <Input
-                id="country"
-                value={localBusinessInfo.country}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, country: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="address1">Address Line 1</Label>
-              <Input
-                id="address1"
-                value={localBusinessInfo.address1}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, address1: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="address2">Address Line 2</Label>
-              <Input
-                id="address2"
-                value={localBusinessInfo.address2}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, address2: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="town">Town/City</Label>
-              <Input
-                id="town"
-                value={localBusinessInfo.town}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, town: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="state">State/Province</Label>
-              <Input
-                id="state"
-                value={localBusinessInfo.state}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, state: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="postalCode">Postal Code</Label>
-              <Input
-                id="postalCode"
-                value={localBusinessInfo.postalCode}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, postalCode: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="showAddress"
-                checked={localBusinessInfo.showAddress}
-                onCheckedChange={(checked) => setLocalBusinessInfo({ ...localBusinessInfo, showAddress: checked as boolean })}
-              />
-              <Label htmlFor="showAddress">Show address</Label>
-            </div>
-            <div>
-              <Label htmlFor="taxName">Tax Name</Label>
-              <Input
-                id="taxName"
-                value={localBusinessInfo.taxName}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, taxName: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="taxNumber">Tax Number</Label>
-              <Input
-                id="taxNumber"
-                value={localBusinessInfo.taxNumber}
-                onChange={(e) => setLocalBusinessInfo({ ...localBusinessInfo, taxNumber: e.target.value })}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="showTax"
-                checked={localBusinessInfo.showTax}
-                onCheckedChange={(checked) => setLocalBusinessInfo({ ...localBusinessInfo, showTax: checked as boolean })}
-              />
-              <Label htmlFor="showTax">Show tax information</Label>
-            </div>
-            <Button type="submit" onClick={handleApplyChanges}>
-              Apply Changes
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-    )
-  }
+ 
 
   const AddTaxDialog = ({ itemId }: { itemId: number }) => {
     const [isOpen, setIsOpen] = useState(false)
@@ -351,7 +219,7 @@ export default function InvoiceCreator() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full ">
+    <div className="container mx-auto p-4">
       <div className="flex justify-end space-x-2 mb-4">
         <Button variant="outline">Cancel</Button>
         <Button variant="secondary">Save</Button>
@@ -389,7 +257,7 @@ export default function InvoiceCreator() {
                     <p>{businessInfo.name}</p>
                     {businessInfo.showPhone && <p>{businessInfo.phone}</p>}
                     <p>{businessInfo.country}</p>
-                    <BusinessInfoDialog />
+
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mb-4">
@@ -430,10 +298,10 @@ export default function InvoiceCreator() {
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="dueDate">Due Date</Label>
+                    {/* <Label htmlFor="dueDate">Due Date</Label>
                     <div className="relative">
                       <Calendar />
-                    </div>
+                    </div> */}
                   </div>
                   <div>
                     <Label htmlFor="invoiceNumber">Invoice Number</Label>
