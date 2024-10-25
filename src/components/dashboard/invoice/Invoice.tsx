@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import testBusinessInfoData from './test-business-info-data';
 import { useTheme } from '../layout/ThemeProvider';
-import { LineItem, predefinedItems } from './predefinedItems';
 import { ClientVendor } from '../clients/test-clientvendor-list-data';
+import testCategoryListData from '../products/categories/test-category-list-data';
+import testProductListData from '../products/test-product-list-data';
 import LogoUploader from './LogoUploader';
 import ClientSelector from './ClientSelector';
 import InvoiceDetails from './InvoiceDetails';
@@ -14,6 +15,16 @@ import Signatures from './Signatures';
 import Attachments from './Attachments';
 import TaxDialog from './TaxDialog';
 import testClientVendorListData from '../clients/test-clientvendor-list-data';
+
+interface LineItem {
+  itemId: number;
+  categoryId: number;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  tax: number;
+}
 
 const Invoice: FC = () => {
   const [invoice, setInvoice] = useState({
@@ -52,12 +63,34 @@ const Invoice: FC = () => {
   const penColor = theme === "dark" ? "white" : "black";
 
   const handleAddLineItem = () => {
-    setLineItems([...lineItems, { itemId: '', name: '', description: '', price: 0, quantity: 1, tax: 0 }]);
+    setLineItems([
+      ...lineItems,
+      {
+        itemId: 0,
+        categoryId: 0,
+        name: '',
+        description: '',
+        price: 0,
+        quantity: 1,
+        tax: 0,
+      },
+    ]);
   };
 
   const handleLineItemChange = (index: number, field: keyof LineItem, value: string | number) => {
     const updatedLineItems = lineItems.map((item, i) =>
-      i === index ? { ...item, [field]: field === 'price' || field === 'quantity' ? Number(value) : value } : item
+      i === index
+        ? {
+            ...item,
+            [field]:
+              field === 'price' ||
+              field === 'quantity' ||
+              field === 'itemId' ||
+              field === 'categoryId'
+                ? Number(value)
+                : value,
+          }
+        : item
     );
     setLineItems(updatedLineItems);
     updateTotals(updatedLineItems);
@@ -76,7 +109,7 @@ const Invoice: FC = () => {
       ...invoice,
       price: subtotal,
       tax: tax,
-      total: subtotal + tax
+      total: subtotal + tax,
     });
   };
 
@@ -121,11 +154,20 @@ const Invoice: FC = () => {
     }
   };
 
-  const handleItemSelect = (index: number, itemId: string) => {
-    const selectedItem = predefinedItems.find(item => item.id === itemId);
-    if (selectedItem) {
+  const handleItemSelect = (index: number, categoryId: number, productId: number) => {
+    const selectedProduct = testProductListData.data.find((product) => product.id === productId);
+    if (selectedProduct) {
       const updatedLineItems = lineItems.map((item, i) =>
-        i === index ? { ...item, itemId, name: selectedItem.name, description: selectedItem.description, price: selectedItem.price } : item
+        i === index
+          ? {
+              ...item,
+              itemId: selectedProduct.id,
+              categoryId: categoryId,
+              name: selectedProduct.name,
+              description: '', // Set description if available
+              price: selectedProduct.price,
+            }
+          : item
       );
       setLineItems(updatedLineItems);
       updateTotals(updatedLineItems);
@@ -144,12 +186,13 @@ const Invoice: FC = () => {
   };
 
   const handleSaveSignature = (type: 'business' | 'client') => {
-    const signatureDataUrl = type === 'business'
-      ? sigCanvasBusinessRef.current?.getTrimmedCanvas().toDataURL("image/png")
-      : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL("image/png");
+    const signatureDataUrl =
+      type === 'business'
+        ? sigCanvasBusinessRef.current?.getTrimmedCanvas().toDataURL('image/png')
+        : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL('image/png');
     setInvoice((prev) => ({
       ...prev,
-      [`${type}Signature`]: signatureDataUrl || ''
+      [`${type}Signature`]: signatureDataUrl || '',
     }));
   };
 
@@ -188,10 +231,7 @@ const Invoice: FC = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <ClientSelector
-            selectedClient={selectedClient}
-            handleClientSelect={handleClientSelect}
-          />
+          <ClientSelector selectedClient={selectedClient} handleClientSelect={handleClientSelect} />
           <InvoiceDetails invoice={invoice} setInvoice={setInvoice} />
         </div>
         <LineItems
@@ -216,7 +256,11 @@ const Invoice: FC = () => {
           businessSignatureInputRef={businessSignatureInputRef}
           clientSignatureInputRef={clientSignatureInputRef}
         />
-        <Attachments handleAttachment={handleAttachment} fileInputRef={fileInputRef} handleFileUpload={handleFileUpload} />
+        <Attachments
+          handleAttachment={handleAttachment}
+          fileInputRef={fileInputRef}
+          handleFileUpload={handleFileUpload}
+        />
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">Cancel</Button>

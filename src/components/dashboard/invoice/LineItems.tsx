@@ -5,8 +5,18 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { PlusIcon, Trash2Icon } from 'lucide-react'
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
-import { LineItem, predefinedItems } from './predefinedItems'
+import testCategoryListData from '../products/categories/test-category-list-data';
+import testProductListData from '../products/test-product-list-data';
+
+interface LineItem {
+  itemId: number;
+  categoryId: number;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  tax: number;
+}
 
 interface LineItemsProps {
   lineItems: LineItem[];
@@ -14,7 +24,7 @@ interface LineItemsProps {
   handleLineItemChange: (index: number, field: keyof LineItem, value: string | number) => void;
   handleRemoveLineItem: (index: number) => void;
   handleAddTaxes: (index: number) => void;
-  handleItemSelect: (index: number, itemId: string) => void;
+  handleItemSelect: (index: number, categoryId: number, productId: number) => void;
 }
 
 const LineItems: FC<LineItemsProps> = ({
@@ -25,6 +35,9 @@ const LineItems: FC<LineItemsProps> = ({
   handleAddTaxes,
   handleItemSelect
 }) => {
+  const categories = testCategoryListData.data;
+  const products = testProductListData.data;
+
   return (
     <div>
       <Label>Line Items</Label>
@@ -32,8 +45,8 @@ const LineItems: FC<LineItemsProps> = ({
         <table className="w-full mb-2">
           <thead>
             <tr>
-              <th className="text-left w-[20%]">Item</th>
-              <th className="text-left w-[20%]">Name</th>
+              <th className="text-left w-[20%]">Category</th>
+              <th className="text-left w-[20%]">Product</th>
               <th className="text-left w-[15%]">Price</th>
               <th className="text-left w-[15%]">Quantity</th>
               <th className="text-center w-[15%]">Line Total</th>
@@ -50,49 +63,41 @@ const LineItems: FC<LineItemsProps> = ({
             {lineItems.map((item, index) => (
               <div key={index} className="mb-4">
                 <div className="flex mb-2">
-                  <Select onValueChange={(value) => handleItemSelect(index, value)}>
+                  <Select
+                    value={item.categoryId ? item.categoryId.toString() : undefined}
+                    onValueChange={(value) => handleLineItemChange(index, 'categoryId', Number(value))}
+                  >
                     <SelectTrigger className="w-[20%] mr-2">
-                      <SelectValue placeholder="Select an item" />
+                      <SelectValue placeholder="Select Category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {predefinedItems.map((predefinedItem) => (
-                        <SelectItem key={predefinedItem.id} value={predefinedItem.id}>
-                          <div className="flex items-center justify-between w-full">
-                            <span>{predefinedItem.name}</span>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <Button variant="link">Nested Options</Button>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-48">
-                                <Select>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Choose nested option" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value={`${predefinedItem.id}-nestedOption1`}>
-                                      Nested Option 1 for {predefinedItem.name}
-                                    </SelectItem>
-                                    <SelectItem value={`${predefinedItem.id}-nestedOption2`}>
-                                      Nested Option 2 for {predefinedItem.name}
-                                    </SelectItem>
-                                    <SelectItem value={`${predefinedItem.id}-nestedOption3`}>
-                                      Nested Option 3 for {predefinedItem.name}
-                                    </SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              </PopoverContent>
-                            </Popover>
-                          </div>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id.toString()}>
+                          {category.description}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <Input
-                    className="w-[20%] mr-2"
-                    placeholder="Enter an Item Name"
-                    value={item.name}
-                    onChange={(e) => handleLineItemChange(index, 'name', e.target.value)}
-                  />
+
+                  <Select
+                    value={item.itemId ? item.itemId.toString() : undefined}
+                    onValueChange={(value) => handleItemSelect(index, item.categoryId, Number(value))}
+                    disabled={!item.categoryId}
+                  >
+                    <SelectTrigger className="w-[20%] mr-2">
+                      <SelectValue placeholder="Select Product" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products
+                        .filter((product) => product.category.id === item.categoryId)
+                        .map((product) => (
+                          <SelectItem key={product.id} value={product.id.toString()}>
+                            {product.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+
                   <Input
                     className="w-[15%] mr-2"
                     type="number"
@@ -109,7 +114,9 @@ const LineItems: FC<LineItemsProps> = ({
                     {(item.price * item.quantity).toFixed(2)}
                   </div>
                   <div className="w-[15%] flex items-center justify-center">
-                    <Button variant="link" onClick={() => handleAddTaxes(index)} className="mr-2 text-blue-700">Add Taxes</Button>
+                    <Button variant="link" onClick={() => handleAddTaxes(index)} className="mr-2 text-blue-700">
+                      Add Taxes
+                    </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleRemoveLineItem(index)}>
                       <Trash2Icon className="h-4 w-4" />
                     </Button>
