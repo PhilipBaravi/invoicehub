@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import CurrencyExchangeRates from "./CurrencyExchangeRates";
 import ProductSalesChart from "./ProductSalesChart";
+import { Component } from "./testChart";
 import { ArrowUpRight, TrendingUp, Users, ShoppingBag, GripVertical } from "lucide-react";
 
 import {
@@ -31,11 +32,12 @@ import { DropResult } from "react-beautiful-dnd";
 
 const DashboardDefault: FC = () => {
   const [components, setComponents] = useState([
-    { id: "currency", title: "Currency Exchange Rates", component: <CurrencyExchangeRates />, width: "col-span-full" },
-    { id: "productSales", title: "Product Sales Chart", component: <ProductSalesChart />, width: "col-span-full" },
-    { id: "stats", title: "Statistics", component: <StatisticsGrid />, width: "col-span-full" },
-    { id: "transactions", title: "Transactions", component: <TransactionsCard />, width: "col-span-1 md:col-span-2" },
-    { id: "recentSales", title: "Recent Sales", component: <RecentSalesCard />, width: "col-span-1" },
+    { id: "stats", title: "Statistics", component: <StatisticsGrid />, width: "col-span-8" },
+    { id: "currency", title: "Currency Exchange Rates", component: <CurrencyExchangeRates />, width: "col-span-8" },
+    { id: 'testCharts', title: 'Test Charts', component: <Component />, width: "col-span-4" },
+
+    { id: "productSales", title: "Product Sales Chart", component: <ProductSalesChart />, width: "col-span-8" },
+    { id: "transactions", title: "Transactions", component: <TransactionsCard />, width: "col-span-4" },
   ]);
 
   const onDragEnd = (result: DropResult) => {
@@ -57,25 +59,22 @@ const DashboardDefault: FC = () => {
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="dashboard">
             {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
-                {components.map((component, index) => (
-                  <Draggable key={component.id} draggableId={component.id} index={index}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                        className={`bg-background rounded-lg shadow-md p-4 ${component.width} overflow-hidden w-full`}
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <h2 className="text-xl font-semibold">{component.title}</h2>
-                          <GripVertical className="text-muted-foreground cursor-move" />
-                        </div>
-                        {component.component}
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
+              <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-12 gap-4 auto-rows-min">
+                {/* Left Side (2/3 width) */}
+                <div className="col-span-8 grid grid-rows-2 gap-4">
+                  <div className="row-span-1">{components[0].component}</div>
+                  <div className="row-span-1">{components[1].component}</div>
+                </div>
+
+                {/* Right Side (1/3 width) */}
+                <div className="col-span-4 grid-rows-2 gap-4">
+                  <div className="row-span-2">{components[2].component}</div>
+                </div>
+
+                {/* Bottom Row */}
+                <div className="col-span-4">{components[4].component}</div>
+                <div className="col-span-8">{components[3].component}</div>
+
                 {provided.placeholder}
               </div>
             )}

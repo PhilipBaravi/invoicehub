@@ -1,472 +1,236 @@
-"use client"
-
-import React, { useState, useRef } from "react"
+import { useState, useRef, FC } from 'react';
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { CalendarIcon, PlusCircle, Trash2, Paperclip, X } from "lucide-react"
-import { Calendar } from "@/components/ui/calendar"
-import AddClientVendorSheet from "../clients/AddClientVendorSheet"
-import jsPDF from "jspdf"
-import html2canvas from "html2canvas"
-import JSZip from "jszip"
-import { ClientVendor } from "../clients/CliendVendorTypes"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import testBusinessInfoData from './test-business-info-data';
+import { useTheme } from '../layout/ThemeProvider';
+import { LineItem, predefinedItems } from './predefinedItems';
+import { ClientVendor } from '../clients/test-clientvendor-list-data';
+import LogoUploader from './LogoUploader';
+import ClientSelector from './ClientSelector';
+import InvoiceDetails from './InvoiceDetails';
+import LineItems from './LineItems';
+import Totals from './Totals';
+import Signatures from './Signatures';
+import Attachments from './Attachments';
+import TaxDialog from './TaxDialog';
+import testClientVendorListData from '../clients/test-clientvendor-list-data';
 
-type InvoiceItem = {
-  id: number
-  name: string
-  description: string
-  rate: number
-  qty: number
-  taxes: Tax[]
-}
+const Invoice: FC = () => {
+  const [invoice, setInvoice] = useState({
+    invoiceNo: '0000002',
+    dateOfIssue: new Date(),
+    dueDate: new Date(),
+    notes: '',
+    terms: '',
+    price: 0,
+    tax: 0,
+    total: 0,
+    businessSignature: '',
+    clientSignature: '',
+  });
 
-type Tax = {
-  rate: number
-  name: string
-  number: string
-}
+  const [lineItems, setLineItems] = useState<LineItem[]>([]);
+  const [currentItemIndex, setCurrentItemIndex] = useState<number | null>(null);
+  const [showTaxDialog, setShowTaxDialog] = useState(false);
+  const [taxDetails, setTaxDetails] = useState({ percentage: 0, name: '', number: '' });
+  const [logo, setLogo] = useState<string | null>(null);
+  const [businessSignatureImage, setBusinessSignatureImage] = useState<string | null>(null);
+  const [clientSignatureImage, setClientSignatureImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const sigCanvasBusinessRef = useRef<any>(null);
+  const sigCanvasClientRef = useRef<any>(null);
+  const businessSignatureInputRef = useRef<HTMLInputElement>(null);
+  const clientSignatureInputRef = useRef<HTMLInputElement>(null);
+  const [selectedClient, setSelectedClient] = useState<ClientVendor | null>(null);
 
-type Client = {
-  id: number
-  name: string
-  email: string
-}
+  const handleClientSelect = (clientName: string) => {
+    const client = testClientVendorListData.data.find((c) => c.name === clientName);
+    setSelectedClient(client || null);
+  };
 
-type BusinessInfo = {
-  name: string
-  phone: string
-  country: string
-  address1: string
-  address2: string
-  town: string
-  state: string
-  postalCode: string
-  taxName: string
-  taxNumber: string
-  showPhone: boolean
-  showAddress: boolean
-  showTax: boolean
-}
+  const { theme } = useTheme();
+  const penColor = theme === "dark" ? "white" : "black";
 
-export default function InvoiceCreator() {
-  const [isAddClientVendorOpen, setIsAddClientVendorOpen] = useState(false);
-  const [logo, setLogo] = useState<string | null>(null)
-  const [items, setItems] = useState<InvoiceItem[]>([])
-  const [clients, setClients] = useState<Client[]>([])
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null)
-  const [businessInfo, setBusinessInfo] = useState<BusinessInfo>({
-    name: "Saliz",
-    phone: "+34664587841",
-    country: "Spain",
-    address1: "",
-    address2: "",
-    town: "",
-    state: "",
-    postalCode: "",
-    taxName: "",
-    taxNumber: "",
-    showPhone: true,
-    showAddress: true,
-    showTax: true,
-  })
-  const [attachments, setAttachments] = useState<File[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const attachmentInputRef = useRef<HTMLInputElement>(null)
-  const invoiceRef = useRef<HTMLDivElement>(null)
+  const handleAddLineItem = () => {
+    setLineItems([...lineItems, { itemId: '', name: '', description: '', price: 0, quantity: 1, tax: 0 }]);
+  };
 
-  
+  const handleLineItemChange = (index: number, field: keyof LineItem, value: string | number) => {
+    const updatedLineItems = lineItems.map((item, i) =>
+      i === index ? { ...item, [field]: field === 'price' || field === 'quantity' ? Number(value) : value } : item
+    );
+    setLineItems(updatedLineItems);
+    updateTotals(updatedLineItems);
+  };
+
+  const handleRemoveLineItem = (index: number) => {
+    const updatedLineItems = lineItems.filter((_, i) => i !== index);
+    setLineItems(updatedLineItems);
+    updateTotals(updatedLineItems);
+  };
+
+  const updateTotals = (items: LineItem[]) => {
+    const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const tax = items.reduce((sum, item) => sum + (item.price * item.quantity * item.tax) / 100, 0);
+    setInvoice({
+      ...invoice,
+      price: subtotal,
+      tax: tax,
+      total: subtotal + tax
+    });
+  };
+
+  const handleAddTaxes = (index: number) => {
+    setCurrentItemIndex(index);
+    setShowTaxDialog(true);
+  };
+
+  const applyTaxes = () => {
+    if (currentItemIndex !== null) {
+      const updatedLineItems = lineItems.map((item, index) =>
+        index === currentItemIndex ? { ...item, tax: taxDetails.percentage } : item
+      );
+      setLineItems(updatedLineItems);
+      updateTotals(updatedLineItems);
+      setShowTaxDialog(false);
+      setCurrentItemIndex(null);
+      setTaxDetails({ percentage: 0, name: '', number: '' });
+    }
+  };
+
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
+    const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => setLogo(e.target?.result as string)
-      reader.readAsDataURL(file)
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogo(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
-  const addItem = () => {
-    setItems([...items, { id: Date.now(), name: "", description: "", rate: 0, qty: 1, taxes: [] }])
-  }
+  const handleAttachment = () => {
+    fileInputRef.current?.click();
+  };
 
-  const updateItem = (id: number, field: keyof InvoiceItem, value: string | number) => {
-    setItems(
-      items.map((item) =>
-        item.id === id ? { ...item, [field]: field === "rate" || field === "qty" ? Number(value) : value } : item
-      )
-    )
-  }
-
-  const deleteItem = (id: number) => {
-    setItems(items.filter((item) => item.id !== id))
-  }
-
-  const addTaxToItem = (itemId: number, tax: Tax) => {
-    setItems(
-      items.map((item) => (item.id === itemId ? { ...item, taxes: [...item.taxes, tax] } : item))
-    )
-  }
-
-  const calculateSubtotal = () => {
-    return items.reduce((total, item) => total + item.rate * item.qty, 0)
-  }
-
-  const calculateTaxTotal = () => {
-    return items.reduce((total, item) => {
-      const itemTotal = item.rate * item.qty
-      return total + item.taxes.reduce((taxTotal, tax) => taxTotal + (itemTotal * tax.rate) / 100, 0)
-    }, 0)
-  }
-
-  const calculateTotal = () => {
-    return calculateSubtotal() + calculateTaxTotal()
-  }
-
-  const handleAttachmentUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (files) {
-      setAttachments([...attachments, ...Array.from(files)])
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      console.log('File selected:', file.name);
+      alert(`File "${file.name}" has been selected for upload.`);
     }
-  }
+  };
 
-  const deleteAttachment = (index: number) => {
-    setAttachments(attachments.filter((_, i) => i !== index))
-  }
-
-  const handleDownloadInvoice = async () => {
-    if (!invoiceRef.current) return
-
-    const canvas = await html2canvas(invoiceRef.current)
-    const imgData = canvas.toDataURL("image/png")
-    const pdf = new jsPDF("p", "mm", "a4")
-    const imgProps = pdf.getImageProperties(imgData)
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight)
-
-    const zip = new JSZip()
-    zip.file("invoice.pdf", pdf.output("blob"))
-    attachments.forEach((file) => {
-      zip.file(file.name, file)
-    })
-    const content = await zip.generateAsync({ type: "blob" })
-    const link = document.createElement("a")
-    link.href = URL.createObjectURL(content)
-    link.download = "invoice_with_attachments.zip"
-    link.click()
-  }
-
- 
-
-  const AddTaxDialog = ({ itemId }: { itemId: number }) => {
-    const [isOpen, setIsOpen] = useState(false)
-    const [tax, setTax] = useState<Tax>({ rate: 0, name: "", number: "" })
-
-    const handleAddTax = () => {
-      addTaxToItem(itemId, tax)
-      setTax({ rate: 0, name: "", number: "" })
-      setIsOpen(false)
+  const handleItemSelect = (index: number, itemId: string) => {
+    const selectedItem = predefinedItems.find(item => item.id === itemId);
+    if (selectedItem) {
+      const updatedLineItems = lineItems.map((item, i) =>
+        i === index ? { ...item, itemId, name: selectedItem.name, description: selectedItem.description, price: selectedItem.price } : item
+      );
+      setLineItems(updatedLineItems);
+      updateTotals(updatedLineItems);
     }
+  };
 
-    return (
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <Button variant="link" className="text-blue-500 p-0">
-            Add Taxes
-          </Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Taxes</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="taxRate">Rate (%)</Label>
-              <Input
-                id="taxRate"
-                type="number"
-                value={tax.rate}
-                onChange={(e) => setTax({ ...tax, rate: Number(e.target.value) })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="taxName">Tax Name</Label>
-              <Input
-                id="taxName"
-                value={tax.name}
-                onChange={(e) => setTax({ ...tax, name: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="taxNumber">Tax Number (Optional)</Label>
-              <Input
-                id="taxNumber"
-                value={tax.number}
-                onChange={(e) => setTax({ ...tax, number: e.target.value })}
-              />
-            </div>
-            <Checkbox id="applyToAll"  />
-            <Button onClick={handleAddTax}>Apply Taxes</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    )
-  }
+  const handleClearSignature = (type: 'business' | 'client') => {
+    if (type === 'business') {
+      sigCanvasBusinessRef.current?.clear();
+      setBusinessSignatureImage(null);
+    } else {
+      sigCanvasClientRef.current?.clear();
+      setClientSignatureImage(null);
+    }
+    setInvoice((prev) => ({ ...prev, [`${type}Signature`]: '' }));
+  };
+
+  const handleSaveSignature = (type: 'business' | 'client') => {
+    const signatureDataUrl = type === 'business'
+      ? sigCanvasBusinessRef.current?.getTrimmedCanvas().toDataURL("image/png")
+      : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL("image/png");
+    setInvoice((prev) => ({
+      ...prev,
+      [`${type}Signature`]: signatureDataUrl || ''
+    }));
+  };
+
+  const handleSignatureUpload = (event: React.ChangeEvent<HTMLInputElement>, type: 'business' | 'client') => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (type === 'business') {
+          setBusinessSignatureImage(result);
+        } else {
+          setClientSignatureImage(result);
+        }
+        setInvoice((prev) => ({ ...prev, [`${type}Signature`]: result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-end space-x-2 mb-4">
+    <Card className="w-[95%] max-w-7xl mx-auto">
+      <CardHeader>
+        <CardTitle>New Invoice</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex justify-between items-start">
+          <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
+          <div className="text-right">
+            <h2 className="text-xl font-bold">{testBusinessInfoData.data.title}</h2>
+            <p>{testBusinessInfoData.data.phone}</p>
+            <p className="text-blue-700">{testBusinessInfoData.data.website}</p>
+            <p>{testBusinessInfoData.data.address.country}</p>
+            <p>{testBusinessInfoData.data.address.city}</p>
+            <p>{testBusinessInfoData.data.address.addressLine1}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <ClientSelector
+            selectedClient={selectedClient}
+            handleClientSelect={handleClientSelect}
+          />
+          <InvoiceDetails invoice={invoice} setInvoice={setInvoice} />
+        </div>
+        <LineItems
+          lineItems={lineItems}
+          handleAddLineItem={handleAddLineItem}
+          handleLineItemChange={handleLineItemChange}
+          handleRemoveLineItem={handleRemoveLineItem}
+          handleAddTaxes={handleAddTaxes}
+          handleItemSelect={handleItemSelect}
+        />
+        <Totals invoice={invoice} setInvoice={setInvoice} />
+        <Signatures
+          invoice={invoice}
+          penColor={penColor}
+          sigCanvasBusinessRef={sigCanvasBusinessRef}
+          sigCanvasClientRef={sigCanvasClientRef}
+          businessSignatureImage={businessSignatureImage}
+          clientSignatureImage={clientSignatureImage}
+          handleClearSignature={handleClearSignature}
+          handleSaveSignature={handleSaveSignature}
+          handleSignatureUpload={handleSignatureUpload}
+          businessSignatureInputRef={businessSignatureInputRef}
+          clientSignatureInputRef={clientSignatureInputRef}
+        />
+        <Attachments handleAttachment={handleAttachment} fileInputRef={fileInputRef} handleFileUpload={handleFileUpload} />
+      </CardContent>
+      <CardFooter className="flex justify-between">
         <Button variant="outline">Cancel</Button>
-        <Button variant="secondary">Save</Button>
-        <Button onClick={handleDownloadInvoice}>Download Invoice</Button>
-      </div>
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">New Invoice</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div ref={invoiceRef}>
-                <div className="mb-4 flex justify-between items-start">
-                  <div
-                    className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    {logo ? (
-                      <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-                    ) : (
-                      <span className="text-sm text-gray-500 w-[80%] text-center">
-                        Select a file
-                      </span>
-                    )}
-                  </div>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    onChange={handleLogoUpload}
-                    accept="image/*"
-                  />
-                  <div>
-                    <p>{businessInfo.name}</p>
-                    {businessInfo.showPhone && <p>{businessInfo.phone}</p>}
-                    <p>{businessInfo.country}</p>
+        <Button>Save Invoice</Button>
+      </CardFooter>
+      <TaxDialog
+        showTaxDialog={showTaxDialog}
+        setShowTaxDialog={setShowTaxDialog}
+        taxDetails={taxDetails}
+        setTaxDetails={setTaxDetails}
+        applyTaxes={applyTaxes}
+      />
+    </Card>
+  );
+};
 
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <Label htmlFor="billedTo">Billed To</Label>
-                    <Select
-                      onValueChange={(value) =>
-                        setSelectedClient(clients.find((c) => c.id.toString() === value) || null)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a Client" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {clients.map((client) => (
-                          <SelectItem key={client.id} value={client.id.toString()}>
-                            {client.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                      {/* <AddClientVendorSheet isOpen={false} onOpenChange={function (open: boolean): void {
-                        throw new Error("Function not implemented.")
-                      } } onAddClientVendor={function (clientVendor: ClientVendor): void {
-                        throw new Error("Function not implemented.")
-                      } } /> */}
-                    </Select>
-                    {selectedClient && (
-                      <Button variant="link" className="text-blue-500 p-0">
-                        Remove Client
-                      </Button>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="dateOfIssue">Date of Issue</Label>
-                    <div className="relative">
-                      <Input id="dateOfIssue" type="date" />
-                      <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    </div>
-                  </div>
-                  <div>
-                    {/* <Label htmlFor="dueDate">Due Date</Label>
-                    <div className="relative">
-                      <Calendar />
-                    </div> */}
-                  </div>
-                  <div>
-                    <Label htmlFor="invoiceNumber">Invoice Number</Label>
-                    <Input id="invoiceNumber" placeholder="0000001" />
-                  </div>
-                  <div>
-                    <Label htmlFor="reference">Reference</Label>
-                    <Input id="reference" placeholder="Enter value (e.g. PO #)" />
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left pb-2">Description</th>
-                        <th className="text-right pb-2">Rate</th>
-                        <th className="text-right pb-2">Qty</th>
-                        <th className="text-right pb-2">Line Total</th>
-                        <th className="text-right pb-2">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((item) => (
-                        <React.Fragment key={item.id}>
-                          <tr className="border-b">
-                            <td className="py-2">
-                              <Input
-                                value={item.name}
-                                onChange={(e) => updateItem(item.id, "name", e.target.value)}
-                                placeholder="Enter an Item Name"
-                              />
-                            </td>
-                            <td className="py-2">
-                              <Input
-                                type="number"
-                                value={item.rate}
-                                onChange={(e) => updateItem(item.id, "rate", e.target.value)}
-                                className="text-right"
-                              />
-                            </td>
-                            <td className="py-2">
-                              <Input
-                                type="number"
-                                value={item.qty}
-                                onChange={(e) => updateItem(item.id, "qty", e.target.value)}
-                                className="text-right"
-                              />
-                            </td>
-                            <td className="py-2 text-right">{(item.rate * item.qty).toFixed(2)}</td>
-                            <td className="py-2 text-right">
-                              <AddTaxDialog itemId={item.id} />
-                              <Button variant="ghost" onClick={() => deleteItem(item.id)}>
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            </td>
-                          </tr>
-                          <tr className="border-b">
-                            <td className="py-2" colSpan={5}>
-                              <Textarea
-                                value={item.description}
-                                onChange={(e) => updateItem(item.id, "description", e.target.value)}
-                                placeholder="Enter an Item Description"
-                              />
-                            </td>
-                          </tr>
-                        </React.Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                  <Button variant="outline" className="mt-2" onClick={addItem}>
-                    <PlusCircle className="w-4 h-4 mr-2" /> Add a Line
-                  </Button>
-                </div>
-                <div className="flex justify-end">
-                  <div className="w-1/2">
-                    <div className="flex justify-between mb-2">
-                      <span>Subtotal</span>
-                      <span>{calculateSubtotal().toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between mb-2">
-                      <span>Tax</span>
-                      <span>{calculateTaxTotal().toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-bold">
-                      <span>Total</span>
-                      <span>{calculateTotal().toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-4">
-                  <Label htmlFor="notes">Notes</Label>
-                  <Textarea id="notes" placeholder="Enter notes or bank transfer details (optional)" />
-                </div>
-                <div className="mt-4">
-                  <Label htmlFor="terms">Terms</Label>
-                  <Textarea
-                    id="terms"
-                    placeholder="Enter your terms and conditions. (Pro tip: It pays to be polite. Invoices that include 'please' and 'thanks' get paid up to 2 days faster.)"
-                  />
-                </div>
-                <div className="mt-4">
-                  <h3 className="text-lg font-semibold mb-2">Attachments</h3>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
-                    <Button variant="outline" onClick={() => attachmentInputRef.current?.click()}>
-                      <PlusCircle className="w-4 h-4 mr-2" /> Add an attachment
-                    </Button>
-                    <input
-                      type="file"
-                      ref={attachmentInputRef}
-                      className="hidden"
-                      onChange={handleAttachmentUpload}
-                      multiple
-                    />
-                    {attachments.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between mt-2">
-                        <div className="flex items-center">
-                          <Paperclip className="w-4 h-4 mr-2" />
-                          <span>{file.name}</span>
-                        </div>
-                        <Button variant="ghost" onClick={() => deleteAttachment(index)}>
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-              <p className="text-sm text-gray-500">For This Invoice</p>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between items-center">
-                <span>Accept Online Payments</span>
-                <span>NO</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span>Customize Invoice Style</span>
-                <span>{">"}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span>Send Reminders</span>
-                <span>NO</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span>Change Late Fees</span>
-                <span>NO</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span>Currency & Language</span>
-                <span>{">"}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span>Invoice Attachments</span>
-                <span>NO</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
-  )
-}
+export default Invoice;
