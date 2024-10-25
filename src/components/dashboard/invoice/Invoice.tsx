@@ -1,12 +1,11 @@
+// Invoice.tsx
 import { useState, useRef, FC } from 'react';
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import testBusinessInfoData from './test-business-info-data';
 import { useTheme } from '../layout/ThemeProvider';
-import { ClientVendor } from '../clients/test-clientvendor-list-data';
-import testCategoryListData from '../products/categories/test-category-list-data';
+import testClientVendorListData, { ClientVendor } from '../clients/test-clientvendor-list-data';
 import testProductListData from '../products/test-product-list-data';
-import LogoUploader from './LogoUploader';
 import ClientSelector from './ClientSelector';
 import InvoiceDetails from './InvoiceDetails';
 import LineItems from './LineItems';
@@ -14,7 +13,8 @@ import Totals from './Totals';
 import Signatures from './Signatures';
 import Attachments from './Attachments';
 import TaxDialog from './TaxDialog';
-import testClientVendorListData from '../clients/test-clientvendor-list-data';
+import { pdf } from '@react-pdf/renderer';
+import InvoicePDF from './InvoicePdf';
 
 interface LineItem {
   itemId: number;
@@ -44,7 +44,6 @@ const Invoice: FC = () => {
   const [currentItemIndex, setCurrentItemIndex] = useState<number | null>(null);
   const [showTaxDialog, setShowTaxDialog] = useState(false);
   const [taxDetails, setTaxDetails] = useState({ percentage: 0, name: '', number: '' });
-  const [logo, setLogo] = useState<string | null>(null);
   const [businessSignatureImage, setBusinessSignatureImage] = useState<string | null>(null);
   const [clientSignatureImage, setClientSignatureImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -60,7 +59,7 @@ const Invoice: FC = () => {
   };
 
   const { theme } = useTheme();
-  const penColor = theme === "dark" ? "white" : "black";
+  const penColor = theme === 'dark' ? 'white' : 'black';
 
   const handleAddLineItem = () => {
     setLineItems([
@@ -131,17 +130,6 @@ const Invoice: FC = () => {
     }
   };
 
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setLogo(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleAttachment = () => {
     fileInputRef.current?.click();
   };
@@ -164,7 +152,7 @@ const Invoice: FC = () => {
               itemId: selectedProduct.id,
               categoryId: categoryId,
               name: selectedProduct.name,
-              description: '', // Set description if available
+              description: '',
               price: selectedProduct.price,
             }
           : item
@@ -178,11 +166,12 @@ const Invoice: FC = () => {
     if (type === 'business') {
       sigCanvasBusinessRef.current?.clear();
       setBusinessSignatureImage(null);
+      setInvoice((prev) => ({ ...prev, businessSignature: '' }));
     } else {
       sigCanvasClientRef.current?.clear();
       setClientSignatureImage(null);
+      setInvoice((prev) => ({ ...prev, clientSignature: '' }));
     }
-    setInvoice((prev) => ({ ...prev, [`${type}Signature`]: '' }));
   };
 
   const handleSaveSignature = (type: 'business' | 'client') => {
@@ -190,13 +179,21 @@ const Invoice: FC = () => {
       type === 'business'
         ? sigCanvasBusinessRef.current?.getTrimmedCanvas().toDataURL('image/png')
         : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL('image/png');
-    setInvoice((prev) => ({
-      ...prev,
-      [`${type}Signature`]: signatureDataUrl || '',
-    }));
+    if (signatureDataUrl) {
+      if (type === 'business') {
+        setBusinessSignatureImage(signatureDataUrl);
+        setInvoice((prev) => ({ ...prev, businessSignature: signatureDataUrl }));
+      } else {
+        setClientSignatureImage(signatureDataUrl);
+        setInvoice((prev) => ({ ...prev, clientSignature: signatureDataUrl }));
+      }
+    }
   };
 
-  const handleSignatureUpload = (event: React.ChangeEvent<HTMLInputElement>, type: 'business' | 'client') => {
+  const handleSignatureUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: 'business' | 'client'
+  ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -204,76 +201,104 @@ const Invoice: FC = () => {
         const result = e.target?.result as string;
         if (type === 'business') {
           setBusinessSignatureImage(result);
+          setInvoice((prev) => ({ ...prev, businessSignature: result }));
         } else {
           setClientSignatureImage(result);
+          setInvoice((prev) => ({ ...prev, clientSignature: result }));
         }
-        setInvoice((prev) => ({ ...prev, [`${type}Signature`]: result }));
       };
       reader.readAsDataURL(file);
     }
   };
 
+  const generatePDF = async () => {
+    const blob = await pdf(
+      <InvoicePDF
+        invoice={invoice}
+        lineItems={lineItems}
+        selectedClient={selectedClient}
+        businessSignatureImage={businessSignatureImage}
+        clientSignatureImage={clientSignatureImage} logo={null}      />
+    ).toBlob();
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Invoice_${invoice.invoiceNo}.pdf`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <Card className="w-[95%] max-w-7xl mx-auto">
-      <CardHeader>
-        <CardTitle>New Invoice</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex justify-between items-start">
-          <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
-          <div className="text-right">
-            <h2 className="text-xl font-bold">{testBusinessInfoData.data.title}</h2>
-            <p>{testBusinessInfoData.data.phone}</p>
-            <p className="text-blue-700">{testBusinessInfoData.data.website}</p>
-            <p>{testBusinessInfoData.data.address.country}</p>
-            <p>{testBusinessInfoData.data.address.city}</p>
-            <p>{testBusinessInfoData.data.address.addressLine1}</p>
+    <div className="p-4">
+      <Card className="w-full max-w-7xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">New Invoice</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col space-y-4">
+              <InvoiceDetails invoice={invoice} setInvoice={setInvoice} />
+              <ClientSelector
+                selectedClient={selectedClient}
+                handleClientSelect={handleClientSelect}
+              />
+            </div>
+            <div className="text-right">
+              <h2 className="text-xl font-bold">{testBusinessInfoData.data.title}</h2>
+              <p>{testBusinessInfoData.data.phone}</p>
+              <p className="text-blue-700">{testBusinessInfoData.data.website}</p>
+              <p>{testBusinessInfoData.data.address.country}</p>
+              <p>{testBusinessInfoData.data.address.city}</p>
+              <p>{testBusinessInfoData.data.address.addressLine1}</p>
+            </div>
           </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <ClientSelector selectedClient={selectedClient} handleClientSelect={handleClientSelect} />
-          <InvoiceDetails invoice={invoice} setInvoice={setInvoice} />
-        </div>
-        <LineItems
-          lineItems={lineItems}
-          handleAddLineItem={handleAddLineItem}
-          handleLineItemChange={handleLineItemChange}
-          handleRemoveLineItem={handleRemoveLineItem}
-          handleAddTaxes={handleAddTaxes}
-          handleItemSelect={handleItemSelect}
+          <LineItems
+            lineItems={lineItems}
+            handleAddLineItem={handleAddLineItem}
+            handleLineItemChange={handleLineItemChange}
+            handleRemoveLineItem={handleRemoveLineItem}
+            handleAddTaxes={handleAddTaxes}
+            handleItemSelect={handleItemSelect}
+          />
+          <Totals invoice={invoice} setInvoice={setInvoice} />
+          <Signatures
+            invoice={invoice}
+            penColor={penColor}
+            sigCanvasBusinessRef={sigCanvasBusinessRef}
+            sigCanvasClientRef={sigCanvasClientRef}
+            businessSignatureImage={businessSignatureImage}
+            clientSignatureImage={clientSignatureImage}
+            handleClearSignature={handleClearSignature}
+            handleSaveSignature={handleSaveSignature}
+            handleSignatureUpload={handleSignatureUpload}
+            businessSignatureInputRef={businessSignatureInputRef}
+            clientSignatureInputRef={clientSignatureInputRef}
+          />
+          <Attachments
+            handleAttachment={handleAttachment}
+            fileInputRef={fileInputRef}
+            handleFileUpload={handleFileUpload}
+          />
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button variant="outline">Cancel</Button>
+          <div className="space-x-2">
+            <Button variant="outline" onClick={generatePDF}>
+              Generate PDF
+            </Button>
+            <Button>Save Invoice</Button>
+          </div>
+        </CardFooter>
+        <TaxDialog
+          showTaxDialog={showTaxDialog}
+          setShowTaxDialog={setShowTaxDialog}
+          taxDetails={taxDetails}
+          setTaxDetails={setTaxDetails}
+          applyTaxes={applyTaxes}
         />
-        <Totals invoice={invoice} setInvoice={setInvoice} />
-        <Signatures
-          invoice={invoice}
-          penColor={penColor}
-          sigCanvasBusinessRef={sigCanvasBusinessRef}
-          sigCanvasClientRef={sigCanvasClientRef}
-          businessSignatureImage={businessSignatureImage}
-          clientSignatureImage={clientSignatureImage}
-          handleClearSignature={handleClearSignature}
-          handleSaveSignature={handleSaveSignature}
-          handleSignatureUpload={handleSignatureUpload}
-          businessSignatureInputRef={businessSignatureInputRef}
-          clientSignatureInputRef={clientSignatureInputRef}
-        />
-        <Attachments
-          handleAttachment={handleAttachment}
-          fileInputRef={fileInputRef}
-          handleFileUpload={handleFileUpload}
-        />
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline">Cancel</Button>
-        <Button>Save Invoice</Button>
-      </CardFooter>
-      <TaxDialog
-        showTaxDialog={showTaxDialog}
-        setShowTaxDialog={setShowTaxDialog}
-        taxDetails={taxDetails}
-        setTaxDetails={setTaxDetails}
-        applyTaxes={applyTaxes}
-      />
-    </Card>
+      </Card>
+    </div>
   );
 };
 

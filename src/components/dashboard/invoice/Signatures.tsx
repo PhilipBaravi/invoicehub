@@ -37,11 +37,15 @@ const Signatures: FC<SignaturesProps> = ({
         <div>
           <Label htmlFor="businessSignature" className="mb-2 block">Business Signature</Label>
           <div className="border-2 border-dashed border-gray-300 p-4 h-32 flex flex-col items-center justify-center relative">
-            <SignatureCanvas
-              ref={sigCanvasBusinessRef}
-              penColor={penColor}
-              canvasProps={{ className: "w-full h-full absolute inset-0" }}
-            />
+            {businessSignatureImage ? (
+              <img src={businessSignatureImage} alt="Business Signature" className="max-h-full" />
+            ) : (
+              <SignatureCanvas
+                ref={sigCanvasBusinessRef}
+                penColor={penColor}
+                canvasProps={{ className: "w-full h-full absolute inset-0" }}
+              />
+            )}
           </div>
           <div className="z-10 flex space-x-2 mt-2">
             <Button variant="outline" size="sm" onClick={() => handleClearSignature('business')}>Clear</Button>

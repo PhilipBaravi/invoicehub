@@ -1,3 +1,4 @@
+// InvoiceDetails.tsx
 import { FC } from 'react';
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -14,7 +15,7 @@ interface InvoiceDetailsProps {
 
 const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
   return (
-    <>
+    <div className="space-y-4">
       <div>
         <Label htmlFor="invoiceNumber">Invoice Number</Label>
         <Input id="invoiceNumber" value={invoice.invoiceNo} readOnly />
@@ -42,7 +43,7 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
           </PopoverContent>
         </Popover>
       </div>
-    </>
+    </div>
   );
 };
 
