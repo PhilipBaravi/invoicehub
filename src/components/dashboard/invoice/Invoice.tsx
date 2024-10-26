@@ -1,4 +1,7 @@
 import { useState, useRef, FC } from 'react';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import testBusinessInfoData from './test-business-info-data';
@@ -16,6 +19,7 @@ import { pdf } from '@react-pdf/renderer';
 import InvoicePDF from './InvoicePdf';
 import LogoUploader from './LogoUploader';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface LineItem {
   itemId: number;
@@ -54,6 +58,8 @@ const Invoice: FC = () => {
   const clientSignatureInputRef = useRef<HTMLInputElement>(null);
   const [selectedClient, setSelectedClient] = useState<ClientVendor | null>(null);
   const [logo, setLogo] = useState<string | null>(null);
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleClientSelect = (clientName: string) => {
     const client = testClientVendorListData.data.find((c) => c.name === clientName);
@@ -148,11 +154,46 @@ const Invoice: FC = () => {
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      console.log('File selected:', file.name);
-      alert(`File "${file.name}" has been selected for upload.`);
+    const files = event.target.files;
+    if (files) {
+      const validFiles: File[] = [];
+      const invalidFiles: string[] = [];
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+      ];
+
+      Array.from(files).forEach((file) => {
+        if (allowedTypes.includes(file.type)) {
+          validFiles.push(file);
+        } else {
+          invalidFiles.push(file.name);
+        }
+      });
+
+      if (invalidFiles.length > 0) {
+        setErrorMessage(
+          `Invalid file types: ${invalidFiles.join(
+            ', '
+          )}. Only PDF, DOC, DOCX, JPEG, PNG, and GIF files are allowed.`
+        );
+      } else {
+        setErrorMessage('');
+      }
+
+      setAttachments((prev) => [...prev, ...validFiles]);
+
+      // Reset the input value to allow uploading the same file again if needed
+      event.target.value = '';
     }
+  };
+
+  const handleRemoveAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleItemSelect = (index: number, categoryId: number, productId: number) => {
@@ -224,24 +265,96 @@ const Invoice: FC = () => {
     }
   };
 
-  const generatePDF = async () => {
-    const blob = await pdf(
-      <InvoicePDF
-        invoice={invoice}
-        lineItems={lineItems}
-        selectedClient={selectedClient}
-        businessSignatureImage={businessSignatureImage}
-        clientSignatureImage={clientSignatureImage}
-        logo={logo}
-      />
-    ).toBlob();
+  const generatePDFAndZip = async () => {
+    try {
+      // Generate the Invoice PDF blob
+      const invoicePdfBlob = await pdf(
+        <InvoicePDF
+          invoice={invoice}
+          lineItems={lineItems}
+          selectedClient={selectedClient}
+          businessSignatureImage={businessSignatureImage}
+          clientSignatureImage={clientSignatureImage}
+          logo={logo}
+        />
+      ).toBlob();
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Invoice_${invoice.invoiceNo}.pdf`;
-    link.click();
-    URL.revokeObjectURL(url);
+      // Initialize JSZip
+      const zip = new JSZip();
+
+      // Add Invoice PDF to ZIP
+      zip.file(`Invoice_${invoice.invoiceNo}.pdf`, invoicePdfBlob);
+
+      // Add Attachments to ZIP
+      attachments.forEach((file) => {
+        zip.file(file.name, file);
+      });
+
+      // Create Combined PDF
+      const combinedPdfBytes = await createCombinedPDF(invoicePdfBlob, attachments);
+      zip.file(`Invoice_and_Attachments_${invoice.invoiceNo}.pdf`, combinedPdfBytes);
+
+      // Generate the ZIP blob
+      const zipBlob = await zip.generateAsync({ type: 'blob' });
+
+      // Trigger download using FileSaver
+      saveAs(zipBlob, `Invoice_${invoice.invoiceNo}.zip`);
+    } catch (error) {
+      console.error('Error generating ZIP:', error);
+      setErrorMessage('An error occurred while generating the ZIP file.');
+    }
+  };
+
+  /**
+   * Creates a combined PDF containing the Invoice and all Attachments.
+   * @param invoiceBlob - The Invoice PDF as a Blob.
+   * @param attachments - Array of attachment Files.
+   * @returns Combined PDF as Uint8Array.
+   */
+  const createCombinedPDF = async (invoiceBlob: Blob, attachments: File[]): Promise<Uint8Array> => {
+    // Load the Invoice PDF
+    const combinedPdf = await PDFDocument.create();
+    const invoicePdf = await PDFDocument.load(await invoiceBlob.arrayBuffer());
+    const invoicePages = await combinedPdf.copyPages(invoicePdf, invoicePdf.getPageIndices());
+    invoicePages.forEach((page: any) => combinedPdf.addPage(page));
+
+    // Iterate through attachments and append them
+    for (const file of attachments) {
+      if (file.type === 'application/pdf') {
+        const attachmentPdf = await PDFDocument.load(await file.arrayBuffer());
+        const attachmentPages = await combinedPdf.copyPages(attachmentPdf, attachmentPdf.getPageIndices());
+        attachmentPages.forEach((page: any) => combinedPdf.addPage(page));
+      } else if (
+        file.type === 'image/jpeg' ||
+        file.type === 'image/png' ||
+        file.type === 'image/gif'
+      ) {
+        const imageBytes = await file.arrayBuffer();
+        let image;
+        if (file.type === 'image/jpeg') {
+          image = await combinedPdf.embedJpg(imageBytes);
+        } else if (file.type === 'image/png' || file.type === 'image/gif') {
+          image = await combinedPdf.embedPng(imageBytes);
+        } else {
+          continue; // Skip unsupported image types
+        }
+
+        const imgDims = image.scale(1);
+
+        const page = combinedPdf.addPage([imgDims.width, imgDims.height]);
+        page.drawImage(image, {
+          x: 0,
+          y: 0,
+          width: imgDims.width,
+          height: imgDims.height,
+        });
+      }
+      // Note: DOC and DOCX files are not handled here.
+      // To include them, you'd need to convert them to PDF first, which isn't straightforward on the client-side.
+    }
+
+    const combinedPdfBytes = await combinedPdf.save();
+    return combinedPdfBytes;
   };
 
   return (
@@ -262,7 +375,7 @@ const Invoice: FC = () => {
               <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
             </div>
           </div>
-<Separator />
+          <Separator />
           {/* Align ClientSelector and Business Information horizontally */}
           <div className="flex justify-between items-center mt-6">
             {/* Left: Client Selector */}
@@ -283,7 +396,7 @@ const Invoice: FC = () => {
               </p>
               <p>
                 <span className="text-stone-950 dark:text-stone-50 font-[600]">Email:</span> 
-                <span className="font-[600] text-blue-700"> test@gmail.com </span> {/* Needs to be added to data */}
+                <span className="font-[600] text-blue-700"> 'test@gmail.com'</span> {/* Needs to be added to businessinfodata */}
               </p>
               <p>
                 <span className="font-[600]">Country:</span> 
@@ -299,7 +412,7 @@ const Invoice: FC = () => {
               </p>
             </div>
           </div>
-<Separator />
+          <Separator />
           <LineItems
             lineItems={lineItems}
             handleAddLineItem={handleAddLineItem}
@@ -325,17 +438,26 @@ const Invoice: FC = () => {
           />
           <Separator />
           <Attachments
+            attachments={attachments}
             handleAttachment={handleAttachment}
             fileInputRef={fileInputRef}
             handleFileUpload={handleFileUpload}
+            handleRemoveAttachment={handleRemoveAttachment}
           />
+          {/* Display error message if any */}
+          {errorMessage && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
         </CardContent>
         <Separator />
         <CardFooter className="flex justify-between">
           <Button variant="outline">Cancel</Button>
           <div className="space-x-2">
-            <Button variant="outline" onClick={generatePDF}>
-              Generate PDF
+            <Button variant="outline" onClick={generatePDFAndZip}>
+              Generate PDF & ZIP
             </Button>
             <Button>Save Invoice</Button>
           </div>

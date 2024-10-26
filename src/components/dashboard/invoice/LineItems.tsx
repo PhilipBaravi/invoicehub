@@ -101,12 +101,14 @@ const LineItems: FC<LineItemsProps> = ({
                   <Input
                     className="w-[15%] mr-2"
                     type="number"
+                    min="0"
                     value={item.price}
                     onChange={(e) => handleLineItemChange(index, 'price', e.target.value)}
                   />
                   <Input
                     className="w-[15%] mr-2"
                     type="number"
+                    min="0"
                     value={item.quantity}
                     onChange={(e) => handleLineItemChange(index, 'quantity', e.target.value)}
                   />

@@ -31,6 +31,7 @@ const TaxDialog: FC<TaxDialogProps> = ({
             <Input
               id="taxPercentage"
               type="number"
+              min="0"
               placeholder="0"
               value={taxDetails.percentage}
               onChange={(e) => setTaxDetails({ ...taxDetails, percentage: Number(e.target.value) })}
