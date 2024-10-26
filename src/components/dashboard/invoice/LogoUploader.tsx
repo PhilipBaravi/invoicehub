@@ -1,7 +1,8 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { UploadIcon } from 'lucide-react';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 interface LogoUploaderProps {
   logo: string | null;
@@ -9,10 +10,41 @@ interface LogoUploaderProps {
 }
 
 const LogoUploader: FC<LogoUploaderProps> = ({ logo, handleLogoUpload }) => {
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        setErrorMessage('Invalid file type. Only images (PNG, JPEG, JPG, GIF) are allowed.');
+        return;
+      } else {
+        setErrorMessage('');
+        handleLogoUpload(event);
+      }
+    }
+  };
+
   return (
-    <div className="w-32 h-32 border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden">
+    <div
+      className="w-32 h-32 border-2 border-dashed border-gray-300 flex items-center justify-center relative overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {logo ? (
-        <img src={logo} alt="Company Logo" className="w-full h-full object-contain" />
+        <>
+          <img src={logo} alt="Company Logo" className="w-full h-full object-contain" />
+          {isHovered && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
+              <Label htmlFor="logo-upload" className="cursor-pointer text-white text-center">
+                <UploadIcon className="w-6 h-6 mx-auto mb-2" />
+                <span className="text-sm">Change Logo</span>
+              </Label>
+            </div>
+          )}
+        </>
       ) : (
         <Label htmlFor="logo-upload" className="cursor-pointer text-center">
           <UploadIcon className="w-6 h-6 mx-auto mb-2" />
@@ -23,9 +55,15 @@ const LogoUploader: FC<LogoUploaderProps> = ({ logo, handleLogoUpload }) => {
         id="logo-upload"
         type="file"
         className="hidden"
-        onChange={handleLogoUpload}
-        accept="image/*"
+        onChange={handleFileChange}
+        accept="image/png, image/jpeg, image/jpg, image/gif"
       />
+      {errorMessage && (
+        <Alert variant="destructive" className="mt-2">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{errorMessage}</AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 };

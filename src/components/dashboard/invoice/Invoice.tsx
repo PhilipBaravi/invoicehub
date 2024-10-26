@@ -15,7 +15,7 @@ import TaxDialog from './TaxDialog';
 import { pdf } from '@react-pdf/renderer';
 import InvoicePDF from './InvoicePdf';
 import LogoUploader from './LogoUploader';
-import { Label } from 'recharts';
+import { Separator } from '@/components/ui/separator';
 
 interface LineItem {
   itemId: number;
@@ -262,7 +262,7 @@ const Invoice: FC = () => {
               <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
             </div>
           </div>
-
+<Separator />
           {/* Align ClientSelector and Business Information horizontally */}
           <div className="flex justify-between items-center mt-6">
             {/* Left: Client Selector */}
@@ -299,7 +299,7 @@ const Invoice: FC = () => {
               </p>
             </div>
           </div>
-
+<Separator />
           <LineItems
             lineItems={lineItems}
             handleAddLineItem={handleAddLineItem}
@@ -308,6 +308,7 @@ const Invoice: FC = () => {
             handleAddTaxes={handleAddTaxes}
             handleItemSelect={handleItemSelect}
           />
+          <Separator />
           <Totals invoice={invoice} setInvoice={setInvoice} />
           <Signatures
             invoice={invoice}
@@ -322,12 +323,14 @@ const Invoice: FC = () => {
             businessSignatureInputRef={businessSignatureInputRef}
             clientSignatureInputRef={clientSignatureInputRef}
           />
+          <Separator />
           <Attachments
             handleAttachment={handleAttachment}
             fileInputRef={fileInputRef}
             handleFileUpload={handleFileUpload}
           />
         </CardContent>
+        <Separator />
         <CardFooter className="flex justify-between">
           <Button variant="outline">Cancel</Button>
           <div className="space-x-2">

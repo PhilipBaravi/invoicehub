@@ -11,11 +11,9 @@ import {
 import testBusinessInfoData from './test-business-info-data';
 import testCategoryListData from '../products/categories/test-category-list-data';
 
-// Import the font files
 import OpenSansRegular from '../../../fonts/OpenSans-Regular.ttf';
 import OpenSansBold from '../../../fonts/OpenSans-Bold.ttf';
 
-// Register the fonts
 Font.register({
   family: 'Open Sans',
   fonts: [
@@ -103,6 +101,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e5e5e5',
     borderStyle: 'solid',
+    marginBottom: 20,
   },
   tableHeader: {
     flexDirection: 'row',
@@ -130,14 +129,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  notesTerms: {
+  notesTermsContainer: {
     width: '60%',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e5e5',
+    paddingTop: 15,
+  },
+  notesItem: {
+    marginBottom: 15,
+  },
+  separator: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5e5',
+    marginVertical: 10,
   },
   totalsContainer: {
     width: '35%',
     backgroundColor: '#f3f3f3',
-    padding: 10,
+    padding: 20,
     borderRadius: 5,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e5e5',
+    alignItems: 'center', // Center the items horizontally
+  },
+  totalItem: {
+    marginBottom: 15,
+    fontSize: 12, // Reduced font size from 14 to 12
+    color: '#1a1a1a',
+    textAlign: 'center', // Center the text
   },
   signaturesSection: {
     marginTop: 50,
@@ -154,11 +173,13 @@ const styles = StyleSheet.create({
   signatureLabel: {
     fontSize: 10,
     marginBottom: 8,
+    fontWeight: 'bold',
+    color: '#4a4a4a',
   },
   signatureImage: {
     width: '65%',
     height: 39,
-    marginTop: 4, // Adjust the image to be slightly lower than the label
+    marginTop: 4,
   },
   signatureLine: {
     width: '65%',
@@ -189,21 +210,17 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
     <Page size="A4" style={styles.page}>
       {/* Header */}
       <View style={styles.headerContainer}>
-        {/* Left: Logo and Invoice Details */}
-        <View>
-          {logo && <Image src={logo} style={styles.logoContainer} />}
-          <View style={styles.invoiceDetailsContainer}>
-            <Text style={styles.invoiceTitle}>Invoice</Text>
-            <Text style={styles.invoiceDetail}>Invoice Number: {invoice.invoiceNo}</Text>
-            <Text style={styles.invoiceDetail}>Date of Issue: {new Date(invoice.dateOfIssue).toLocaleDateString()}</Text>
-            <Text style={styles.invoiceDetail}>Due Date: {new Date(invoice.dueDate).toLocaleDateString()}</Text>
-          </View>
+        <View style={styles.invoiceDetailsContainer}>
+          <Text style={styles.invoiceTitle}>Invoice</Text>
+          <Text style={styles.invoiceDetail}>Invoice Number: {invoice.invoiceNo}</Text>
+          <Text style={styles.invoiceDetail}>Date of Issue: {new Date(invoice.dateOfIssue).toLocaleDateString()}</Text>
+          <Text style={styles.invoiceDetail}>Due Date: {new Date(invoice.dueDate).toLocaleDateString()}</Text>
         </View>
+        {logo && <Image src={logo} style={styles.logoContainer} />}
       </View>
 
       {/* Info Section */}
       <View style={styles.infoSectionContainer}>
-        {/* Left: Client Information */}
         <View>
           <Text style={styles.sectionTitle}>Bill To:</Text>
           {selectedClient && (
@@ -218,8 +235,6 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
             </View>
           )}
         </View>
-        
-        {/* Right: Business Information */}
         <View style={{ textAlign: 'right' }}>
           <Text style={styles.sectionTitle}>Business Information:</Text>
           <View style={styles.sectionContent}>
@@ -259,34 +274,39 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         })}
       </View>
 
-      {/* Notes and Totals */}
+      {/* Notes and Terms */}
       <View style={styles.totalsSection}>
-        <View style={styles.notesTerms}>
+        <View style={styles.notesTermsContainer}>
           {invoice.notes && (
-            <>
+            <View style={styles.notesItem}>
               <Text style={styles.sectionTitle}>Notes:</Text>
               <Text style={styles.sectionContent}>{invoice.notes}</Text>
-            </>
+            </View>
           )}
           {invoice.terms && (
-            <>
+            <View style={styles.notesItem}>
               <Text style={styles.sectionTitle}>Terms:</Text>
               <Text style={styles.sectionContent}>{invoice.terms}</Text>
-            </>
+            </View>
           )}
         </View>
         <View style={styles.totalsContainer}>
-          <Text>Subtotal: {formatCurrency(invoice.price)}</Text>
-          <Text>Tax: {formatCurrency(invoice.tax)}</Text>
-          <Text style={{ fontWeight: 'bold' }}>Total: {formatCurrency(invoice.total)}</Text>
+          <View style={styles.totalItem}>
+            <Text>Subtotal: {formatCurrency(invoice.price)}</Text>
+          </View>
+          <View style={styles.totalItem}>
+            <Text>Tax: {formatCurrency(invoice.tax)}</Text>
+          </View>
+          <View style={styles.totalItem}>
+            <Text style={{ fontWeight: 'bold' }}>Total: {formatCurrency(invoice.total)}</Text>
+          </View>
         </View>
       </View>
 
       {/* Signatures */}
       <View style={styles.signaturesSection}>
-        <Text>Signatures:</Text>
+        <Text style={styles.sectionTitle}>Signatures:</Text>
         <View style={styles.signatureContainer}>
-          {/* Left: Client Signature */}
           <View style={styles.signatureBlock}>
             <Text style={styles.signatureLabel}>Client Signature:</Text>
             {clientSignatureImage ? (
@@ -295,7 +315,6 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               <View style={styles.signatureLine} />
             )}
           </View>
-          {/* Right: Business Signature */}
           <View style={styles.signatureBlock}>
             <Text style={styles.signatureLabel}>Business Signature:</Text>
             {businessSignatureImage ? (
