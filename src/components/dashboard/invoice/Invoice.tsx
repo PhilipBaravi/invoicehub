@@ -1,4 +1,3 @@
-// Invoice.tsx
 import { useState, useRef, FC } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +14,8 @@ import Attachments from './Attachments';
 import TaxDialog from './TaxDialog';
 import { pdf } from '@react-pdf/renderer';
 import InvoicePDF from './InvoicePdf';
+import LogoUploader from './LogoUploader';
+import { Label } from 'recharts';
 
 interface LineItem {
   itemId: number;
@@ -52,6 +53,7 @@ const Invoice: FC = () => {
   const businessSignatureInputRef = useRef<HTMLInputElement>(null);
   const clientSignatureInputRef = useRef<HTMLInputElement>(null);
   const [selectedClient, setSelectedClient] = useState<ClientVendor | null>(null);
+  const [logo, setLogo] = useState<string | null>(null);
 
   const handleClientSelect = (clientName: string) => {
     const client = testClientVendorListData.data.find((c) => c.name === clientName);
@@ -60,6 +62,17 @@ const Invoice: FC = () => {
 
   const { theme } = useTheme();
   const penColor = theme === 'dark' ? 'white' : 'black';
+
+  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogo(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAddLineItem = () => {
     setLineItems([
@@ -218,7 +231,9 @@ const Invoice: FC = () => {
         lineItems={lineItems}
         selectedClient={selectedClient}
         businessSignatureImage={businessSignatureImage}
-        clientSignatureImage={clientSignatureImage} logo={null}      />
+        clientSignatureImage={clientSignatureImage}
+        logo={logo}
+      />
     ).toBlob();
 
     const url = URL.createObjectURL(blob);
@@ -231,28 +246,60 @@ const Invoice: FC = () => {
 
   return (
     <div className="p-4">
-      <Card className="w-full max-w-7xl mx-auto">
+      <Card className="w-full max-w-5xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">New Invoice</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-8">
+          {/* Align InvoiceDetails and LogoUploader horizontally */}
           <div className="flex justify-between items-start">
-            <div className="flex flex-col space-y-4">
+            {/* Left: Invoice Details */}
+            <div className="w-1/2">
               <InvoiceDetails invoice={invoice} setInvoice={setInvoice} />
+            </div>
+            {/* Right: Logo Uploader */}
+            <div className="w-1/2 flex justify-end">
+              <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
+            </div>
+          </div>
+
+          {/* Align ClientSelector and Business Information horizontally */}
+          <div className="flex justify-between items-center mt-6">
+            {/* Left: Client Selector */}
+            <div className="w-1/2">
               <ClientSelector
                 selectedClient={selectedClient}
                 handleClientSelect={handleClientSelect}
               />
             </div>
-            <div className="text-right">
-              <h2 className="text-xl font-bold">{testBusinessInfoData.data.title}</h2>
-              <p>{testBusinessInfoData.data.phone}</p>
-              <p className="text-blue-700">{testBusinessInfoData.data.website}</p>
-              <p>{testBusinessInfoData.data.address.country}</p>
-              <p>{testBusinessInfoData.data.address.city}</p>
-              <p>{testBusinessInfoData.data.address.addressLine1}</p>
+
+            {/* Right: Business Information */}
+            <div className="w-1/2 text-right flex flex-col justify-start pt-16">
+              <h2 className="text-xl font-bold">Company Name: {testBusinessInfoData.data.title}</h2>
+              <p className="font-[600]">Phone: {testBusinessInfoData.data.phone}</p>
+              <p>
+                <span className="text-stone-950 dark:text-stone-50 font-[600]">Website:</span> 
+                <span className="font-[600] text-blue-700"> {testBusinessInfoData.data.website}</span>
+              </p>
+              <p>
+                <span className="text-stone-950 dark:text-stone-50 font-[600]">Email:</span> 
+                <span className="font-[600] text-blue-700"> test@gmail.com </span> {/* Needs to be added to data */}
+              </p>
+              <p>
+                <span className="font-[600]">Country:</span> 
+                <span className="text-stone-950 dark:text-stone-50 font-[600]"> {testBusinessInfoData.data.address.country}</span>
+              </p>
+              <p>
+                <span className="font-[600]">City:</span> 
+                <span className="text-stone-950 dark:text-stone-50 font-[600]"> {testBusinessInfoData.data.address.city}</span>
+              </p>
+              <p>
+                <span className="font-[600]">Address:</span> 
+                <span className="text-stone-950 dark:text-stone-50 font-[600]"> {testBusinessInfoData.data.address.addressLine1}</span>
+              </p>
             </div>
           </div>
+
           <LineItems
             lineItems={lineItems}
             handleAddLineItem={handleAddLineItem}

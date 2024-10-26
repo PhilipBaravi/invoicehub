@@ -220,4 +220,4 @@ const StatCard: FC<StatCardProps> = ({ title, value, description, icon, trend })
   );
 };
 
-export default DashboardDefault;
+export default DashboardDefault

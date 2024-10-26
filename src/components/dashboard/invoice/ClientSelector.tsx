@@ -26,13 +26,13 @@ const ClientSelector: FC<ClientSelectorProps> = ({ selectedClient, handleClientS
       </Select>
       {selectedClient && (
         <div className="text-left mt-4">
-          <h2 className="text-xl font-bold">{selectedClient.name}</h2>
-          <p>{selectedClient.phone}</p>
-          <p className="text-blue-700">{selectedClient.website}</p>
-          <p className="text-blue-700">{selectedClient.email}</p>
-          <p>{selectedClient.address.country}</p>
-          <p>{selectedClient.address.city}</p>
-          <p>{selectedClient.address.addressLine1}</p>
+          <h2 className="text-xl font-bold">Company Name: {selectedClient.name}</h2>
+          <p className='font-[600]'>Phone: {selectedClient.phone}</p>
+          <p><span className='text-stone-950 dark:text-stone-50 font-[600]'>Website:</span> <span className='font-[600] text-blue-700'>{selectedClient.website}</span></p>
+          <p><span className='text-stone-950 dark:text-stone-50 font-[600]'>Email:</span> <span className='font-[600] text-blue-700'>{selectedClient.email}</span></p>
+          <p><span className='font-[600]'>Country:</span> <span className='text-stone-950 dark:text-stone-50 font-[600]'>{selectedClient.address.country}</span></p>
+          <p><span className='font-[600]'>City:</span> <span className='text-stone-950 dark:text-stone-50 font-[600]'>{selectedClient.address.city}</span></p>
+          <p><span className='font-[600]'>Address:</span> <span className='text-stone-950 dark:text-stone-50 font-[600]'>{selectedClient.address.addressLine1}</span></p>
         </div>
       )}
     </div>

@@ -5,8 +5,6 @@ interface Category {
   }
   
   interface Product {
-    categoryId: number;
-    categoryName: any;
     id: number;
     name: string;
     quantityInStock: number;

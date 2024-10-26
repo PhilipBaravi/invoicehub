@@ -1,4 +1,3 @@
-// InvoicePDF.tsx
 import React from 'react';
 import {
   Document,
@@ -20,13 +19,8 @@ import OpenSansBold from '../../../fonts/OpenSans-Bold.ttf';
 Font.register({
   family: 'Open Sans',
   fonts: [
-    {
-      src: OpenSansRegular,
-    },
-    {
-      src: OpenSansBold,
-      fontWeight: 'bold',
-    },
+    { src: OpenSansRegular },
+    { src: OpenSansBold, fontWeight: 'bold' },
   ],
 });
 
@@ -54,56 +48,65 @@ const styles = StyleSheet.create({
     fontFamily: 'Open Sans',
     fontSize: 12,
     padding: 40,
-    backgroundColor: '#fafaf9', // bg-stone-50
-    color: '#1a1a1a', // text-stone-900
+    backgroundColor: '#fafaf9',
+    color: '#1a1a1a',
   },
-  cardHeader: {
+  headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: 20,
   },
-  cardTitle: {
+  logoContainer: {
+    width: 80,
+    height: 80,
+    marginBottom: 10,
+  },
+  invoiceDetailsContainer: {
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    fontSize: 10,
+    color: '#57534e',
+  },
+  invoiceTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 8,
   },
-  invoiceDetails: {
-    fontSize: 10,
-    color: '#57534e', // text-stone-600
+  invoiceDetail: {
+    marginBottom: 4,
   },
-  companyInfo: {
-    textAlign: 'right',
-  },
-  companyName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  companyDetails: {
-    fontSize: 10,
-    color: '#57534e',
-  },
-  section: {
+  infoSectionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 14,
-    fontWeight: 'semibold',
-    marginBottom: 8,
+    fontSize: 12,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: '#4a4a4a',
   },
   sectionContent: {
     fontSize: 10,
     color: '#57534e',
+    lineHeight: 1.3,
+  },
+  companyName: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1a1a1a',
+    marginBottom: 4,
   },
   table: {
     width: '100%',
     borderWidth: 1,
-    borderColor: '#e5e5e5', // border-stone-300
+    borderColor: '#e5e5e5',
     borderStyle: 'solid',
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#f5f5f4', // bg-gray-100
+    backgroundColor: '#f5f5f4',
     borderBottomWidth: 1,
     borderBottomColor: '#e5e5e5',
     borderStyle: 'solid',
@@ -115,13 +118,9 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
   },
   tableCell: {
+    flex: 1,
     padding: 8,
     fontSize: 10,
-  },
-  tableCellHeader: {
-    padding: 8,
-    fontSize: 10,
-    fontWeight: 'bold',
   },
   tableCellRight: {
     textAlign: 'right',
@@ -136,65 +135,42 @@ const styles = StyleSheet.create({
   },
   totalsContainer: {
     width: '35%',
-    backgroundColor: '#f3f3f3', // Light grey background
+    backgroundColor: '#f3f3f3',
     padding: 10,
     borderRadius: 5,
   },
-  totals: {
-    textAlign: 'right',
-  },
-  totalsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  totalsLabel: {
-    fontSize: 10,
-  },
-  totalsValue: {
-    fontSize: 10,
-  },
-  separator: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#d1d5db', // Slightly darker grey
-    marginVertical: 8,
-  },
   signaturesSection: {
-    marginTop: 30,
-  },
-  signaturesTitle: {
-    fontSize: 14,
-    fontWeight: 'semibold',
-    marginBottom: 8,
-  },
-  signaturesContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    marginTop: 50,
   },
   signatureBlock: {
-    width: '48%',
-    alignItems: 'center', // Center the signature within its block
+    width: '30%',
+    alignItems: 'center',
+  },
+  signatureContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
   },
   signatureLabel: {
     fontSize: 10,
-    marginBottom: 4,
+    marginBottom: 8,
   },
   signatureImage: {
-    width: '65%', // Reduced width by 35%
-    height: 39,   // Reduced height by 35% (from 60 to 39)
+    width: '65%',
+    height: 39,
+    marginTop: 4, // Adjust the image to be slightly lower than the label
   },
   signatureLine: {
-    width: '65%', // Match the reduced width
-    height: 39,   // Match the reduced height
+    width: '65%',
+    height: 39,
     borderBottomWidth: 1,
     borderBottomColor: '#d4d4d4',
     borderStyle: 'solid',
+    marginTop: 4,
   },
 });
 
-const formatCurrency = (value: number) => {
-  return `$${value.toFixed(2)}`;
-};
+const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
 
 const getCategoryName = (categoryId: number) => {
   const category = testCategoryListData.data.find((cat) => cat.id === categoryId);
@@ -205,82 +181,79 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
   invoice,
   lineItems,
   selectedClient,
+  logo,
   businessSignatureImage,
   clientSignatureImage,
 }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}
-      <View style={styles.cardHeader}>
+      <View style={styles.headerContainer}>
+        {/* Left: Logo and Invoice Details */}
         <View>
-          <Text style={styles.cardTitle}>Invoice</Text>
-          <View style={styles.invoiceDetails}>
-            <Text>Invoice Number: {invoice.invoiceNo}</Text>
-            <Text>
-              Date of Issue: {new Date(invoice.dateOfIssue).toLocaleDateString()}
-            </Text>
-            <Text>
-              Due Date: {new Date(invoice.dueDate).toLocaleDateString()}
-            </Text>
+          {logo && <Image src={logo} style={styles.logoContainer} />}
+          <View style={styles.invoiceDetailsContainer}>
+            <Text style={styles.invoiceTitle}>Invoice</Text>
+            <Text style={styles.invoiceDetail}>Invoice Number: {invoice.invoiceNo}</Text>
+            <Text style={styles.invoiceDetail}>Date of Issue: {new Date(invoice.dateOfIssue).toLocaleDateString()}</Text>
+            <Text style={styles.invoiceDetail}>Due Date: {new Date(invoice.dueDate).toLocaleDateString()}</Text>
           </View>
-        </View>
-        <View style={styles.companyInfo}>
-          <Text style={styles.companyName}>{testBusinessInfoData.data.title}</Text>
-          <Text style={styles.companyDetails}>{testBusinessInfoData.data.phone}</Text>
-          <Text style={styles.companyDetails}>{testBusinessInfoData.data.website}</Text>
-          <Text style={styles.companyDetails}>{testBusinessInfoData.data.address.country}</Text>
-          <Text style={styles.companyDetails}>{testBusinessInfoData.data.address.city}</Text>
-          <Text style={styles.companyDetails}>{testBusinessInfoData.data.address.addressLine1}</Text>
         </View>
       </View>
 
-      {/* Bill To Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Bill To:</Text>
-        {selectedClient && (
+      {/* Info Section */}
+      <View style={styles.infoSectionContainer}>
+        {/* Left: Client Information */}
+        <View>
+          <Text style={styles.sectionTitle}>Bill To:</Text>
+          {selectedClient && (
+            <View style={styles.sectionContent}>
+              <Text>Company name: {selectedClient.name}</Text>
+              <Text>Phone: {selectedClient.phone}</Text>
+              <Text>Website: {selectedClient.website}</Text>
+              <Text>Email: {selectedClient.email}</Text>
+              <Text>Country: {selectedClient.address.country}</Text>
+              <Text>City: {selectedClient.address.city}</Text>
+              <Text>Address: {selectedClient.address.addressLine1}</Text>
+            </View>
+          )}
+        </View>
+        
+        {/* Right: Business Information */}
+        <View style={{ textAlign: 'right' }}>
+          <Text style={styles.sectionTitle}>Business Information:</Text>
           <View style={styles.sectionContent}>
-            <Text>{selectedClient.name}</Text>
-            <Text>{selectedClient.phone}</Text>
-            <Text>{selectedClient.website}</Text>
-            <Text>{selectedClient.email}</Text>
-            <Text>{selectedClient.address.country}</Text>
-            <Text>{selectedClient.address.city}</Text>
-            <Text>{selectedClient.address.addressLine1}</Text>
+            <Text>Company Name: {testBusinessInfoData.data.title}</Text>
+            <Text>Phone: {testBusinessInfoData.data.phone}</Text>
+            <Text>Website: {testBusinessInfoData.data.website}</Text>
+            <Text>Country: {testBusinessInfoData.data.address.country}</Text>
+            <Text>City: {testBusinessInfoData.data.address.city}</Text>
+            <Text>Address: {testBusinessInfoData.data.address.addressLine1}</Text>
           </View>
-        )}
+        </View>
       </View>
 
       {/* Table */}
       <View style={styles.table}>
-        {/* Table Header */}
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableCellHeader, { width: '15%' }]}>Category</Text>
-          <Text style={[styles.tableCellHeader, { width: '20%' }]}>Product</Text>
-          <Text style={[styles.tableCellHeader, { width: '15%' }]}>Price</Text>
-          <Text style={[styles.tableCellHeader, { width: '10%' }]}>Quantity</Text>
-          <Text style={[styles.tableCellHeader, { width: '15%' }]}>Tax</Text>
-          <Text style={[styles.tableCellHeader, { width: '25%', textAlign: 'right' }]}>
-            Line Total
-          </Text>
+          <Text style={styles.tableCell}>Category</Text>
+          <Text style={styles.tableCell}>Product</Text>
+          <Text style={styles.tableCell}>Price</Text>
+          <Text style={styles.tableCell}>Quantity</Text>
+          <Text style={styles.tableCell}>Tax</Text>
+          <Text style={[styles.tableCell, styles.tableCellRight]}>Line Total</Text>
         </View>
-        {/* Table Rows */}
         {lineItems.map((item, index) => {
           const itemTax = (item.price * item.quantity * item.tax) / 100;
           const lineTotal = item.price * item.quantity + itemTax;
           return (
             <View style={styles.tableRow} key={index}>
-              <Text style={[styles.tableCell, { width: '15%' }]}>
-                {getCategoryName(item.categoryId)}
-              </Text>
-              <Text style={[styles.tableCell, { width: '20%' }]}>{item.name}</Text>
-              <Text style={[styles.tableCell, { width: '15%' }]}>
-                {formatCurrency(item.price)}
-              </Text>
-              <Text style={[styles.tableCell, { width: '10%' }]}>{item.quantity}</Text>
-              <Text style={[styles.tableCell, { width: '15%' }]}>{item.tax}%</Text>
-              <Text style={[styles.tableCell, { width: '25%', textAlign: 'right' }]}>
-                {formatCurrency(lineTotal)}
-              </Text>
+              <Text style={styles.tableCell}>{getCategoryName(item.categoryId)}</Text>
+              <Text style={styles.tableCell}>{item.name}</Text>
+              <Text style={styles.tableCell}>{formatCurrency(item.price)}</Text>
+              <Text style={styles.tableCell}>{item.quantity}</Text>
+              <Text style={styles.tableCell}>{item.tax}%</Text>
+              <Text style={[styles.tableCell, styles.tableCellRight]}>{formatCurrency(lineTotal)}</Text>
             </View>
           );
         })}
@@ -288,7 +261,6 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
 
       {/* Notes and Totals */}
       <View style={styles.totalsSection}>
-        {/* Left Side: Notes and Terms */}
         <View style={styles.notesTerms}>
           {invoice.notes && (
             <>
@@ -298,57 +270,36 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
           )}
           {invoice.terms && (
             <>
-              <Text style={[styles.sectionTitle, { marginTop: 16 }]}>Terms:</Text>
+              <Text style={styles.sectionTitle}>Terms:</Text>
               <Text style={styles.sectionContent}>{invoice.terms}</Text>
             </>
           )}
         </View>
-        {/* Right Side: Totals */}
         <View style={styles.totalsContainer}>
-          <View style={styles.totals}>
-            <View style={styles.totalsRow}>
-              <Text style={styles.totalsLabel}>Subtotal:</Text>
-              <Text style={styles.totalsValue}>{formatCurrency(invoice.price)}</Text>
-            </View>
-            <View style={styles.totalsRow}>
-              <Text style={styles.totalsLabel}>Tax:</Text>
-              <Text style={styles.totalsValue}>{formatCurrency(invoice.tax)}</Text>
-            </View>
-            <View style={styles.separator} />
-            <View style={styles.totalsRow}>
-              <Text style={[styles.totalsLabel, { fontWeight: 'bold' }]}>Total:</Text>
-              <Text style={[styles.totalsValue, { fontWeight: 'bold' }]}>
-                {formatCurrency(invoice.total)}
-              </Text>
-            </View>
-          </View>
+          <Text>Subtotal: {formatCurrency(invoice.price)}</Text>
+          <Text>Tax: {formatCurrency(invoice.tax)}</Text>
+          <Text style={{ fontWeight: 'bold' }}>Total: {formatCurrency(invoice.total)}</Text>
         </View>
       </View>
 
       {/* Signatures */}
       <View style={styles.signaturesSection}>
-        <Text style={styles.signaturesTitle}>Signatures:</Text>
-        <View style={styles.signaturesContent}>
-          {/* Business Signature */}
+        <Text>Signatures:</Text>
+        <View style={styles.signatureContainer}>
+          {/* Left: Client Signature */}
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureLabel}>Business Signature:</Text>
-            {businessSignatureImage ? (
-              <Image
-                src={businessSignatureImage}
-                style={styles.signatureImage}
-              />
+            <Text style={styles.signatureLabel}>Client Signature:</Text>
+            {clientSignatureImage ? (
+              <Image src={clientSignatureImage} style={styles.signatureImage} />
             ) : (
               <View style={styles.signatureLine} />
             )}
           </View>
-          {/* Client Signature */}
+          {/* Right: Business Signature */}
           <View style={styles.signatureBlock}>
-            <Text style={styles.signatureLabel}>Client Signature:</Text>
-            {clientSignatureImage ? (
-              <Image
-                src={clientSignatureImage}
-                style={styles.signatureImage}
-              />
+            <Text style={styles.signatureLabel}>Business Signature:</Text>
+            {businessSignatureImage ? (
+              <Image src={businessSignatureImage} style={styles.signatureImage} />
             ) : (
               <View style={styles.signatureLine} />
             )}
