@@ -11,7 +11,7 @@ const menuItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
   { name: 'Clients', icon: Building2, path: '/dashboard/clients' },
-  { name: 'Invoice', icon: FileText, path: '/dashboard/invoice' },
+  { name: 'Invoice', icon: FileText, path: '/dashboard/invoices-list' },
   { name: 'Categories', icon: FolderKanban, path: '/dashboard/categories' },
   { name: 'Profile', icon: UserPen, path: '/dashboard/profile' },
   { name: 'Login', icon: LogIn, path: '/new-login' }, 

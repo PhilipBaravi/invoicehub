@@ -13,18 +13,19 @@ interface Category {
 
 interface Product {
   name: string;
-  status: "Active" | "Draft";
+  status: "ACTIVE" | "DRAFT"; // Updated to match backend data
   price: number;
   quantityInStock: number;
   lowLimitAlert: number;
   productUnit: string;
+  description: string;
   category: Category;
 }
 
 interface ProductFormDialogProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
-  newProduct: Product; // Keep the category field in the Product type
+  newProduct: Product;
   setNewProduct: (product: Product) => void;
   handleAddProduct: () => void;
   handleEditProduct: () => void;
@@ -61,9 +62,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             <Input
               id="name"
               value={newProduct.name}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, name: e.target.value }) // Always spread the product and update only specific fields
-              }
+              onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
               required
             />
           </div>
@@ -71,16 +70,14 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             <Label htmlFor="status">Status</Label>
             <Select
               value={newProduct.status}
-              onValueChange={(value) =>
-                setNewProduct({ ...newProduct, status: value as "Active" | "Draft" })
-              }
+              onValueChange={(value) => setNewProduct({ ...newProduct, status: value as "ACTIVE" | "DRAFT" })}
             >
-              <SelectTrigger id='status'>
+              <SelectTrigger id="status">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Draft">Draft</SelectItem>
+                <SelectItem value="ACTIVE">Active</SelectItem>
+                <SelectItem value="DRAFT">Draft</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -91,9 +88,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               type="number"
               step="0.01"
               value={newProduct.price}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })
-              }
+              onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
               required
             />
           </div>
@@ -103,9 +98,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               id="quantity"
               type="number"
               value={newProduct.quantityInStock}
-              onChange={(e) =>
-                setNewProduct({ ...newProduct, quantityInStock: parseInt(e.target.value) })
-              }
+              onChange={(e) => setNewProduct({ ...newProduct, quantityInStock: parseInt(e.target.value) })}
               required
             />
           </div>
@@ -115,12 +108,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               id="lowLimitAlert"
               type="number"
               value={newProduct.lowLimitAlert}
-              onChange={(e) =>
-                setNewProduct({
-                  ...newProduct,
-                  lowLimitAlert: parseInt(e.target.value),
-                })
-              }
+              onChange={(e) => setNewProduct({ ...newProduct, lowLimitAlert: parseInt(e.target.value) })}
               required
             />
           </div>
@@ -129,16 +117,18 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             <Input
               id="productUnit"
               value={newProduct.productUnit}
-              onChange={(e) =>
-                setNewProduct({
-                  ...newProduct,
-                  productUnit: e.target.value,
-                })
-              }
+              onChange={(e) => setNewProduct({ ...newProduct, productUnit: e.target.value })}
               required
             />
           </div>
-
+          <div>
+            <Label htmlFor="description">Description</Label>
+            <Input
+              id="description"
+              value={newProduct.description}
+              onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+            />
+          </div>
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
               Cancel

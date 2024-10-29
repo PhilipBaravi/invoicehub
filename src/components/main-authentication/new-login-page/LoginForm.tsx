@@ -1,8 +1,8 @@
 // LoginForm.tsx
 
 import { useState } from 'react';
-// import { useKeycloak } from '@react-keycloak/web';
-import { Link, useNavigate } from 'react-router-dom';
+import { useKeycloak } from '@react-keycloak/web';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -12,36 +12,27 @@ import AppleIcon from '../AppleIcon';
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
-  const navigate = useNavigate()
-
-  const handleSubmit = () => {
-    if(loginEmail === 'Bob' && loginPassword === 'Bob123'){
-      navigate('/dashboard')
-    }else{
-      navigate('/*')
-    }
-  }
-  // const { keycloak, initialized } = useKeycloak();
+  const { keycloak, initialized } = useKeycloak();
 
   // Use Keycloak's built-in login method to handle authentication
-  // const handleKeycloakLogin = async () => {
-  //   if (keycloak) {
-  //     try {
-  //       // Trigger the Keycloak login method with explicit redirect to /dashboard
-  //       await keycloak.login({
-  //         redirectUri: `${window.location.origin}/dashboard`, // Redirect to /dashboard after login
-  //       });
-  //     } catch (error) {
-  //       console.error('Error logging in with Keycloak:', error);
-  //     }
-  //   } else {
-  //     console.error('Keycloak instance not found');
-  //   }
-  // };
+  const handleKeycloakLogin = async () => {
+    if (keycloak) {
+      try {
+        // Trigger the Keycloak login method with explicit redirect to /dashboard
+        await keycloak.login({
+          redirectUri: `${window.location.origin}/dashboard`, // Redirect to /dashboard after login
+        });
+      } catch (error) {
+        console.error('Error logging in with Keycloak:', error);
+      }
+    } else {
+      console.error('Keycloak instance not found');
+    }
+  };
 
   // Debugging statements
-  // console.log('LoginForm - Keycloak initialized:', initialized);
-  // console.log('LoginForm - Keycloak authenticated:', keycloak.authenticated);
+  console.log('LoginForm - Keycloak initialized:', initialized);
+  console.log('LoginForm - Keycloak authenticated:', keycloak.authenticated);
 
   return (
     <>
@@ -81,8 +72,7 @@ const LoginForm = () => {
             I agree to the terms of service and privacy policy
           </label>
         </div>
-        {/* onClick={handleKeycloakLogin} Later for fetching*/}
-        <Button className="w-full" onClick={handleSubmit}>
+        <Button className="w-full" onClick={handleKeycloakLogin}>
           Login with Keycloak
         </Button>
       </form>

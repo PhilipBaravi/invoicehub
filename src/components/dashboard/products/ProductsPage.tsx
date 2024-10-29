@@ -1,12 +1,12 @@
 import { FC, useState } from "react";
-import { useOutletContext } from "react-router-dom"; // Import useOutletContext to get the category ID
+import { useOutletContext } from "react-router-dom";
 import { Search, Download, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProductTable from "./ProductTable";
 import ProductFilter from "./ProductFilter";
 import ProductFormDialog from "./ProductFormDialog";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"; // Use ShadCN UI alert
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import testProductListData from "./test-product-list-data";
 
 interface Category {
@@ -18,7 +18,8 @@ interface Category {
 interface Product {
   id: number;
   name: string;
-  status: "Active" | "Draft";
+  description: string;
+  status: "ACTIVE" | "DRAFT"; // Use "ACTIVE" | "DRAFT" to match backend
   price: number;
   quantityInStock: number;
   lowLimitAlert: number;
@@ -28,7 +29,7 @@ interface Product {
 }
 
 const ProductsPage: FC = () => {
-  const [activeTab, setActiveTab] = useState("All");
+  const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<Product[]>(testProductListData.data);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -36,22 +37,21 @@ const ProductsPage: FC = () => {
 
   const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'createdAt'>>({
     name: '',
-    status: 'Draft',
+    description: '',
+    status: 'DRAFT',
     price: 0,
     quantityInStock: 0,
     lowLimitAlert: 0,
     productUnit: 'PCS',
-    category: { id: 1, description: '', icon: '' }, // Default category structure
+    category: { id: 1, description: '', icon: '' },
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 1000 });
 
-  // Get the selected category ID from the context
   const { selectedCategoryId } = useOutletContext<{ selectedCategoryId: number }>();
 
-  // Filter products based on the selected category
   const filteredProducts = products.filter((product) => {
     const matchesCategory = product.category.id === selectedCategoryId;
     const matchesTab = activeTab === "All" || product.status === activeTab;
@@ -68,21 +68,22 @@ const ProductsPage: FC = () => {
   const handleAddProduct = () => {
     const product: Product = {
       ...newProduct,
-      id: products.length + 1, // Generate new ID
+      id: products.length + 1,
       createdAt: new Date().toLocaleString(),
-      category: { id: selectedCategoryId, description: '', icon: '' } // Assign to the selected category
+      category: { id: selectedCategoryId, description: '', icon: '' }
     };
 
     setProducts((prevProducts) => [...prevProducts, product]);
     setIsDialogOpen(false);
     setNewProduct({
       name: '',
-      status: 'Draft',
+      description: '',
+      status: 'DRAFT',
       price: 0,
       quantityInStock: 0,
       lowLimitAlert: 0,
       productUnit: 'PCS',
-      category: { id: selectedCategoryId, description: '', icon: '' }, // Reset with selected category
+      category: { id: selectedCategoryId, description: '', icon: '' },
     });
   };
 
@@ -94,12 +95,13 @@ const ProductsPage: FC = () => {
       setEditingProduct(null);
       setNewProduct({
         name: '',
-        status: 'Draft',
+        description: '',
+        status: 'DRAFT',
         price: 0,
         quantityInStock: 0,
         lowLimitAlert: 0,
         productUnit: 'PCS',
-        category: { id: selectedCategoryId, description: '', icon: '' }, // Reset with selected category
+        category: { id: selectedCategoryId, description: '', icon: '' },
       });
     }
   };
@@ -112,12 +114,13 @@ const ProductsPage: FC = () => {
     setEditingProduct(product);
     setNewProduct({
       name: product.name,
+      description: product.description,
       status: product.status,
       price: product.price,
       quantityInStock: product.quantityInStock,
       lowLimitAlert: product.lowLimitAlert,
       productUnit: product.productUnit,
-      category: product.category, // Set the existing category
+      category: product.category,
     });
     setIsDialogOpen(true);
   };
@@ -156,7 +159,6 @@ const ProductsPage: FC = () => {
         </Button>
       </div>
 
-      {/* Conditional Alert for low stock */}
       {lowStockProducts.length > 0 && (
         <Alert variant="destructive">
           <AlertTitle>Low Stock Alert</AlertTitle>
@@ -164,9 +166,8 @@ const ProductsPage: FC = () => {
         </Alert>
       )}
 
-      {/* Filtered Products Alert */}
       {filteredProducts.length === 0 && (
-        <Alert variant="default"> {/* Use default variant */}
+        <Alert variant="default">
           <AlertTitle>No products found</AlertTitle>
           <AlertDescription>No products available for this category.</AlertDescription>
         </Alert>
@@ -174,13 +175,13 @@ const ProductsPage: FC = () => {
 
       <div className="flex justify-between items-center">
         <div className="flex space-x-4">
-          {["All", "Active", "Draft"].map((tab) => (
+          {["All", "ACTIVE", "DRAFT"].map((tab) => (
             <button
               key={tab}
               className={`px-3 py-2 text-sm font-medium ${activeTab === tab ? "text-stone-900 dark:text-stone-100 border-b-2 border-stone-900 dark:border-stone-100" : "text-stone-500 dark:text-stone-400"}`}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => setActiveTab(tab as "All" | "ACTIVE" | "DRAFT")}
             >
-              {tab}
+              {tab === "All" ? tab : tab === "ACTIVE" ? "Active" : "Draft"}
             </button>
           ))}
         </div>
@@ -204,7 +205,7 @@ const ProductsPage: FC = () => {
             setPriceRange={setPriceRange}
           />
           <Button variant="outline" onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" /> Export
+          <Download className="mr-2 h-4 w-4" /> Export
           </Button>
         </div>
       </div>
@@ -213,7 +214,7 @@ const ProductsPage: FC = () => {
         products={filteredProducts}
         openEditDialog={openEditDialog}
         handleDeleteProduct={handleDeleteProduct}
-        lowStockProducts={lowStockProducts} // Pass low stock products to table for highlighting
+        lowStockProducts={lowStockProducts}
       />
 
       <ProductFormDialog

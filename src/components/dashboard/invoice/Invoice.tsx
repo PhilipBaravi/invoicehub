@@ -1,7 +1,7 @@
 import { useState, useRef, FC } from 'react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import testBusinessInfoData from './test-business-info-data';
