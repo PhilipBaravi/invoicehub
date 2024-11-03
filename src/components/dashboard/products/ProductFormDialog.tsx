@@ -4,33 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-interface Category {
-  id: number;
-  description: string;
-  icon: string;
-}
-
-interface Product {
-  name: string;
-  status: "ACTIVE" | "DRAFT"; // Updated to match backend data
-  price: number;
-  quantityInStock: number;
-  lowLimitAlert: number;
-  productUnit: string;
-  description: string;
-  category: Category;
-}
-
-interface ProductFormDialogProps {
-  isDialogOpen: boolean;
-  setIsDialogOpen: (open: boolean) => void;
-  newProduct: Product;
-  setNewProduct: (product: Product) => void;
-  handleAddProduct: () => void;
-  handleEditProduct: () => void;
-  editingProduct: Product | null;
-}
+import { ProductFormDialogProps } from "./products-types";
 
 const ProductFormDialog: FC<ProductFormDialogProps> = ({
   isDialogOpen,

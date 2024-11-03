@@ -1,3 +1,5 @@
+// Categories.tsx
+
 import { FC, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import AddCategoryBtn from "./AddCategoryBtn";
@@ -12,20 +14,6 @@ import {
 import {
   Trash2,
   Pencil,
-  ShoppingBag,
-  Airplay,
-  Aperture,
-  Book,
-  Box,
-  Cake,
-  Car,
-  Coffee,
-  Droplet,
-  Home,
-  Laptop,
-  Leaf,
-  Utensils,
-  LucideIcon,
 } from "lucide-react";
 import {
   AlertDialog,
@@ -39,27 +27,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useKeycloak } from "@react-keycloak/web";
 
-interface Category {
-  id: number;
-  description: string;
-  icon: string;
-}
-
-const iconMap: Record<string, LucideIcon> = {
-  ShoppingBag,
-  Airplay,
-  Aperture,
-  Book,
-  Box,
-  Cake,
-  Car,
-  Coffee,
-  Droplet,
-  Home,
-  Laptop,
-  Leaf,
-  Utensils,
-};
+// Import types and icon map
+import { Category } from "./categories-types";
+import iconMap from "./icons-map";
 
 const Categories: FC = () => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);

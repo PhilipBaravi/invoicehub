@@ -1,52 +1,28 @@
+// AddCategoryBtn.tsx
+
 import { FC, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import { ShoppingBag, Airplay, Aperture, Book, Box, Cake, Car, Coffee, Droplet, Home, Laptop, Leaf, Utensils, LucideIcon } from "lucide-react";
-import { useKeycloak } from "@react-keycloak/web"; // Assuming Keycloak is integrated
+import { useKeycloak } from "@react-keycloak/web";
 
-interface Category {
-  id: number;
-  description: string;
-  icon: string;
-}
+// Import types and icon map
+import { AddCategoryBtnProps } from "./categories-types";
+import iconMap from "./icons-map";
 
-const iconMap: Record<string, LucideIcon> = {
-  ShoppingBag,
-  Airplay,
-  Aperture,
-  Book,
-  Box,
-  Cake,
-  Car,
-  Coffee,
-  Droplet,
-  Home,
-  Laptop,
-  Leaf,
-  Utensils,
-};
+const categoryIcons = Object.keys(iconMap);
 
-const categoryIcons = [
-  "ShoppingBag",
-  "Airplay",
-  "Aperture",
-  "Book",
-  "Box",
-  "Cake",
-  "Car",
-  "Coffee",
-  "Droplet",
-  "Home",
-  "Laptop",
-  "Leaf",
-  "Utensils",
-];
-
-const AddCategoryBtn: FC<{ onAddCategory: (newCategory: Category) => void }> = ({ onAddCategory }) => {
-  const [categoryName, setCategoryName] = useState<string>('');
+const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
+  const [categoryName, setCategoryName] = useState<string>("");
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -66,12 +42,12 @@ const AddCategoryBtn: FC<{ onAddCategory: (newCategory: Category) => void }> = (
       setError("Please choose a category icon");
       return;
     }
-  
+
     const newCategory = {
       description: categoryName,
       icon: selectedIcon,
     };
-  
+
     try {
       const response = await fetch("http://localhost:9090/api/v1/category/create", {
         method: "POST",
@@ -81,19 +57,19 @@ const AddCategoryBtn: FC<{ onAddCategory: (newCategory: Category) => void }> = (
         },
         body: JSON.stringify(newCategory),
       });
-  
+
       if (!response.ok) throw new Error("Failed to add category");
-  
+
       const createdCategory = await response.json();
       onAddCategory(createdCategory.data); // Add the new category to the state immediately
       setIsDialogOpen(false);
-      setCategoryName('');
+      setCategoryName("");
       setSelectedIcon(null);
     } catch (error) {
       setError("An error occurred while adding the category.");
       console.error(error);
     }
-  };  
+  };
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -133,15 +109,17 @@ const AddCategoryBtn: FC<{ onAddCategory: (newCategory: Category) => void }> = (
           <Card>
             <CardContent className="grid grid-cols-4 gap-2 p-2">
               {categoryIcons.map((icon, index) => {
-                const Icon = iconMap[icon];
+                const IconComponent = iconMap[icon];
                 return (
                   <Button
                     key={index}
                     variant="ghost"
-                    className={`p-2 hover:bg-secondary ${selectedIcon === icon ? 'bg-primary text-primary-foreground' : ''}`}
+                    className={`p-2 hover:bg-secondary ${
+                      selectedIcon === icon ? "bg-primary text-primary-foreground" : ""
+                    }`}
                     onClick={() => handleIconSelect(icon)}
                   >
-                    {Icon && <Icon className="h-6 w-6" />}
+                    {IconComponent && <IconComponent className="h-6 w-6" />}
                   </Button>
                 );
               })}

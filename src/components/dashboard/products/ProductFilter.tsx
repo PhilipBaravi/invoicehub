@@ -4,15 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-
-interface ProductFilterProps {
-  isFilterOpen: boolean;
-  setIsFilterOpen: (open: boolean) => void;
-  dateRange: { from: Date | undefined; to: Date | undefined };
-  setDateRange: (range: { from: Date | undefined; to: Date | undefined }) => void;
-  priceRange: { min: number; max: number };
-  setPriceRange: (range: { min: number; max: number }) => void;
-}
+import { ProductFilterProps } from "./products-types";
 
 const ProductFilter: FC<ProductFilterProps> = ({
   isFilterOpen,

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProductTableProps } from "./products-types";
 import {
   Table,
   TableBody,
@@ -15,32 +16,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface Category {
-  id: number;
-  description: string;
-  icon: string;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  status: "ACTIVE" | "DRAFT"; // Matches backend data
-  price: number;
-  quantityInStock: number;
-  lowLimitAlert: number;
-  productUnit: string;
-  createdAt: string;
-  description: string;
-  category: Category;
-}
-
-interface ProductTableProps {
-  products: Product[];
-  openEditDialog: (product: Product) => void;
-  handleDeleteProduct: (productId: number) => void;
-  lowStockProducts: Product[];
-}
 
 const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleDeleteProduct, lowStockProducts }) => {
   return (

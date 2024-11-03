@@ -1,57 +1,29 @@
+// EditCategoryBtn.tsx
+
 import { FC, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CategoryList } from "./test-category-list-data";
-import { ShoppingBag, Airplay, Aperture, Book, Box, Cake, Car, Coffee, Droplet, Home, Laptop, Leaf, Utensils, LucideIcon } from "lucide-react";
-import { useKeycloak } from "@react-keycloak/web"; // Assuming Keycloak integration
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useKeycloak } from "@react-keycloak/web";
 
-// Map of string icon names to actual Lucide icons
-const iconMap: Record<string, LucideIcon> = {
-  ShoppingBag,
-  Airplay,
-  Aperture,
-  Book,
-  Box,
-  Cake,
-  Car,
-  Coffee,
-  Droplet,
-  Home,
-  Laptop,
-  Leaf,
-  Utensils,
-};
+// Import types and icon map
+import { EditCategoryBtnProps } from "./categories-types";
+import iconMap from "./icons-map";
 
-const categoryIcons = [
-  "ShoppingBag",
-  "Airplay",
-  "Aperture",
-  "Book",
-  "Box",
-  "Cake",
-  "Car",
-  "Coffee",
-  "Droplet",
-  "Home",
-  "Laptop",
-  "Leaf",
-  "Utensils",
-];
-
-interface EditCategoryBtnProps {
-  category: CategoryList;
-  onEditCategory: (updatedCategory: CategoryList) => void;
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-}
+const categoryIcons = Object.keys(iconMap);
 
 const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, isOpen, setIsOpen }) => {
   const [categoryName, setCategoryName] = useState<string>(category.description);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const { keycloak } = useKeycloak();
-  
+
   useEffect(() => {
     const icon = categoryIcons.find((iconName) => iconName === category.icon);
     setSelectedIcon(icon || null);
@@ -68,7 +40,7 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
   const handleEditCategory = async () => {
     if (!selectedIcon) return;
 
-    const updatedCategory: CategoryList = {
+    const updatedCategory = {
       ...category,
       description: categoryName,
       icon: selectedIcon,
@@ -130,7 +102,9 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
                   <Button
                     key={index}
                     variant="ghost"
-                    className={`p-2 hover:bg-secondary ${selectedIcon === icon ? 'bg-primary text-primary-foreground' : ''}`}
+                    className={`p-2 hover:bg-secondary ${
+                      selectedIcon === icon ? "bg-primary text-primary-foreground" : ""
+                    }`}
                     onClick={() => handleIconSelect(icon)}
                   >
                     {IconComponent && <IconComponent className="h-6 w-6" />}

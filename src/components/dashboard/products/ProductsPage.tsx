@@ -8,25 +8,7 @@ import ProductFilter from "./ProductFilter";
 import ProductFormDialog from "./ProductFormDialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useKeycloak } from "@react-keycloak/web";
-
-interface Category {
-  id: number;
-  description: string;
-  icon: string;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  status: "ACTIVE" | "DRAFT";
-  price: number;
-  quantityInStock: number;
-  lowLimitAlert: number;
-  productUnit: string;
-  createdAt: string;
-  category: Category;
-}
+import { Category, Product } from "./products-types";
 
 const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");
@@ -98,10 +80,18 @@ const ProductsPage: FC = () => {
   const lowStockProducts = products.filter((product) => product.quantityInStock <= product.lowLimitAlert);
 
   const handleAddProduct = async () => {
+    if (!selectedCategoryId || !selectedCategoryDescription) {
+      console.error("Category not selected or invalid.");
+      return;
+    }
+  
     const productToAdd = {
       ...newProduct,
       createdAt: new Date().toISOString(),
-      category: { id: selectedCategoryId, description: selectedCategoryDescription },
+      category: {
+        id: selectedCategoryId,
+        description: selectedCategoryDescription,
+      },
     };
   
     try {
@@ -116,14 +106,9 @@ const ProductsPage: FC = () => {
   
       const createdProduct = await response.json();
   
-      // Check if the response was successful and if the product data is available
-      if (response.ok && createdProduct.success && createdProduct.data) {
-        console.log("Product created:", createdProduct.data); // Debugging output
-  
-        // Add the new product to the state
-        setProducts((prevProducts) => [...prevProducts, createdProduct.data]);
-        
-        // Reset form and dialog state
+      if (response.ok && createdProduct.success) {
+        // Product created successfully; re-fetch products to ensure we have the proper id
+        await fetchProducts();
         setIsDialogOpen(false);
         resetProductForm();
       } else {
@@ -134,6 +119,10 @@ const ProductsPage: FC = () => {
     }
   };
   
+  
+  
+  
+
   
   
 
