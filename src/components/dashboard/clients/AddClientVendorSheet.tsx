@@ -2,27 +2,39 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ClientVendor } from './CliendVendorTypes';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useKeycloak } from '@react-keycloak/web';
 
 export default function AddClientVendorSheet({
   isOpen,
   onOpenChange,
-  onAddClientVendor,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddClientVendor: (clientVendor: Omit<ClientVendor, 'id'>) => void;
 }) {
-  const [newClientVendor, setNewClientVendor] = useState<Omit<ClientVendor, 'id'>>({
+  const { keycloak } = useKeycloak();
+
+  const initialClientVendorState = {
     name: '',
     phone: '',
     website: '',
     email: '',
     clientVendorType: 'CLIENT',
     address: {
-      id: 0,
       addressLine1: '',
       addressLine2: '',
       city: '',
@@ -30,28 +42,11 @@ export default function AddClientVendorSheet({
       country: '',
       zipCode: '',
     },
-    company: {
-      title: '',
-      phone: '',
-      website: '',
-      address: {
-        id: 0,
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        state: '',
-        country: '',
-        zipCode: '',
-      },
-    },
-  });
+  };
 
-  const [errors, setErrors] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    website: '',
-  });
+  const [newClientVendor, setNewClientVendor] = useState(initialClientVendorState);
+
+  const [errors, setErrors] = useState<any>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,27 +60,6 @@ export default function AddClientVendorSheet({
           [addressField]: value,
         },
       }));
-    } else if (name.startsWith('company.')) {
-      const companyField = name.split('.')[1];
-      setNewClientVendor((prev) => ({
-        ...prev,
-        company: {
-          ...prev.company,
-          [companyField]: value,
-        },
-      }));
-    } else if (name.startsWith('company.address.')) {
-      const companyAddressField = name.split('.')[2];
-      setNewClientVendor((prev) => ({
-        ...prev,
-        company: {
-          ...prev.company,
-          address: {
-            ...prev.company.address,
-            [companyAddressField]: value,
-          },
-        },
-      }));
     } else {
       setNewClientVendor((prev) => ({ ...prev, [name]: value }));
     }
@@ -95,6 +69,7 @@ export default function AddClientVendorSheet({
     const newErrors: any = {};
     let valid = true;
 
+    // Personal Details Validation
     if (!newClientVendor.name) {
       newErrors.name = 'Name is required.';
       valid = false;
@@ -115,48 +90,63 @@ export default function AddClientVendorSheet({
       valid = false;
     }
 
+    // Address Validation
+    if (!newClientVendor.address.addressLine1) {
+      newErrors.addressLine1 = 'Address Line 1 is required.';
+      valid = false;
+    }
+
+    if (!newClientVendor.address.city) {
+      newErrors.city = 'City is required.';
+      valid = false;
+    }
+
+    if (!newClientVendor.address.state) {
+      newErrors.state = 'State is required.';
+      valid = false;
+    }
+
+    if (!newClientVendor.address.country) {
+      newErrors.country = 'Country is required.';
+      valid = false;
+    }
+
+    if (!newClientVendor.address.zipCode) {
+      newErrors.zipCode = 'Zip Code is required.';
+      valid = false;
+    }
+
     setErrors(newErrors);
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    onAddClientVendor(newClientVendor);
-    onOpenChange(false);
-
-    // Reset the form
-    setNewClientVendor({
-      name: '',
-      phone: '',
-      website: '',
-      email: '',
-      clientVendorType: 'CLIENT',
-      address: {
-        id: 0,
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        state: '',
-        country: '',
-        zipCode: '',
-      },
-      company: {
-        title: '',
-        phone: '',
-        website: '',
-        address: {
-          id: 0,
-          addressLine1: '',
-          addressLine2: '',
-          city: '',
-          state: '',
-          country: '',
-          zipCode: '',
+    try {
+      const response = await fetch('http://localhost:9090/api/v1/clientVendor/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${keycloak.token}`,
         },
-      },
-    });
+        body: JSON.stringify(newClientVendor),
+      });
+
+      if (response.ok) {
+        // Close the form
+        onOpenChange(false);
+        // Reset the form
+        setNewClientVendor(initialClientVendorState);
+        setErrors({});
+      } else {
+        const errorData = await response.json();
+        console.error('Error:', errorData);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -167,9 +157,12 @@ export default function AddClientVendorSheet({
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Add New Client/Vendor</SheetTitle>
-          <SheetDescription>Enter the details of the new client/vendor below.</SheetDescription>
+          <SheetDescription>
+            Enter the details of the new client/vendor below.
+          </SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          {/* Personal Details */}
           <div>
             <Label htmlFor="name">Name</Label>
             <Input
@@ -235,37 +228,75 @@ export default function AddClientVendorSheet({
               </SelectContent>
             </Select>
           </div>
-          {/* Company Fields */}
+
+          {/* Address Details */}
           <div>
-            <Label htmlFor="company.title">Company Title</Label>
+            <Label htmlFor="address.addressLine1">Address Line 1</Label>
             <Input
-              id="company.title"
-              name="company.title"
-              value={newClientVendor.company.title}
+              id="address.addressLine1"
+              name="address.addressLine1"
+              value={newClientVendor.address.addressLine1}
               onChange={handleInputChange}
               required
             />
+            {errors.addressLine1 && (
+              <p className="text-red-500 text-sm">{errors.addressLine1}</p>
+            )}
           </div>
           <div>
-            <Label htmlFor="company.phone">Company Phone</Label>
+            <Label htmlFor="address.addressLine2">Address Line 2</Label>
             <Input
-              id="company.phone"
-              name="company.phone"
-              value={newClientVendor.company.phone}
+              id="address.addressLine2"
+              name="address.addressLine2"
+              value={newClientVendor.address.addressLine2}
               onChange={handleInputChange}
-              required
             />
           </div>
           <div>
-            <Label htmlFor="company.website">Company Website</Label>
+            <Label htmlFor="address.city">City</Label>
             <Input
-              id="company.website"
-              name="company.website"
-              value={newClientVendor.company.website}
+              id="address.city"
+              name="address.city"
+              value={newClientVendor.address.city}
               onChange={handleInputChange}
               required
             />
+            {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
           </div>
+          <div>
+            <Label htmlFor="address.state">State</Label>
+            <Input
+              id="address.state"
+              name="address.state"
+              value={newClientVendor.address.state}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
+          </div>
+          <div>
+            <Label htmlFor="address.country">Country</Label>
+            <Input
+              id="address.country"
+              name="address.country"
+              value={newClientVendor.address.country}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.country && <p className="text-red-500 text-sm">{errors.country}</p>}
+          </div>
+          <div>
+            <Label htmlFor="address.zipCode">Zip Code</Label>
+            <Input
+              id="address.zipCode"
+              name="address.zipCode"
+              value={newClientVendor.address.zipCode}
+              onChange={handleInputChange}
+              required
+            />
+            {errors.zipCode && <p className="text-red-500 text-sm">{errors.zipCode}</p>}
+          </div>
+
           <Button type="submit">Add Client/Vendor</Button>
         </form>
       </SheetContent>

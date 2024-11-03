@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CategoryList } from "./test-category-list-data";
 import { ShoppingBag, Airplay, Aperture, Book, Box, Cake, Car, Coffee, Droplet, Home, Laptop, Leaf, Utensils, LucideIcon } from "lucide-react";
+import { useKeycloak } from "@react-keycloak/web"; // Assuming Keycloak integration
 
 // Map of string icon names to actual Lucide icons
 const iconMap: Record<string, LucideIcon> = {
@@ -49,9 +50,9 @@ interface EditCategoryBtnProps {
 const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, isOpen, setIsOpen }) => {
   const [categoryName, setCategoryName] = useState<string>(category.description);
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
-
+  const { keycloak } = useKeycloak();
+  
   useEffect(() => {
-    // Initialize the selectedIcon with the existing category icon (mapped from string)
     const icon = categoryIcons.find((iconName) => iconName === category.icon);
     setSelectedIcon(icon || null);
   }, [category.icon]);
@@ -64,16 +65,33 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
     setSelectedIcon(icon);
   };
 
-  const handleEditCategory = () => {
+  const handleEditCategory = async () => {
     if (!selectedIcon) return;
 
     const updatedCategory: CategoryList = {
       ...category,
       description: categoryName,
-      icon: selectedIcon, // Save the selected icon name as a string
+      icon: selectedIcon,
     };
 
-    onEditCategory(updatedCategory);
+    try {
+      const response = await fetch(`http://localhost:9090/api/v1/category/update/${category.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+        body: JSON.stringify(updatedCategory),
+      });
+
+      if (!response.ok) throw new Error("Failed to update category");
+
+      const result = await response.json();
+      onEditCategory(result.data); // Use updated data returned from the API
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
   };
 
   return (
@@ -107,7 +125,7 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
           <Card>
             <CardContent className="grid grid-cols-4 gap-2 p-2">
               {categoryIcons.map((icon, index) => {
-                const IconComponent = iconMap[icon]; // Get the Lucide icon component
+                const IconComponent = iconMap[icon];
                 return (
                   <Button
                     key={index}
@@ -115,7 +133,7 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
                     className={`p-2 hover:bg-secondary ${selectedIcon === icon ? 'bg-primary text-primary-foreground' : ''}`}
                     onClick={() => handleIconSelect(icon)}
                   >
-                    {IconComponent && <IconComponent className="h-6 w-6" />} {/* Render the icon */}
+                    {IconComponent && <IconComponent className="h-6 w-6" />}
                   </Button>
                 );
               })}

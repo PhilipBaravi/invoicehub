@@ -2,60 +2,64 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  CountryCode,
+  getCountryCallingCode,
+  isValidPhoneNumber,
+} from 'libphonenumber-js';
 import countryList from '@/components/account-details/profile-form/CountryCodes';
 import { Employee } from './employeeTypes';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import { useKeycloak } from '@react-keycloak/web';
+
+// Types for errors
+type EmployeeErrors = {
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+};
 
 export default function AddEmployeeSheet({
   isOpen,
   onOpenChange,
-  onAddEmployee,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddEmployee: (employee: Omit<Employee, 'id'>) => void;
 }) {
+  const { keycloak } = useKeycloak();
   const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id'>>({
     username: '',
     password: '',
-    confirmPassword: null,
     firstName: '',
     lastName: '',
     phone: '',
     role: { description: 'Employee' },
     dateOfEmployment: new Date(),
-    enabled: true,
     status: 'INACTIVE',
-    company: {
-      title: '',
-      phone: '',
-      website: '',
-      address: {
-        id: 0,
-        addressLine1: '',
-        addressLine2: '',
-        city: '',
-        state: '',
-        country: '',
-        zipCode: '',
-      },
-    },
   });
 
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
-  const [errors, setErrors] = useState({
-    username: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
-  });
+  const [errors, setErrors] = useState<EmployeeErrors>({});
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,11 +67,11 @@ export default function AddEmployeeSheet({
     setNewEmployee((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     let valid = true;
-    const newErrors: any = {};
+    const newErrors: EmployeeErrors = {};
 
     // Validation
     if (!newEmployee.username) {
@@ -100,39 +104,41 @@ export default function AddEmployeeSheet({
     const completeEmployeeData = {
       ...newEmployee,
       phone: fullPhoneNumber,
+      dateOfEmployment: newEmployee.dateOfEmployment.toISOString().split('T')[0],
     };
 
-    // Add employee to the list
-    onAddEmployee(completeEmployeeData);
-    onOpenChange(false);
-
-    // Reset form fields
-    setNewEmployee({
-      username: '',
-      password: '',
-      confirmPassword: null,
-      firstName: '',
-      lastName: '',
-      phone: '',
-      role: { description: 'Employee' },
-      dateOfEmployment: new Date(),
-      enabled: true,
-      status: 'INACTIVE',
-      company: {
-        title: '',
-        phone: '',
-        website: '',
-        address: {
-          id: 0,
-          addressLine1: '',
-          addressLine2: '',
-          city: '',
-          state: '',
-          country: '',
-          zipCode: '',
+    try {
+      const response = await fetch('http://localhost:9090/api/v1/user/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${keycloak.token}`,
         },
-      },
-    });
+        body: JSON.stringify(completeEmployeeData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error adding employee:', errorData);
+        return;
+      }
+
+      // Close the sheet and reset the form
+      onOpenChange(false);
+      setNewEmployee({
+        username: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        role: { description: 'Employee' },
+        dateOfEmployment: new Date(),
+        status: 'INACTIVE',
+      });
+      setErrors({});
+    } catch (error) {
+      console.error('Error adding employee:', error);
+    }
   };
 
   return (

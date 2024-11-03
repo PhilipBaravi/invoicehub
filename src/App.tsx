@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./components/main-authentication/new-login-page/keycloak";
@@ -9,7 +9,6 @@ import Dashboard from "./components/dashboard/layout/Dashboard";
 import DashboardDefault from "./components/dashboard/dashboarddefault/DashboardDefault";
 import Employee from "./components/dashboard/employee/EmployeeList";
 import ProductsPage from "./components/dashboard/products/ProductsPage";
-import Profile from "./components/dashboard/profile/Profile";
 import NewLoginPage from "./components/main-authentication/new-login-page/NewLoginPage";
 import NewRegisterPage from "./components/main-authentication/new-register-page/NewRegisterPage";
 import { ThemeProvider } from "./components/dashboard/layout/ThemeProvider";
@@ -18,12 +17,13 @@ import LoginRegisterLayout from "./components/main-authentication/LoginRegisterL
 import ClientVendorList from "./components/dashboard/clients/ClientVendorList";
 import NotFound from "./NotFound";
 import Settings from "./components/dashboard/company-settings/Settings";
-import Invoice from "./components/dashboard/invoice/Invoice";
 import ProfileSubscription from "./components/dashboard/subscription/ProfileSubscription";
 import ManagePaymentMethods from "./components/dashboard/subscription/ManagePaymentMethods";
 import Categories from "./components/dashboard/products/categories/Categories";
 import UpdateCompanyDetails from "./components/dashboard/company-settings/UpdateCompanyDetails";
 import InvoiceListPage from "./components/dashboard/invoice/invoice-list-page/InvoiceListPage";
+import { Progress } from "@/components/ui/progress";
+import Invoice from "./components/dashboard/invoice/Invoice";
 
 // UserDetails interface
 interface UserDetails {
@@ -37,18 +37,34 @@ interface UserDetails {
 // ProtectedRoute Component
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   const { keycloak, initialized } = useKeycloak();
+  const [progress, setProgress] = useState(0);
 
   // Debugging statements
   console.log("ProtectedRoute - Keycloak initialized:", initialized);
   console.log("ProtectedRoute - Keycloak authenticated:", keycloak.authenticated);
   console.log("ProtectedRoute - Keycloak instance:", keycloak);
 
+  useEffect(() => {
+    if (!initialized) {
+      const timer = setInterval(() => {
+        setProgress((prev) => (prev < 100 ? prev + 10 : 100));
+      }, 300);
+      return () => clearInterval(timer);
+    } else {
+      setProgress(100);
+    }
+  }, [initialized]);
+
+  // Display the progress bar while initializing
   if (!initialized) {
-    // Display loading indicator while initializing
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Progress value={progress} className="w-[60%]" />
+      </div>
+    );
   }
 
-  // Proceed to the element regardless of authentication status
+  // Proceed to the element if authenticated, otherwise show the login page
   return keycloak.authenticated ? element : <NewLoginPage />;
 };
 
@@ -105,16 +121,14 @@ const App: React.FC = () => {
               <Route index element={<DashboardDefault />} />
               <Route path="employee" element={<Employee />} />
               <Route path="clients" element={<ClientVendorList />} />
-              <Route path="invoices-list" element={<InvoiceListPage />}>
-                <Route path="invoice" element={<Invoice />} />
-              </Route>
-              <Route path="settings" element={<Settings />}>
+              <Route path="invoices" element={<InvoiceListPage />} />
+              <Route path="invoices/new-invoice" element={<Invoice />} />
+              <Route path="settings" element={<Settings />} >
                 <Route index element={<UpdateCompanyDetails />} />
-                <Route path="profile" element={<Profile />} />
                 <Route path="profile-subscription" element={<ProfileSubscription />} />
                 <Route path="payment-methods" element={<ManagePaymentMethods />} />
               </Route>
-              <Route path="categories" element={<Categories />}>
+              <Route path="categories" element={<Categories />} >
                 <Route path="products" element={<ProductsPage />} />
               </Route>
             </Route>
@@ -125,4 +139,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default App

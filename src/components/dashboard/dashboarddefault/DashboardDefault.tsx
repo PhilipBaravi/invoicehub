@@ -1,16 +1,11 @@
 import { FC, useState } from "react";
 import { Link } from "react-router-dom";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import CurrencyExchangeRates from "./CurrencyExchangeRates";
 import ProductSalesChart from "./ProductSalesChart";
 import { Component } from "./testChart";
-import { ArrowUpRight, TrendingUp, Users, ShoppingBag, GripVertical } from "lucide-react";
+import { ArrowUpRight, TrendingUp, Users, ShoppingBag } from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,26 +23,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DropResult } from "react-beautiful-dnd";
 
 const DashboardDefault: FC = () => {
-  const [components, setComponents] = useState([
+  const [components] = useState([
     { id: "stats", title: "Statistics", component: <StatisticsGrid />, width: "col-span-8" },
     { id: "currency", title: "Currency Exchange Rates", component: <CurrencyExchangeRates />, width: "col-span-8" },
     { id: 'testCharts', title: 'Test Charts', component: <Component />, width: "col-span-4" },
-
     { id: "productSales", title: "Product Sales Chart", component: <ProductSalesChart />, width: "col-span-8" },
     { id: "transactions", title: "Transactions", component: <TransactionsCard />, width: "col-span-4" },
   ]);
-
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
-    if (!destination) return;
-    const items = [...components];
-    const [reorderedItem] = items.splice(source.index, 1);
-    items.splice(destination.index, 0, reorderedItem);
-    setComponents(items);
-  };
 
   return (
     <>
@@ -56,30 +40,22 @@ const DashboardDefault: FC = () => {
       </h1>
 
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="dashboard">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef} className="grid grid-cols-12 gap-4 auto-rows-min">
-                {/* Left Side (2/3 width) */}
-                <div className="col-span-8 grid grid-rows-2 gap-4">
-                  <div className="row-span-1">{components[0].component}</div>
-                  <div className="row-span-1">{components[1].component}</div>
-                </div>
+        <div className="grid grid-cols-12 gap-4 auto-rows-min">
+          {/* Left Side (2/3 width) */}
+          <div className="col-span-8 grid grid-rows-2 gap-4">
+            <div className="row-span-1">{components[0].component}</div>
+            <div className="row-span-1">{components[1].component}</div>
+          </div>
 
-                {/* Right Side (1/3 width) */}
-                <div className="col-span-4 grid-rows-2 gap-4">
-                  <div className="row-span-2">{components[2].component}</div>
-                </div>
+          {/* Right Side (1/3 width) */}
+          <div className="col-span-4 grid-rows-2 gap-4">
+            <div className="row-span-2">{components[2].component}</div>
+          </div>
 
-                {/* Bottom Row */}
-                <div className="col-span-4">{components[4].component}</div>
-                <div className="col-span-8">{components[3].component}</div>
-
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
+          {/* Bottom Row */}
+          <div className="col-span-4">{components[4].component}</div>
+          <div className="col-span-8">{components[3].component}</div>
+        </div>
       </main>
     </>
   );
@@ -170,29 +146,6 @@ const TransactionsCard: FC = () => {
   );
 };
 
-const RecentSalesCard: FC = () => {
-  return (
-    <Card className="h-full">
-      <CardHeader>
-        <CardTitle>Recent Sales</CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-8">
-        <div className="flex items-center gap-4">
-          <Avatar className="hidden h-9 w-9 sm:flex">
-            <AvatarImage src="/avatars/01.png" alt="Avatar" />
-            <AvatarFallback>OM</AvatarFallback>
-          </Avatar>
-          <div className="grid gap-1">
-            <p className="text-sm font-medium leading-none">Olivia Martin</p>
-            <p className="text-sm text-muted-foreground">olivia.martin@email.com</p>
-          </div>
-          <div className="ml-auto font-medium">+$1,999.00</div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
-
 interface StatCardProps {
   title: string;
   value: string;
@@ -220,4 +173,4 @@ const StatCard: FC<StatCardProps> = ({ title, value, description, icon, trend })
   );
 };
 
-export default DashboardDefault
+export default DashboardDefault;

@@ -1,5 +1,3 @@
-// LoginForm.tsx
-
 import { useState } from 'react';
 import { useKeycloak } from '@react-keycloak/web';
 import { Link } from 'react-router-dom';
@@ -14,13 +12,11 @@ const LoginForm = () => {
   const [loginPassword, setLoginPassword] = useState<string>('');
   const { keycloak, initialized } = useKeycloak();
 
-  // Use Keycloak's built-in login method to handle authentication
   const handleKeycloakLogin = async () => {
     if (keycloak) {
       try {
-        // Trigger the Keycloak login method with explicit redirect to /dashboard
         await keycloak.login({
-          redirectUri: `${window.location.origin}/dashboard`, // Redirect to /dashboard after login
+          redirectUri: `${window.location.origin}/dashboard`,
         });
       } catch (error) {
         console.error('Error logging in with Keycloak:', error);
@@ -29,10 +25,6 @@ const LoginForm = () => {
       console.error('Keycloak instance not found');
     }
   };
-
-  // Debugging statements
-  console.log('LoginForm - Keycloak initialized:', initialized);
-  console.log('LoginForm - Keycloak authenticated:', keycloak.authenticated);
 
   return (
     <>

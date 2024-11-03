@@ -1,9 +1,8 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import AddCategoryBtn from "./AddCategoryBtn";
 import EditCategoryBtn from "./EditCategoryBtn";
 import { Card, CardContent } from "@/components/ui/card";
-import testCategoryListData, { CategoryList } from "./test-category-list-data";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -28,8 +27,6 @@ import {
   Utensils,
   LucideIcon,
 } from "lucide-react";
-
-// Import AlertDialog components
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,8 +37,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useKeycloak } from "@react-keycloak/web";
 
-// Map of string icon names to actual Lucide icons
+interface Category {
+  id: number;
+  description: string;
+  icon: string;
+}
+
 const iconMap: Record<string, LucideIcon> = {
   ShoppingBag,
   Airplay,
@@ -59,20 +62,40 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 const Categories: FC = () => {
-  const [productCategories, setProductCategories] = useState(testCategoryListData.data);
+  const [productCategories, setProductCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
-  const [categoryToEdit, setCategoryToEdit] = useState<CategoryList | null>(null);
+  const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [categoryToDelete, setCategoryToDelete] = useState<CategoryList | null>(null); // Track category to delete
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // Track dialog open state
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const navigate = useNavigate();
+  const { keycloak } = useKeycloak();
 
-  const handleAddCategory = (newCategory: CategoryList) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:9090/api/v1/category/list", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
+        const data = await response.json();
+        setProductCategories(data.data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, [keycloak.token]);
+
+  const handleAddCategory = (newCategory: Category) => {
     setProductCategories((prevCategories) => [...prevCategories, newCategory]);
   };
 
-  const handleEditCategory = (updatedCategory: CategoryList) => {
+  const handleEditCategory = (updatedCategory: Category) => {
     setProductCategories((prevCategories) =>
       prevCategories.map((category) =>
         category.id === updatedCategory.id ? updatedCategory : category
@@ -81,24 +104,32 @@ const Categories: FC = () => {
     setIsEditDialogOpen(false);
   };
 
-  // Deleting category only after confirmation
-  const confirmDeleteCategory = () => {
-    if (categoryToDelete !== null) {
-      setProductCategories((prevCategories) =>
-        prevCategories.filter((category) => category.id !== categoryToDelete.id)
-      );
-      setCategoryToDelete(null); // Reset the delete state
-      setIsDeleteDialogOpen(false); // Close the dialog
+  const confirmDeleteCategory = async () => {
+    if (categoryToDelete) {
+      try {
+        await fetch(`http://localhost:9090/api/v1/category/delete/${categoryToDelete.id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
+        setProductCategories((prevCategories) =>
+          prevCategories.filter((category) => category.id !== categoryToDelete.id)
+        );
+      } catch (error) {
+        console.error("Failed to delete category:", error);
+      }
+      setCategoryToDelete(null);
+      setIsDeleteDialogOpen(false);
     }
   };
 
-  // Function to trigger the delete confirmation dialog
-  const openDeleteDialog = (category: CategoryList) => {
-    setCategoryToDelete(category); // Set the category to delete
-    setIsDeleteDialogOpen(true); // Open the dialog
+  const openDeleteDialog = (category: Category) => {
+    setCategoryToDelete(category);
+    setIsDeleteDialogOpen(true);
   };
 
-  const openEditDialog = (category: CategoryList) => {
+  const openEditDialog = (category: Category) => {
     setCategoryToEdit(category);
     setIsEditDialogOpen(true);
   };
@@ -118,7 +149,6 @@ const Categories: FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {productCategories.map((category) => {
           const Icon = iconMap[category.icon];
-
           return (
             <ContextMenu key={category.id}>
               <ContextMenuTrigger>
@@ -160,7 +190,6 @@ const Categories: FC = () => {
         />
       )}
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -176,7 +205,7 @@ const Categories: FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Outlet context={{ selectedCategoryId }} />
+      <Outlet context={{ selectedCategoryId, selectedCategoryDescription: productCategories.find(category => category.id === selectedCategoryId)?.description || '' }} />
     </div>
   );
 };

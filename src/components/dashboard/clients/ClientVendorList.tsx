@@ -5,9 +5,11 @@ import EditClientVendorSheet from './EditClientVendorSheet';
 import ClientVendorTable from './ClientVendorTable';
 import Pagination from '../employee/Pagination';
 import SearchAndFilter from '../employee/SearchAndFilter';
-import testClientVendorListData from './test-clientvendor-list-data'; // Import the local data
+import { useKeycloak } from '@react-keycloak/web';
 
 export default function ClientVendorList() {
+  const { keycloak } = useKeycloak();
+
   const [clientVendors, setClientVendors] = useState<ClientVendor[]>([]);
   const [filteredClientVendors, setFilteredClientVendors] = useState<ClientVendor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,10 +29,31 @@ export default function ClientVendorList() {
     { value: 'clientVendorType', label: 'Type' },
   ];
 
-  // Load client/vendors from the local data file
   useEffect(() => {
-    setClientVendors(testClientVendorListData.data);
-  }, []);
+    const fetchClientVendors = async () => {
+      try {
+        const response = await fetch('http://localhost:9090/api/v1/clientVendor/list', {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setClientVendors(data.data);
+        } else {
+          console.error('Failed to fetch client/vendors');
+        }
+      } catch (error) {
+        console.error('Error fetching client/vendors:', error);
+      }
+    };
+
+    if (keycloak && keycloak.token) {
+      fetchClientVendors();
+    }
+  }, [keycloak]);
 
   // Re-filter client/vendors when search term, client vendor list, or filter category changes
   useEffect(() => {
@@ -44,8 +67,24 @@ export default function ClientVendorList() {
   }, [searchTerm, clientVendors, filterCategory]);
 
   // Delete client/vendor by ID
-  const deleteClientVendor = (id: number) => {
-    setClientVendors(clientVendors.filter((cv) => cv.id !== id));
+  const deleteClientVendor = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:9090/api/v1/clientVendor/delete/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
+
+      if (response.ok) {
+        // Remove the client/vendor from the state
+        setClientVendors(clientVendors.filter((cv) => cv.id !== id));
+      } else {
+        console.error('Failed to delete client/vendor');
+      }
+    } catch (error) {
+      console.error('Error deleting client/vendor:', error);
+    }
   };
 
   // Handle selecting an individual client/vendor
@@ -73,15 +112,40 @@ export default function ClientVendorList() {
     currentPage * rowsPerPage
   );
 
+  // Refresh the client/vendors list
+  const refreshClientVendors = async () => {
+    try {
+      const response = await fetch('http://localhost:9090/api/v1/clientVendor/list', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setClientVendors(data.data);
+      } else {
+        console.error('Failed to fetch client/vendors');
+      }
+    } catch (error) {
+      console.error('Error fetching client/vendors:', error);
+    }
+  };
+
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Client/Vendor List ({filteredClientVendors.length})</h1>
+        <h1 className="text-3xl font-bold">
+          Client/Vendor List ({filteredClientVendors.length})
+        </h1>
         <AddClientVendorSheet
           isOpen={isAddClientVendorOpen}
-          onOpenChange={setIsAddClientVendorOpen}
-          onAddClientVendor={(clientVendor) => {
-            setClientVendors([...clientVendors, { ...clientVendor, id: Date.now() }]);
+          onOpenChange={(open) => {
+            setIsAddClientVendorOpen(open);
+            if (!open) {
+              refreshClientVendors();
+            }
           }}
         />
       </div>
@@ -114,14 +178,13 @@ export default function ClientVendorList() {
       {editingClientVendor && (
         <EditClientVendorSheet
           isOpen={isEditClientVendorOpen}
-          onOpenChange={setIsEditClientVendorOpen}
-          clientVendor={editingClientVendor}
-          onEditClientVendor={(updatedClientVendor) => {
-            setClientVendors(
-              clientVendors.map((cv) => (cv.id === updatedClientVendor.id ? updatedClientVendor : cv))
-            );
-            setIsEditClientVendorOpen(false);
+          onOpenChange={(open) => {
+            setIsEditClientVendorOpen(open);
+            if (!open) {
+              refreshClientVendors();
+            }
           }}
+          clientVendor={editingClientVendor}
         />
       )}
     </div>

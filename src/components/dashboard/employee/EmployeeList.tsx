@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
+import { useKeycloak } from '@react-keycloak/web';
 import { Employee } from './employeeTypes';
 import AddEmployeeSheet from './AddEmployeeSheet';
 import EditEmployeeSheet from './EditEmployeeSheet';
 import EmployeeTable from './EmployeeTable';
 import Pagination from './Pagination';
 import SearchAndFilter from './SearchAndFilter';
-import testUserListData from './test-user-list-data'; // Import the test data
 
 export default function EmployeeList() {
+  const { keycloak } = useKeycloak();
+
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -28,22 +30,44 @@ export default function EmployeeList() {
     { value: 'status', label: 'Status' },
   ];
 
-  // Load test data when the component mounts
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('http://localhost:9090/api/v1/user/list', {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch employees');
+      }
+      const data = await response.json();
+      const users = data.data.map((user: any) => ({
+        ...user,
+        id: user.id.toString(),
+        dateOfEmployment: new Date(user.dateOfEmployment),
+        status: user.userStatus,
+      }));
+      setEmployees(users);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
   useEffect(() => {
-    // Convert the test data to match the Employee type
-    const users = testUserListData.data.map((user) => ({
-      ...user,
-      id: user.id.toString(), // Convert id to string as expected by Employee type
-      dateOfEmployment: new Date(user.dateOfEmployment), // Ensure dateOfEmployment is a Date object
-    }));
-  
-    setEmployees(users);
-  }, []);
+    if (keycloak.token) {
+      fetchEmployees();
+    }
+  }, [keycloak.token]);
 
   // Re-filter employees when search term, employee list, or filter category changes
   useEffect(() => {
     const filtered = employees.filter((employee) => {
-      const value = employee[filterCategory]?.toString().toLowerCase() ?? '';
+      let value = '';
+      if (filterCategory === 'role') {
+        value = employee.role.description.toLowerCase();
+      } else {
+        value = employee[filterCategory]?.toString().toLowerCase() ?? '';
+      }
       return value.includes(searchTerm.toLowerCase());
     });
 
@@ -52,8 +76,27 @@ export default function EmployeeList() {
   }, [searchTerm, employees, filterCategory]);
 
   // Delete employee by ID
-  const deleteEmployee = (id: string) => {
-    setEmployees(employees.filter((emp) => emp.id !== id));
+  const deleteEmployee = async (id: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:9090/api/v1/user/delete/${id}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete employee');
+      }
+
+      // Refresh the employee list after deletion
+      fetchEmployees();
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+    }
   };
 
   // Handle selecting an individual employee
@@ -74,7 +117,7 @@ export default function EmployeeList() {
 
   // Calculate total pages for pagination
   const totalPages = Math.ceil(filteredEmployees.length / rowsPerPage);
-  
+
   // Slice the employees array for pagination
   const paginatedEmployees = filteredEmployees.slice(
     (currentPage - 1) * rowsPerPage,
@@ -84,12 +127,16 @@ export default function EmployeeList() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Employee List ({filteredEmployees.length})</h1>
+        <h1 className="text-3xl font-bold">
+          Employee List ({filteredEmployees.length})
+        </h1>
         <AddEmployeeSheet
           isOpen={isAddEmployeeOpen}
-          onOpenChange={setIsAddEmployeeOpen}
-          onAddEmployee={(employee) => {
-            setEmployees([...employees, { ...employee, id: Date.now().toString() }]);
+          onOpenChange={(open) => {
+            setIsAddEmployeeOpen(open);
+            if (!open) {
+              fetchEmployees(); // Refresh after adding
+            }
           }}
         />
       </div>
@@ -122,14 +169,13 @@ export default function EmployeeList() {
       {editingEmployee && (
         <EditEmployeeSheet
           isOpen={isEditEmployeeOpen}
-          onOpenChange={setIsEditEmployeeOpen}
-          employee={editingEmployee}
-          onEditEmployee={(updatedEmployee) => {
-            setEmployees(
-              employees.map((emp) => (emp.id === updatedEmployee.id ? updatedEmployee : emp))
-            );
-            setIsEditEmployeeOpen(false);
+          onOpenChange={(open) => {
+            setIsEditEmployeeOpen(open);
+            if (!open) {
+              fetchEmployees(); // Refresh after editing
+            }
           }}
+          employee={editingEmployee}
         />
       )}
     </div>

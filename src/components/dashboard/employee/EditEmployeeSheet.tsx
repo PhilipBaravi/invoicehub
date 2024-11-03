@@ -2,37 +2,55 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  CountryCode,
+  getCountryCallingCode,
+  isValidPhoneNumber,
+} from 'libphonenumber-js';
 import countryList from '@/components/account-details/profile-form/CountryCodes';
 import { Employee } from './employeeTypes';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import { useKeycloak } from '@react-keycloak/web';
+
+type EmployeeErrors = {
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  password?: string;
+};
 
 export default function EditEmployeeSheet({
   isOpen,
   onOpenChange,
   employee,
-  onEditEmployee,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   employee: Employee;
-  onEditEmployee: (employee: Employee) => void;
 }) {
+  const { keycloak } = useKeycloak();
   const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
-  const [errors, setErrors] = useState({
-    username: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
-    password: '',
-  });
+  const [errors, setErrors] = useState<EmployeeErrors>({});
 
   useEffect(() => {
     if (isOpen) {
@@ -46,13 +64,8 @@ export default function EditEmployeeSheet({
   };
 
   const validateForm = () => {
-    const newErrors: any = {};
+    const newErrors: EmployeeErrors = {};
     let valid = true;
-
-    if (!editedEmployee.username || !/\S+@\S+\.\S+/.test(editedEmployee.username)) {
-      newErrors.username = 'Please enter a valid email.';
-      valid = false;
-    }
 
     if (!editedEmployee.firstName) {
       newErrors.firstName = 'First name is required.';
@@ -74,24 +87,44 @@ export default function EditEmployeeSheet({
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     const fullPhoneNumber = phoneCode + editedEmployee.phone;
 
-    // Update employee locally
-    const updatedEmployeeData: Employee = {
+    const updatedEmployeeData = {
       ...editedEmployee,
       phone: fullPhoneNumber,
       dateOfEmployment: editedEmployee.dateOfEmployment
-        ? new Date(editedEmployee.dateOfEmployment)
-        : new Date(),
+        ? editedEmployee.dateOfEmployment.toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0],
     };
 
-    // Pass updated employee back to parent
-    onEditEmployee(updatedEmployeeData);
-    onOpenChange(false);
+    try {
+      const response = await fetch(
+        `http://localhost:9090/api/v1/user/update/${employee.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+          body: JSON.stringify(updatedEmployeeData),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Error updating employee:', errorData);
+        return;
+      }
+
+      // Close the sheet after successful update
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error updating employee:', error);
+    }
   };
 
   return (
@@ -101,7 +134,7 @@ export default function EditEmployeeSheet({
           <SheetTitle>Edit Employee</SheetTitle>
           <SheetDescription>Edit the details of the employee below.</SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} id='editEmployeeForm' className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} id="editEmployeeForm" className="space-y-4 mt-4">
           <div>
             <Label htmlFor="username">Email</Label>
             <Input
@@ -191,7 +224,7 @@ export default function EditEmployeeSheet({
                 }))
               }
             >
-              <SelectTrigger id='role'>
+              <SelectTrigger id="role">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
@@ -204,7 +237,7 @@ export default function EditEmployeeSheet({
           <div>
             <Label htmlFor="dateOfEmployment">Date of Employment</Label>
             <Popover>
-              <PopoverTrigger asChild id='dateOfEmployment'>
+              <PopoverTrigger asChild id="dateOfEmployment">
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {editedEmployee.dateOfEmployment

@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Search, Download, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import ProductTable from "./ProductTable";
 import ProductFilter from "./ProductFilter";
 import ProductFormDialog from "./ProductFormDialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import testProductListData from "./test-product-list-data";
+import { useKeycloak } from "@react-keycloak/web";
 
 interface Category {
   id: number;
@@ -19,7 +19,7 @@ interface Product {
   id: number;
   name: string;
   description: string;
-  status: "ACTIVE" | "DRAFT"; // Use "ACTIVE" | "DRAFT" to match backend
+  status: "ACTIVE" | "DRAFT";
   price: number;
   quantityInStock: number;
   lowLimitAlert: number;
@@ -31,116 +31,193 @@ interface Product {
 const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");
   const [searchTerm, setSearchTerm] = useState("");
-  const [products, setProducts] = useState<Product[]>(testProductListData.data);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const [newProduct, setNewProduct] = useState<Omit<Product, 'id' | 'createdAt'>>({
-    name: '',
-    description: '',
-    status: 'DRAFT',
+  const [newProduct, setNewProduct] = useState<Omit<Product, "id" | "createdAt">>({
+    name: "",
+    description: "",
+    status: "DRAFT",
     price: 0,
     quantityInStock: 0,
     lowLimitAlert: 0,
-    productUnit: 'PCS',
-    category: { id: 1, description: '', icon: '' },
+    productUnit: "PCS",
+    category: { id: 1, description: "", icon: "" },
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({ from: undefined, to: undefined });
+  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
+    from: undefined,
+    to: undefined,
+  });
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 1000 });
 
-  const { selectedCategoryId } = useOutletContext<{ selectedCategoryId: number }>();
+  const { selectedCategoryId, selectedCategoryDescription } = useOutletContext<{
+    selectedCategoryId: number;
+    selectedCategoryDescription: string;
+  }>();
+  const { keycloak } = useKeycloak();
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("http://localhost:9090/api/v1/product/list", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setProducts(data.data.filter((product: Product) => product.category?.id === selectedCategoryId));
+      } else {
+        console.error("Error fetching products:", data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedCategoryId) {
+      fetchProducts();
+    }
+  }, [selectedCategoryId, keycloak.token]);
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = product.category.id === selectedCategoryId;
     const matchesTab = activeTab === "All" || product.status === activeTab;
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesDateRange = (dateRange.from === undefined && dateRange.to === undefined)
-      || (dateRange.from && dateRange.to && new Date(product.createdAt) >= dateRange.from && new Date(product.createdAt) <= dateRange.to);
+    const matchesDateRange =
+      (dateRange.from === undefined && dateRange.to === undefined) ||
+      (dateRange.from && dateRange.to && new Date(product.createdAt) >= dateRange.from && new Date(product.createdAt) <= dateRange.to);
     const matchesPriceRange = product.price >= priceRange.min && product.price <= priceRange.max;
-
     return matchesCategory && matchesTab && matchesSearch && matchesDateRange && matchesPriceRange;
   });
 
-  const lowStockProducts = products.filter(product => product.quantityInStock <= product.lowLimitAlert);
+  const lowStockProducts = products.filter((product) => product.quantityInStock <= product.lowLimitAlert);
 
-  const handleAddProduct = () => {
-    const product: Product = {
+  const handleAddProduct = async () => {
+    const productToAdd = {
       ...newProduct,
-      id: products.length + 1,
-      createdAt: new Date().toLocaleString(),
-      category: { id: selectedCategoryId, description: '', icon: '' }
+      createdAt: new Date().toISOString(),
+      category: { id: selectedCategoryId, description: selectedCategoryDescription },
     };
-
-    setProducts((prevProducts) => [...prevProducts, product]);
-    setIsDialogOpen(false);
-    setNewProduct({
-      name: '',
-      description: '',
-      status: 'DRAFT',
-      price: 0,
-      quantityInStock: 0,
-      lowLimitAlert: 0,
-      productUnit: 'PCS',
-      category: { id: selectedCategoryId, description: '', icon: '' },
-    });
-  };
-
-  const handleEditProduct = () => {
-    if (editingProduct) {
-      const updatedProducts = products.map(p => p.id === editingProduct.id ? { ...editingProduct, ...newProduct } : p);
-      setProducts(updatedProducts);
-      setIsDialogOpen(false);
-      setEditingProduct(null);
-      setNewProduct({
-        name: '',
-        description: '',
-        status: 'DRAFT',
-        price: 0,
-        quantityInStock: 0,
-        lowLimitAlert: 0,
-        productUnit: 'PCS',
-        category: { id: selectedCategoryId, description: '', icon: '' },
+  
+    try {
+      const response = await fetch("http://localhost:9090/api/v1/product/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+        body: JSON.stringify(productToAdd),
       });
+  
+      const createdProduct = await response.json();
+  
+      // Check if the response was successful and if the product data is available
+      if (response.ok && createdProduct.success && createdProduct.data) {
+        console.log("Product created:", createdProduct.data); // Debugging output
+  
+        // Add the new product to the state
+        setProducts((prevProducts) => [...prevProducts, createdProduct.data]);
+        
+        // Reset form and dialog state
+        setIsDialogOpen(false);
+        resetProductForm();
+      } else {
+        console.error("Error adding product:", createdProduct);
+      }
+    } catch (error) {
+      console.error("Failed to add product:", error);
+    }
+  };
+  
+  
+  
+
+  const handleEditProduct = async () => {
+    if (editingProduct && editingProduct.id) {
+      try {
+        const response = await fetch(`http://localhost:9090/api/v1/product/update/${editingProduct.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+          body: JSON.stringify({ ...newProduct, category: editingProduct.category }),
+        });
+        const updatedProduct = await response.json();
+        if (response.ok) {
+          setProducts((prevProducts) =>
+            prevProducts.map((product) =>
+              product.id === editingProduct.id ? updatedProduct.data : product
+            )
+          );
+          setIsDialogOpen(false);
+          resetProductForm();
+          setEditingProduct(null); // Clear editing state after successful edit
+        } else {
+          console.error("Error updating product:", updatedProduct);
+        }
+      } catch (error) {
+        console.error("Failed to edit product:", error);
+      }
+    } else {
+      console.error("Editing product is not set or has no ID.");
+    }
+  };
+  
+
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      const response = await fetch(`http://localhost:9090/api/v1/product/delete/${productId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
+      if (response.ok) {
+        setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
+      } else {
+        console.error("Failed to delete product:", await response.json());
+      }
+    } catch (error) {
+      console.error("Failed to delete product:", error);
     }
   };
 
-  const handleDeleteProduct = (productId: number) => {
-    setProducts((prevProducts) => prevProducts.filter(product => product.id !== productId));
-  };
-
-  const openEditDialog = (product: Product) => {
-    setEditingProduct(product);
+  const resetProductForm = () => {
     setNewProduct({
-      name: product.name,
-      description: product.description,
-      status: product.status,
-      price: product.price,
-      quantityInStock: product.quantityInStock,
-      lowLimitAlert: product.lowLimitAlert,
-      productUnit: product.productUnit,
-      category: product.category,
+      name: "",
+      description: "",
+      status: "DRAFT",
+      price: 0,
+      quantityInStock: 0,
+      lowLimitAlert: 0,
+      productUnit: "PCS",
+      category: { id: selectedCategoryId, description: "", icon: "" },
     });
-    setIsDialogOpen(true);
+    setEditingProduct(null);
   };
 
   const handleExport = () => {
     const headers = ["Name", "Status", "Price", "Quantity in Stock", "Low Limit Alert", "Product Unit", "Created At"];
     const csvContent = [
       headers.join(","),
-      ...filteredProducts.map(product =>
+      ...filteredProducts.map((product) =>
         [product.name, product.status, product.price, product.quantityInStock, product.lowLimitAlert, product.productUnit, product.createdAt].join(",")
-      )
+      ),
     ].join("\n");
 
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const link = document.createElement("a");
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
       link.setAttribute("download", "products.csv");
-      link.style.visibility = 'hidden';
+      link.style.visibility = "hidden";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -205,14 +282,18 @@ const ProductsPage: FC = () => {
             setPriceRange={setPriceRange}
           />
           <Button variant="outline" onClick={handleExport}>
-          <Download className="mr-2 h-4 w-4" /> Export
+            <Download className="mr-2 h-4 w-4" /> Export
           </Button>
         </div>
       </div>
 
       <ProductTable
         products={filteredProducts}
-        openEditDialog={openEditDialog}
+        openEditDialog={(product) => {
+          setEditingProduct(product);
+          setNewProduct({ ...product });
+          setIsDialogOpen(true);
+        }}
         handleDeleteProduct={handleDeleteProduct}
         lowStockProducts={lowStockProducts}
       />

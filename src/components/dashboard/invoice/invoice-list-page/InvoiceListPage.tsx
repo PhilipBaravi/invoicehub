@@ -1,5 +1,6 @@
 // src/components/dashboard/invoice/invoice-list-page/InvoiceListPage.tsx
 import { FC, useState, useEffect } from 'react';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -8,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlusCircle, Search } from 'lucide-react';
 import testInvoiceListData from '../test-invoice-list-data';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 interface Address {
   id: number;
@@ -54,7 +54,7 @@ const InvoiceListPage: FC = () => {
   const [statusFilter, setStatusFilter] = useState('ALL_STATUSES');
   const [typeFilter, setTypeFilter] = useState('ALL_TYPES');
 
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     const filteredInvoices = testInvoiceListData.filter(invoice =>
@@ -80,7 +80,7 @@ const InvoiceListPage: FC = () => {
   };
 
   const handleCreateInvoice = () => {
-    navigate('/dashboard/invoices-list/invoice'); // Navigate to the Invoice component
+    navigate('/dashboard/invoices/new-invoice'); 
   };
 
   return (
@@ -154,6 +154,7 @@ const InvoiceListPage: FC = () => {
           </div>
         </CardContent>
       </Card>
+      <Outlet />
     </div>
   );
 };
