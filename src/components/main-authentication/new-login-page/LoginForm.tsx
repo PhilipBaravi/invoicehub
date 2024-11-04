@@ -10,7 +10,7 @@ import AppleIcon from '../AppleIcon';
 const LoginForm = () => {
   const [loginEmail, setLoginEmail] = useState<string>('');
   const [loginPassword, setLoginPassword] = useState<string>('');
-  const { keycloak, initialized } = useKeycloak();
+  const { keycloak } = useKeycloak();
 
   const handleKeycloakLogin = async () => {
     if (keycloak) {
@@ -57,12 +57,14 @@ const LoginForm = () => {
         </div>
         <div className="flex items-center space-x-2">
           <Checkbox id="terms" required />
+          <Link to="/privacy-policy">
           <label
             htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 underline cursor-pointer"
           >
             I agree to the terms of service and privacy policy
           </label>
+          </Link>
         </div>
         <Button className="w-full" onClick={handleKeycloakLogin}>
           Login with Keycloak

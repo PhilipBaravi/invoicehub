@@ -8,7 +8,7 @@ import ProductFilter from "./ProductFilter";
 import ProductFormDialog from "./ProductFormDialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useKeycloak } from "@react-keycloak/web";
-import { Category, Product } from "./products-types";
+import {  Product } from "./products-types";
 
 const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");

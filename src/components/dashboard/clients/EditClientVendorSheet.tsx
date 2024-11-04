@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { apiFetch } from '@/utils/api';
 import { useKeycloak } from '@react-keycloak/web';
 
 export default function EditClientVendorSheet({
@@ -30,7 +31,7 @@ export default function EditClientVendorSheet({
   const { keycloak } = useKeycloak();
 
   const [editedClientVendor, setEditedClientVendor] = useState(clientVendor);
-  const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (isOpen) {
@@ -43,7 +44,7 @@ export default function EditClientVendorSheet({
 
     if (name.startsWith('address.')) {
       const addressField = name.split('.')[1];
-      setEditedClientVendor((prev: { address: any; }) => ({
+      setEditedClientVendor((prev: any) => ({
         ...prev,
         address: {
           ...prev.address,
@@ -56,7 +57,7 @@ export default function EditClientVendorSheet({
   };
 
   const validateForm = () => {
-    const newErrors: any = {};
+    const newErrors: Record<string, string> = {};
     let valid = true;
 
     // Personal Details Validation
@@ -64,20 +65,14 @@ export default function EditClientVendorSheet({
       newErrors.name = 'Name is required.';
       valid = false;
     }
-
-    if (
-      !editedClientVendor.email ||
-      !/\S+@\S+\.\S+/.test(editedClientVendor.email)
-    ) {
+    if (!editedClientVendor.email || !/\S+@\S+\.\S+/.test(editedClientVendor.email)) {
       newErrors.email = 'Please enter a valid email.';
       valid = false;
     }
-
     if (!editedClientVendor.phone) {
       newErrors.phone = 'Phone number is required.';
       valid = false;
     }
-
     if (!editedClientVendor.website) {
       newErrors.website = 'Website is required.';
       valid = false;
@@ -88,22 +83,18 @@ export default function EditClientVendorSheet({
       newErrors.addressLine1 = 'Address Line 1 is required.';
       valid = false;
     }
-
     if (!editedClientVendor.address.city) {
       newErrors.city = 'City is required.';
       valid = false;
     }
-
     if (!editedClientVendor.address.state) {
       newErrors.state = 'State is required.';
       valid = false;
     }
-
     if (!editedClientVendor.address.country) {
       newErrors.country = 'Country is required.';
       valid = false;
     }
-
     if (!editedClientVendor.address.zipCode) {
       newErrors.zipCode = 'Zip Code is required.';
       valid = false;
@@ -118,27 +109,15 @@ export default function EditClientVendorSheet({
     if (!validateForm()) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:9090/api/v1/clientVendor/update/${editedClientVendor.id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-          body: JSON.stringify(editedClientVendor),
-        }
-      );
+      await apiFetch(`http://localhost:9090/api/v1/clientVendor/update/${editedClientVendor.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(editedClientVendor),
+      });
 
-      if (response.ok) {
-        // Close the form
-        onOpenChange(false);
-      } else {
-        const errorData = await response.json();
-        console.error('Error:', errorData);
-      }
+      // Close the form
+      onOpenChange(false);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error updating client/vendor:', error);
     }
   };
 

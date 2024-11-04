@@ -24,6 +24,7 @@ import UpdateCompanyDetails from "./components/dashboard/company-settings/Update
 import InvoiceListPage from "./components/dashboard/invoice/invoice-list-page/InvoiceListPage";
 import { Progress } from "@/components/ui/progress";
 import Invoice from "./components/dashboard/invoice/Invoice";
+import PrivacyPolicy from "./components/main-authentication/privacyPolicy";
 
 // UserDetails interface
 interface UserDetails {
@@ -104,6 +105,7 @@ const App: React.FC = () => {
             <Route path="/business-details" element={<BusinessForm />} />
             <Route path="/intent-details" element={<IntentFormDetails />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
             <Route
               path="/company-registration"
               element={

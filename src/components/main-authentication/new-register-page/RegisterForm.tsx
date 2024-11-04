@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
-import axios from 'axios';
 
 interface RegisterFormProps {
   setUserDetails: (details: UserFormValues) => void;
@@ -47,7 +46,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { username, password, confirmPassword, firstName, lastName, phone } = formValues;
     let valid = true;
@@ -85,74 +84,26 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
       valid = false;
     }
 
-    // If not valid, set errors
     if (!valid) {
       setErrors(newErrors);
       return;
     }
 
-    // If valid, send data using axios
-    try {
-      const response = await axios.post('http://localhost:9090/api/v1/user/register', {
-        username,
-        password,
-        firstName,
-        lastName,
-        phone: fullPhoneNumber,
-      });
-
-      if (response.status === 201) {
-        // Pass user details to parent state and navigate to company registration form
-        setUserDetails({
-          username,
-          password,
-          confirmPassword,
-          firstName,
-          lastName,
-          phone: fullPhoneNumber,
-        });
-        navigate("/company-registration");
-      }
-    } catch (error) {
-      console.error('Error submitting the form:', error);
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        username: 'There was an error submitting the form. Please try again later.',
-      }));
-    }
+    // Pass user details to parent component and navigate to company registration form
+    setUserDetails({
+      username,
+      password,
+      confirmPassword,
+      firstName,
+      lastName,
+      phone: fullPhoneNumber,
+    });
+    navigate("/company-registration");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
-
-    // Real-time validation
-    if (name === "username") {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        username: validateEmail(value) ? "" : "Please enter a valid email address.",
-      }));
-    }
-    if (name === "password") {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        password: validatePassword(value) ? "" : "Invalid password format.",
-        confirmPassword: formValues.confirmPassword === value ? "" : "Passwords do not match.",
-      }));
-    }
-    if (name === "confirmPassword") {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        confirmPassword: value === formValues.password ? "" : "Passwords do not match.",
-      }));
-    }
-    if (name === "phone") {
-      const fullPhoneNumber = phoneCode + value;
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        phone: isValidPhoneNumber(fullPhoneNumber, country) ? "" : "Invalid phone number.",
-      }));
-    }
   };
 
   const handleCountryChange = (code: CountryCode) => setCountry(code);
@@ -255,9 +206,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
             className="w-full"
             required
           />
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
-          )}
+          {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
         </div>
 
         {/* Sign Up Button */}

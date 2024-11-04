@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { apiFetch } from '@/utils/api';
 import { useKeycloak } from '@react-keycloak/web';
 
 export default function AddClientVendorSheet({
@@ -26,7 +27,7 @@ export default function AddClientVendorSheet({
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { keycloak } = useKeycloak();
+  useKeycloak();
 
   const initialClientVendorState = {
     name: '',
@@ -45,8 +46,7 @@ export default function AddClientVendorSheet({
   };
 
   const [newClientVendor, setNewClientVendor] = useState(initialClientVendorState);
-
-  const [errors, setErrors] = useState<any>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,7 +66,7 @@ export default function AddClientVendorSheet({
   };
 
   const validateForm = () => {
-    const newErrors: any = {};
+    const newErrors: Record<string, string> = {};
     let valid = true;
 
     // Personal Details Validation
@@ -74,17 +74,14 @@ export default function AddClientVendorSheet({
       newErrors.name = 'Name is required.';
       valid = false;
     }
-
     if (!newClientVendor.email || !/\S+@\S+\.\S+/.test(newClientVendor.email)) {
       newErrors.email = 'Please enter a valid email.';
       valid = false;
     }
-
     if (!newClientVendor.phone) {
       newErrors.phone = 'Phone number is required.';
       valid = false;
     }
-
     if (!newClientVendor.website) {
       newErrors.website = 'Website is required.';
       valid = false;
@@ -95,22 +92,18 @@ export default function AddClientVendorSheet({
       newErrors.addressLine1 = 'Address Line 1 is required.';
       valid = false;
     }
-
     if (!newClientVendor.address.city) {
       newErrors.city = 'City is required.';
       valid = false;
     }
-
     if (!newClientVendor.address.state) {
       newErrors.state = 'State is required.';
       valid = false;
     }
-
     if (!newClientVendor.address.country) {
       newErrors.country = 'Country is required.';
       valid = false;
     }
-
     if (!newClientVendor.address.zipCode) {
       newErrors.zipCode = 'Zip Code is required.';
       valid = false;
@@ -125,27 +118,18 @@ export default function AddClientVendorSheet({
     if (!validateForm()) return;
 
     try {
-      const response = await fetch('http://localhost:9090/api/v1/clientVendor/create', {
+      await apiFetch('http://localhost:9090/api/v1/clientVendor/create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${keycloak.token}`,
-        },
         body: JSON.stringify(newClientVendor),
       });
 
-      if (response.ok) {
-        // Close the form
-        onOpenChange(false);
-        // Reset the form
-        setNewClientVendor(initialClientVendorState);
-        setErrors({});
-      } else {
-        const errorData = await response.json();
-        console.error('Error:', errorData);
-      }
+      // Close the form
+      onOpenChange(false);
+      // Reset the form
+      setNewClientVendor(initialClientVendorState);
+      setErrors({});
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error adding client/vendor:', error);
     }
   };
 

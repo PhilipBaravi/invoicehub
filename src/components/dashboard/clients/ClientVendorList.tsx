@@ -5,6 +5,7 @@ import EditClientVendorSheet from './EditClientVendorSheet';
 import ClientVendorTable from './ClientVendorTable';
 import Pagination from '../employee/Pagination';
 import SearchAndFilter from '../employee/SearchAndFilter';
+import { apiFetch } from '@/utils/api';
 import { useKeycloak } from '@react-keycloak/web';
 
 export default function ClientVendorList() {
@@ -32,19 +33,8 @@ export default function ClientVendorList() {
   useEffect(() => {
     const fetchClientVendors = async () => {
       try {
-        const response = await fetch('http://localhost:9090/api/v1/clientVendor/list', {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setClientVendors(data.data);
-        } else {
-          console.error('Failed to fetch client/vendors');
-        }
+        const data = await apiFetch('http://localhost:9090/api/v1/clientVendor/list');
+        setClientVendors(data.data);
       } catch (error) {
         console.error('Error fetching client/vendors:', error);
       }
@@ -69,19 +59,11 @@ export default function ClientVendorList() {
   // Delete client/vendor by ID
   const deleteClientVendor = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:9090/api/v1/clientVendor/delete/${id}`, {
+      await apiFetch(`http://localhost:9090/api/v1/clientVendor/delete/${id}`, {
         method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${keycloak.token}`,
-        },
       });
-
-      if (response.ok) {
-        // Remove the client/vendor from the state
-        setClientVendors(clientVendors.filter((cv) => cv.id !== id));
-      } else {
-        console.error('Failed to delete client/vendor');
-      }
+      // Remove the client/vendor from the state
+      setClientVendors(clientVendors.filter((cv) => cv.id !== id));
     } catch (error) {
       console.error('Error deleting client/vendor:', error);
     }
@@ -115,19 +97,8 @@ export default function ClientVendorList() {
   // Refresh the client/vendors list
   const refreshClientVendors = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/clientVendor/list', {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setClientVendors(data.data);
-      } else {
-        console.error('Failed to fetch client/vendors');
-      }
+      const data = await apiFetch('http://localhost:9090/api/v1/clientVendor/list');
+      setClientVendors(data.data);
     } catch (error) {
       console.error('Error fetching client/vendors:', error);
     }

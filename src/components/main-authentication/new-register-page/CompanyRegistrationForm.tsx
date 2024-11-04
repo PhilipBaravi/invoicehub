@@ -5,10 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
-import axios from 'axios';
+import { apiFetch } from '@/utils/api';
 
 interface CompanyRegistrationFormProps {
-  userDetails?: UserFormValues | null;
+  userDetails: UserFormValues | null;
 }
 
 interface UserFormValues {
@@ -46,15 +46,10 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     e.preventDefault();
     const { title, addressLine1, addressLine2, city, state, zipCode, phone, website } = formValues;
 
-    if (!userDetails) {
-      console.error('User details are missing');
-      return;
-    }
-
     let valid = true;
     const newErrors: any = {};
 
-    // Validations
+    // Validation logic
     if (!title) {
       newErrors.title = 'Company name is required.';
       valid = false;
@@ -109,25 +104,18 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
       },
     };
 
-    // Post Data to endpoint using axios
     try {
-      const response = await axios.post('http://localhost:9090/api/v1/user/register', completeRegistrationData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      // Sending the combined data using apiFetch
+      const response = await apiFetch('http://localhost:9090/api/v1/user/create', {
+        method: 'POST',
+        body: JSON.stringify(completeRegistrationData),
       });
 
-      if (response.status === 200 || response.status === 201) {
-        console.log('Registration successful!');
-        // Redirect to the dashboard after successful registration
-        navigate('/dashboard');
-      } else {
-        console.error('Registration failed:', response.data);
-        alert('Registration failed. Please try again.');
-      }
+      console.log('Registration successful!', response);
+      navigate('/dashboard');
     } catch (error) {
-      console.error('Network error:', error);
-      alert('Network error. Please try again.');
+      console.error('Error during registration:', error);
+      alert('Registration failed. Please try again.');
     }
   };
 
