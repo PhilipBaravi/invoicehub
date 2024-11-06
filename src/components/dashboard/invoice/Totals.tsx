@@ -1,7 +1,12 @@
 import { FC } from 'react';
 import NotesTerms from './NotesTerms';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 interface TotalsProps {
   invoice: any;
@@ -23,7 +28,9 @@ const Totals: FC<TotalsProps> = ({ invoice, setInvoice }) => {
             <div className="bg-muted p-4 rounded-lg">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-muted-foreground">Subtotal</span>
-                <span className="font-medium">${invoice.price.toFixed(2)}</span>
+                <span className="font-medium">
+                  ${invoice.price.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-muted-foreground">Tax</span>

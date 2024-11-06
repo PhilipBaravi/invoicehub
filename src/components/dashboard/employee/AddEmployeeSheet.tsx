@@ -30,7 +30,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { useKeycloak } from '@react-keycloak/web';
 
-// Types for
+// Types for errors
 type EmployeeErrors = {
   username?: string;
   password?: string;

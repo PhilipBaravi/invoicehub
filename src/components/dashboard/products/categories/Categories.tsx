@@ -1,5 +1,3 @@
-// Categories.tsx
-
 import { FC, useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import AddCategoryBtn from "./AddCategoryBtn";
@@ -11,10 +9,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import {
-  Trash2,
-  Pencil,
-} from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -63,6 +58,7 @@ const Categories: FC = () => {
 
   const handleAddCategory = (newCategory: Category) => {
     setProductCategories((prevCategories) => [...prevCategories, newCategory]);
+    handleSelectCategory(newCategory.id); // Update selectedCategoryId
   };
 
   const handleEditCategory = (updatedCategory: Category) => {
@@ -175,7 +171,14 @@ const Categories: FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Outlet context={{ selectedCategoryId, selectedCategoryDescription: productCategories.find(category => category.id === selectedCategoryId)?.description || '' }} />
+      <Outlet
+        context={{
+          selectedCategoryId,
+          selectedCategoryDescription:
+            productCategories.find((category) => category.id === selectedCategoryId)?.description ||
+            "",
+        }}
+      />
     </div>
   );
 };

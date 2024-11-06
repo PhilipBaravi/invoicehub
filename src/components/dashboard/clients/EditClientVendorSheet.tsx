@@ -28,7 +28,7 @@ export default function EditClientVendorSheet({
   onOpenChange: (open: boolean) => void;
   clientVendor: any;
 }) {
-  const { keycloak } = useKeycloak();
+  useKeycloak();
 
   const [editedClientVendor, setEditedClientVendor] = useState(clientVendor);
   const [errors, setErrors] = useState<Record<string, string>>({});

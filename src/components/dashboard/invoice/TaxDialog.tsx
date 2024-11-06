@@ -37,24 +37,6 @@ const TaxDialog: FC<TaxDialogProps> = ({
               onChange={(e) => setTaxDetails({ ...taxDetails, percentage: Number(e.target.value) })}
             />
           </div>
-          <div>
-            <Label htmlFor="taxName">Tax Name</Label>
-            <Input
-              id="taxName"
-              placeholder="Enter tax name"
-              value={taxDetails.name}
-              onChange={(e) => setTaxDetails({ ...taxDetails, name: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="taxNumber">Tax Number (Optional)</Label>
-            <Input
-              id="taxNumber"
-              placeholder="Enter tax number"
-              value={taxDetails.number}
-              onChange={(e) => setTaxDetails({ ...taxDetails, number: e.target.value })}
-            />
-          </div>
           <Button className="w-full" onClick={applyTaxes}>Apply Taxes</Button>
         </div>
       </DialogContent>

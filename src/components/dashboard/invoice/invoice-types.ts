@@ -1,30 +1,33 @@
+// Invoice status and type enums
+export type InvoiceStatus = 'AWAITING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'PAID';
+export type InvoiceTypeType = 'SALES' | 'PURCHASE';
 
-
-export type InvoiceStatus = "AWAITING_APPROVAL" | "APPROVED" | "REJECTED" | "PAID";
-export type InvoiceType = "SALES" | "PURCHASE";
-
+// Address interface
 export interface Address {
-  id: number;
+  id?: number;
   addressLine1: string;
-  addressLine2: string | null;
+  addressLine2?: string;
   city: string;
   state: string;
   country: string;
   zipCode: string;
+  [key: string]: any;
 }
 
+// ClientVendor interface
 export interface ClientVendor {
-  id: number;
+  id: number; // Make 'id' required
   name: string;
   phone: string;
   website: string;
   email: string;
-  clientVendorType: "CLIENT" | "VENDOR"; // Updated to be more specific
+  clientVendorType: 'CLIENT' | 'VENDOR';
   address: Address;
 }
 
+// BusinessInfo interface
 export interface BusinessInfo {
-  id: number;
+  id?: number;
   title: string;
   phone: string;
   website: string;
@@ -32,16 +35,18 @@ export interface BusinessInfo {
   address: Address;
 }
 
+// Category interface
 export interface Category {
   id: number;
   description: string;
   icon: string;
 }
 
+// Product interface
 export interface Product {
   id: number;
   name: string;
-  description: string;
+  description?: string;
   quantityInStock: number;
   lowLimitAlert: number;
   price: number;
@@ -51,36 +56,8 @@ export interface Product {
   category: Category;
 }
 
-export interface Invoice {
-  id: number;
-  invoiceNo: string;
-  invoiceStatus: InvoiceStatus;
-  invoiceType: InvoiceType;
-  dateOfIssue: Date; // Change from string to Date
-  dueDate: Date;      // Change from string to Date
-  paymentTerms: string;
-  notes: string;
-  clientVendor: ClientVendor;
-  price: number;
-  tax: number;
-  total: number;
-}
-
-
-export interface InvoiceCreateRequest {
-  invoiceNo: string;
-  dateOfIssue: string;
-  dueDate: string;
-  paymentTerms: string;
-  notes: string;
-  clientVendorId: number;
-  lineItems: LineItemCreateRequest[];
-  price: number;
-  tax: number;
-  total: number;
-}
-
-export interface LineItemCreateRequest {
+// **LineItem interface**
+export interface LineItem {
   itemId: number;
   categoryId: number;
   name: string;
@@ -88,11 +65,25 @@ export interface LineItemCreateRequest {
   price: number;
   quantity: number;
   tax: number;
+  maxQuantity?: number; // Optional, used for validation in components
+  error?: string; // Optional, used for validation in components
 }
 
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  code: number;
-  data: T;
+// Invoice interface
+export interface Invoice {
+  id?: number;
+  invoiceNo: string;
+  invoiceStatus: InvoiceStatus;
+  invoiceType: InvoiceTypeType;
+  dateOfIssue: Date | null;
+  dueDate: Date | null;
+  paymentTerms: string;
+  notes: string;
+  terms: string;
+  clientVendor: ClientVendor | null;
+  price: number;
+  tax: number;
+  total: number;
+  businessSignature?: string;
+  clientSignature?: string;
 }

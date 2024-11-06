@@ -1,22 +1,11 @@
-import { useEffect, useState, FC } from 'react';
+import { FC } from 'react';
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusIcon, Trash2Icon } from 'lucide-react';
-import { Category, Product } from '../products/products-types';
-import { useKeycloak } from '@react-keycloak/web';
-
-interface LineItem {
-  itemId: number;
-  categoryId: number;
-  name: string;
-  description: string;
-  price: number;
-  quantity: number;
-  tax: number;
-}
+import { LineItem, Category, Product } from './invoice-types';
 
 interface LineItemsProps {
   lineItems: LineItem[];
@@ -25,6 +14,8 @@ interface LineItemsProps {
   handleRemoveLineItem: (index: number) => void;
   handleAddTaxes: (index: number) => void;
   handleItemSelect: (index: number, categoryId: number, productId: number) => void;
+  categories: Category[];
+  products: Product[];
 }
 
 const LineItems: FC<LineItemsProps> = ({
@@ -33,44 +24,10 @@ const LineItems: FC<LineItemsProps> = ({
   handleLineItemChange,
   handleRemoveLineItem,
   handleAddTaxes,
-  handleItemSelect
+  handleItemSelect,
+  categories,
+  products,
 }) => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
-  const { keycloak } = useKeycloak();
-
-  useEffect(() => {
-    // Fetch products and categories from the API endpoint with Keycloak token
-    const fetchProductsAndCategories = async () => {
-      try {
-        const response = await fetch('http://localhost:9090/api/v1/product/list', {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`
-          }
-        });
-        const data = await response.json();
-
-        if (data.success) {
-          setProducts(data.data);
-          // Extract unique categories from the products data
-          const uniqueCategories = Array.from(
-            new Set(data.data.map((product: Product) => product.category.id))
-          ).map((id) => data.data.find((product: Product) => product.category.id === id)?.category);
-
-          setCategories(uniqueCategories as Category[]);
-        } else {
-          console.error('Failed to fetch products and categories:', data.message);
-        }
-      } catch (error) {
-        console.error('Error fetching products and categories:', error);
-      }
-    };
-
-    if (keycloak && keycloak.token) {
-      fetchProductsAndCategories();
-    }
-  }, [keycloak]);
-
   return (
     <div>
       <Label>Line Items</Label>
@@ -146,7 +103,7 @@ const LineItems: FC<LineItemsProps> = ({
                     onChange={(e) => handleLineItemChange(index, 'quantity', e.target.value)}
                   />
                   <div className="w-[15%] mr-2 flex items-center justify-center font-bold">
-                    {(item.price * item.quantity).toFixed(2)}
+                    ${(item.price * item.quantity).toFixed(2)}
                   </div>
                   <div className="w-[15%] flex items-center justify-center">
                     <Button variant="link" onClick={() => handleAddTaxes(index)} className="mr-2 text-blue-700">
@@ -163,6 +120,7 @@ const LineItems: FC<LineItemsProps> = ({
                   onChange={(e) => handleLineItemChange(index, 'description', e.target.value)}
                   className="w-full"
                 />
+                {item.error && <p className="text-red-500">{item.error}</p>}
               </div>
             ))}
             <Button onClick={handleAddLineItem} className="mt-2">
