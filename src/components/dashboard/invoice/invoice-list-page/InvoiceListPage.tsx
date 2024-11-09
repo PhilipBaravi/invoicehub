@@ -11,6 +11,7 @@ import { PlusCircle, Search, MoreHorizontal, Trash2, Pencil } from 'lucide-react
 import { useKeycloak } from '@react-keycloak/web';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Invoice, InvoiceStatus } from '../invoice-types';
+import { useTranslation } from 'react-i18next';
 
 const InvoiceListPage: FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -19,7 +20,7 @@ const InvoiceListPage: FC = () => {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'ALL_STATUSES'>('ALL_STATUSES');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
-
+  const { t } = useTranslation('invoices');
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
 
@@ -118,9 +119,9 @@ const InvoiceListPage: FC = () => {
     <div className="container mx-auto px-4 py-8">
       <Card>
         <CardHeader className="flex flex-col sm:flex-row justify-between items-center">
-          <CardTitle className="text-2xl font-bold mb-4 sm:mb-0">Invoices</CardTitle>
+          <CardTitle className="text-2xl font-bold mb-4 sm:mb-0">{t('invoiceList.pageTitle')}</CardTitle>
           <Button className="w-full sm:w-auto" onClick={() => navigate('/dashboard/invoices/new-invoice')}>
-            <PlusCircle className="mr-2 h-4 w-4" /> Create New Invoice
+            <PlusCircle className="mr-2 h-4 w-4" /> {t('invoiceList.createNew')}
           </Button>
         </CardHeader>
         <CardContent>
@@ -129,21 +130,21 @@ const InvoiceListPage: FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <Input
                 className="pl-10"
-                placeholder="Search invoices..."
+                placeholder={t('invoiceList.search')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as InvoiceStatus | 'ALL_STATUSES')}>
               <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder={t('invoiceList.filter')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL_STATUSES">All Statuses</SelectItem>
-                <SelectItem value="AWAITING_APPROVAL">Awaiting Approval</SelectItem>
-                <SelectItem value="APPROVED">Approved</SelectItem>
-                <SelectItem value="REJECTED">Rejected</SelectItem>
-                <SelectItem value="PAID">Paid</SelectItem>
+                <SelectItem value="ALL_STATUSES">{t('invoiceList.all')}</SelectItem>
+                <SelectItem value="AWAITING_APPROVAL">{t('invoiceList.awaiting')}</SelectItem>
+                <SelectItem value="APPROVED">{t('invoiceList.approved')}</SelectItem>
+                <SelectItem value="REJECTED">{t('invoiceList.rejected')}</SelectItem>
+                <SelectItem value="PAID">{t('invoiceList.Paid')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -151,12 +152,12 @@ const InvoiceListPage: FC = () => {
             <Table className="min-w-full">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[18%]">Invoice No</TableHead>
-                  <TableHead className="w-[18%]">Client/Vendor</TableHead>
-                  <TableHead className="w-[18%]">Date</TableHead>
-                  <TableHead className="w-[18%]">Total</TableHead>
-                  <TableHead className="w-[18%]">Status</TableHead>
-                  <TableHead className="w-[10%]">Actions</TableHead>
+                  <TableHead className="w-[18%]">{t('invoiceList.invoiceNo')}</TableHead>
+                  <TableHead className="w-[18%]">{t('invoiceList.client')}</TableHead>
+                  <TableHead className="w-[18%]">{t('invoiceList.date')}</TableHead>
+                  <TableHead className="w-[18%]">{t('invoiceList.total')}</TableHead>
+                  <TableHead className="w-[18%]">{t('invoiceList.status')}</TableHead>
+                  <TableHead className="w-[10%]">{t('invoiceList.actions')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -180,11 +181,11 @@ const InvoiceListPage: FC = () => {
                             className="text-red-600 focus:text-red-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                            {t('invoiceList.delete')}
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
                             <Pencil className="mr-2 h-4 w-4" />
-                            Edit
+                            {t('invoiceList.edit')}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -202,14 +203,14 @@ const InvoiceListPage: FC = () => {
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('invoiceList.dialog.sure')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the invoice.
+            {t('invoiceList.dialog.confirmation')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteInvoice}>Continue</AlertDialogAction>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>{t('invoiceList.dialog.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteInvoice}>{t('invoiceList.dialog.continue')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

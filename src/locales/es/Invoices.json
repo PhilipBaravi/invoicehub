@@ -1,0 +1,61 @@
+{
+    "invoiceList": {
+        "pageTitle": "Facturas",
+        "createNew": "Crear Nueva Factura",
+        "search": "Buscar facturas...",
+        "filter": "Filtrar por estado",
+        "all": "Todos los Estados",
+        "awaiting": "Esperando Aprobación",
+        "approved": "Aprobada",
+        "rejected": "Rechazada",
+        "paid": "Pagada",
+        "invoiceNo": "No de Factura",
+        "client": "Cliente/Vendedor",
+        "date": "Fecha",
+        "total": "Total",
+        "status": "Estado",
+        "actions": "Acciones",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "dialog": {
+            "sure": "¿Estás seguro?",
+            "confirmation": "Esta acción no se puede deshacer. Esto eliminará permanentemente la factura.",
+            "cancel": "Cancelar",
+            "continue": "Continuar"
+        }
+    },
+    "invoice": {
+        "errors": {
+            "failedFetchProdcuts": "No se pudo obtener productos y categorías:",
+            "failedFetchingProdcuts": "Error al obtener productos y categorías",
+            "failedFetchClients": "No se pudo obtener clientes:",
+            "failedFetchingClients": "Error al obtener clientes.",
+            "failedFetchBusiness": "Error al obtener información de la empresa",
+            "maximumQuantity": "La cantidad máxima disponible es",
+            "minimumQuantity": "La cantidad mínima es 1",
+            "invalidFileTypes": "Tipos de archivo no válidos:",
+            "fileTypes": "Solo se permiten archivos PDF, DOC, DOCX, JPEG, PNG y GIF.",
+            "productNotFound": "Producto seleccionado no encontrado.",
+            "errorGenerating": "Ocurrió un error al generar el archivo ZIP.",
+            "selectClient": "Por favor, selecciona un cliente.",
+            "lineItems": "Por favor, corrige los errores en los elementos de línea antes de guardar.",
+            "notesTerms": "Por favor, llena tanto Notas como Términos.",
+            "errorAddingProduct": "Error al agregar producto a la factura:",
+            "errorSavingInvoice": "Ocurrió un error al guardar la factura."
+        },
+        "newInvoice": "Nueva Factura",
+        "companyName": "Nombre de la Empresa: ",
+        "phone": "Teléfono: ",
+        "website": "Sitio Web: ",
+        "email": "Correo Electrónico: ",
+        "country": "País: ",
+        "city": "Ciudad: ",
+        "address": "Dirección: ",
+        "loadingData": "Cargando datos...",
+        "attachmentsError": "Error",
+        "loadingClients": "Cargando clientes...",
+        "cancel": "Cancelar",
+        "generatePDF": "Generar PDF y ZIP",
+        "saveInvoice": "Guardar Factura"
+    }
+}

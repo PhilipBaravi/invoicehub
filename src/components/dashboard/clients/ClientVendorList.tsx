@@ -6,10 +6,11 @@ import ClientVendorTable from './ClientVendorTable';
 import Pagination from '../employee/Pagination';
 import SearchAndFilter from '../employee/SearchAndFilter';
 import { useKeycloak } from '@react-keycloak/web';
+import { useTranslation } from 'react-i18next';
 
 export default function ClientVendorList() {
   const { keycloak } = useKeycloak();
-
+  const { t } = useTranslation('clients');
   const [clientVendors, setClientVendors] = useState<ClientVendor[]>([]);
   const [filteredClientVendors, setFilteredClientVendors] = useState<ClientVendor[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -22,11 +23,11 @@ export default function ClientVendorList() {
   const [filterCategory, setFilterCategory] = useState<keyof ClientVendor>('name');
 
   const filterOptions: Array<{ value: keyof ClientVendor; label: string }> = [
-    { value: 'name', label: 'Name' },
-    { value: 'email', label: 'Email' },
-    { value: 'phone', label: 'Phone' },
-    { value: 'website', label: 'Website' },
-    { value: 'clientVendorType', label: 'Type' },
+    { value: 'name', label: t('clientFilter.name') },
+    { value: 'email', label: t('clientFilter.email') },
+    { value: 'phone', label: t('clientFilter.phone') },
+    { value: 'website', label: t('clientFilter.website') },
+    { value: 'clientVendorType', label: t('clientFilter.type') },
   ];
 
   useEffect(() => {
@@ -137,7 +138,7 @@ export default function ClientVendorList() {
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">
-          Client/Vendor List ({filteredClientVendors.length})
+          {t('pageTitle')} ({filteredClientVendors.length})
         </h1>
         <AddClientVendorSheet
           isOpen={isAddClientVendorOpen}

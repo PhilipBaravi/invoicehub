@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { useKeycloak } from "@react-keycloak/web";
+import { useTranslation } from "react-i18next";
 
 // Import types and icon map
 import { AddCategoryBtnProps } from "./categories-types";
@@ -27,6 +28,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { keycloak } = useKeycloak();
+  const { t } = useTranslation('categoriesAndProducts')
 
   const handleCategoryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategoryName(e.target.value);
@@ -75,21 +77,21 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 h-4 w-4" /> New Category
+          <Plus className="mr-2 h-4 w-4" /> {t('categories.addCategory.addCategory')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Category</DialogTitle>
+          <DialogTitle>{t('categories.addCategory.addNewCategory')}</DialogTitle>
           <DialogDescription>
-            Enter the details for the new category and choose an icon.
+          {t('categories.addCategory.details')}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex items-center">
             <Input
               type="text"
-              placeholder="Category name"
+              placeholder={t('categories.addCategory.name')}
               value={categoryName}
               onChange={handleCategoryInput}
             />
@@ -99,13 +101,13 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
               disabled={!categoryName || !selectedIcon}
             >
               <Plus className="mr-2 h-4 w-4" />
-              Add
+              {t('categories.addCategory.add')}
             </Button>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
         </div>
         <div>
-          <h3 className="mb-2 text-sm font-medium">Choose category icon:</h3>
+          <h3 className="mb-2 text-sm font-medium">{t('categories.addCategory.icon')}</h3>
           <Card>
             <CardContent className="grid grid-cols-4 gap-2 p-2">
               {categoryIcons.map((icon, index) => {

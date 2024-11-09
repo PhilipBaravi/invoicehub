@@ -36,6 +36,7 @@ import {
   Category,
   Product,
 } from './invoice-types';
+import { useTranslation } from 'react-i18next';
 
 
 const InvoiceComponent: FC = () => {
@@ -91,6 +92,7 @@ const InvoiceComponent: FC = () => {
   const [clients, setClients] = useState<ClientVendor[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState<boolean>(false);
   const [businessInformation, setBusinessInformation] = useState<BusinessInfo | null>(null);
+  const { t } = useTranslation('invoices')
 
   const updateTotals = useCallback((items: LineItem[]) => {
     const subtotal = items.reduce(
@@ -140,11 +142,11 @@ const InvoiceComponent: FC = () => {
         setCategories(uniqueCategories);
       } else {
         setErrorMessage(
-          `Failed to fetch products and categories: ${data.message}`
+          `${t('invoice.errors.failedFetchProducts')} ${data.message}`
         );
       }
     } catch (error) {
-      setErrorMessage('Error fetching products and categories.');
+      setErrorMessage(t('invoice.errors.failedFetchingProducts'));
     }
   }, [keycloak.token]);
 
@@ -165,10 +167,10 @@ const InvoiceComponent: FC = () => {
         if (data.success) {
           setClients(data.data);
         } else {
-          setErrorMessage(`Failed to fetch clients: ${data.message}`);
+          setErrorMessage(`${t('invoice.errors.failedFetchClients')} ${data.message}`);
         }
       } catch (error) {
-        setErrorMessage('Error fetching clients.');
+        setErrorMessage(t('invoice.errors.failedFetchingClients'));
       } finally {
         setIsLoadingClients(false);
       }
@@ -189,10 +191,10 @@ const InvoiceComponent: FC = () => {
         if (data.success) {
           setBusinessInformation(data.data);
         } else {
-          setErrorMessage('Error fetching business information');
+          setErrorMessage(t('invoice.errors.failedFetchBusiness'));
         }
       } catch (error) {
-        setErrorMessage('Error fetching business information');
+        setErrorMessage(t('invoice.errors.failedFetchBusiness'));
       }
     };
 
@@ -281,10 +283,10 @@ const InvoiceComponent: FC = () => {
                 const maxQuantity = selectedProduct.quantityInStock;
                 if (Number(value) > maxQuantity) {
                   updatedItem.quantity = maxQuantity;
-                  updatedItem.error = `Maximum available quantity is ${maxQuantity}`;
+                  updatedItem.error = `${t('invoice.errors.maximumQuantity')} ${maxQuantity}`;
                 } else if (Number(value) < 1) {
                   updatedItem.quantity = 1;
-                  updatedItem.error = `Minimum quantity is 1`;
+                  updatedItem.error = `${t('invoice.errors.minimumQuantity')}`;
                 }
               }
             }
@@ -362,9 +364,9 @@ const InvoiceComponent: FC = () => {
 
         if (invalidFiles.length > 0) {
           setErrorMessage(
-            `Invalid file types: ${invalidFiles.join(
+            `${t('invoice.errors.invalidFileTypes')} ${invalidFiles.join(
               ', '
-            )}. Only PDF, DOC, DOCX, JPEG, PNG, and GIF files are allowed.`
+            )}. ${t('invoice.errors.fileTypes')}`
           );
         } else {
           setErrorMessage('');
@@ -408,7 +410,7 @@ const InvoiceComponent: FC = () => {
           return updatedLineItems;
         });
       } else {
-        setErrorMessage(`Selected product not found.`);
+        setErrorMessage(`${t('invoice.errors.productNotFound')}`);
       }
     },
     [products, updateTotals]
@@ -579,7 +581,7 @@ const InvoiceComponent: FC = () => {
 
       saveAs(zipBlob, `Invoice_${invoice.invoiceNo}.zip`);
     } catch (error) {
-      setErrorMessage('An error occurred while generating the ZIP file.');
+      setErrorMessage(t('invoice.errors.errorGenerating'));
     }
   }, [
     invoice,
@@ -597,20 +599,20 @@ const InvoiceComponent: FC = () => {
   const handleSaveInvoice = useCallback(async () => {
     // Perform all validations before making any API calls
     if (!selectedClient) {
-      setErrorMessage('Please select a client.');
+      setErrorMessage(t('invoice.errors.selectClient'));
       return;
     }
 
     // Check for errors in line items
     const hasErrors = lineItems.some((item) => item.error);
     if (hasErrors) {
-      setErrorMessage('Please fix errors in line items before saving.');
+      setErrorMessage(t('invoice.errors.lineItems'));
       return;
     }
 
     // Check that notes and terms are not empty
     if (!invoice.notes || !invoice.terms) {
-      setErrorMessage('Please fill in both Notes and Terms.');
+      setErrorMessage(t('invoice.errors.notesTerms'));
       return;
     }
 
@@ -706,7 +708,7 @@ const InvoiceComponent: FC = () => {
         if (!productResponse.ok) {
           const errorResponse = await productResponse.json();
           setErrorMessage(
-            `Error adding product to invoice: ${
+            `${t('invoice.errors.errorAddingProduct')} ${
               errorResponse.message || 'Unknown error'
             }`
           );
@@ -720,7 +722,7 @@ const InvoiceComponent: FC = () => {
       alert('Invoice saved successfully');
     } catch (error) {
       console.error(error);
-      setErrorMessage('An error occurred while saving the invoice.');
+      setErrorMessage(t('invoice.errors.errorSavingInvoice'));
     }
   }, [
     invoice,
@@ -735,7 +737,7 @@ const InvoiceComponent: FC = () => {
     <div className="p-4">
       <Card className="w-full max-w-5xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">New Invoice</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('invoice.newInvoice')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
           <div className="flex justify-between items-start">
@@ -759,12 +761,12 @@ const InvoiceComponent: FC = () => {
               {businessInformation ? (
                 <>
                   <h2 className="text-xl font-bold">
-                    Company Name: {businessInformation.title}
+                    {t('invoice.companyName')} {businessInformation.title}
                   </h2>
-                  <p className="font-[600]">Phone: {businessInformation.phone}</p>
+                  <p className="font-[600]">{t('invoice.phone')} {businessInformation.phone}</p>
                   <p>
                     <span className="text-stone-950 dark:text-stone-50 font-[600]">
-                      Website:
+                      {t('invoice.website')}
                     </span>
                     <span className="font-[600] text-blue-700">
                       {' '}
@@ -773,7 +775,7 @@ const InvoiceComponent: FC = () => {
                   </p>
                   <p>
                     <span className="text-stone-950 dark:text-stone-50 font-[600]">
-                      Email:
+                      {t('invoice.email')}
                     </span>
                     <span className="font-[600] text-blue-700">
                       {' '}
@@ -781,21 +783,21 @@ const InvoiceComponent: FC = () => {
                     </span>
                   </p>
                   <p>
-                    <span className="font-[600]">Country:</span>
+                    <span className="font-[600]">{t('invoice.country')}</span>
                     <span className="text-stone-950 dark:text-stone-50 font-[600]">
                       {' '}
                       {businessInformation.address.country}
                     </span>
                   </p>
                   <p>
-                    <span className="font-[600]">City:</span>
+                    <span className="font-[600]">{t('invoice.city')}</span>
                     <span className="text-stone-950 dark:text-stone-50 font-[600]">
                       {' '}
                       {businessInformation.address.city}
                     </span>
                   </p>
                   <p>
-                    <span className="font-[600]">Address:</span>
+                    <span className="font-[600]">{t('invoice.address')}</span>
                     <span className="text-stone-950 dark:text-stone-50 font-[600]">
                       {' '}
                       {businessInformation.address.addressLine1}
@@ -803,7 +805,7 @@ const InvoiceComponent: FC = () => {
                   </p>
                 </>
               ) : (
-                <div>Loading Data...</div>
+                <div>{t('invoice.loadingData')}</div>
               )}
             </div>
           </div>
@@ -843,24 +845,24 @@ const InvoiceComponent: FC = () => {
           />
           {errorMessage && (
             <Alert variant="destructive" className="mt-4">
-              <AlertTitle>Error</AlertTitle>
+              <AlertTitle>{t('invoice.attachmentsError')}</AlertTitle>
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
           {isLoadingClients && (
             <div className="mt-4">
-              <p>Loading clients...</p>
+              <p>{t('invoice.loadingClients')}</p>
             </div>
           )}
         </CardContent>
         <Separator />
         <CardFooter className="flex justify-between">
-          <Button variant="outline">Cancel</Button>
+          <Button variant="outline">{t('invoice.cancel')}</Button>
           <div className="space-x-2">
             <Button variant="outline" onClick={generatePDFAndZip}>
-              Generate PDF & ZIP
+              {t('invoice.generatePDF')}
             </Button>
-            <Button onClick={handleSaveInvoice}>Save Invoice</Button>
+            <Button onClick={handleSaveInvoice}>{t('invoice.saveInvoice')}</Button>
           </div>
         </CardFooter>
         <TaxDialog

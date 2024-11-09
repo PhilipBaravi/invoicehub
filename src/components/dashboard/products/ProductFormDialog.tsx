@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductFormDialogProps } from "./products-types";
+import { useTranslation } from "react-i18next";
 
 const ProductFormDialog: FC<ProductFormDialogProps> = ({
   isDialogOpen,
@@ -15,13 +16,14 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
   handleEditProduct,
   editingProduct,
 }) => {
+  const { t } = useTranslation('categoriesAndProducts')
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+          <DialogTitle>{editingProduct ? t('products.formDialog.edit') : t('products.formDialog.add')}</DialogTitle>
           <DialogDescription>
-            {editingProduct ? 'Edit the details of the product below.' : 'Enter the details of the new product below.'}
+            {editingProduct ? t('products.formDialog.editDetails') : t('products.formDialog.enterDetails')}
           </DialogDescription>
         </DialogHeader>
         <form
@@ -32,7 +34,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
           className="space-y-4 mt-4"
         >
           <div>
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t('products.formDialog.name')}</Label>
             <Input
               id="name"
               value={newProduct.name}
@@ -41,7 +43,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             />
           </div>
           <div>
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t('products.formDialog.status')}</Label>
             <Select
               value={newProduct.status}
               onValueChange={(value) => setNewProduct({ ...newProduct, status: value as "ACTIVE" | "DRAFT" })}
@@ -56,7 +58,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             </Select>
           </div>
           <div>
-            <Label htmlFor="price">Price</Label>
+            <Label htmlFor="price">{t('products.formDialog.price')}</Label>
             <Input
               id="price"
               type="number"
@@ -67,7 +69,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             />
           </div>
           <div>
-            <Label htmlFor="quantity">Quantity in Stock</Label>
+            <Label htmlFor="quantity">{t('products.formDialog.inStock')}</Label>
             <Input
               id="quantity"
               type="number"
@@ -77,7 +79,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             />
           </div>
           <div>
-            <Label htmlFor="lowLimitAlert">Low Stock Alert</Label>
+            <Label htmlFor="lowLimitAlert">{t('products.formDialog.lowStock')}</Label>
             <Input
               id="lowLimitAlert"
               type="number"
@@ -87,7 +89,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             />
           </div>
           <div>
-            <Label htmlFor="productUnit">Product Unit</Label>
+            <Label htmlFor="productUnit">{t('products.formDialog.productUnit')}</Label>
             <Input
               id="productUnit"
               value={newProduct.productUnit}
@@ -96,7 +98,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             />
           </div>
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('products.formDialog.description')}</Label>
             <Input
               id="description"
               value={newProduct.description}
@@ -105,9 +107,9 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
           </div>
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
+            {t('products.formDialog.cancel')}
             </Button>
-            <Button type="submit">{editingProduct ? 'Update Product' : 'Add Product'}</Button>
+            <Button type="submit">{editingProduct ? t('products.formDialog.updateProduct') : t('products.formDialog.addProduct')}</Button>
           </div>
         </form>
       </DialogContent>

@@ -1,0 +1,75 @@
+{
+    "pageTitle": "Lista de Clientes/Proveedores",
+    "clientFilter": {
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "website": "Sitio web",
+        "type": "Tipo"
+    },
+    "clientsTable": {
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "website": "Sitio web",
+        "type": "Tipo",
+        "address": "Dirección",
+        "actions": "Acciones",
+        "delete": "Eliminar",
+        "edit": "Editar"
+    },
+    "validations": {
+        "name": "El nombre es obligatorio.",
+        "email": "El correo electrónico es obligatorio.",
+        "phone": "El teléfono es obligatorio.",
+        "website": "El sitio web es obligatorio.",
+        "addressLine1": "La Línea de Dirección 1 es obligatoria.",
+        "city": "La ciudad es obligatoria.",
+        "state": "El estado es obligatorio.",
+        "country": "El país es obligatorio.",
+        "zipCode": "El código postal es obligatorio."
+    },
+    "addClient": {
+        "addClient": "Agregar Cliente/Proveedor",
+        "addNewClient": "Agregar Nuevo Cliente/Proveedor",
+        "details": "Ingrese los detalles del nuevo cliente/proveedor a continuación.",
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "website": "Sitio web",
+        "type": "Tipo",
+        "addressLine1": "Línea de Dirección 1",
+        "addressLine2": "Línea de Dirección 2",
+        "city": "Ciudad",
+        "state": "Estado",
+        "country": "País",
+        "zipCode": "Código postal"
+    },
+    "editValidations": {
+        "name": "El nombre es obligatorio.",
+        "email": "Por favor, ingrese un correo electrónico válido.",
+        "phone": "El número de teléfono es obligatorio.",
+        "website": "El sitio web es obligatorio.",
+        "addressLine1": "La Línea de Dirección 1 es obligatoria.",
+        "city": "La ciudad es obligatoria.",
+        "state": "El estado es obligatorio.",
+        "country": "El país es obligatorio.",
+        "zipCode": "El código postal es obligatorio."
+    },
+    "editClient": {
+        "editClient": "Editar Cliente/Proveedor",
+        "editDetails": "Edite los detalles del cliente/proveedor a continuación.",
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "website": "Sitio web",
+        "type": "Tipo",
+        "addressLine1": "Línea de Dirección 1",
+        "addressLine2": "Línea de Dirección 2",
+        "city": "Ciudad",
+        "state": "Estado",
+        "country": "País",
+        "zipCode": "Código postal",
+        "save": "Guardar cambios"
+    }
+}

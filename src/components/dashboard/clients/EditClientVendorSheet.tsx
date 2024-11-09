@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import { apiFetch } from '@/utils/api';
 import { useKeycloak } from '@react-keycloak/web';
+import { useTranslation } from 'react-i18next';
 
 export default function EditClientVendorSheet({
   isOpen,
@@ -30,6 +31,7 @@ export default function EditClientVendorSheet({
 }) {
   useKeycloak();
 
+  const { t } = useTranslation('clients');
   const [editedClientVendor, setEditedClientVendor] = useState(clientVendor);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -62,41 +64,41 @@ export default function EditClientVendorSheet({
 
     // Personal Details Validation
     if (!editedClientVendor.name) {
-      newErrors.name = 'Name is required.';
+      newErrors.name = t('editValidations.name');
       valid = false;
     }
     if (!editedClientVendor.email || !/\S+@\S+\.\S+/.test(editedClientVendor.email)) {
-      newErrors.email = 'Please enter a valid email.';
+      newErrors.email = t('editValidations.email');
       valid = false;
     }
     if (!editedClientVendor.phone) {
-      newErrors.phone = 'Phone number is required.';
+      newErrors.phone = t('editValidations.phone');
       valid = false;
     }
     if (!editedClientVendor.website) {
-      newErrors.website = 'Website is required.';
+      newErrors.website = t('editValidations.website');
       valid = false;
     }
 
     // Address Validation
     if (!editedClientVendor.address.addressLine1) {
-      newErrors.addressLine1 = 'Address Line 1 is required.';
+      newErrors.addressLine1 = t('editValidations.addressLine1');
       valid = false;
     }
     if (!editedClientVendor.address.city) {
-      newErrors.city = 'City is required.';
+      newErrors.city = t('editValidations.city');
       valid = false;
     }
     if (!editedClientVendor.address.state) {
-      newErrors.state = 'State is required.';
+      newErrors.state = t('editValidations.state');
       valid = false;
     }
     if (!editedClientVendor.address.country) {
-      newErrors.country = 'Country is required.';
+      newErrors.country = t('editValidations.country');
       valid = false;
     }
     if (!editedClientVendor.address.zipCode) {
-      newErrors.zipCode = 'Zip Code is required.';
+      newErrors.zipCode = t('editValidations.zipCode');
       valid = false;
     }
 
@@ -125,13 +127,13 @@ export default function EditClientVendorSheet({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Edit Client/Vendor</SheetTitle>
-          <SheetDescription>Edit the details of the client/vendor below.</SheetDescription>
+          <SheetTitle>{t('editClient.editClient')}</SheetTitle>
+          <SheetDescription>{t('editClient.editDetails')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {/* Personal Details */}
           <div>
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{t('editClient.name')}</Label>
             <Input
               id="name"
               name="name"
@@ -142,7 +144,7 @@ export default function EditClientVendorSheet({
             {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
           </div>
           <div>
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('editClient.email')}</Label>
             <Input
               id="email"
               name="email"
@@ -155,7 +157,7 @@ export default function EditClientVendorSheet({
             {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </div>
           <div>
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone">{t('editClient.phone')}</Label>
             <Input
               id="phone"
               name="phone"
@@ -166,7 +168,7 @@ export default function EditClientVendorSheet({
             {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
           </div>
           <div>
-            <Label htmlFor="website">Website</Label>
+            <Label htmlFor="website">{t('editClient.website')}</Label>
             <Input
               id="website"
               name="website"
@@ -177,7 +179,7 @@ export default function EditClientVendorSheet({
             {errors.website && <p className="text-red-500 text-sm">{errors.website}</p>}
           </div>
           <div>
-            <Label htmlFor="clientVendorType">Type</Label>
+            <Label htmlFor="clientVendorType">{t('editClient.type')}</Label>
             <Select
               value={editedClientVendor.clientVendorType}
               onValueChange={(value) =>
@@ -199,7 +201,7 @@ export default function EditClientVendorSheet({
 
           {/* Address Details */}
           <div>
-            <Label htmlFor="address.addressLine1">Address Line 1</Label>
+            <Label htmlFor="address.addressLine1">{t('editClient.addressLine1')}</Label>
             <Input
               id="address.addressLine1"
               name="address.addressLine1"
@@ -212,7 +214,7 @@ export default function EditClientVendorSheet({
             )}
           </div>
           <div>
-            <Label htmlFor="address.addressLine2">Address Line 2</Label>
+            <Label htmlFor="address.addressLine2">{t('editClient.addressLine2')}</Label>
             <Input
               id="address.addressLine2"
               name="address.addressLine2"
@@ -221,7 +223,7 @@ export default function EditClientVendorSheet({
             />
           </div>
           <div>
-            <Label htmlFor="address.city">City</Label>
+            <Label htmlFor="address.city">{t('editClient.city')}</Label>
             <Input
               id="address.city"
               name="address.city"
@@ -232,7 +234,7 @@ export default function EditClientVendorSheet({
             {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
           </div>
           <div>
-            <Label htmlFor="address.state">State</Label>
+            <Label htmlFor="address.state">{t('editClient.state')}</Label>
             <Input
               id="address.state"
               name="address.state"
@@ -243,7 +245,7 @@ export default function EditClientVendorSheet({
             {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
           </div>
           <div>
-            <Label htmlFor="address.country">Country</Label>
+            <Label htmlFor="address.country">{t('editClient.country')}</Label>
             <Input
               id="address.country"
               name="address.country"
@@ -254,7 +256,7 @@ export default function EditClientVendorSheet({
             {errors.country && <p className="text-red-500 text-sm">{errors.country}</p>}
           </div>
           <div>
-            <Label htmlFor="address.zipCode">Zip Code</Label>
+            <Label htmlFor="address.zipCode">{t('editClient.zipCode')}</Label>
             <Input
               id="address.zipCode"
               name="address.zipCode"
@@ -265,7 +267,7 @@ export default function EditClientVendorSheet({
             {errors.zipCode && <p className="text-red-500 text-sm">{errors.zipCode}</p>}
           </div>
 
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit">{t('editClient.save')}</Button>
         </form>
       </SheetContent>
     </Sheet>

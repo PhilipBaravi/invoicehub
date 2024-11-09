@@ -16,19 +16,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleDeleteProduct, lowStockProducts }) => {
+  const { t } = useTranslation('categoriesAndProducts')
   return (
     <>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[300px] text-center">Name</TableHead>
-            <TableHead className="text-center">Status</TableHead>
-            <TableHead className="text-center">Price</TableHead>
-            <TableHead className="text-center">Quantity in Stock</TableHead>
-            <TableHead className="text-center">Description</TableHead>
-            <TableHead className="text-center">Created at</TableHead>
+            <TableHead className="w-[300px] text-center">{t('products.table.name')}</TableHead>
+            <TableHead className="text-center">{t('products.table.status')}</TableHead>
+            <TableHead className="text-center">{t('products.table.price')}</TableHead>
+            <TableHead className="text-center">{t('products.table.quantity')}</TableHead>
+            <TableHead className="text-center">{t('products.table.description')}</TableHead>
+            <TableHead className="text-center">{t('products.table.createdAt')}</TableHead>
             <TableHead className="w-[50px] text-center"></TableHead>
           </TableRow>
         </TableHeader>
@@ -65,10 +67,10 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => openEditDialog(product)} key={`${product.id}-edit`}>
-                <Pencil className="mr-2 h-4 w-4" /> Edit
+                <Pencil className="mr-2 h-4 w-4" /> {t('products.table.edit')}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleDeleteProduct(product.id)} key={`${product.id}-delete`}>
-                <Trash className="mr-2 h-4 w-4" /> Delete
+                <Trash className="mr-2 h-4 w-4" /> {t('products.table.delete')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -79,7 +81,9 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
 </TableBody>
 
       </Table>
-      <div className="text-sm text-stone-500 dark:text-stone-400">Showing {products.length} products</div>
+      <div className="text-sm text-stone-500 dark:text-stone-400">
+      {t('products.table.showing', { count: products.length })}
+    </div>
     </>
   );
 };

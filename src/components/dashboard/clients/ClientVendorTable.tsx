@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, Trash2, User } from 'lucide-react';
 import { ClientVendor } from './CliendVendorTypes';
+import { useTranslation } from 'react-i18next';
 
 interface ClientVendorTableProps {
   paginatedClientVendors: ClientVendor[];
@@ -26,6 +27,7 @@ export default function ClientVendorTable({
   setIsEditClientVendorOpen,
   filteredClientVendors,
 }: ClientVendorTableProps) {
+  const { t } = useTranslation('clients');
   return (
     <div className="border rounded-md">
       <Table>
@@ -37,13 +39,13 @@ export default function ClientVendorTable({
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Website</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Address</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>{t('clientsTable.name')}</TableHead>
+            <TableHead>{t('clientsTable.email')}</TableHead>
+            <TableHead>{t('clientsTable.phone')}</TableHead>
+            <TableHead>{t('clientsTable.website')}</TableHead>
+            <TableHead>{t('clientsTable.type')}</TableHead>
+            <TableHead>{t('clientsTable.address')}</TableHead>
+            <TableHead>{t('clientsTable.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -71,17 +73,17 @@ export default function ClientVendorTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                    <DropdownMenuLabel>{t('clientsTable.actions')}</DropdownMenuLabel>
                     <DropdownMenuItem onClick={() => deleteClientVendor(clientVendor.id)}>
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      {t('clientsTable.delete')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => {
                       setEditingClientVendor(clientVendor);
                       setIsEditClientVendorOpen(true);
                     }}>
                       <User className="mr-2 h-4 w-4" />
-                      Edit
+                      {t('clientsTable.edit')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

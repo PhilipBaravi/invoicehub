@@ -8,7 +8,8 @@ import ProductFilter from "./ProductFilter";
 import ProductFormDialog from "./ProductFormDialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useKeycloak } from "@react-keycloak/web";
-import {  Product } from "./products-types";
+import { Product } from "./products-types";
+import { useTranslation } from "react-i18next";
 
 const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");
@@ -16,6 +17,7 @@ const ProductsPage: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const { t } = useTranslation("categoriesAndProducts");
 
   const [newProduct, setNewProduct] = useState<Omit<Product, "id" | "createdAt">>({
     name: "",
@@ -26,6 +28,7 @@ const ProductsPage: FC = () => {
     lowLimitAlert: 0,
     productUnit: "PCS",
     category: { id: 1, description: "", icon: "" },
+    quantity: 0,
   });
 
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -84,7 +87,7 @@ const ProductsPage: FC = () => {
       console.error("Category not selected or invalid.");
       return;
     }
-  
+
     const productToAdd = {
       ...newProduct,
       createdAt: new Date().toISOString(),
@@ -93,7 +96,7 @@ const ProductsPage: FC = () => {
         description: selectedCategoryDescription,
       },
     };
-  
+
     try {
       const response = await fetch("http://localhost:9090/api/v1/product/create", {
         method: "POST",
@@ -103,9 +106,9 @@ const ProductsPage: FC = () => {
         },
         body: JSON.stringify(productToAdd),
       });
-  
+
       const createdProduct = await response.json();
-  
+
       if (response.ok && createdProduct.success) {
         // Product created successfully; re-fetch products to ensure we have the proper id
         await fetchProducts();
@@ -118,13 +121,6 @@ const ProductsPage: FC = () => {
       console.error("Failed to add product:", error);
     }
   };
-  
-  
-  
-  
-
-  
-  
 
   const handleEditProduct = async () => {
     if (editingProduct && editingProduct.id) {
@@ -157,7 +153,6 @@ const ProductsPage: FC = () => {
       console.error("Editing product is not set or has no ID.");
     }
   };
-  
 
   const handleDeleteProduct = async (productId: number) => {
     try {
@@ -187,6 +182,7 @@ const ProductsPage: FC = () => {
       lowLimitAlert: 0,
       productUnit: "PCS",
       category: { id: selectedCategoryId, description: "", icon: "" },
+      quantity: 0,
     });
     setEditingProduct(null);
   };
@@ -217,25 +213,25 @@ const ProductsPage: FC = () => {
     <div className="w-full mx-auto p-6 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">Products</h1>
-          <p className="text-sm text-stone-500 dark:text-stone-400">Manage your products and view their stock levels.</p>
+          <h1 className="text-2xl font-bold text-stone-900 dark:text-stone-100">{t('products.pageTitle')}</h1>
+          <p className="text-sm text-stone-500 dark:text-stone-400">{t('products.description')}</p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Add Product
+          <Plus className="mr-2 h-4 w-4" /> {t('products.add')}
         </Button>
       </div>
 
       {lowStockProducts.length > 0 && (
         <Alert variant="destructive">
-          <AlertTitle>Low Stock Alert</AlertTitle>
-          <AlertDescription>Some products are below the low stock limit!</AlertDescription>
+          <AlertTitle>{t('products.lowStock')}</AlertTitle>
+          <AlertDescription>{t('products.lowStockDescription')}</AlertDescription>
         </Alert>
       )}
 
       {filteredProducts.length === 0 && (
         <Alert variant="default">
-          <AlertTitle>No products found</AlertTitle>
-          <AlertDescription>No products available for this category.</AlertDescription>
+          <AlertTitle>{t('products.notFound')}</AlertTitle>
+          <AlertDescription>{t('products.notFoundDescription')}</AlertDescription>
         </Alert>
       )}
 
@@ -247,7 +243,7 @@ const ProductsPage: FC = () => {
               className={`px-3 py-2 text-sm font-medium ${activeTab === tab ? "text-stone-900 dark:text-stone-100 border-b-2 border-stone-900 dark:border-stone-100" : "text-stone-500 dark:text-stone-400"}`}
               onClick={() => setActiveTab(tab as "All" | "ACTIVE" | "DRAFT")}
             >
-              {tab === "All" ? tab : tab === "ACTIVE" ? "Active" : "Draft"}
+              {tab === "All" ? t("products.all") : tab === "ACTIVE" ? t("products.active") : t("products.draft")}
             </button>
           ))}
         </div>
@@ -271,7 +267,7 @@ const ProductsPage: FC = () => {
             setPriceRange={setPriceRange}
           />
           <Button variant="outline" onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" /> Export
+            <Download className="mr-2 h-4 w-4" /> {t('products.export')}
           </Button>
         </div>
       </div>

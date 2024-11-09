@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useKeycloak } from "@react-keycloak/web";
+import { useTranslation } from "react-i18next";
 
 // Import types and icon map
 import { Category } from "./categories-types";
@@ -33,6 +34,7 @@ const Categories: FC = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { t } = useTranslation('categoriesAndProducts')
 
   const navigate = useNavigate();
   const { keycloak } = useKeycloak();
@@ -108,7 +110,7 @@ const Categories: FC = () => {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Categories ({productCategories.length})</h1>
+        <h1 className="text-2xl font-bold">{t('categories.pageTitle')} ({productCategories.length})</h1>
         <AddCategoryBtn onAddCategory={handleAddCategory} />
       </div>
 
@@ -135,11 +137,11 @@ const Categories: FC = () => {
               <ContextMenuContent>
                 <ContextMenuItem onClick={() => openDeleteDialog(category)}>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
+                  {t('categories.delete')}
                 </ContextMenuItem>
                 <ContextMenuItem onClick={() => openEditDialog(category)}>
                   <Pencil className="mr-2 h-4 w-4" />
-                  Edit
+                  {t('categories.edit')}
                 </ContextMenuItem>
               </ContextMenuContent>
             </ContextMenu>

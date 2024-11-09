@@ -1,0 +1,74 @@
+{   "pageTitle" : "Client/Vendor List",
+    "clientFilter" : {
+        "name" : "Name",
+        "email" : "Email",
+        "phone" : "Phone",
+        "website" : "Website",
+        "type" : "Type"
+    },
+    "clientsTable" : {
+        "name" : "Name",
+        "email" : "Email",
+        "phone" : "Phone",
+        "website" : "Website",
+        "type" : "Type",
+        "address" : "Address",
+        "actions" : "Actions",
+        "delete" : "Delete",
+        "edit" : "Edit"
+    },
+    "validations" : {
+        "name" : "Name is required.",
+        "email" : "Email is required.",
+        "phone" : "Phone is required.",
+        "website" : "Website is required.",
+        "addressLine1" : "Address Line 1 is required.",
+        "city" : "City is required.",
+        "state" : "State is required.",
+        "country" : "Country is required.",
+        "zipCode" : "Zip Code is required."
+    },
+    "addClient" : {
+        "addClient" : "Add Client/Vendor",
+        "addNewClient" : "Add New Client/Vendor",
+        "details" : "Enter the details of the new client/vendor below.",
+        "name" : "Name",
+        "email" : "Email",
+        "phone" : "Phone",
+        "website" : "Website",
+        "type" : "Type",
+        "addressLine1" : "Address Line 1",
+        "addressLine2" : "Address Line 2",
+        "city" : "City",
+        "state" : "State",
+        "country" : "Country",
+        "zipCode" : "Zip Code"
+    },
+    "editValidations" : {
+        "name" : "Names is required.",
+        "email" : "Please enter a valid email.",
+        "phone" : "Phone number is required.",
+        "website" : "Website is required.",
+        "addressLine1" : "Address Line 1 is required.",
+        "city" : "City is required.",
+        "state" : "State is required.",
+        "country" : "Country is required.",
+        "zipCode" : "Zip Code is required."
+    },
+    "editClient" : {
+        "editClient" : "Edit Client/Vendor",
+        "editDetails" : "Edit the details of the client/vendor below.",
+        "name" : "Name",
+        "email" : "Email",
+        "phone" : "Phone",
+        "website" : "Website",
+        "type" : "Type",
+        "addressLine1" : "Address Line 1",
+        "addressLine2" : "Address Line 2",
+        "city" : "City",
+        "state" : "State",
+        "country" : "Country",
+        "zipCode" : "Zip Code",
+        "save" : "Save Changes"
+    }
+}
