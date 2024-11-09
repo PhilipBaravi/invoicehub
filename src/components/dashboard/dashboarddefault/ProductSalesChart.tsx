@@ -1,6 +1,7 @@
 import { FC } from "react"
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
+import { useTranslation } from "react-i18next"
 
 import {
   Card,
@@ -69,20 +70,20 @@ const productSalesData = [
   // ... Add more data points as needed
 ]
 
-const chartConfig = {
-  productsSold: {
-    label: "Products Sold",
-    color: "hsl(var(--chart-1))",
-  },
-  totalSales: {
-    label: "Total Sales ($)",
-    color: "hsl(var(--chart-2))",
-  },
-}
-
 const ProductSalesChart: FC = () => {
   const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("productsSold")
-
+  const { t } = useTranslation('dashboardDefault')
+  const chartConfig = {
+    productsSold: {
+      label: t('productSalesChart.productsSold'),
+      color: "hsl(var(--chart-1))",
+    },
+    totalSales: {
+      label: t('productSalesChart.totalSales') + " $",
+      color: "hsl(var(--chart-2))",
+    },
+  }
+  
   const total = React.useMemo(
     () => ({
       productsSold: productSalesData.reduce((acc, curr) => acc + curr.productsSold, 0),
@@ -95,9 +96,9 @@ const ProductSalesChart: FC = () => {
     <Card>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5 sm:py-6">
-          <CardTitle>Product Sales Chart</CardTitle>
+          <CardTitle>{t('productSalesChart.title')}</CardTitle>
           <CardDescription>
-            Showing product sales data for the last month
+            {t('productSalesChart.dataDescription')}
           </CardDescription>
         </div>
         <div className="flex">

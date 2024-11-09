@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { apiFetch } from '@/utils/api';
+import { useTranslation } from 'react-i18next';
 
 interface CompanyRegistrationFormProps {
   userDetails: UserFormValues | null;
@@ -20,6 +21,7 @@ interface UserFormValues {
 }
 
 const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userDetails }) => {
+  const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
     title: '',
     addressLine1: '',
@@ -51,33 +53,33 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
 
     // Validation logic
     if (!title) {
-      newErrors.title = 'Company name is required.';
+      newErrors.title = t('companySignUpForm.errors.companyName');
       valid = false;
     }
 
     const fullCompanyPhoneNumber = companyPhoneCode + phone;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
-      newErrors.phone = 'Invalid company phone number for the selected country.';
+      newErrors.phone = t('companySignUpForm.errors.companyPhone');
       valid = false;
     }
 
     if (!addressLine1) {
-      newErrors.addressLine1 = 'Company address is required.';
+      newErrors.addressLine1 = t('companySignUpForm.errors.companyAddress');
       valid = false;
     }
 
     if (!city) {
-      newErrors.city = 'City is required.';
+      newErrors.city = t('companySignUpForm.errors.companyCity')
       valid = false;
     }
 
     if (!state) {
-      newErrors.state = 'State is required.';
+      newErrors.state = t('companySignUpForm.errors.companyState');
       valid = false;
     }
 
     if (!zipCode) {
-      newErrors.zipCode = 'Zip code is required.';
+      newErrors.zipCode = t('companySignUpForm.errors.zipCode');
       valid = false;
     }
 
@@ -131,14 +133,14 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
       {/* Company Name */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium mb-1">
-          Company Name
+          {t('companySignUpForm.companyName')}
         </label>
         <Input
           id="title"
           name="title"
           value={formValues.title}
           onChange={handleChange}
-          placeholder="Company Name"
+          placeholder={t('companySignUpForm.companyName')}
           className="w-full"
           required
         />
@@ -153,7 +155,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="addressLine1"
             value={formValues.addressLine1}
             onChange={handleChange}
-            placeholder="Address Line 1"
+            placeholder={t('companySignUpForm.addressLine1')}
             className="w-full"
             required
           />
@@ -165,7 +167,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="addressLine2"
             value={formValues.addressLine2}
             onChange={handleChange}
-            placeholder="Address Line 2 (Optional)"
+            placeholder={t('companySignUpForm.addressLine2')}
             className="w-full"
           />
         </div>
@@ -179,7 +181,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="city"
             value={formValues.city}
             onChange={handleChange}
-            placeholder="City"
+            placeholder={t('companySignUpForm.city')}
             className="w-full"
             required
           />
@@ -191,7 +193,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="state"
             value={formValues.state}
             onChange={handleChange}
-            placeholder="State"
+            placeholder={t('companySignUpForm.state')}
             className="w-full"
             required
           />
@@ -203,7 +205,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="zipCode"
             value={formValues.zipCode}
             onChange={handleChange}
-            placeholder="Zip Code"
+            placeholder={t('companySignUpForm.zipCode')}
             className="w-full"
             required
           />
@@ -215,7 +217,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
       <div className="flex space-x-2">
         <Select onValueChange={handleCompanyCountryChange}>
           <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder={countryList.find((c) => c.code === companyCountry)?.name || 'Select country'} />
+            <SelectValue placeholder={countryList.find((c) => c.code === companyCountry)?.name || t('companySignUpForm.selectCountry')} />
           </SelectTrigger>
           <SelectContent>
             {countryList.map((c) => (
@@ -244,11 +246,11 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           name="website"
           value={formValues.website}
           onChange={handleChange}
-          placeholder="Company Website (Optional)"
+          placeholder={t('companySignUpForm.website')}
           className="w-full"
         />
       </div>
-      <Button className="w-full">Submit</Button>
+      <Button className="w-full">{t('companySignUpForm.submitBtn')}</Button>
     </form>
   );
 };

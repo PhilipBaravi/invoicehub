@@ -1,3 +1,5 @@
+// InvoicePdf.tsx
+
 import React from 'react';
 import {
   Document,
@@ -13,7 +15,6 @@ import { BusinessInfo } from './invoice-types';
 
 import OpenSansRegular from '../../../fonts/OpenSans-Regular.ttf';
 import OpenSansBold from '../../../fonts/OpenSans-Bold.ttf';
-
 
 Font.register({
   family: 'Open Sans',
@@ -255,7 +256,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
             <Text style={styles.sectionTitle}>Bill To:</Text>
             {selectedClient && (
               <View style={styles.sectionContent}>
-                <Text>Company name: {selectedClient.name}</Text>
+                <Text>Company Name: {selectedClient.name}</Text>
                 <Text>Phone: {selectedClient.phone}</Text>
                 <Text>Website: {selectedClient.website}</Text>
                 <Text>Email: {selectedClient.email}</Text>
@@ -272,7 +273,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
                 <Text>Company Name: {businessInformation.title}</Text>
                 <Text>Phone: {businessInformation.phone}</Text>
                 <Text>Website: {businessInformation.website}</Text>
-                <Text>Email {businessInformation.email}</Text>
+                <Text>Email: {businessInformation.email}</Text>
                 <Text>Country: {businessInformation.address.country}</Text>
                 <Text>City: {businessInformation.address.city}</Text>
                 <Text>Address: {businessInformation.address.addressLine1}</Text>
@@ -330,6 +331,13 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               <View style={styles.notesItem}>
                 <Text style={styles.sectionTitle}>Terms:</Text>
                 <Text style={styles.sectionContent}>{invoice.terms}</Text>
+              </View>
+            )}
+            {/* Optionally include Payment Terms */}
+            {invoice.paymentTerms && (
+              <View style={styles.notesItem}>
+                <Text style={styles.sectionTitle}>Payment Terms:</Text>
+                <Text style={styles.sectionContent}>{invoice.paymentTerms}</Text>
               </View>
             )}
           </View>

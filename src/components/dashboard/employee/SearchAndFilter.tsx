@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from "@/components/ui/select";
 import { Search } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 interface SearchAndFilterProps<T> {
   searchTerm: string;
@@ -21,6 +22,7 @@ export default function SearchAndFilter<T>({
   setRowsPerPage,
   filterOptions,
 }: SearchAndFilterProps<T>) {
+  const { t } = useTranslation('employees')
   return (
     <div className="flex justify-between items-center mb-4">
       <div className="flex items-center space-x-2">
@@ -29,7 +31,7 @@ export default function SearchAndFilter<T>({
             id="searchTerm"
             name="searchTerm"
             type="text"
-            placeholder="Search..."
+            placeholder={t('searchAndFilter.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-4 py-2 w-64"
@@ -39,7 +41,7 @@ export default function SearchAndFilter<T>({
         </div>
         <Select value={filterCategory as string} onValueChange={(value) => setFilterCategory(value as keyof T)}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by" />
+            <SelectValue placeholder={t('searchAndFilter.filterBy')} />
           </SelectTrigger>
           <SelectContent>
             {filterOptions.map((option) => (
@@ -52,12 +54,12 @@ export default function SearchAndFilter<T>({
       </div>
       <Select value={rowsPerPage.toString()} onValueChange={(value) => setRowsPerPage(Number(value))}>
         <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Rows per page" />
+          <SelectValue placeholder={t('searchAndFilter.rowsPerPage')} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="10">10 rows</SelectItem>
-          <SelectItem value="20">20 rows</SelectItem>
-          <SelectItem value="50">50 rows</SelectItem>
+          <SelectItem value="10">10 {t('searchAndFilter.rows')}</SelectItem>
+          <SelectItem value="20">20 {t('searchAndFilter.rows')}</SelectItem>
+          <SelectItem value="50">50 {t('searchAndFilter.rows')}</SelectItem>
         </SelectContent>
       </Select>
     </div>

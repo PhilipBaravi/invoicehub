@@ -1,0 +1,54 @@
+{
+    "pageTitle": "თანამშრომლების სია",
+    "table": {
+        "name": "სახელი",
+        "email": "ელ. ფოსტა",
+        "password": "პაროლი",
+        "phone": "ტელეფონი",
+        "role": "როლი",
+        "dateOfEmployment": "დასაქმების თარიღი",
+        "status": "სტატუსი",
+        "actions": "მოქმედებები",
+        "delete": "წაშლა",
+        "edit": "რედაქტირება"
+    },
+    "pagination": {
+         "showingEntries": "ჩვენება {{start}} -დან {{end}} -მდე, სულ {{total}} ჩანაწერი",
+        "previous": "წინა",
+        "next": "შემდეგი"
+    },
+    "searchAndFilter": {
+        "searchPlaceholder": "ძიება...",
+        "filterBy": "ფილტრი",
+        "rowsPerPage": "სტრიქონები თითო გვერდზე",
+        "rows": "სტრიქონი"
+    },
+    "filterOptions": {
+        "firstName": "სახელი",
+        "lastName": "გვარი",
+        "username": "ელ. ფოსტა",
+        "phone": "ტელეფონი",
+        "role": "როლი",
+        "status": "სტატუსი"
+    },
+    "addValidation": {
+        "email": "ელ.ფოსტა სავალდებულოა.",
+        "password": "პაროლი სავალდებულოა.",
+        "firstName": "სახელი სავალდებულოა.",
+        "lastName": "გვარი სავალდებულოა.",
+        "phone": "არასწორი ტელეფონის ნომერი არჩეული ქვეყნისთვის."
+    },
+    "addEmployee": {
+        "addEmployee": "თანამშრომლის დამატება",
+        "addNewEmployee": "ახალი თანამშრომლის დამატება",
+        "details": "შეიყვანეთ ახალი თანამშრომლის დეტალები ქვემოთ.",
+        "email": "ელ. ფოსტა",
+        "password": "პაროლი",
+        "firstName": "სახელი",
+        "lastName": "გვარი",
+        "role": "როლი",
+        "selectRole": "როლის არჩევა",
+        "dateOfEmployment": "დასაქმების თარიღი",
+        "pickADate": "თარიღის არჩევა"
+    }
+}

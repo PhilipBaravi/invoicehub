@@ -25,6 +25,8 @@ import InvoiceListPage from "./components/dashboard/invoice/invoice-list-page/In
 import { Progress } from "@/components/ui/progress";
 import Invoice from "./components/dashboard/invoice/Invoice";
 import PrivacyPolicy from "./components/main-authentication/privacyPolicy";
+import './i18n';
+import { useTranslation } from "react-i18next";
 
 // UserDetails interface
 interface UserDetails {
@@ -72,6 +74,7 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
 // Main App Component
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const { t } = useTranslation();
 
   return (
     <ReactKeycloakProvider
@@ -110,8 +113,8 @@ const App: React.FC = () => {
               path="/company-registration"
               element={
                 <LoginRegisterLayout
-                  title="Register Your Company"
-                  subtitle="Enter your company details to register"
+                  title={t('companySignUpForm.company.title')}
+                  subtitle={t('companySignUpForm.company.subtitle')}
                 >
                   <CompanyRegistrationForm userDetails={userDetails} />
                 </LoginRegisterLayout>

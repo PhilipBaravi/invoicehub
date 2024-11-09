@@ -1,0 +1,54 @@
+{
+    "pageTitle" : "Employee List",
+    "table" : {
+        "name" : "Name",
+        "email" : "Email",
+        "password" : "Password",
+        "phone" : "Phone",
+        "role" : "Role",
+        "dateOfEmployment" : "Date of employment",
+        "status" : "Status",
+        "actions" : "Actions",
+        "delete" : "Delete",
+        "edit" : "Edit"
+    },
+    "pagination" : {
+       "showingEntries": "Showing {{start}} to {{end}} of {{total}} entries",
+        "previous" : "Previous",
+        "next" : "Next"
+    },
+    "searchAndFilter" : {
+        "searchPlaceholder" : "Search...",
+        "filterBy" : "Filter By",
+        "rowsPerPage" : "Rows per page",
+        "rows" : "rows"
+    },
+    "filterOptions" : {
+        "firstName" : "First Name",
+        "lastName" : "Last Name",
+        "username" : "Email",
+        "phone" : "Phone",
+        "role" : "Role",
+        "status" : "Status"
+    },
+    "addValidation" : {
+        "email" : "Email is required.",
+        "password" : "Password is required",
+        "firstName" : "First name is required.",
+        "lastName" : "Last name is required.",
+        "phone" : "Invalid phone number for the selected country."
+    },
+    "addEmployee" : {
+        "addEmployee" : "Add Employee",
+        "addNewEmployee" : "Add New Employee",
+        "details" : "Enter the details of the new employee below.",
+        "email" : "Email",
+        "password" : "Password",
+        "firstName" : "First Name",
+        "lastName" : "Last Name",
+        "role" : "Role",
+        "selectRole" : "Select role",
+        "dateOfEmployment" : "Date of Employment",
+        "pickADate" : "Pick a date"
+    }
+}

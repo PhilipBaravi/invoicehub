@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 interface PaginationProps {
   currentPage: number;
@@ -15,11 +16,17 @@ export default function Pagination({
   rowsPerPage,
   totalItems,
 }: PaginationProps) {
+  const { t } = useTranslation('employees')
   return (
     <div className="flex items-center justify-between space-x-2 py-4">
       <div className="text-sm text-muted-foreground">
-        Showing {(currentPage - 1) * rowsPerPage + 1} to {Math.min(currentPage * rowsPerPage, totalItems)} of {totalItems} entries
-      </div>
+    {t('pagination.showingEntries', {
+        start: (currentPage - 1) * rowsPerPage + 1,
+        end: Math.min(currentPage * rowsPerPage, totalItems),
+        total: totalItems
+    })}
+</div>
+
       <div className="space-x-2">
         <Button
           variant="outline"
@@ -27,7 +34,7 @@ export default function Pagination({
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          Previous
+          {t('pagination.previous')}
         </Button>
         <Button
           variant="outline"
@@ -35,7 +42,7 @@ export default function Pagination({
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
         >
-          Next
+          {t('pagination.next')}
         </Button>
       </div>
     </div>

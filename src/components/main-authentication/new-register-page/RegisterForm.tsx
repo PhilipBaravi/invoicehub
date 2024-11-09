@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
+import { useTranslation } from 'react-i18next';
 
 interface RegisterFormProps {
   setUserDetails: (details: UserFormValues) => void;
@@ -20,6 +21,7 @@ interface UserFormValues {
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
+  const { t } = useTranslation();
   const [formValues, setFormValues] = useState<UserFormValues>({
     username: "",
     password: "",
@@ -54,33 +56,33 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
 
     // Validation logic
     if (!validateEmail(username)) {
-      newErrors.username = "Please enter a valid email address.";
+      newErrors.username = t('signUpForm.errors.validateEmail')
       valid = false;
     }
 
     if (!validatePassword(password)) {
-      newErrors.password = "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.";
+      newErrors.password = t('signUpForm.errors.validatePassword')
       valid = false;
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
+      newErrors.confirmPassword = t('signUpForm.errors.confirmPassword')
       valid = false;
     }
 
     if (!firstName) {
-      newErrors.firstName = "First name is required.";
+      newErrors.firstName = t('signUpForm.errors.firstName')
       valid = false;
     }
 
     if (!lastName) {
-      newErrors.lastName = "Last name is required.";
+      newErrors.lastName = t('signUpForm.errors.lastName')
       valid = false;
     }
 
     const fullPhoneNumber = phoneCode + phone;
     if (!isValidPhoneNumber(fullPhoneNumber, country)) {
-      newErrors.phone = "Invalid phone number for the selected country.";
+      newErrors.phone = t('signUpForm.errors.phone')
       valid = false;
     }
 
@@ -119,7 +121,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
               name="firstName"
               value={formValues.firstName}
               onChange={handleChange}
-              placeholder="First Name"
+              placeholder={t('signUpForm.firstName')}
               className="w-full"
               required
             />
@@ -131,7 +133,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
               name="lastName"
               value={formValues.lastName}
               onChange={handleChange}
-              placeholder="Last Name"
+              placeholder={t('signUpForm.lastName')}
               className="w-full"
               required
             />
@@ -147,7 +149,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
             name="username"
             value={formValues.username}
             onChange={handleChange}
-            placeholder="Email"
+            placeholder={t('signUpForm.email')}
             className="w-full"
             required
           />
@@ -158,7 +160,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
         <div className="flex space-x-2">
           <Select onValueChange={handleCountryChange}>
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder={countryList.find((c) => c.code === country)?.name || 'Select country'} />
+              <SelectValue placeholder={countryList.find((c) => c.code === country)?.name || t('signUpForm.selectCountry')} />
             </SelectTrigger>
             <SelectContent>
               {countryList.map((c) => (
@@ -189,7 +191,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
             name="password"
             value={formValues.password}
             onChange={handleChange}
-            placeholder="Password"
+            placeholder={t('signUpForm.password')}
             className="w-full"
             required
           />
@@ -202,7 +204,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
             name="confirmPassword"
             value={formValues.confirmPassword}
             onChange={handleChange}
-            placeholder="Confirm Password"
+            placeholder={t('signUpForm.confirmPassword')}
             className="w-full"
             required
           />
@@ -210,14 +212,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
         </div>
 
         {/* Sign Up Button */}
-        <Button className="w-full">Next: Company Info</Button>
+        <Button className="w-full">{t('signUpForm.companyInfo')}</Button>
       </form>
 
       {/* Login Redirect */}
       <p className="mt-6 text-center text-xs text-stone-500 dark:text-stone-400">
-        Already have an account?{' '}
+        {t('signUpForm.haveAnAccount')}{' '}
         <Link to="/new-login" className="underline hover:text-stone-300">
-          Login
+          {t('signUpForm.login')}
         </Link>
       </p>
     </>

@@ -2,6 +2,7 @@ import { useEffect, useState, FC } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Euro, PoundSterling, JapaneseYen } from "lucide-react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 interface ExchangeRate {
   code: string;
@@ -11,6 +12,7 @@ interface ExchangeRate {
 }
 
 const CurrencyExchangeRates: FC = () => {
+  const { t } = useTranslation('dashboardDefault')
   const [rates, setRates] = useState<ExchangeRate[]>([
     { code: "USD", rate: 0, change: 0, icon: <DollarSign className="h-4 w-4 text-muted-foreground" /> },
     { code: "EUR", rate: 0, change: 0, icon: <Euro className="h-4 w-4 text-muted-foreground" /> },
@@ -49,14 +51,14 @@ const CurrencyExchangeRates: FC = () => {
       {rates.map((rate) => (
         <Card key={rate.code} >
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{rate.code} to GEL</CardTitle>
+            <CardTitle className="text-sm font-medium">{rate.code} / GEL</CardTitle>
             {rate.icon}
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{rate.rate.toFixed(4)}</div>
             <p className="text-xs text-muted-foreground">
               {rate.change > 0 ? "+" : ""}
-              {rate.change}% from last month
+              {rate.change}% {t('currencyExchanges.lastMonth')}
             </p>
           </CardContent>
         </Card>

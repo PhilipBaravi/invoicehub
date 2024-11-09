@@ -6,6 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { MoreHorizontal, Trash2, User, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { Employee } from './employeeTypes';
+import { useTranslation } from 'react-i18next';
 
 interface EmployeeTableProps {
   paginatedEmployees: Employee[];
@@ -29,6 +30,7 @@ export default function EmployeeTable({
   filteredEmployees,
 }: EmployeeTableProps) {
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
+  const { t } = useTranslation('employees')
 
   const togglePasswordVisibility = (id: string) => {
     setVisiblePasswords((prev) => ({
@@ -48,14 +50,14 @@ export default function EmployeeTable({
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Password</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Date of Employment</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>{t('table.name')}</TableHead>
+            <TableHead>{t('table.email')}</TableHead>
+            <TableHead>{t('table.password')}</TableHead>
+            <TableHead>{t('table.phone')}</TableHead>
+            <TableHead>{t('table.role')}</TableHead>
+            <TableHead>{t('table.dateOfEmployment')}</TableHead>
+            <TableHead>{t('table.status')}</TableHead>
+            <TableHead>{t('table.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -92,14 +94,14 @@ export default function EmployeeTable({
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
                     <DropdownMenuItem onClick={() => deleteEmployee(employee.id)}>
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      {t('table.delete')}
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => {
                       setEditingEmployee(employee);
                       setIsEditEmployeeOpen(true);
                     }}>
                       <User className="mr-2 h-4 w-4" />
-                      Edit
+                      {t('table.edit')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

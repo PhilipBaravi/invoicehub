@@ -1,0 +1,34 @@
+{
+    "dashboard": {
+        "greetings": "გამარჯობა, კეთილი დაბრუნება"
+    },
+    "currencyExchanges": {
+        "lastMonth": "წინა თვესთან შედარებით"
+    },
+    "productSalesChart": {
+        "productsSold": "გაყიდული პროდუქტები",
+        "totalSales": "საერთო გაყიდვები",
+        "title": "პროდუქტების გაყიდვების გრაფიკი",
+        "dataDescription": "ბოლო თვის პროდუქტის გაყიდვების მონაცემების ჩვენება"
+    },
+    "statisticsGrid": {
+        "title": "მოწინავე პროდუქტები",
+        "titleDescription": "საერთო გაყიდვები",
+        "employees": "თანამშრომლები",
+        "employeesDescription": "აქტიური წევრები",
+        "clients": "კლიენტები",
+        "clientsDescription": "საერთო კლიენტები",
+        "salesTitle": "გაყიდვები",
+        "salesDescription": "საერთო შემოსავალი"
+    },
+    "transactionsCard": {
+        "title": "ტრანზაქციები",
+        "titleDescription": "ბოლო ტრანზაქციები თქვენი მაღაზიიდან.",
+        "viewAll": "ყველას ნახვა",
+        "customer": "მომხმარებელი",
+        "customerType": "ტიპი",
+        "customerStatus": "სტატუსი",
+        "customerDate": "თარიღი",
+        "customerAmount": "თანხა"
+    }
+}

@@ -1,11 +1,14 @@
 import LoginRegisterLayout from '../LoginRegisterLayout';
 import LoginForm from './LoginForm';
+import { useTranslation } from 'react-i18next';
 
 const NewLoginPage = () => {
+  const { t } = useTranslation();
+
   return (
     <LoginRegisterLayout
-      title="Login to your account"
-      subtitle="Enter your email and password to access your account"
+      title={t('loginRegisterLayout.title')}
+      subtitle={t('loginRegisterLayout.subtitle')}
     >
       <LoginForm />
     </LoginRegisterLayout>

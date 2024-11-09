@@ -6,6 +6,7 @@ import EditEmployeeSheet from './EditEmployeeSheet';
 import EmployeeTable from './EmployeeTable';
 import Pagination from './Pagination';
 import SearchAndFilter from './SearchAndFilter';
+import { useTranslation } from 'react-i18next';
 
 export default function EmployeeList() {
   const { keycloak } = useKeycloak();
@@ -19,14 +20,15 @@ export default function EmployeeList() {
   const [isEditEmployeeOpen, setIsEditEmployeeOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [filterCategory, setFilterCategory] = useState<keyof Employee>('firstName');
+  const { t } = useTranslation('employees')
 
   const filterOptions: Array<{ value: keyof Employee; label: string }> = [
-    { value: 'firstName', label: 'First Name' },
-    { value: 'lastName', label: 'Last Name' },
-    { value: 'username', label: 'Email' },
-    { value: 'phone', label: 'Phone' },
-    { value: 'role', label: 'Role' },
-    { value: 'status', label: 'Status' },
+    { value: 'firstName', label: t('filterOptions.firstName') },
+    { value: 'lastName', label: t('filterOptions.lastName') },
+    { value: 'username', label: t('filterOptions.username') },
+    { value: 'phone', label: t('filterOptions.phone') },
+    { value: 'role', label: t('filterOptions.role') },
+    { value: 'status', label: t('filterOptions.status') },
   ];
 
   // Fetch employee data from API with bearer token
@@ -143,7 +145,7 @@ export default function EmployeeList() {
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Employee List ({filteredEmployees.length})</h1>
+        <h1 className="text-3xl font-bold">{t('pageTitle')} ({filteredEmployees.length})</h1>
         <AddEmployeeSheet
           isOpen={isAddEmployeeOpen}
           onOpenChange={(open) => {

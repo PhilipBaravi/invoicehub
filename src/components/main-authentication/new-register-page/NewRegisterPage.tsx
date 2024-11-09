@@ -1,5 +1,6 @@
 import RegisterForm from './RegisterForm';
 import LoginRegisterLayout from '../LoginRegisterLayout';
+import { useTranslation } from 'react-i18next';
 
 interface UserFormValues {
   username: string;
@@ -15,8 +16,10 @@ interface NewRegisterPageProps {
 }
 
 const NewRegisterPage: React.FC<NewRegisterPageProps> = ({ setUserDetails }) => {
+  const { t } = useTranslation();
+  
   return (
-    <LoginRegisterLayout title="Create a New Account" subtitle="">
+    <LoginRegisterLayout title={t('signUpForm.title')} subtitle="">
       <RegisterForm setUserDetails={setUserDetails} />
     </LoginRegisterLayout>
   );

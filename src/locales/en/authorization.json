@@ -1,0 +1,65 @@
+{
+    "languageSelector" : {
+        "ENGLISH" : "English",
+        "GEORGIAN" : "Georgian",
+        "SPANISH" : "Spanish"
+    },
+    "loginRegisterLayout" : {
+        "title": "Login to your account",
+        "subtitle": "Enter your email and password to access your account"
+    },
+    "loginForm" : {
+        "email": "Email",
+        "password": "Password",
+        "privacyPolicy": "I agree to the terms of services and privacy policy",
+        "loginBtn" : "Login",
+        "continueWith": "OR CONTINUE WITH",
+        "loginGoogle": "Login with Google",
+        "loginApple": "Login with Apple",
+        "haveAnAccount": "Don't have an account?",
+        "signUp": "Sign Up"
+    },
+    "signUpForm" : {
+        "title": "Create a New Account",
+        "firstName": "First Name",
+        "lastName" : "Last Name",
+        "email" : "Email",
+        "selectCountry": "Select country",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "companyInfo" : "Next: Company Info",
+        "haveAnAccount" : "Already have an account?",
+        "login" : "Login",
+            "errors" : {
+            "validateEmail" : "Please enter a valid email address.",
+            "validatePassword" : "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.",
+            "confirmPassword": "Passwords do not match",
+            "firstName" : "First name is required.",
+            "lastName" : "Last name is required",
+            "phone": "Invalid phone number for the selected country."
+    }
+    },
+    "companySignUpForm" : {
+        "company": {
+            "title" : "Register Your Company",
+            "subtitle" : "Enter your company details to register"
+        },
+        "companyName" : "Company Name",
+        "addressLine1" : "Address Line 1",
+        "addressLine2" : "Address Line 2 (Optional)",
+        "city" : "City",
+        "state" : "State",
+        "zipCode" : "Zip Code",
+        "selectCountry" : "Select Country",
+        "website": "Company Website (Optional)",
+        "submitBtn" : "Submit",
+        "errors" : {
+            "companyName" : "Company name is required.",
+            "companyPhone": "Invalid company phone number for the selected country.",
+            "companyAddress" : "Company address is required.",
+            "companyCity" : "City is required.",
+            "companyState" : "State is required.",
+            "zipCode" : "Zip code is required."
+        }
+    } 
+}

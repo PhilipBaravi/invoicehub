@@ -1,0 +1,65 @@
+{
+    "languageSelector" : {
+        "ENGLISH" : "English",
+        "GEORGIAN" : "Georgian",
+        "SPANISH" : "Spanish"
+    },
+    "loginRegisterLayout" : {
+        "title": "Inicia sesión en tu cuenta",
+        "subtitle": "Introduce tu correo electrónico y contraseña para acceder a tu cuenta"
+    },
+    "loginForm": {
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "privacyPolicy": "Acepto los términos de servicio y la política de privacidad",
+        "loginBtn": "Iniciar sesión",
+        "continueWith": "O CONTINUAR CON",
+        "loginGoogle": "Iniciar sesión con Google",
+        "loginApple": "Iniciar sesión con Apple",
+        "haveAnAccount": "¿No tienes una cuenta?",
+        "signUp": "Regístrate"
+    },
+    "signUpForm": {
+        "title": "Crear una cuenta nueva",
+        "firstName": "Nombre",
+        "lastName": "Apellido",
+        "email": "Correo electrónico",
+        "selectCountry": "Seleccionar país",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar contraseña",
+        "companyInfo": "Siguiente: Información de la empresa",
+        "haveAnAccount": "¿Ya tienes una cuenta?",
+        "login": "Iniciar sesión",
+        "errors": {
+            "validateEmail": "Por favor, introduce una dirección de correo electrónico válida.",
+            "validatePassword": "La contraseña debe contener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.",
+            "confirmPassword": "Las contraseñas no coinciden",
+            "firstName": "El nombre es obligatorio.",
+            "lastName": "El apellido es obligatorio.",
+            "phone": "Número de teléfono no válido para el país seleccionado."
+        }
+    },
+    "companySignUpForm": {
+        "company" : {
+            "title": "Registra tu empresa",
+            "subtitle": "Introduce los detalles de tu empresa para registrarte"
+        },
+        "companyName": "Nombre de la empresa",
+        "addressLine1": "Dirección Línea 1",
+        "addressLine2": "Dirección Línea 2 (Opcional)",
+        "city": "Ciudad",
+        "state": "Estado",
+        "zipCode": "Código postal",
+        "selectCountry": "Seleccionar país",
+        "website": "Sitio web de la empresa (Opcional)",
+        "submitBtn": "Enviar",
+        "errors": {
+            "companyName": "El nombre de la empresa es obligatorio.",
+            "companyPhone": "Número de teléfono de la empresa no válido para el país seleccionado.",
+            "companyAddress": "La dirección de la empresa es obligatoria.",
+            "companyCity": "La ciudad es obligatoria.",
+            "companyState": "El estado es obligatorio.",
+            "zipCode": "El código postal es obligatorio."
+        }
+    }
+}

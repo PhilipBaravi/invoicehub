@@ -1,0 +1,34 @@
+{
+    "dashboard": {
+        "greetings" : "Hi, welcome back"
+    },
+    "currencyExchanges" : {
+        "lastMonth" : "from last month"
+    },
+    "productSalesChart" : {
+        "productsSold" : "Products Sold",
+        "totalSales" : "Total Sales",
+        "title" : "Products Sales Chart",
+        "dataDescription" : "Showing product sales data for the last month"
+    },
+     "statisticsGrid" : {
+        "title" : "Top Prodcuts",
+        "titleDescription" : "Total sales",
+        "employees" : "Employees",
+        "employeesDescription" : "Active Members",
+        "clients" : "Clients",
+        "clientsDescription" : "Total customers",
+        "salesTitle" : "Sales",
+        "salesDescription" : "Total revenue"
+    },
+    "transactionsCard" : {
+        "title" : "Transactions",
+        "titleDescription" : "Recent transactions from your store.",
+        "viewAll" : "View All",
+        "customer" : "Customer",
+        "customerType" : "Type",
+        "customerStatus" : "Status",
+        "customerDate" : "Date",
+        "customerAmount" : "Amount"
+    }
+}

@@ -29,6 +29,7 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { useKeycloak } from '@react-keycloak/web';
+import { useTranslation } from 'react-i18next';
 
 // Types for errors
 type EmployeeErrors = {
@@ -58,6 +59,7 @@ export default function AddEmployeeSheet({
     status: 'INACTIVE',
   });
 
+  const { t } = useTranslation('employees')
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
   const [errors, setErrors] = useState<EmployeeErrors>({});
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
@@ -75,24 +77,24 @@ export default function AddEmployeeSheet({
 
     // Validation
     if (!newEmployee.username) {
-      newErrors.username = 'Email is required.';
+      newErrors.username = t('addValidation.employee');
       valid = false;
     }
     if (!newEmployee.password) {
-      newErrors.password = 'Password is required.';
+      newErrors.password = t('addValidation.password');
       valid = false;
     }
     if (!newEmployee.firstName) {
-      newErrors.firstName = 'First name is required.';
+      newErrors.firstName = t('addValidation.firstName');
       valid = false;
     }
     if (!newEmployee.lastName) {
-      newErrors.lastName = 'Last name is required.';
+      newErrors.lastName = t('addValidation.lastName');
       valid = false;
     }
     const fullPhoneNumber = phoneCode + newEmployee.phone;
     if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
-      newErrors.phone = 'Invalid phone number for the selected country.';
+      newErrors.phone = t('addValidation.phone');
       valid = false;
     }
 
@@ -144,16 +146,16 @@ export default function AddEmployeeSheet({
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <Button>Add Employee</Button>
+        <Button>{t('addEmployee.addEmployee')}</Button>
       </SheetTrigger>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Add New Employee</SheetTitle>
-          <SheetDescription>Enter the details of the new employee below.</SheetDescription>
+          <SheetTitle>{t('addEmployee.addNewEmployee')}</SheetTitle>
+          <SheetDescription>{t('addEmployee.details')}</SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} id='addEmployeeForm' className="space-y-4 mt-4">
           <div>
-            <Label htmlFor="username">Email</Label>
+            <Label htmlFor="username">{t('addEmployee.email')}</Label>
             <Input
               id="username"
               name="username"
@@ -166,7 +168,7 @@ export default function AddEmployeeSheet({
             {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
           </div>
           <div className="relative">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('addEmployee.password')}</Label>
             <Input
               id="password"
               name="password"
@@ -180,7 +182,7 @@ export default function AddEmployeeSheet({
             {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </div>
           <div>
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="firstName">{t('addEmployee.firstName')}</Label>
             <Input
               id="firstName"
               name="firstName"
@@ -192,7 +194,7 @@ export default function AddEmployeeSheet({
             {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
           </div>
           <div>
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor="lastName">{t('addEmployee.lastName')}</Label>
             <Input
               id="lastName"
               name="lastName"
@@ -231,13 +233,13 @@ export default function AddEmployeeSheet({
             </div>
           </div>
           <div>
-            <Label htmlFor="role">Role</Label>
+            <Label htmlFor="role">{t('addEmployee.role')}</Label>
             <Select
               value={newEmployee.role.description}
               onValueChange={(value) => setNewEmployee((prev) => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}
             >
               <SelectTrigger id='role'>
-                <SelectValue placeholder="Select role" />
+                <SelectValue placeholder={t('addEmployee.selectRole')} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Admin">Admin</SelectItem>
@@ -247,12 +249,12 @@ export default function AddEmployeeSheet({
             </Select>
           </div>
           <div>
-            <Label htmlFor="dateOfEmployment">Date of Employment</Label>
+            <Label htmlFor="dateOfEmployment">{t('addEmployee.dateOfEmployment')}</Label>
             <Popover>
               <PopoverTrigger asChild id='dateOfEmployment'>
                 <Button variant="outline" className="w-full justify-start text-left font-normal">
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {newEmployee.dateOfEmployment ? format(newEmployee.dateOfEmployment, 'PPP') : <span>Pick a date</span>}
+                  {newEmployee.dateOfEmployment ? format(newEmployee.dateOfEmployment, 'PPP') : <span>{t('addEmployee.pirckADate')}</span>}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -265,7 +267,7 @@ export default function AddEmployeeSheet({
               </PopoverContent>
             </Popover>
           </div>
-          <Button type="submit">Add Employee</Button>
+          <Button type="submit">{t('addEmployee.addEmployee')}</Button>
         </form>
       </SheetContent>
     </Sheet>

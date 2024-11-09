@@ -4,6 +4,7 @@ import CurrencyExchangeRates from "./CurrencyExchangeRates";
 import ProductSalesChart from "./ProductSalesChart";
 import { Component } from "./testChart";
 import { ArrowUpRight, TrendingUp, Users, ShoppingBag } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/table";
 
 const DashboardDefault: FC = () => {
+  const { t } = useTranslation('dashboardDefault');
   const [components] = useState([
     { id: "stats", title: "Statistics", component: <StatisticsGrid />, width: "col-span-8" },
     { id: "currency", title: "Currency Exchange Rates", component: <CurrencyExchangeRates />, width: "col-span-8" },
@@ -36,7 +38,7 @@ const DashboardDefault: FC = () => {
   return (
     <>
       <h1 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 px-6">
-        Hi, welcome back 👋
+        {t('dashboard.greetings')} 👋
       </h1>
 
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
@@ -62,33 +64,34 @@ const DashboardDefault: FC = () => {
 };
 
 const StatisticsGrid: FC = () => {
+  const { t } = useTranslation('dashboardDefault')
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 auto-rows-min">
       <StatCard
-        title="Top Products"
+        title={t('statisticsGrid.title')}
         value="5,234"
-        description="Total sales"
+        description={t('statisticsGrid.titleDescription')}
         icon={<ShoppingBag className="h-4 w-4 text-muted-foreground" />}
         trend="+12.5%"
       />
       <StatCard
-        title="Employees"
+        title={t('statisticsGrid.employees')}
         value="12"
-        description="Active members"
+        description={t('statisticsGrid.titleDescription')}
         icon={<Users className="h-4 w-4 text-muted-foreground" />}
         trend="+2.5%"
       />
       <StatCard
-        title="Clients"
+        title={t('statisticsGrid.clients')}
         value="3,456"
-        description="Total customers"
+        description={t('statisticsGrid.employeesDescription')}
         icon={<Users className="h-4 w-4 text-muted-foreground" />}
         trend="+5.2%"
       />
       <StatCard
-        title="Sales"
+        title={t('statisticsGrid.salesTitle')}
         value="$89,456"
-        description="Total revenue"
+        description={t('statisticsGrid.salesDescription')}
         icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
         trend="+18.7%"
       />
@@ -97,16 +100,17 @@ const StatisticsGrid: FC = () => {
 };
 
 const TransactionsCard: FC = () => {
+  const { t } = useTranslation('dashboardDefault');
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center">
         <div className="grid gap-2">
-          <CardTitle>Transactions</CardTitle>
-          <CardDescription>Recent transactions from your store.</CardDescription>
+          <CardTitle>{t('transactionsCard.title')}</CardTitle>
+          <CardDescription>{t('transactionsCard.titleDescription')}</CardDescription>
         </div>
         <Button asChild size="sm" className="ml-auto gap-1">
           <Link to="/transactions">
-            View All
+            {t('transactionsCard.viewAll')}
             <ArrowUpRight className="h-4 w-4" />
           </Link>
         </Button>
@@ -115,11 +119,11 @@ const TransactionsCard: FC = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead className="hidden xl:table-column">Type</TableHead>
-              <TableHead className="hidden xl:table-column">Status</TableHead>
-              <TableHead className="hidden xl:table-column">Date</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>{t('transactionsCard.customer')}</TableHead>
+              <TableHead className="hidden xl:table-column">{t('transactionsCard.customerType')}</TableHead>
+              <TableHead className="hidden xl:table-column">{t('transactionsCard.customerType')}</TableHead>
+              <TableHead className="hidden xl:table-column">{t('transactionsCard.customerStatus')}</TableHead>
+              <TableHead className="text-right">{t('transactionsCard.customerAmount')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
