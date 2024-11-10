@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { UploadIcon } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { useTranslation } from 'react-i18next';
 
 interface LogoUploaderProps {
   logo: string | null;
@@ -12,13 +13,14 @@ interface LogoUploaderProps {
 const LogoUploader: FC<LogoUploaderProps> = ({ logo, handleLogoUpload }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [isHovered, setIsHovered] = useState(false);
+  const { t } = useTranslation('invoices')
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
       if (!allowedTypes.includes(file.type)) {
-        setErrorMessage('Invalid file type. Only images (PNG, JPEG, JPG, GIF) are allowed.');
+        setErrorMessage(t('invoice.logo.errorMsg'));
         return;
       } else {
         setErrorMessage('');
@@ -40,7 +42,7 @@ const LogoUploader: FC<LogoUploaderProps> = ({ logo, handleLogoUpload }) => {
             <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center">
               <Label htmlFor="logo-upload" className="cursor-pointer text-white text-center">
                 <UploadIcon className="w-6 h-6 mx-auto mb-2" />
-                <span className="text-sm">Change Logo</span>
+                <span className="text-sm">{t('invoice.logo.change')}</span>
               </Label>
             </div>
           )}
@@ -48,7 +50,7 @@ const LogoUploader: FC<LogoUploaderProps> = ({ logo, handleLogoUpload }) => {
       ) : (
         <Label htmlFor="logo-upload" className="cursor-pointer text-center">
           <UploadIcon className="w-6 h-6 mx-auto mb-2" />
-          <span className="text-sm">Upload Logo</span>
+          <span className="text-sm">{t('invoice.logo.upload')}</span>
         </Label>
       )}
       <Input
@@ -60,7 +62,7 @@ const LogoUploader: FC<LogoUploaderProps> = ({ logo, handleLogoUpload }) => {
       />
       {errorMessage && (
         <Alert variant="destructive" className="mt-2">
-          <AlertTitle>Error</AlertTitle>
+          <AlertTitle>{t('invoice.logo.error')}</AlertTitle>
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
       )}

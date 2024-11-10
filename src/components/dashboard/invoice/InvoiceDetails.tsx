@@ -7,6 +7,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { useKeycloak } from '@react-keycloak/web';
+import { useTranslation } from 'react-i18next';
 
 interface InvoiceDetailsProps {
   invoice: any;
@@ -15,6 +16,7 @@ interface InvoiceDetailsProps {
 
 const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
   const { keycloak } = useKeycloak();
+  const { t } = useTranslation('invoices')
 
   useEffect(() => {
     const fetchInvoiceDetails = async () => {
@@ -46,24 +48,24 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
   return (
     <div className="space-y-4">
       <div>
-        <Label htmlFor="invoiceNumber">Invoice Number</Label>
+        <Label htmlFor="invoiceNumber">{t('invoice.invoiceDetails.number')}</Label>
         <Input id="invoiceNumber" value={invoice.invoiceNo || ''} readOnly />
       </div>
       <div>
-        <Label htmlFor="dateOfIssue">Date of Issue</Label>
+        <Label htmlFor="dateOfIssue">{t('invoice.invoiceDetails.dateOfIssue')}</Label>
         <Input
           id="dateOfIssue"
-          value={invoice.dateOfIssue ? format(new Date(invoice.dateOfIssue), 'dd/MM/yyyy') : ''}
+          value={invoice.dateOfIssue ? format(new Date(invoice.dateOfIssue), t('invoice.invoiceDetails.dateFormat')) : ''}
           readOnly
         />
       </div>
       <div>
-        <Label htmlFor="dueDate">Due Date</Label>
+        <Label htmlFor="dueDate">{t('invoice.invoiceDetails.dueDate')}</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-full justify-start text-left font-normal">
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {invoice.dueDate ? format(invoice.dueDate, 'PPP') : <span>Pick a date</span>}
+              {invoice.dueDate ? format(invoice.dueDate, 'PPP') : <span>{t('invoice.invoiceDetails.pickDate')}</span>}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">

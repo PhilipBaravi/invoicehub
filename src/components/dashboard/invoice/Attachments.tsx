@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface AttachmentsProps {
   attachments: File[];
@@ -19,11 +20,12 @@ const Attachments: FC<AttachmentsProps> = ({
   handleFileUpload,
   handleRemoveAttachment
 }) => {
+  const { t } = useTranslation('invoices')
   return (
     <div>
-      <Label className="block mb-2">Attachments</Label>
+      <Label className="block mb-2">{t('invoice.attachments.pageTitle')}</Label>
       <div className="border-2 border-dashed border-gray-300 p-4 text-center relative">
-        <Button variant="outline" onClick={handleAttachment}>+ Add an attachment</Button>
+        <Button variant="outline" onClick={handleAttachment}>{t('invoice.attachments.add')}</Button>
         <Input
           type="file"
           ref={fileInputRef}

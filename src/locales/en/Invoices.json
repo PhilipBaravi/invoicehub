@@ -43,6 +43,102 @@
             "errorAddingProduct" : "Error adding prodcut to invoice:",
             "errorSavingInvoice" : "An error occured while saving the invoice."
         },
+        "attachments" : {
+            "pageTitle" : "Attachments",
+            "add" : "+ Add an attachment"
+        },
+        "invoiceDetails" : {
+            "number" : "Invoice Number",
+            "dateOfIssue" : "Date of Issue",
+            "dateFormat" : "dd/MM/yyyy",
+            "dueDate" : "Due Date",
+            "pickDate" : "Pick a date"
+        },
+        "lineItems" : {
+            "pageTitle" : "Line Items",
+            "category" : "Category",
+            "product" : "Product",
+            "price" : "Price",
+            "quantity" : "Quantity",
+            "lineTotal" : "Line Total",
+            "actions" : "Actions",
+            "add" : "Add Item",
+            "select" : "Select Product",
+            "selectCategory" : "Select Category",
+            "addTax" : "Add Taxes",
+            "enterDescription" : "Enter an Item Description"
+        },
+        "clientSelector" : {
+            "billed" : "Billed To",
+            "select" : "Select a Client",
+            "name" : "Company Name: ",
+            "website" : "Website: ",
+            "email" : "Email",
+            "country" : "Country: ",
+            "city" : "City",
+            "address" : "Address: "
+        },
+        "logo" : {
+            "errorMsg" : "Invalid file type. Only images (PNG, JPEG, JPG, GIF) are allowed.",
+            "change" : "Change Logo",
+            "upload" : "Upload",
+            "error" : "Error"
+        },
+        "notesTerms" : {
+            "pageTitle" : "Notes",
+            "enterNotes" : "Enter notes (optional)",
+            "terms" : "Terms",
+            "enterTerms" : "Enter your terms and conditions"
+        },
+        "signatures" : {
+            "pageTitle" : "Signatures",
+            "clientSignature" : "Client Signature",
+            "clear" : "Clear",
+            "save" : "Save",
+            "upload" : "Upload",
+            "businessSignature" : "Business Signature"
+        },
+        "taxDialog" : {
+            "addTax" : "Add Taxes",
+            "price" : "Price",
+            "apply" : "Apply Taxes"
+        },
+        "totals" : {
+            "summary" : "Invoice Summary",
+            "subtotal" : "Subtotal",
+            "tax" : "Tax",
+            "total" : "Total"
+        },
+        "pdf" : {
+            "invoice" : "Invoice",
+            "invoceNo" : "Invoice Number: ",
+            "dateIssue" : "Date of Issue: ",
+            "dueDate" : "Due Date: ",
+            "bill" : "Bill To: ",
+            "name" : "Company Name: ",
+            "phone" : "Phone : ",
+            "website" : "Website: ",
+            "country" : "Country: ",
+            "city" : "City: ",
+            "address" : "Address: ",
+            "businessInfo" : "Business Information: ",
+            "noBusinessInfo" : "No business information avaiable.",
+            "category" : "Category",
+            "product" : "Product",
+            "price" : "Price",
+            "quantity" : "Quantity",
+            "tax" : "Tax",
+            "lineTotal" : "Line Total",
+            "notes" : "Notes: ",
+            "terms" : "Terms: ",
+            "paymentTerms" : "Payment Terms: ",
+            "subtotal" : "Subtotal: ",
+            "taxTotal" : "Tax: ",
+            "total" : "Total",
+            "signatures" : "Signatures: ",
+            "clientSignature" : "Client Signature: ",
+            "businessSignature" : "Business Signature: "
+        },
         "newInvoice" : "New Invoice",
         "companyName" : "Company Name: ",
         "phone" : "Phone: ",

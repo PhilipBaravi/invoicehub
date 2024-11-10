@@ -15,6 +15,7 @@ import { BusinessInfo } from './invoice-types';
 
 import OpenSansRegular from '../../../fonts/OpenSans-Regular.ttf';
 import OpenSansBold from '../../../fonts/OpenSans-Bold.ttf';
+import { useTranslation } from 'react-i18next';
 
 Font.register({
   family: 'Open Sans',
@@ -219,6 +220,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
   businessInformation,
   categories,
 }) => {
+  const { t } = useTranslation('invoices');
   const getCategoryName = (categoryId: number) => {
     const category = categories.find((cat) => cat.id === categoryId);
     return category ? category.description : 'Unknown';
@@ -230,18 +232,18 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         {/* Header */}
         <View style={styles.headerContainer}>
           <View style={styles.invoiceDetailsContainer}>
-            <Text style={styles.invoiceTitle}>Invoice</Text>
+            <Text style={styles.invoiceTitle}>{t('invoice.pdf.invoice')}</Text>
             <Text style={styles.invoiceDetail}>
-              Invoice Number: {invoice.invoiceNo}
+            {t('invoice.pdf.invoiceNo')} {invoice.invoiceNo}
             </Text>
             <Text style={styles.invoiceDetail}>
-              Date of Issue:{' '}
+            {t('invoice.pdf.dateIssue')}{' '}
               {invoice.dateOfIssue
                 ? new Date(invoice.dateOfIssue).toLocaleDateString()
                 : 'N/A'}
             </Text>
             <Text style={styles.invoiceDetail}>
-              Due Date:{' '}
+            {t('invoice.pdf.dueDate')}{' '}
               {invoice.dueDate
                 ? new Date(invoice.dueDate).toLocaleDateString()
                 : 'N/A'}
@@ -253,33 +255,33 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         {/* Info Section */}
         <View style={styles.infoSectionContainer}>
           <View>
-            <Text style={styles.sectionTitle}>Bill To:</Text>
+            <Text style={styles.sectionTitle}>{t('invoice.pdf.bill')}</Text>
             {selectedClient && (
               <View style={styles.sectionContent}>
-                <Text>Company Name: {selectedClient.name}</Text>
-                <Text>Phone: {selectedClient.phone}</Text>
-                <Text>Website: {selectedClient.website}</Text>
-                <Text>Email: {selectedClient.email}</Text>
-                <Text>Country: {selectedClient.address.country}</Text>
-                <Text>City: {selectedClient.address.city}</Text>
-                <Text>Address: {selectedClient.address.addressLine1}</Text>
+                <Text>{t('invoice.pdf.name')} {selectedClient.name}</Text>
+                <Text>{t('invoice.pdf.phone')} {selectedClient.phone}</Text>
+                <Text>{t('invoice.pdf.website')} {selectedClient.website}</Text>
+                <Text>{t('invoice.pdf.email')} {selectedClient.email}</Text>
+                <Text>{t('invoice.pdf.country')} {selectedClient.address.country}</Text>
+                <Text>{t('invoice.pdf.city')} {selectedClient.address.city}</Text>
+                <Text>{t('invoice.pdf.address')} {selectedClient.address.addressLine1}</Text>
               </View>
             )}
           </View>
           <View style={{ textAlign: 'right' }}>
-            <Text style={styles.sectionTitle}>Business Information:</Text>
+            <Text style={styles.sectionTitle}>{t('invoice.pdf.businessInfo')}</Text>
             {businessInformation ? (
               <View style={styles.sectionContent}>
-                <Text>Company Name: {businessInformation.title}</Text>
-                <Text>Phone: {businessInformation.phone}</Text>
-                <Text>Website: {businessInformation.website}</Text>
-                <Text>Email: {businessInformation.email}</Text>
-                <Text>Country: {businessInformation.address.country}</Text>
-                <Text>City: {businessInformation.address.city}</Text>
-                <Text>Address: {businessInformation.address.addressLine1}</Text>
+                <Text>{t('invoice.pdf.name')} {businessInformation.title}</Text>
+                <Text>{t('invoice.pdf.phone')} {businessInformation.phone}</Text>
+                <Text>{t('invoice.pdf.website')} {businessInformation.website}</Text>
+                <Text>{t('invoice.pdf.email')} {businessInformation.email}</Text>
+                <Text>{t('invoice.pdf.country')} {businessInformation.address.country}</Text>
+                <Text>{t('invoice.pdf.city')} {businessInformation.address.city}</Text>
+                <Text>{t('invoice.pdf.address')} {businessInformation.address.addressLine1}</Text>
               </View>
             ) : (
-              <Text>No business information available.</Text>
+              <Text>{t('invoice.pdf.noBusinessInfo')}</Text>
             )}
           </View>
         </View>
@@ -287,13 +289,13 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         {/* Table */}
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={styles.tableCell}>Category</Text>
-            <Text style={styles.tableCell}>Product</Text>
-            <Text style={styles.tableCell}>Price</Text>
-            <Text style={styles.tableCell}>Quantity</Text>
-            <Text style={styles.tableCell}>Tax</Text>
+            <Text style={styles.tableCell}>{t('invoice.pdf.category')}</Text>
+            <Text style={styles.tableCell}>{t('invoice.pdf.product')}</Text>
+            <Text style={styles.tableCell}>{t('invoice.pdf.price')}</Text>
+            <Text style={styles.tableCell}>{t('invoice.pdf.quantity')}</Text>
+            <Text style={styles.tableCell}>{t('invoice.pdf.tax')}</Text>
             <Text style={[styles.tableCell, styles.tableCellRight]}>
-              Line Total
+            {t('invoice.pdf.lineTotal')}
             </Text>
           </View>
           {lineItems.map((item, index) => {
@@ -323,34 +325,34 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
           <View style={styles.notesTermsContainer}>
             {invoice.notes && (
               <View style={styles.notesItem}>
-                <Text style={styles.sectionTitle}>Notes:</Text>
+                <Text style={styles.sectionTitle}>{t('invoice.pdf.notes')}</Text>
                 <Text style={styles.sectionContent}>{invoice.notes}</Text>
               </View>
             )}
             {invoice.terms && (
               <View style={styles.notesItem}>
-                <Text style={styles.sectionTitle}>Terms:</Text>
+                <Text style={styles.sectionTitle}>{t('invoice.pdf.terms')}</Text>
                 <Text style={styles.sectionContent}>{invoice.terms}</Text>
               </View>
             )}
             {/* Optionally include Payment Terms */}
             {invoice.paymentTerms && (
               <View style={styles.notesItem}>
-                <Text style={styles.sectionTitle}>Payment Terms:</Text>
+                <Text style={styles.sectionTitle}>{t('invoice.pdf.paymentTerms')}</Text>
                 <Text style={styles.sectionContent}>{invoice.paymentTerms}</Text>
               </View>
             )}
           </View>
           <View style={styles.totalsContainer}>
             <View style={styles.totalItem}>
-              <Text>Subtotal: {formatCurrency(invoice.price)}</Text>
+              <Text>{t('invoice.pdf.subtotal')} {formatCurrency(invoice.price)}</Text>
             </View>
             <View style={styles.totalItem}>
-              <Text>Tax: {formatCurrency(invoice.tax)}</Text>
+              <Text>{t('invoice.pdf.taxTotal')} {formatCurrency(invoice.tax)}</Text>
             </View>
             <View style={styles.totalItem}>
               <Text style={{ fontWeight: 'bold' }}>
-                Total: {formatCurrency(invoice.total)}
+              {t('invoice.pdf.total')} {formatCurrency(invoice.total)}
               </Text>
             </View>
           </View>
@@ -358,10 +360,10 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
 
         {/* Signatures */}
         <View style={styles.signaturesSection}>
-          <Text style={styles.sectionTitle}>Signatures:</Text>
+          <Text style={styles.sectionTitle}>{t('invoice.pdf.signatures')}</Text>
           <View style={styles.signatureContainer}>
             <View style={styles.signatureBlock}>
-              <Text style={styles.signatureLabel}>Client Signature:</Text>
+              <Text style={styles.signatureLabel}>{t('invoice.pdf.clientSignature')}</Text>
               {clientSignatureImage ? (
                 <Image
                   src={clientSignatureImage}
@@ -372,7 +374,7 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               )}
             </View>
             <View style={styles.signatureBlock}>
-              <Text style={styles.signatureLabel}>Business Signature:</Text>
+              <Text style={styles.signatureLabel}>{t('invoice.pdf.businessSignature')}</Text>
               {businessSignatureImage ? (
                 <Image
                   src={businessSignatureImage}

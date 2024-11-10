@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { LineItem, Category, Product } from './invoice-types';
+import { useTranslation } from 'react-i18next';
 
 interface LineItemsProps {
   lineItems: LineItem[];
@@ -28,25 +29,26 @@ const LineItems: FC<LineItemsProps> = ({
   categories,
   products,
 }) => {
+  const { t } = useTranslation('invoices')
   return (
     <div>
-      <Label>Line Items</Label>
+      <Label>{t('invoice.lineItems.pageTitle')}</Label>
       <div>
         <table className="w-full mb-2">
           <thead>
             <tr>
-              <th className="text-left w-[20%]">Category</th>
-              <th className="text-left w-[20%]">Product</th>
-              <th className="text-left w-[15%]">Price</th>
-              <th className="text-left w-[15%]">Quantity</th>
-              <th className="text-center w-[15%]">Line Total</th>
-              <th className="w-[15%]">Actions</th>
+              <th className="text-left w-[20%]">{t('invoice.lineItems.category')}</th>
+              <th className="text-left w-[20%]">{t('invoice.lineItems.product')}</th>
+              <th className="text-left w-[15%]">{t('invoice.lineItems.price')}</th>
+              <th className="text-left w-[15%]">{t('invoice.lineItems.quantity')}</th>
+              <th className="text-center w-[15%]">{t('invoice.lineItems.lineTotal')}</th>
+              <th className="w-[15%]">{t('invoice.lineItems.actions')}</th>
             </tr>
           </thead>
         </table>
         {lineItems.length === 0 ? (
           <Button onClick={handleAddLineItem} className="mb-4">
-            <PlusIcon className="mr-2 h-4 w-4" /> Add Item
+            <PlusIcon className="mr-2 h-4 w-4" /> {t('invoice.lineItems.add')}
           </Button>
         ) : (
           <div>
@@ -58,7 +60,7 @@ const LineItems: FC<LineItemsProps> = ({
                     onValueChange={(value) => handleLineItemChange(index, 'categoryId', Number(value))}
                   >
                     <SelectTrigger className="w-[20%] mr-2">
-                      <SelectValue placeholder="Select Category" />
+                      <SelectValue placeholder={t('invoice.lineItems.selectCategory')} />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((category) => (
@@ -75,7 +77,7 @@ const LineItems: FC<LineItemsProps> = ({
                     disabled={!item.categoryId}
                   >
                     <SelectTrigger className="w-[20%] mr-2">
-                      <SelectValue placeholder="Select Product" />
+                      <SelectValue placeholder={t('invoice.lineItems.select')} />
                     </SelectTrigger>
                     <SelectContent>
                       {products
@@ -107,7 +109,7 @@ const LineItems: FC<LineItemsProps> = ({
                   </div>
                   <div className="w-[15%] flex items-center justify-center">
                     <Button variant="link" onClick={() => handleAddTaxes(index)} className="mr-2 text-blue-700">
-                      Add Taxes
+                      {t('invoice.lineItems.addTax')}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => handleRemoveLineItem(index)}>
                       <Trash2Icon className="h-4 w-4" />
@@ -115,7 +117,7 @@ const LineItems: FC<LineItemsProps> = ({
                   </div>
                 </div>
                 <Textarea
-                  placeholder="Enter an Item Description"
+                  placeholder={t('invoice.lineItems.enterDescription')}
                   value={item.description}
                   onChange={(e) => handleLineItemChange(index, 'description', e.target.value)}
                   className="w-full"
@@ -124,7 +126,7 @@ const LineItems: FC<LineItemsProps> = ({
               </div>
             ))}
             <Button onClick={handleAddLineItem} className="mt-2">
-              <PlusIcon className="mr-2 h-4 w-4" /> Add Item
+              <PlusIcon className="mr-2 h-4 w-4" /> {t('invoice.lineItems.add')}
             </Button>
           </div>
         )}
