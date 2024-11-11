@@ -1,25 +1,27 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 interface LargeScreenSidebarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const menuItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-  { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
-  {name: 'Clients', icon: Building2, path:'/dashboard/clients'},
-  {name: 'Invoice', icon: FileText, path:'/dashboard/invoices'},
-  { name: 'Categories', icon: FolderKanban, path: '/dashboard/categories' },
-  { name: 'Login', icon: LogIn, path: '/new-login' },
-];
-
 const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [sidebarWidth, setSidebarWidth] = useState(isOpen ? '250px' : '80px');
+  const { t } = useTranslation('dashboardDefault')
+
+  const menuItems = [
+    { name: t('sidebar.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+    {name: t('sidebar.invoice'), icon: FileText, path:'/dashboard/invoices'},
+    { name: t('sidebar.employee'), icon: UserSearch, path: '/dashboard/employee' },
+    {name: t('sidebar.clients'), icon: Building2, path:'/dashboard/clients'},
+    { name: t('sidebar.categories'), icon: FolderKanban, path: '/dashboard/categories' },
+    { name: t('sidebar.login'), icon: LogIn, path: '/new-login' },
+  ];
 
   const handleItemClick = (path: string) => {
     if (path === '/new-login') {

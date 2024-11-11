@@ -1,24 +1,24 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { PanelRightOpen, LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from 'lucide-react';
+import { useTranslation } from "react-i18next";
 
 interface SideBarProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const menuItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-  { name: 'Employee', icon: UserSearch, path: '/dashboard/employee' },
-  { name: 'Clients', icon: Building2, path: '/dashboard/clients' },
-  { name: 'Invoice', icon: FileText, path: '/dashboard/invoices' },
-  { name: 'Categories', icon: FolderKanban, path: '/dashboard/categories' },
-  { name: 'Login', icon: LogIn, path: '/new-login' }, 
-];
-
 const SideBar: FC<SideBarProps> = ({ onClose }) => {
   const navigate = useNavigate(); // Create navigate instance for redirection
-
+  const { t } = useTranslation('dashboardDefault')
+  const menuItems = [
+    { name: t('sidebar.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
+    {name: t('sidebar.invoice'), icon: FileText, path:'/dashboard/invoices'},
+    { name: t('sidebar.employee'), icon: UserSearch, path: '/dashboard/employee' },
+    {name: t('sidebar.clients'), icon: Building2, path:'/dashboard/clients'},
+    { name: t('sidebar.categories'), icon: FolderKanban, path: '/dashboard/categories' },
+    { name: t('sidebar.login'), icon: LogIn, path: '/new-login' },
+  ];
   const handleItemClick = (path: string, event: React.MouseEvent) => {
     event.preventDefault(); // Prevent default link behavior
     if (path === '/new-login') {

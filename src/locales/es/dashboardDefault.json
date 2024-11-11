@@ -30,5 +30,13 @@
         "customerStatus": "Estado",
         "customerDate": "Fecha",
         "customerAmount": "Monto"
-    }
+    },
+    "sidebar": {
+    "dashboard": "Tablero",
+    "employee": "Empleados",
+    "clients": "Clientes",
+    "invoice": "Factura",
+    "categories": "Categorías",
+    "login": "Iniciar sesión"
+}
 }

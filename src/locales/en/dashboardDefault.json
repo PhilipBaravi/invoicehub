@@ -30,5 +30,13 @@
         "customerStatus" : "Status",
         "customerDate" : "Date",
         "customerAmount" : "Amount"
+    },
+    "sidebar" : {
+        "dashboard" : "Dashboard",
+        "employee" : "Employees",
+        "clients" : "Clients",
+        "invoice" : "Invoice",
+        "categories" : "Categories",
+        "login" : "Login"
     }
 }

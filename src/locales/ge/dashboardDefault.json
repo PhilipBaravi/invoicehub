@@ -30,5 +30,14 @@
         "customerStatus": "სტატუსი",
         "customerDate": "თარიღი",
         "customerAmount": "თანხა"
-    }
+    },
+    "sidebar": {
+    "dashboard": "მთავარი",
+    "employee": "თანამშრომლები",
+    "clients": "კლიენტები",
+    "invoice": "ინვოისი",
+    "categories": "კატეგორიები",
+    "login": "შესვლა"
+}
+
 }

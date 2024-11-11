@@ -1,4 +1,4 @@
-import { FC } from "react"
+import { FC, useEffect, useState } from "react"
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { useTranslation } from "react-i18next"
@@ -31,48 +31,37 @@ const productSalesData = [
   { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
   { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
   { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-01", productsSold: 150, totalSales: 7500 },
+  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },{ date: "2024-04-01", productsSold: 150, totalSales: 7500 },
+  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
+  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
+  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
+  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
+  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
+  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },{ date: "2024-04-01", productsSold: 150, totalSales: 7500 },
   { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
   { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
   { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
   { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
   { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
   { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
-  // ... Add more data points as needed
 ]
 
 const ProductSalesChart: FC = () => {
   const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("productsSold")
+  const [loading, setLoading] = useState(false)
   const { t } = useTranslation('dashboardDefault')
+
+  // Trigger loading on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setLoading(true)
+      setTimeout(() => setLoading(false), 500) // Display loading for 500ms after resize
+    }
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
   const chartConfig = {
     productsSold: {
       label: t('productSalesChart.productsSold'),
@@ -83,7 +72,7 @@ const ProductSalesChart: FC = () => {
       color: "hsl(var(--chart-2))",
     },
   }
-  
+
   const total = React.useMemo(
     () => ({
       productsSold: productSalesData.reduce((acc, curr) => acc + curr.productsSold, 0),
@@ -120,52 +109,59 @@ const ProductSalesChart: FC = () => {
           ))}
         </div>
       </CardHeader>
+      
       <CardContent className="px-2 sm:p-6">
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
-        >
-          <BarChart
-            accessibilityLayer
-            data={productSalesData}
-            margin={{
-              left: 12,
-              right: 12,
-            }}
+        {loading ? (
+          <div className="flex items-center justify-center h-[250px]">
+            <span className="text-lg font-semibold">Loading...</span>
+          </div>
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto h-[250px] w-full"
           >
-            <CartesianGrid vertical={false} />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={32}
-              tickFormatter={(value) => {
-                const date = new Date(value)
-                return date.toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })
+            <BarChart
+              accessibilityLayer
+              data={productSalesData}
+              margin={{
+                left: 12,
+                right: 12,
               }}
-            />
-            <ChartTooltip
-              content={
-                <ChartTooltipContent
-                  className="w-[150px]"
-                  nameKey={activeChart}
-                  labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                    })
-                  }}
-                />
-              }
-            />
-            <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
-          </BarChart>
-        </ChartContainer>
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={32}
+                tickFormatter={(value) => {
+                  const date = new Date(value)
+                  return date.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                  })
+                }}
+              />
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    className="w-[150px]"
+                    nameKey={activeChart}
+                    labelFormatter={(value) => {
+                      return new Date(value).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })
+                    }}
+                  />
+                }
+              />
+              <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   )
