@@ -71,7 +71,7 @@ export interface LineItem {
 
 // Invoice interface
 export interface Invoice {
-  id?: number;
+  id: number;
   invoiceNo: string;
   invoiceStatus: InvoiceStatus;
   invoiceType: InvoiceTypeType;

@@ -61,8 +61,8 @@ const InvoiceListPage: FC = () => {
     const filtered = invoices.filter((invoice) => {
       const matchesSearchTerm = 
         invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        invoice.clientVendor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        invoice.dateOfIssue.toLocaleDateString().includes(searchTerm);
+        invoice.clientVendor?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        invoice.dateOfIssue?.toLocaleDateString().includes(searchTerm);
 
       const matchesStatus = statusFilter === 'ALL_STATUSES' || invoice.invoiceStatus === statusFilter;
 
@@ -164,8 +164,8 @@ const InvoiceListPage: FC = () => {
                 {filteredInvoices.map((invoice) => (
                   <TableRow key={invoice.id}>
                     <TableCell>{invoice.invoiceNo}</TableCell>
-                    <TableCell>{invoice.clientVendor.name}</TableCell>
-                    <TableCell>{invoice.dateOfIssue.toLocaleDateString()}</TableCell>
+                    <TableCell>{invoice.clientVendor?.name}</TableCell>
+                    <TableCell>{invoice.dateOfIssue?.toLocaleDateString()}</TableCell>
                     <TableCell>${invoice.total.toFixed(2)}</TableCell>
                     <TableCell>{getStatusBadge(invoice.invoiceStatus)}</TableCell>
                     <TableCell>

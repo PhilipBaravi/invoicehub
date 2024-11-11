@@ -62,7 +62,7 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
       <div>
         <Label htmlFor="dueDate">{t('invoice.invoiceDetails.dueDate')}</Label>
         <Popover>
-          <PopoverTrigger asChild>
+          <PopoverTrigger asChild id="dueDate">
             <Button variant="outline" className="w-full justify-start text-left font-normal">
               <CalendarIcon className="mr-2 h-4 w-4" />
               {invoice.dueDate ? format(invoice.dueDate, 'PPP') : <span>{t('invoice.invoiceDetails.pickDate')}</span>}

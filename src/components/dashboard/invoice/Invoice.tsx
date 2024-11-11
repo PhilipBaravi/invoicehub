@@ -41,6 +41,7 @@ import { useTranslation } from 'react-i18next';
 
 const InvoiceComponent: FC = () => {
   const [invoice, setInvoice] = useState<Invoice>({
+    id: 0,
     invoiceNo: '',
     invoiceStatus: 'AWAITING_APPROVAL',
     invoiceType: 'SALES',
