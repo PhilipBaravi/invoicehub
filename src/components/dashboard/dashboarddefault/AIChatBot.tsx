@@ -82,22 +82,25 @@ export default function AIChatbot() {
       const response = await fetch(`http://localhost:1010/assistant?q=${encodeURIComponent(content)}`)
       if (response.ok) {
         const data = await response.json()
+        console.log(data);
+        console.log(data.data);
         const botResponse: Message = { 
           id: messages.length + 2, 
           type: 'bot', 
           content: data.data.reply || "I'm sorry, I didn't understand that."
         }
         setMessages(prev => [...prev, botResponse])
-      } else {
-        const errorText = await response.text()
-        console.error('Server responded with an error:', errorText)
-        const errorResponse: Message = {
-          id: messages.length + 2,
-          type: 'bot',
-          content: 'Sorry, there was an error processing your request.',
-        }
-        setMessages(prev => [...prev, errorResponse])
-      }
+      } 
+      // else {
+      //   const errorText = await response.text()
+      //   console.error('Server responded with an error:', errorText)
+      //   const errorResponse: Message = {
+      //     id: messages.length + 2,
+      //     type: 'bot',
+      //     content: 'Sorry, there was an error processing your request.',
+      //   }
+      //   setMessages(prev => [...prev, errorResponse])
+      // }
     } catch (error) {
       console.error('Fetch error:', error)
       const errorResponse: Message = {
