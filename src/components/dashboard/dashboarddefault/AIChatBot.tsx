@@ -77,19 +77,20 @@ export default function AIChatbot() {
   const handleSendMessage = async (content: string) => {
     const newUserMessage: Message = { id: messages.length + 1, type: 'user', content }
     setMessages([...messages, newUserMessage])
-
+  
     try {
-      const response = await fetch(`http://localhost:1010/assistant?q=${encodeURIComponent(content)}`)
+      const response = await fetch(`http://localhost:1010/assistant?ask=${encodeURIComponent(content)}`)
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
         const botResponse: Message = { 
           id: messages.length + 2, 
           type: 'bot', 
-          content: data.reply || "I'm sorry, I didn't understand that."
+          content: data.data.reply || "I'm sorry, I didn't understand that."
         }
         setMessages(prev => [...prev, botResponse])
       } else {
+        const errorText = await response.text()
+        console.error('Server responded with an error:', errorText)
         const errorResponse: Message = {
           id: messages.length + 2,
           type: 'bot',
@@ -98,6 +99,7 @@ export default function AIChatbot() {
         setMessages(prev => [...prev, errorResponse])
       }
     } catch (error) {
+      console.error('Fetch error:', error)
       const errorResponse: Message = {
         id: messages.length + 2,
         type: 'bot',
