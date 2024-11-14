@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MessageSquare, Send, Paperclip, X } from 'lucide-react'
+import { MessageSquare, Send, X } from 'lucide-react'
 import { Rnd } from 'react-rnd'
 import HeaderAvatar from '../layout/header/HeaderAvatar'
 import { useMediaQuery } from 'react-responsive'
@@ -32,22 +32,14 @@ const ChatMessage: React.FC<{ message: Message }> = ({ message }) => (
   </div>
 )
 
-const ChatInput: React.FC<{ onSendMessage: (message: string) => void, onFileUpload: (file: File) => void }> = ({ onSendMessage, onFileUpload }) => {
+const ChatInput: React.FC<{ onSendMessage: (message: string) => void }> = ({ onSendMessage }) => {
   const [input, setInput] = useState('')
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (input.trim()) {
       onSendMessage(input)
       setInput('')
-    }
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      onFileUpload(file)
     }
   }
 
@@ -62,15 +54,6 @@ const ChatInput: React.FC<{ onSendMessage: (message: string) => void, onFileUplo
       <Button type="submit" size="icon">
         <Send className="h-4 w-4" />
       </Button>
-      <Button type="button" size="icon" variant="outline" onClick={() => fileInputRef.current?.click()}>
-        <Paperclip className="h-4 w-4" />
-      </Button>
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        className="hidden"
-      />
     </form>
   )
 }
@@ -91,37 +74,37 @@ export default function AIChatbot() {
     }
   }, [messages])
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     const newUserMessage: Message = { id: messages.length + 1, type: 'user', content }
     setMessages([...messages, newUserMessage])
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse: Message = { 
-        id: messages.length + 2, 
-        type: 'bot', 
-        content: `I'm processing your request about "${content}". How else can I assist you?`
+    try {
+      const response = await fetch(`http://localhost:1010/assistant?q=${encodeURIComponent(content)}`)
+      if (response.ok) {
+        const data = await response.json()
+        console.log(data)
+        const botResponse: Message = { 
+          id: messages.length + 2, 
+          type: 'bot', 
+          content: data.reply || "I'm sorry, I didn't understand that."
+        }
+        setMessages(prev => [...prev, botResponse])
+      } else {
+        const errorResponse: Message = {
+          id: messages.length + 2,
+          type: 'bot',
+          content: 'Sorry, there was an error processing your request.',
+        }
+        setMessages(prev => [...prev, errorResponse])
       }
-      setMessages(prev => [...prev, botResponse])
-    }, 1000)
-  }
-
-  const handleFileUpload = (file: File) => {
-    const newUserMessage: Message = { 
-      id: messages.length + 1, 
-      type: 'user', 
-      content: `Uploaded file: ${file.name}` 
+    } catch (error) {
+      const errorResponse: Message = {
+        id: messages.length + 2,
+        type: 'bot',
+        content: 'Sorry, there was an error connecting to the assistant.',
+      }
+      setMessages(prev => [...prev, errorResponse])
     }
-    setMessages([...messages, newUserMessage])
-
-    setTimeout(() => {
-      const botResponse: Message = { 
-        id: messages.length + 2, 
-        type: 'bot', 
-        content: `I've received your file "${file.name}". How would you like me to process it?`
-      }
-      setMessages(prev => [...prev, botResponse])
-    }, 1000)
   }
 
   return (
@@ -164,7 +147,7 @@ export default function AIChatbot() {
                   ))}
                 </ScrollArea>
                 <div className="p-4 border-t">
-                  <ChatInput onSendMessage={handleSendMessage} onFileUpload={handleFileUpload} />
+                  <ChatInput onSendMessage={handleSendMessage} />
                 </div>
               </div>
             </Rnd>
@@ -182,7 +165,7 @@ export default function AIChatbot() {
                 ))}
               </ScrollArea>
               <div className="p-4 border-t">
-                <ChatInput onSendMessage={handleSendMessage} onFileUpload={handleFileUpload} />
+                <ChatInput onSendMessage={handleSendMessage} />
               </div>
             </div>
           )}
