@@ -37,7 +37,7 @@ import {
   Product,
 } from './invoice-types';
 import { useTranslation } from 'react-i18next';
-
+import { useParams, useNavigate } from 'react-router-dom';
 
 const InvoiceComponent: FC = () => {
   const [invoice, setInvoice] = useState<Invoice>({
@@ -49,7 +49,6 @@ const InvoiceComponent: FC = () => {
     dueDate: new Date(),
     paymentTerms: '',
     notes: '',
-    terms: '',
     clientVendor: null,
     price: 0,
     tax: 0,
@@ -86,6 +85,7 @@ const InvoiceComponent: FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const { keycloak } = useKeycloak();
+  const navigate = useNavigate();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -93,7 +93,10 @@ const InvoiceComponent: FC = () => {
   const [clients, setClients] = useState<ClientVendor[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState<boolean>(false);
   const [businessInformation, setBusinessInformation] = useState<BusinessInfo | null>(null);
-  const { t } = useTranslation('invoices')
+  const { t } = useTranslation('invoices');
+
+  const { id } = useParams<{ id: string }>();
+  const isEditMode = Boolean(id);
 
   const updateTotals = useCallback((items: LineItem[]) => {
     const subtotal = items.reduce(
@@ -113,7 +116,6 @@ const InvoiceComponent: FC = () => {
     }));
   }, []);
 
-  // Fetch products and categories
   const fetchProductsAndCategories = useCallback(async () => {
     try {
       const response = await fetch(
@@ -221,7 +223,95 @@ const InvoiceComponent: FC = () => {
     },
     [clients]
   );
-  
+
+  useEffect(() => {
+    const fetchInvoiceDetails = async () => {
+      try {
+        if (isEditMode) {
+          const response = await fetch('http://localhost:9090/api/v1/invoice/list', {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            const invoices = data.data;
+            const fetchedInvoice = invoices.find((inv: any) => inv.id === Number(id));
+            if (fetchedInvoice) {
+              setInvoice({
+                id: fetchedInvoice.id,
+                invoiceNo: fetchedInvoice.invoiceNo,
+                invoiceStatus: fetchedInvoice.invoiceStatus,
+                invoiceType: fetchedInvoice.invoiceType,
+                dateOfIssue: fetchedInvoice.dateOfIssue ? new Date(fetchedInvoice.dateOfIssue) : null,
+                dueDate: fetchedInvoice.dueDate ? new Date(fetchedInvoice.dueDate) : null,
+                paymentTerms: fetchedInvoice.paymentTerms,
+                notes: fetchedInvoice.notes,
+                clientVendor: fetchedInvoice.clientVendor,
+                price: fetchedInvoice.price,
+                tax: fetchedInvoice.tax,
+                total: fetchedInvoice.total,
+                businessSignature: fetchedInvoice.businessSignature,
+                clientSignature: fetchedInvoice.clientSignature,
+              });
+
+              setSelectedClient(fetchedInvoice.clientVendor);
+
+              const lineItemsResponse = await fetch(`http://localhost:9090/api/v1/invoice/product/list/${id}`, {
+                headers: {
+                  Authorization: `Bearer ${keycloak.token}`,
+                },
+              });
+
+              if (lineItemsResponse.ok) {
+                const lineItemsData = await lineItemsResponse.json();
+                const fetchedLineItems = lineItemsData.data.map((item: any) => ({
+                  itemId: item.product.id,
+                  categoryId: item.product.category.id,
+                  name: item.product.name,
+                  description: item.product.description || '',
+                  price: item.price,
+                  quantity: item.quantity,
+                  tax: item.tax,
+                  maxQuantity: item.product.quantityInStock,
+                  error: '',
+                }));
+                setLineItems(fetchedLineItems);
+                updateTotals(fetchedLineItems);
+              } else {
+                console.error('Failed to fetch line items');
+              }
+            } else {
+              console.error('Invoice not found');
+            }
+          } else {
+            console.error('Failed to fetch invoice list');
+          }
+        } else {
+          const response = await fetch('http://localhost:9090/api/v1/invoice/generate', {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch invoice details');
+          }
+          const data = await response.json();
+          setInvoice((prevInvoice: any) => ({
+            ...prevInvoice,
+            invoiceNo: data.data.invoiceNo,
+            dateOfIssue: new Date(data.data.dateOfIssue),
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching invoice details:', error);
+      }
+    };
+
+    if (keycloak.token) {
+      fetchInvoiceDetails();
+    }
+  }, [isEditMode, id, keycloak.token, updateTotals]);
 
   const { theme } = useTheme();
   const penColor = theme === 'dark' ? 'white' : 'black';
@@ -250,8 +340,8 @@ const InvoiceComponent: FC = () => {
         description: '',
         price: 0,
         quantity: 1,
-        tax: 0, // Initialize 'tax' to 0
-        maxQuantity: 0, // Initialize maxQuantity
+        tax: 0,
+        maxQuantity: 0,
         error: '',
       },
     ]);
@@ -275,7 +365,6 @@ const InvoiceComponent: FC = () => {
               error: '',
             };
 
-            // Check for quantity exceeding maxQuantity
             if (field === 'quantity') {
               const selectedProduct = products.find(
                 (product) => product.id === item.itemId
@@ -300,7 +389,7 @@ const InvoiceComponent: FC = () => {
         return updatedLineItems;
       });
     },
-    [products, updateTotals]
+    [products, updateTotals, t]
   );
 
   const handleRemoveLineItem = useCallback(
@@ -378,7 +467,7 @@ const InvoiceComponent: FC = () => {
         event.target.value = '';
       }
     },
-    []
+    [t]
   );
 
   const handleRemoveAttachment = useCallback((index: number) => {
@@ -401,8 +490,8 @@ const InvoiceComponent: FC = () => {
                   name: selectedProduct.name,
                   description: selectedProduct.description || '',
                   price: selectedProduct.price,
-                  quantity: 1, // Reset quantity to 1
-                  maxQuantity: selectedProduct.quantityInStock, // Set maxQuantity
+                  quantity: 1,
+                  maxQuantity: selectedProduct.quantityInStock,
                   error: '',
                 }
               : item
@@ -414,7 +503,7 @@ const InvoiceComponent: FC = () => {
         setErrorMessage(`${t('invoice.errors.productNotFound')}`);
       }
     },
-    [products, updateTotals]
+    [products, updateTotals, t]
   );
 
   const handleClearSignature = useCallback(
@@ -595,45 +684,59 @@ const InvoiceComponent: FC = () => {
     createCombinedPDF,
     businessInformation,
     categories,
+    t,
   ]);
 
   const handleSaveInvoice = useCallback(async () => {
-    // Perform all validations before making any API calls
     if (!selectedClient) {
       setErrorMessage(t('invoice.errors.selectClient'));
       return;
     }
 
-    // Check for errors in line items
     const hasErrors = lineItems.some((item) => item.error);
     if (hasErrors) {
       setErrorMessage(t('invoice.errors.lineItems'));
       return;
     }
 
-    // Check that notes and terms are not empty
-    if (!invoice.notes || !invoice.terms) {
+    if (!invoice.notes || !invoice.paymentTerms) {
       setErrorMessage(t('invoice.errors.notesTerms'));
       return;
     }
 
-    // You can add more validations as needed
-
     try {
-      // Now proceed with API calls
       const clientVendor = {
+        id: selectedClient.id,
         name: selectedClient.name,
         phone: selectedClient.phone,
         website: selectedClient.website,
         email: selectedClient.email,
         clientVendorType: selectedClient.clientVendorType,
         address: {
+          id: selectedClient.address.id,
           addressLine1: selectedClient.address.addressLine1,
           addressLine2: selectedClient.address.addressLine2,
           city: selectedClient.address.city,
           state: selectedClient.address.state,
           country: selectedClient.address.country,
           zipCode: selectedClient.address.zipCode,
+        },
+      };
+
+      const companyData = {
+        id: businessInformation?.id,
+        title: businessInformation?.title,
+        phone: businessInformation?.phone,
+        website: businessInformation?.website,
+        email: businessInformation?.email,
+        address: {
+          id: businessInformation?.address?.id,
+          addressLine1: businessInformation?.address?.addressLine1,
+          addressLine2: businessInformation?.address?.addressLine2,
+          city: businessInformation?.address?.city,
+          state: businessInformation?.address?.state,
+          country: businessInformation?.address?.country,
+          zipCode: businessInformation?.address?.zipCode,
         },
       };
 
@@ -646,17 +749,19 @@ const InvoiceComponent: FC = () => {
         dueDate: invoice.dueDate ? invoice.dueDate.toISOString() : null,
         paymentTerms: invoice.paymentTerms,
         notes: invoice.notes,
-        terms: invoice.terms,
         clientVendor: clientVendor,
         price: invoice.price,
         tax: invoice.tax,
         total: invoice.total,
+        company: companyData,
       };
 
       const response = await fetch(
-        'http://localhost:9090/api/v1/invoice/create',
+        isEditMode
+          ? `http://localhost:9090/api/v1/invoice/update/${id}`
+          : 'http://localhost:9090/api/v1/invoice/create',
         {
-          method: 'POST',
+          method: isEditMode ? 'PUT' : 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${keycloak.token}`,
@@ -670,11 +775,37 @@ const InvoiceComponent: FC = () => {
         setErrorMessage(
           `Server Error: ${errorResponse.message || 'Unknown error'}`
         );
-        throw new Error('Failed to create invoice');
+        throw new Error('Failed to create/update invoice');
       }
 
       const responseData = await response.json();
       const invoiceId = responseData.data.id;
+
+      if (isEditMode) {
+        const existingLineItemsResponse = await fetch(
+          `http://localhost:9090/api/v1/invoice/product/list/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          }
+        );
+
+        const existingLineItemsData = await existingLineItemsResponse.json();
+        const existingLineItems = existingLineItemsData.data;
+
+        for (const item of existingLineItems) {
+          await fetch(
+            `http://localhost:9090/api/v1/invoice/remove/product/${item.id}`,
+            {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${keycloak.token}`,
+              },
+            }
+          );
+        }
+      }
 
       for (const item of lineItems) {
         const product = products.find((p) => p.id === item.itemId);
@@ -717,10 +848,14 @@ const InvoiceComponent: FC = () => {
         }
       }
 
-      // Fetch updated product list to reflect new quantities
       await fetchProductsAndCategories();
 
-      alert('Invoice saved successfully');
+      alert(
+        isEditMode
+          ? 'Invoice updated successfully'
+          : 'Invoice saved successfully'
+      );
+      navigate('/dashboard/invoices');
     } catch (error) {
       console.error(error);
       setErrorMessage(t('invoice.errors.errorSavingInvoice'));
@@ -732,18 +867,25 @@ const InvoiceComponent: FC = () => {
     keycloak.token,
     products,
     fetchProductsAndCategories,
+    isEditMode,
+    id,
+    navigate,
+    t,
+    businessInformation,
   ]);
 
   return (
     <div className="p-4">
       <Card className="w-full max-w-5xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">{t('invoice.newInvoice')}</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            {isEditMode ? t('invoice.editInvoice') : t('invoice.newInvoice')}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
           <div className="flex justify-between items-start">
             <div className="w-1/2">
-              <InvoiceDetails invoice={invoice} setInvoice={setInvoice} />
+              <InvoiceDetails invoice={invoice} setInvoice={setInvoice} isEditMode={isEditMode} />
             </div>
             <div className="w-1/2 flex justify-end">
               <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
@@ -820,6 +962,7 @@ const InvoiceComponent: FC = () => {
             handleItemSelect={handleItemSelect}
             categories={categories}
             products={products}
+            isEditMode={isEditMode}
           />
           <Separator />
           <Totals invoice={invoice} setInvoice={setInvoice} />
@@ -858,12 +1001,16 @@ const InvoiceComponent: FC = () => {
         </CardContent>
         <Separator />
         <CardFooter className="flex justify-between">
-          <Button variant="outline">{t('invoice.cancel')}</Button>
+          <Button variant="outline" onClick={() => navigate('/dashboard/invoices')}>
+            {t('invoice.cancel')}
+          </Button>
           <div className="space-x-2">
             <Button variant="outline" onClick={generatePDFAndZip}>
               {t('invoice.generatePDF')}
             </Button>
-            <Button onClick={handleSaveInvoice}>{t('invoice.saveInvoice')}</Button>
+            <Button onClick={handleSaveInvoice}>
+              {isEditMode ? t('invoice.updateInvoice') : t('invoice.saveInvoice')}
+            </Button>
           </div>
         </CardFooter>
         <TaxDialog

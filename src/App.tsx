@@ -82,7 +82,7 @@ const App: React.FC = () => {
       onEvent={(event, error) => {
         console.log("Keycloak event:", event);
         if (error) console.error("Keycloak error:", error);
-        
+
         // Additional debug for specific events
         if (event === "onInitError") {
           console.error("Keycloak initialization error:", error);
@@ -128,6 +128,7 @@ const App: React.FC = () => {
               <Route path="clients" element={<ClientVendorList />} />
               <Route path="invoices" element={<InvoiceListPage />} />
               <Route path="invoices/new-invoice" element={<Invoice />} />
+              <Route path="invoices/edit/:id" element={<Invoice />} />
               <Route path="settings" element={<Settings />} >
                 <Route index element={<UpdateCompanyDetails />} />
                 <Route path="profile-subscription" element={<ProfileSubscription />} />
@@ -144,4 +145,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App
+export default App;

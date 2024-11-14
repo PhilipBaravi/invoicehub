@@ -1,40 +1,45 @@
-import { FC, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useKeycloak } from '@react-keycloak/web';
+import { useTranslation } from 'react-i18next';
+import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { useKeycloak } from '@react-keycloak/web';
-import { useTranslation } from 'react-i18next';
 
 interface InvoiceDetailsProps {
   invoice: any;
   setInvoice: React.Dispatch<React.SetStateAction<any>>;
+  isEditMode: boolean;
 }
 
-const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
+const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice, isEditMode }) => {
   const { keycloak } = useKeycloak();
-  const { t } = useTranslation('invoices')
+  const { t } = useTranslation('invoices');
 
   useEffect(() => {
     const fetchInvoiceDetails = async () => {
       try {
-        const response = await fetch('http://localhost:9090/api/v1/invoice/generate', {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch invoice details');
+        if (isEditMode) {
+          // Do nothing, data is already fetched
+        } else {
+          const response = await fetch('http://localhost:9090/api/v1/invoice/generate', {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          });
+          if (!response.ok) {
+            throw new Error('Failed to fetch invoice details');
+          }
+          const data = await response.json();
+          setInvoice((prevInvoice: any) => ({
+            ...prevInvoice,
+            invoiceNo: data.data.invoiceNo,
+            dateOfIssue: new Date(data.data.dateOfIssue),
+          }));
         }
-        const data = await response.json();
-        setInvoice((prevInvoice: any) => ({
-          ...prevInvoice,
-          invoiceNo: data.data.invoiceNo,
-          dateOfIssue: new Date(data.data.dateOfIssue),
-        }));
       } catch (error) {
         console.error('Error fetching invoice details:', error);
       }
@@ -43,7 +48,7 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
     if (keycloak.token) {
       fetchInvoiceDetails();
     }
-  }, [keycloak.token, setInvoice]);
+  }, [keycloak.token, setInvoice, isEditMode]);
 
   return (
     <div className="space-y-4">
@@ -55,7 +60,7 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice }) => {
         <Label htmlFor="dateOfIssue">{t('invoice.invoiceDetails.dateOfIssue')}</Label>
         <Input
           id="dateOfIssue"
-          value={invoice.dateOfIssue ? format(new Date(invoice.dateOfIssue), t('invoice.invoiceDetails.dateFormat')) : ''}
+          value={invoice.dateOfIssue ? format(new Date(invoice.dateOfIssue), 'PPP') : ''}
           readOnly
         />
       </div>

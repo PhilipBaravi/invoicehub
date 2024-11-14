@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from 'react-i18next';
 
 interface NotesTermsProps {
@@ -9,7 +9,7 @@ interface NotesTermsProps {
 }
 
 const NotesTerms: FC<NotesTermsProps> = ({ invoice, setInvoice }) => {
-  const { t } = useTranslation('invoices')
+  const { t } = useTranslation('invoices');
   return (
     <div className="space-y-4">
       <div>
@@ -18,16 +18,16 @@ const NotesTerms: FC<NotesTermsProps> = ({ invoice, setInvoice }) => {
           id="notes"
           placeholder={t('invoice.notesTerms.enterNotes')}
           value={invoice.notes}
-          onChange={(e) => setInvoice({ ...invoice, notes:  e.target.value })}
+          onChange={(e) => setInvoice({ ...invoice, notes: e.target.value })}
         />
       </div>
       <div>
-        <Label htmlFor="terms">{t('invoice.notesTerms.terms')}</Label>
+        <Label htmlFor="paymentTerms">{t('invoice.notesTerms.terms')}</Label>
         <Textarea
-          id="terms"
+          id="paymentTerms"
           placeholder={t('invoice.notesTerms.enterTerms')}
-          value={invoice.terms}
-          onChange={(e) => setInvoice({ ...invoice, terms: e.target.value })}
+          value={invoice.paymentTerms}
+          onChange={(e) => setInvoice({ ...invoice, paymentTerms: e.target.value })}
         />
       </div>
     </div>

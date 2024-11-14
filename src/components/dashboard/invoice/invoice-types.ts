@@ -79,7 +79,7 @@ export interface Invoice {
   dueDate: Date | null;
   paymentTerms: string;
   notes: string;
-  terms: string;
+  terms?: string;
   clientVendor: ClientVendor | null;
   price: number;
   tax: number;

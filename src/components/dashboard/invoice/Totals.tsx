@@ -15,7 +15,7 @@ interface TotalsProps {
 }
 
 const Totals: FC<TotalsProps> = ({ invoice, setInvoice }) => {
-  const { t } = useTranslation('invoices')
+  const { t } = useTranslation('invoices');
   return (
     <Card className="w-full mt-8">
       <CardHeader>
