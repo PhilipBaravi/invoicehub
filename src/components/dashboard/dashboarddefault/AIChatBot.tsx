@@ -79,7 +79,7 @@ export default function AIChatbot() {
     setMessages([...messages, newUserMessage])
   
     try {
-      const response = await fetch(`http://localhost:1010/assistant?ask=${encodeURIComponent(content)}`)
+      const response = await fetch(`http://localhost:1010/assistant?q=${encodeURIComponent(content)}`)
       if (response.ok) {
         const data = await response.json()
         const botResponse: Message = { 
