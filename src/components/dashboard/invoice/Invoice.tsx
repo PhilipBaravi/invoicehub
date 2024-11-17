@@ -403,10 +403,17 @@ const InvoiceComponent: FC = () => {
     [updateTotals]
   );
 
-  const handleAddTaxes = useCallback((index: number) => {
-    setCurrentItemIndex(index);
-    setShowTaxDialog(true);
-  }, []);
+  const handleAddTaxes = useCallback(
+    (index: number) => {
+      setCurrentItemIndex(index);
+      setTaxDetails((prevTaxDetails) => ({
+        ...prevTaxDetails,
+        percentage: lineItems[index].tax,
+      }));
+      setShowTaxDialog(true);
+    },
+    [lineItems]
+  );
 
   const applyTaxes = useCallback(() => {
     if (currentItemIndex !== null) {
@@ -491,6 +498,7 @@ const InvoiceComponent: FC = () => {
                   description: selectedProduct.description || '',
                   price: selectedProduct.price,
                   quantity: 1,
+                  tax: 0,
                   maxQuantity: selectedProduct.quantityInStock,
                   error: '',
                 }
