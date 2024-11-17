@@ -15,7 +15,7 @@ const ClientSelector: FC<ClientSelectorProps> = ({ selectedClient, handleClientS
   return (
     <div>
       <Label htmlFor="client">{t('invoice.clientSelector.billed')}</Label>
-      <Select onValueChange={(value) => handleClientSelect(value)}>
+      <Select value={selectedClient?.name} onValueChange={(value) => handleClientSelect(value)}>
         <SelectTrigger id="client">
           <SelectValue placeholder={t('invoice.clientSelector.select')} />
         </SelectTrigger>
@@ -30,7 +30,7 @@ const ClientSelector: FC<ClientSelectorProps> = ({ selectedClient, handleClientS
       {selectedClient && (
         <div className="text-left mt-4">
           <h2 className="text-xl font-bold">{t('invoice.clientSelector.name')} {selectedClient.name}</h2>
-          <p className='font-[600]'>Phone: {selectedClient.phone}</p>
+          <p className='font-[600]'>{t('invoice.clientSelector.phone')}: {selectedClient.phone}</p>
           <p>
             <span className='text-stone-950 dark:text-stone-50 font-[600]'>{t('invoice.clientSelector.website')}</span> 
             <span className='font-[600] text-blue-700'>{selectedClient.website}</span>

@@ -151,7 +151,7 @@ const InvoiceComponent: FC = () => {
     } catch (error) {
       setErrorMessage(t('invoice.errors.failedFetchingProducts'));
     }
-  }, [keycloak.token]);
+  }, [keycloak.token, t]);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -206,7 +206,7 @@ const InvoiceComponent: FC = () => {
       fetchProductsAndCategories();
       fetchClients();
     }
-  }, [keycloak, fetchProductsAndCategories]);
+  }, [keycloak, fetchProductsAndCategories, t]);
 
   const handleClientSelect = useCallback(
     (clientName: string) => {
