@@ -15,7 +15,7 @@ const DashboardDefault: FC = () => {
       <h1 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 px-6">
         {t('dashboard.greetings')} 👋
       </h1>
-      <Separator className="w-full h-[1px] bg-stone-300 dark:bg-stone-100 mt-2"/>
+      <Separator className="w-full h-[1px] bg-stone-300 dark:bg-stone-700 mt-2"/>
       <main className="w-[95%] flex flex-col gap-4 pt-4 mx-auto">
       <CurrencyExchangeRates />
   <div className="w-full flex flex-col xl:flex-row gap-4 justify-between items-center">

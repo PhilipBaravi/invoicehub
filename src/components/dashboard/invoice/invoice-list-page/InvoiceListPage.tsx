@@ -7,9 +7,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { PlusCircle, Search, MoreHorizontal, Trash2, Pencil } from 'lucide-react';
+import { PlusCircle, Search, MoreHorizontal, Trash2, Pencil, ClipboardCheck } from 'lucide-react';
 import { useKeycloak } from '@react-keycloak/web';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Invoice, InvoiceStatus } from '../invoice-types';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +29,7 @@ const InvoiceListPage: FC = () => {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'ALL_STATUSES'>('ALL_STATUSES');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
+  const [isApproving, setIsApproving] = useState(false);
   const { t } = useTranslation('invoices');
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
@@ -88,7 +98,7 @@ const InvoiceListPage: FC = () => {
       });
 
       let result;
-      if (response.ok && response.status !== 204) { // Status 204 means "No Content"
+      if (response.ok && response.status !== 204) {
         result = await response.json();
       }
 
@@ -102,6 +112,40 @@ const InvoiceListPage: FC = () => {
       }
     } catch (error) {
       console.error("An error occurred while deleting invoice:", error);
+    }
+  };
+
+  const handleApproveInvoice = async (invoiceId: number) => {
+    setIsApproving(true);
+    try {
+      const response = await fetch(`http://localhost:9090/api/v1/invoice/approve/${invoiceId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Update the status of the invoice in the state
+        setInvoices((prevInvoices) =>
+          prevInvoices.map((invoice) =>
+            invoice.id === invoiceId ? { ...invoice, invoiceStatus: 'APPROVED' } : invoice
+          )
+        );
+        setFilteredInvoices((prevInvoices) =>
+          prevInvoices.map((invoice) =>
+            invoice.id === invoiceId ? { ...invoice, invoiceStatus: 'APPROVED' } : invoice
+          )
+        );
+      } else {
+        console.error("Failed to approve invoice:", result.message);
+      }
+    } catch (error) {
+      console.error("An error occurred while approving invoice:", error);
+    } finally {
+      setIsApproving(false);
     }
   };
 
@@ -176,17 +220,27 @@ const InvoiceListPage: FC = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          {invoice.invoiceStatus !== 'APPROVED' && (
+                            <DropdownMenuItem onClick={() => handleApproveInvoice(invoice.id)}>
+                              <ClipboardCheck className="mr-2 h-4 w-4 text-green-700" />
+                              <span className="text-green-700">
+                                {t('invoiceList.approve')}
+                              </span>
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
+                            <Pencil className="mr-2 h-4 w-4 text-yellow-700" />
+                            <span className='text-yellow-700'>
+                              {t('invoiceList.edit')}
+                            </span>
+                          </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => openDeleteDialog(invoice.id)}
                             className="text-red-600 focus:text-red-600"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             {t('invoiceList.delete')}
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            {t('invoiceList.edit')}
-                          </DropdownMenuItem>
+                          </DropdownMenuItem>                          
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -205,7 +259,7 @@ const InvoiceListPage: FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>{t('invoiceList.dialog.sure')}</AlertDialogTitle>
             <AlertDialogDescription>
-            {t('invoiceList.dialog.confirmation')}
+              {t('invoiceList.dialog.confirmation')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
