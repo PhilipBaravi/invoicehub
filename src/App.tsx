@@ -27,6 +27,7 @@ import Invoice from "./components/dashboard/invoice/Invoice";
 import PrivacyPolicy from "./components/main-authentication/privacyPolicy";
 import './i18n';
 import { useTranslation } from "react-i18next";
+import LandingPage from "./landing-page/LandingPage";
 
 // UserDetails interface
 interface UserDetails {
@@ -98,12 +99,13 @@ const App: React.FC = () => {
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Router>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<NewLoginPage />} />
             <Route
               path="/register"
               element={<NewRegisterPage setUserDetails={setUserDetails} />}
             />
-            <Route path="/" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
+            <Route path="/register" element={<NewRegisterPage setUserDetails={setUserDetails} />} />
             <Route path="/account-details" element={<AccountDetails />} />
             <Route path="/business-details" element={<BusinessForm />} />
             <Route path="/intent-details" element={<IntentFormDetails />} />

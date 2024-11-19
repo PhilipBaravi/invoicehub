@@ -60,8 +60,11 @@ module.exports = {
   			}
   		},
   		fontFamily: {
-  			georgian: ['Noto Serif Georgian"', 'serif']
-  		},
+			georgian: ['Noto Serif Georgian', 'serif'],
+			poppins: ['Poppins', 'sans-serif'], 
+			montserrat: ['Montserrat', 'sans-serif'], 
+			ubuntu: ['Ubuntu', 'sans-serif'], 
+		  },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',

@@ -1,7 +1,7 @@
 {   
     "invoiceList" : {
         "pageTitle" : "Invoices",
-        "createNew" : "Create New Invocies",
+        "createNew" : "Create New Invoice",
         "search" : "Search invoices...",
         "filter" : "Filter by status",
         "all" : "All Statuses",
