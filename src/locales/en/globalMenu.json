@@ -1,0 +1,14 @@
+{
+    "dashboard" : "Dashboard",
+    "invoices" : "Invoices",
+    "employees" : "Employees",
+    "clients" : "Clients",
+    "categories" : "Categories",
+    "subscription" : "Profile Subscription",
+    "payment" : "Payment Methods",
+    "settings" : "Settings",
+    "logOut" : "Log Out",
+    "back" : "Go Back",
+    "forward" : "Go Forward",
+    "reload" : "Reload"
+}

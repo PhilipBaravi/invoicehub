@@ -37,6 +37,6 @@
         "clients" : "Clients",
         "invoice" : "Invoice",
         "categories" : "Categories",
-        "login" : "Login"
+        "login" : "Log out"
     }
 }

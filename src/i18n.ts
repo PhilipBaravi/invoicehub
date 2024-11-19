@@ -8,6 +8,7 @@ import clientsEN from './locales/en/clients.json';
 import dashboardDefaultEN from './locales/en/dashboardDefault.json';
 import employeesEN from './locales/en/employees.json';
 import invoicesEN from './locales/en/invoices.json';
+import globalMenuEN from './locales/en/globalMenu.json'
 // import privacyPolicyEN from './locales/en/privacyPolicy.json';
 // import quotesEN from './locales/en/quotes.json';
 // import settingsEN from './locales/en/settings.json';
@@ -19,6 +20,7 @@ import clientsES from './locales/es/clients.json';
 import dashboardDefaultES from './locales/es/dashboardDefault.json';
 import employeesES from './locales/es/employees.json';
 import invoicesES from './locales/es/invoices.json';
+import globalMenuES from './locales/es/globalMenu.json'
 // import privacyPolicyES from './locales/es/privacyPolicy.json';
 // import quotesES from './locales/es/quotes.json';
 // import settingsES from './locales/es/settings.json';
@@ -30,6 +32,7 @@ import clientsGE from './locales/ge/clients.json';
 import dashboardDefaultGE from './locales/ge/dashboardDefault.json';
 import employeesGE from './locales/ge/employees.json';
 import invoicesGE from './locales/ge/invoices.json';
+import globalMenuGE from './locales/ge/globalMenu.json'
 // import privacyPolicyGE from './locales/ge/privacyPolicy.json';
 // import quotesGE from './locales/ge/quotes.json';
 // import settingsGE from './locales/ge/settings.json';
@@ -45,6 +48,7 @@ i18n
         dashboardDefault: dashboardDefaultEN,
         employees: employeesEN,
         invoices: invoicesEN,
+        globalMenu: globalMenuEN,
         // privacyPolicy: privacyPolicyEN,
         // quotes: quotesEN,
         // settings: settingsEN,
@@ -56,6 +60,7 @@ i18n
         dashboardDefault: dashboardDefaultES,
         employees: employeesES,
         invoices: invoicesES,
+        globalMenu: globalMenuES,
         // privacyPolicy: privacyPolicyES,
         // quotes: quotesES,
         // settings: settingsES,
@@ -67,6 +72,7 @@ i18n
         dashboardDefault: dashboardDefaultGE,
         employees: employeesGE,
         invoices: invoicesGE,
+        globalMenu: globalMenuGE
         // privacyPolicy: privacyPolicyGE,
         // quotes: quotesGE,
         // settings: settingsGE,
@@ -83,7 +89,8 @@ i18n
       'invoices',
       'privacyPolicy',
       'quotes',
-      'settings'
+      'settings',
+      'globalMenu'
     ],
     defaultNS: 'authorization',
     interpolation: {

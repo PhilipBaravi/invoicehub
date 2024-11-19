@@ -6,9 +6,6 @@ module.exports = {
   ],
   theme: {
   	extend: {
-		// boxShadow: {
-		// 	'white': '0 1px 2px rgba(255, 255, 255, 0.1)'
-		//   },
   		colors: {
   			brightBlue: '#4169E1',
   			background: 'hsl(var(--background))',
@@ -50,10 +47,20 @@ module.exports = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
   		fontFamily: {
-  			georgian: ['Noto Serif Georgian"', 'serif'],
+  			georgian: ['Noto Serif Georgian"', 'serif']
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

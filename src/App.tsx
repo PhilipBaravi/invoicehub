@@ -98,9 +98,9 @@ const App: React.FC = () => {
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Router>
           <Routes>
-            <Route path="/new-login" element={<NewLoginPage />} />
+            <Route path="/login" element={<NewLoginPage />} />
             <Route
-              path="/new-register"
+              path="/register"
               element={<NewRegisterPage setUserDetails={setUserDetails} />}
             />
             <Route path="/" element={<NewRegisterPage setUserDetails={setUserDetails} />} />

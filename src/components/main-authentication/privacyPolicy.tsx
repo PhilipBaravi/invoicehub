@@ -105,7 +105,7 @@ const PrivacyPolicy: FC = () => {
         </TabsContent>
       </Tabs>
       <div className="mt-6 flex justify-center">
-        <Link to='/new-login'>
+        <Link to='/login'>
         <Button onClick={() => console.log("Agreed to terms and privacy policy")}>
           Back To Login Page
         </Button>

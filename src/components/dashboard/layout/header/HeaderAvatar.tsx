@@ -16,7 +16,7 @@ const HeaderAvatar: FC = () => {
     const navigate = useNavigate();
 
     const logOut = () => {
-        navigate('/new-login')
+        navigate('/login')
     }
   return (
     <DropdownMenu>
@@ -38,21 +38,17 @@ const HeaderAvatar: FC = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Profile
-        </DropdownMenuItem>
-        <Link to="payment-methods">
-        <DropdownMenuItem>
-          Payment Method
-        </DropdownMenuItem>
-        </Link>
-        
         <Link to="employee">
         <DropdownMenuItem>
           Team
         </DropdownMenuItem>
         </Link>
-        <Link to="profile-subscription">
+        <Link to="settings/payment-methods">
+        <DropdownMenuItem>
+          Payment Method
+        </DropdownMenuItem>
+        </Link>
+        <Link to="settings/profile-subscription">
         <DropdownMenuItem>
           Subscription
         </DropdownMenuItem>

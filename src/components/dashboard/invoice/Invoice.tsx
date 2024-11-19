@@ -900,6 +900,21 @@ const InvoiceComponent: FC = () => {
             </div>
           </div>
           <Separator />
+          
+          <Separator />
+          <LineItems
+            lineItems={lineItems}
+            handleAddLineItem={handleAddLineItem}
+            handleLineItemChange={handleLineItemChange}
+            handleRemoveLineItem={handleRemoveLineItem}
+            handleAddTaxes={handleAddTaxes}
+            handleItemSelect={handleItemSelect}
+            categories={categories}
+            products={products}
+            isEditMode={isEditMode}
+          />
+          <Separator />
+          <Totals invoice={invoice} setInvoice={setInvoice} />
           <div className="flex justify-between items-center mt-6">
             <div className="w-1/2">
               <ClientSelector
@@ -960,20 +975,6 @@ const InvoiceComponent: FC = () => {
               )}
             </div>
           </div>
-          <Separator />
-          <LineItems
-            lineItems={lineItems}
-            handleAddLineItem={handleAddLineItem}
-            handleLineItemChange={handleLineItemChange}
-            handleRemoveLineItem={handleRemoveLineItem}
-            handleAddTaxes={handleAddTaxes}
-            handleItemSelect={handleItemSelect}
-            categories={categories}
-            products={products}
-            isEditMode={isEditMode}
-          />
-          <Separator />
-          <Totals invoice={invoice} setInvoice={setInvoice} />
           <Signatures
             invoice={invoice}
             penColor={penColor}
@@ -1008,6 +1009,7 @@ const InvoiceComponent: FC = () => {
           )}
         </CardContent>
         <Separator />
+        
         <CardFooter className="flex justify-between">
           <Button variant="outline" onClick={() => navigate('/dashboard/invoices')}>
             {t('invoice.cancel')}

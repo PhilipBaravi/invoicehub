@@ -101,6 +101,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
   const handleCompanyCountryChange = (code: CountryCode) => setCompanyCountry(code);
 
   return (
+    <div className='px-4'>
     <form className="space-y-4" onSubmit={handleSubmit}>
       {/* Company Name */}
       <div>
@@ -224,6 +225,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
       </div>
       <Button onClick={handleSubmit}>Save</Button>
     </form>
+    </div>
   );
 };
 

@@ -106,9 +106,7 @@ const ManagePaymentMethods : FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Manage Payment Methods</h1>
-
+    <div className="container mx-auto px-4">
       {alert && (
         <Alert className="mb-4" variant={alert.type === 'success' ? 'default' : 'destructive'}>
           <CheckCircle2 className="h-4 w-4" />
@@ -119,12 +117,9 @@ const ManagePaymentMethods : FC = () => {
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle>Your Payment Methods</CardTitle>
-          </CardHeader>
           <CardContent>
             {paymentMethods.map((method) => (
-              <div key={method.id} className="mb-4 p-4 border rounded-lg">
+              <div key={method.id} className="mb-4 mt-4 p-4 border rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2">
                     <CreditCard className="h-5 w-5" />

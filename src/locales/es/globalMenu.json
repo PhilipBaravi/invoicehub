@@ -1,0 +1,14 @@
+{
+    "dashboard": "Tablero",
+    "invoices": "Facturas",
+    "employees": "Empleados",
+    "clients": "Clientes",
+    "categories": "Categorías",
+    "subscription": "Suscripción de Perfil",
+    "payment": "Métodos de Pago",
+    "settings": "Configuraciones",
+    "logOut": "Cerrar Sesión",
+    "back": "Regresar",
+    "forward": "Avanzar",
+    "reload": "Recargar"
+}

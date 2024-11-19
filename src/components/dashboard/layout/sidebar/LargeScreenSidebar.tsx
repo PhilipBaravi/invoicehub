@@ -20,11 +20,11 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     { name: t('sidebar.employee'), icon: UserSearch, path: '/dashboard/employee' },
     {name: t('sidebar.clients'), icon: Building2, path:'/dashboard/clients'},
     { name: t('sidebar.categories'), icon: FolderKanban, path: '/dashboard/categories' },
-    { name: t('sidebar.login'), icon: LogIn, path: '/new-login' },
+    { name: t('sidebar.login'), icon: LogIn, path: '/login' },
   ];
 
   const handleItemClick = (path: string) => {
-    if (path === '/new-login') {
+    if (path === '/login') {
       navigate(path);
       onClose(); // Close only for login
     } else {

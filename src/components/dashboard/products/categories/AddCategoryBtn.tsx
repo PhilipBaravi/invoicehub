@@ -80,7 +80,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
           <Plus className="mr-2 h-4 w-4" /> {t('categories.addCategory.addCategory')}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="min-w-[60%] max-h-[80%]">
         <DialogHeader>
           <DialogTitle>{t('categories.addCategory.addNewCategory')}</DialogTitle>
           <DialogDescription>
@@ -109,19 +109,19 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
         <div>
           <h3 className="mb-2 text-sm font-medium">{t('categories.addCategory.icon')}</h3>
           <Card>
-            <CardContent className="grid grid-cols-4 gap-2 p-2">
+            <CardContent className="grid grid-cols-8 gap-2 p-2">
               {categoryIcons.map((icon, index) => {
                 const IconComponent = iconMap[icon];
                 return (
                   <Button
                     key={index}
                     variant="ghost"
-                    className={`p-2 hover:bg-secondary ${
+                    className={`p-2 hover:bg-secondary${
                       selectedIcon === icon ? "bg-primary text-primary-foreground" : ""
                     }`}
                     onClick={() => handleIconSelect(icon)}
                   >
-                    {IconComponent && <IconComponent className="h-6 w-6" />}
+                    {IconComponent && <IconComponent className="min-w-[20px] min-h-[20px]" />}
                   </Button>
                 );
               })}

@@ -81,13 +81,8 @@ export default function ProfileSubscription() {
   const [selectedPlan, setSelectedPlan] = useState<string>('Creator')
 
   return (
-    <div className="container mx-auto px-4 py-16">
-      <h1 className="text-4xl font-bold mb-4">Pricing</h1>
-      <p className="text-xl mb-8">
-        From individual creators to the biggest enterprises, we have a plan for you.
-      </p>
-      
-      <div className="flex items-center justify-end mb-8">
+    <div className="container mx-auto px-4">
+      <div className="flex items-center justify-start mb-8">
         <span className="mr-2 text-sm font-medium">MONTHLY</span>
         <Switch checked={isYearly} onCheckedChange={setIsYearly} />
         <span className="ml-2 text-sm font-medium">YEARLY</span>

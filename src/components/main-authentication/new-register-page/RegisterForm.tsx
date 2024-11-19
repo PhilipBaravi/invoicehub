@@ -218,7 +218,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
       {/* Login Redirect */}
       <p className="mt-6 text-center text-xs text-stone-500 dark:text-stone-400">
         {t('signUpForm.haveAnAccount')}{' '}
-        <Link to="/new-login" className="underline hover:text-stone-300">
+        <Link to="/login" className="underline hover:text-stone-300">
           {t('signUpForm.login')}
         </Link>
       </p>

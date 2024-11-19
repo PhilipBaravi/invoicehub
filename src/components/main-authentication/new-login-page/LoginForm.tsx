@@ -88,7 +88,7 @@ const LoginForm = () => {
 
       <p className="mt-6 text-center text-xs text-stone-500 dark:text-stone-400">
         {t('loginForm.haveAnAccount')}{' '}
-        <Link to="/new-register" className="underline hover:text-stone-300">
+        <Link to="/register" className="underline hover:text-stone-300">
           {t('loginForm.signUp')}
         </Link>
       </p>
