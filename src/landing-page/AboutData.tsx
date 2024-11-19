@@ -2,8 +2,10 @@ import { FC } from 'react';
 import AboutDataFirstChart from './AboutDataFirstChart';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
+import { useTranslation } from 'react-i18next';
 
 const DataVisualizationShowcase: FC = () => {
+  const { t } = useTranslation('landingPage')
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.2,
@@ -43,9 +45,9 @@ const DataVisualizationShowcase: FC = () => {
       <div className="container mx-auto px-4">
         <motion.h2
           variants={itemVariants}
-          className="font-poppins text-[1.8rem] leading-large font-bold text-center mb-8 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-stone-950 to-stone-500 dark:from-stone-50 dark:to-stone-400"
+          className="font-poppins text-[1.8rem] leading-large font-bold text-center mb-8 tracking-tight"
         >
-          Your Workflow, Simplified in Stunning Visuals
+          {t('aboutData.title')}
         </motion.h2>
         <motion.div
           variants={itemVariants}

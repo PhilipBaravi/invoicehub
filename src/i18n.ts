@@ -1,41 +1,33 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-// English translation files
 import authorizationEN from './locales/en/authorization.json';
 import categoriesAndProductsEN from './locales/en/categoriesAndProducts.json';
 import clientsEN from './locales/en/clients.json';
 import dashboardDefaultEN from './locales/en/dashboardDefault.json';
 import employeesEN from './locales/en/employees.json';
 import invoicesEN from './locales/en/invoices.json';
-import globalMenuEN from './locales/en/globalMenu.json'
-// import privacyPolicyEN from './locales/en/privacyPolicy.json';
-// import quotesEN from './locales/en/quotes.json';
-// import settingsEN from './locales/en/settings.json';
+import globalMenuEN from './locales/en/globalMenu.json';
+import landingPageEN from './locales/en/landingPage.json';
 
-// Spanish translation files
 import authorizationES from './locales/es/authorization.json';
 import categoriesAndProductsES from './locales/es/categoriesAndProducts.json';
 import clientsES from './locales/es/clients.json';
 import dashboardDefaultES from './locales/es/dashboardDefault.json';
 import employeesES from './locales/es/employees.json';
 import invoicesES from './locales/es/invoices.json';
-import globalMenuES from './locales/es/globalMenu.json'
-// import privacyPolicyES from './locales/es/privacyPolicy.json';
-// import quotesES from './locales/es/quotes.json';
-// import settingsES from './locales/es/settings.json';
+import globalMenuES from './locales/es/globalMenu.json';
+import landingPageES from './locales/es/landingPage.json';
 
-// Georgian translation files
+
 import authorizationGE from './locales/ge/authorization.json';
 import categoriesAndProductsGE from './locales/ge/categoriesAndProducts.json';
 import clientsGE from './locales/ge/clients.json';
 import dashboardDefaultGE from './locales/ge/dashboardDefault.json';
 import employeesGE from './locales/ge/employees.json';
 import invoicesGE from './locales/ge/invoices.json';
-import globalMenuGE from './locales/ge/globalMenu.json'
-// import privacyPolicyGE from './locales/ge/privacyPolicy.json';
-// import quotesGE from './locales/ge/quotes.json';
-// import settingsGE from './locales/ge/settings.json';
+import globalMenuGE from './locales/ge/globalMenu.json';
+import landingPageGE from './locales/ge/landingPage.json';
 
 i18n
   .use(initReactI18next)
@@ -49,9 +41,7 @@ i18n
         employees: employeesEN,
         invoices: invoicesEN,
         globalMenu: globalMenuEN,
-        // privacyPolicy: privacyPolicyEN,
-        // quotes: quotesEN,
-        // settings: settingsEN,
+        landingPage: landingPageEN,
       },
       es: {
         authorization: authorizationES,
@@ -61,9 +51,7 @@ i18n
         employees: employeesES,
         invoices: invoicesES,
         globalMenu: globalMenuES,
-        // privacyPolicy: privacyPolicyES,
-        // quotes: quotesES,
-        // settings: settingsES,
+        landingPage: landingPageES,
       },
       ge: {
         authorization: authorizationGE,
@@ -72,14 +60,13 @@ i18n
         dashboardDefault: dashboardDefaultGE,
         employees: employeesGE,
         invoices: invoicesGE,
-        globalMenu: globalMenuGE
-        // privacyPolicy: privacyPolicyGE,
-        // quotes: quotesGE,
-        // settings: settingsGE,
+        globalMenu: globalMenuGE,
+        landingPage: landingPageGE,
       },
     },
-    lng: 'en', // Default language
+    lng: localStorage.getItem('language') || 'en',
     fallbackLng: 'en',
+    debug: true,
     ns: [
       'authorization',
       'categoriesAndProducts',
@@ -87,14 +74,16 @@ i18n
       'dashboardDefault',
       'employees',
       'invoices',
-      'privacyPolicy',
-      'quotes',
-      'settings',
-      'globalMenu'
-    ],
+      'globalMenu',
+      'landingPage',
+    ], 
     defaultNS: 'authorization',
     interpolation: {
       escapeValue: false,
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
     },
   });
 

@@ -1,12 +1,14 @@
 import { FC, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 type GetStartedBtnProps = {
   isVisible: boolean;
 };
 
 const GetStartedBtn: FC<GetStartedBtnProps> = ({ isVisible }) => {
+  const { t } = useTranslation('landingPage')
   return (
     <Link to="register">
      <Button
@@ -14,7 +16,7 @@ const GetStartedBtn: FC<GetStartedBtnProps> = ({ isVisible }) => {
         isVisible ? "block" : "hidden"
       } md:block`}
     >
-      Get Started
+      {t('main.btn')}
     </Button>
     </Link>
    

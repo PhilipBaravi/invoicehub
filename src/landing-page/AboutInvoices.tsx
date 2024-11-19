@@ -5,8 +5,10 @@ import { CheckCircle, PlusCircle, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { AnimatedSection } from "./AnimatedSection";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AboutInvoices: FC = () => {
+  const { t } = useTranslation('landingPage');
   return (
     <section className="py-16 overflow-hidden">
       <div className="container mx-auto px-4">
@@ -20,7 +22,7 @@ const AboutInvoices: FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Generate Invoices in Seconds
+                {t('section.generate')}
               </motion.h3>
               <motion.p 
                 className="text-lg mb-6"
@@ -28,7 +30,7 @@ const AboutInvoices: FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Create professional invoices with just a few clicks. Our intuitive interface makes invoice generation a breeze.
+                {t('section.generateText')}
               </motion.p>
               <Link to="register">
               <motion.div 
@@ -39,7 +41,7 @@ const AboutInvoices: FC = () => {
               >
                 <Button className="flex items-center gap-2 hover:scale-105 transition-transform">
                   <PlusCircle className="w-4 h-4" />
-                  New Invoice
+                  {t('section.generateBtn')}
                 </Button>
               </motion.div>
               </Link>
@@ -71,7 +73,7 @@ const AboutInvoices: FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Easy Product Management
+                {t('section.product')}
               </motion.h3>
               <motion.p 
                 className="text-lg mb-6"
@@ -79,7 +81,7 @@ const AboutInvoices: FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Organize, edit, and add products with ease. Keep track of your financial documents in one place.
+                {t('section.productText')}
               </motion.p>
               <motion.div 
                 className="grid grid-cols-3 gap-4"
@@ -89,7 +91,7 @@ const AboutInvoices: FC = () => {
               >
                 <Card className="hover:scale-105 transition-transform">
                   <CardHeader className="p-4">
-                    <CardTitle className="text-lg">Total</CardTitle>
+                    <CardTitle className="text-lg">{t('section.total')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-3xl font-bold">152</p>
@@ -97,7 +99,7 @@ const AboutInvoices: FC = () => {
                 </Card>
                 <Card className="hover:scale-105 transition-transform">
                   <CardHeader className="p-4">
-                    <CardTitle className="text-lg">Active</CardTitle>
+                    <CardTitle className="text-lg">{t('section.active')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-3xl font-bold text-green-600">128</p>
@@ -105,7 +107,7 @@ const AboutInvoices: FC = () => {
                 </Card>
                 <Card className="hover:scale-105 transition-transform">
                   <CardHeader className="p-4">
-                    <CardTitle className="text-lg">Draft</CardTitle>
+                    <CardTitle className="text-lg">{t('section.draft')}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-3xl font-bold text-yellow-600">24</p>
@@ -140,7 +142,7 @@ const AboutInvoices: FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                Real-Time Invoice Tracking
+                {t('section.tracking')}
               </motion.h3>
               <motion.p 
                 className="text-lg mb-6"
@@ -148,7 +150,7 @@ const AboutInvoices: FC = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Monitor payment status and send reminders automatically. Stay on top of your cash flow with powerful tracking tools.
+                {t('section.trackingText')}
               </motion.p>
               <motion.div 
                 className="flex flex-wrap gap-4"
@@ -159,7 +161,7 @@ const AboutInvoices: FC = () => {
                 <Link to="register">
                 <Button variant="outline" className="flex items-center gap-2 hover:scale-105 transition-transform">
                   <CheckCircle className="w-4 h-4" />
-                  Track Invoices
+                  {t('section.trackingBtn')}
                 </Button>
                 </Link>
               </motion.div>
@@ -193,7 +195,7 @@ const AboutInvoices: FC = () => {
               transition={{ duration: 0.8 }}
             >
               <h1 className="font-poppins text-4xl font-bold tracking-tight text-stone-900 sm:text-6xl dark:text-stone-50">
-                And Much More!
+                {t('footer.more')}
               </h1>
               <motion.div 
                 className="mt-10 flex items-center justify-center gap-x-6"
@@ -206,7 +208,7 @@ const AboutInvoices: FC = () => {
                   size="lg" 
                   className="group hover:scale-105 transition-transform"
                 >
-                  Get started
+                  {t('footer.btn')}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
                 </Link>

@@ -3,6 +3,7 @@ import { ModeToggle } from '@/components/dashboard/layout/ModeToggle';
 import LanguageSelector from './new-login-page/LanguageSelector';
 import { quotes } from './new-login-page/quotes';
 import loginRegisterImages from './login-register-images';
+import { Link } from 'react-router-dom';
 
 interface LoginRegisterLayoutProps {
   children: ReactNode;
@@ -37,9 +38,11 @@ const LoginRegisterLayout: FC<LoginRegisterLayoutProps> = ({ children, title, su
       {/* Left side - hidden by default, visible after md */}
       <div className="hidden md:flex w-full md:w-[60%] flex-col p-10">
         <div className="flex items-center space-x-2">
+          <Link to="/">
           <div className="text-3xl font-bold  bg-clip-text">
             InvoiceHub
           </div>
+          </Link>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <img

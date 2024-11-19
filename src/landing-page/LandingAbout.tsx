@@ -1,13 +1,15 @@
 import { FC } from "react";
 import GetStartedBtn from "./GetStartedBtn";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 const LandingAbout: FC = () => {
+  const { t } = useTranslation('landingPage')
   return (
     <div className="w-[90%] pt-4 flex flex-col justify-center items-center md:flex-row gap-8">
       <div className="flex flex-col justify-center items-center gap-4 w-full lg:w-[45%]">
-        <h1 className="font-poppins text-[1.8rem] leading-large font-bold text-center tracking-tight">Effortless Invoicing and Management for Growing Businesses</h1>
-        <p className="font-poppins text-[1rem] leading-[32px] font-light text-center">Boost your business efficiency with a centralized platform designed for small and medium enterprises. Automate invoicing, client management, employee tracking, and product inventory.</p>
+        <h1 className="font-poppins text-[1.8rem] leading-large font-bold text-center tracking-tight">{t('main.title')}</h1>
+        <p className="font-poppins text-[1rem] leading-[32px] font-light text-center">{t('main.subtitle')}</p>
         <div className="pt-2">
         <GetStartedBtn isVisible={true} />
             </div>

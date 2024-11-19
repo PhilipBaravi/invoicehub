@@ -1,0 +1,38 @@
+{
+    "main": {
+        "title": "Facturación y Gestión Sin Esfuerzo para Empresas en Crecimiento",
+        "subtitle": "Mejora la eficiencia de tu negocio con una plataforma centralizada diseñada para pequeñas y medianas empresas. Automatiza la facturación, la gestión de clientes, el seguimiento de empleados y el inventario de productos.",
+        "btn": "Comienza ahora"
+    },
+    "aboutData": {
+        "title": "Tu flujo de trabajo, Simplificado en Gráficas",
+        "numberOfProducts": "Número de Productos",
+        "numberSold": "Número de Productos Vendidos",
+        "90d": "90 días",
+        "30d": "30 días",
+        "7d": "7 días",
+        "chartTitle": "Gráfica de Área - Interactiva",
+        "chartDescription": "Mostrando datos de productos y ventas en los últimos 3 meses",
+        "select": "Selecciona un valor",
+        "last3Months": "Últimos 3 meses",
+        "last30Days": "Últimos 30 días",
+        "last7Days": "Últimos 7 días"
+    },
+    "section": {
+        "generate": "Genera Facturas en Segundos",
+        "generateText": "Crea facturas profesionales con unos pocos clics. Nuestra interfaz intuitiva hace que la generación de facturas sea muy sencilla.",
+        "generateBtn": "Nueva Factura",
+        "product": "Gestión de Productos Fácil",
+        "productText": "Organiza, edita y añade productos fácilmente. Mantén todos tus documentos financieros en un solo lugar.",
+        "total": "Total",
+        "active": "Activos",
+        "draft": "Borradores",
+        "tracking": "Seguimiento de Facturas en Tiempo Real",
+        "trackingText": "Monitorea el estado de los pagos y envía recordatorios automáticamente. Mantente al tanto de tu flujo de caja con herramientas de seguimiento avanzadas.",
+        "trackingBtn": "Seguir Facturas"
+    },
+    "footer": {
+        "more": "¡Y Mucho Más!",
+        "btn": "Comienza ahora"
+    }
+}
