@@ -79,3 +79,4 @@ const LoginRegisterLayout: FC<LoginRegisterLayoutProps> = ({ children, title, su
 };
 
 export default LoginRegisterLayout;
+

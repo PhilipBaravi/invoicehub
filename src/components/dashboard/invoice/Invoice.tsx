@@ -898,9 +898,7 @@ const InvoiceComponent: FC = () => {
             <div className="w-1/2 flex justify-end">
               <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
             </div>
-          </div>
-          <Separator />
-          
+          </div>    
           <Separator />
           <LineItems
             lineItems={lineItems}
@@ -975,6 +973,7 @@ const InvoiceComponent: FC = () => {
               )}
             </div>
           </div>
+          <Separator />
           <Signatures
             invoice={invoice}
             penColor={penColor}

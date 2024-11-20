@@ -17,6 +17,7 @@
         "actions" : "Actions",
         "delete" : "Delete",
         "edit" : "Edit",
+        "approve" : "Approve",
         "dialog" : {
             "sure" : "Are you sure?",
             "confirmation" : "This actions cannot be undone. This will permanently delete the invoice.",

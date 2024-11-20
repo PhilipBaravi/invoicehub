@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useKeycloak } from "@react-keycloak/web";  // Import useKeycloak hook
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,11 +13,18 @@ import {
 import { Button } from "@/components/ui/button";
 
 const HeaderAvatar: FC = () => {
-    const navigate = useNavigate();
+  const { keycloak } = useKeycloak();  // Get the keycloak instance
+  const navigate = useNavigate();
 
-    const logOut = () => {
-        navigate('/login')
+  const logOut = () => {
+    if (keycloak?.authenticated) {
+      keycloak.logout({ redirectUri: window.location.origin + "/login" }); // Log out and redirect
+    } else {
+      // If Keycloak is not initialized or already logged out, simply navigate
+      navigate('/login');
     }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,24 +46,24 @@ const HeaderAvatar: FC = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link to="employee">
-        <DropdownMenuItem>
-          Team
-        </DropdownMenuItem>
+          <DropdownMenuItem>
+            Team
+          </DropdownMenuItem>
         </Link>
         <Link to="settings/payment-methods">
-        <DropdownMenuItem>
-          Payment Method
-        </DropdownMenuItem>
+          <DropdownMenuItem>
+            Payment Method
+          </DropdownMenuItem>
         </Link>
         <Link to="settings/profile-subscription">
-        <DropdownMenuItem>
-          Subscription
-        </DropdownMenuItem>
+          <DropdownMenuItem>
+            Subscription
+          </DropdownMenuItem>
         </Link>
         <Link to="settings">
-        <DropdownMenuItem>
-          Settings
-        </DropdownMenuItem>
+          <DropdownMenuItem>
+            Settings
+          </DropdownMenuItem>
         </Link>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logOut} className="cursor-pointer">

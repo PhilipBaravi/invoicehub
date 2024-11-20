@@ -188,7 +188,7 @@ const InvoiceListPage: FC = () => {
                 <SelectItem value="AWAITING_APPROVAL">{t('invoiceList.awaiting')}</SelectItem>
                 <SelectItem value="APPROVED">{t('invoiceList.approved')}</SelectItem>
                 <SelectItem value="REJECTED">{t('invoiceList.rejected')}</SelectItem>
-                <SelectItem value="PAID">{t('invoiceList.Paid')}</SelectItem>
+                <SelectItem value="PAID">{t('invoiceList.paid')}</SelectItem>
               </SelectContent>
             </Select>
           </div>

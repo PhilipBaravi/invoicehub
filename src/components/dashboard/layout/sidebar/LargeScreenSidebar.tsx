@@ -1,7 +1,8 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from 'lucide-react';
+import { LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useKeycloak } from "@react-keycloak/web";
 
 interface LargeScreenSidebarProps {
   isOpen: boolean;
@@ -9,28 +10,29 @@ interface LargeScreenSidebarProps {
 }
 
 const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) => {
+  const { keycloak } = useKeycloak(); // Get the Keycloak instance
+
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const [sidebarWidth, setSidebarWidth] = useState(isOpen ? '250px' : '80px');
-  const { t } = useTranslation('dashboardDefault')
+  const [sidebarWidth, setSidebarWidth] = useState(isOpen ? "250px" : "80px");
+  const { t } = useTranslation("dashboardDefault");
 
-  const menuItems = [
-    { name: t('sidebar.dashboard'), icon: LayoutDashboard, path: '/dashboard' },
-    {name: t('sidebar.invoice'), icon: FileText, path:'/dashboard/invoices'},
-    { name: t('sidebar.employee'), icon: UserSearch, path: '/dashboard/employee' },
-    {name: t('sidebar.clients'), icon: Building2, path:'/dashboard/clients'},
-    { name: t('sidebar.categories'), icon: FolderKanban, path: '/dashboard/categories' },
-    { name: t('sidebar.login'), icon: LogIn, path: '/login' },
-  ];
-
-  const handleItemClick = (path: string) => {
-    if (path === '/login') {
-      navigate(path);
-      onClose(); // Close only for login
+  const logOut = () => {
+    if (keycloak?.authenticated) {
+      keycloak.logout({ redirectUri: window.location.origin + "/login" }); // Log out and redirect
     } else {
-      navigate(path); // Navigate within the dashboard without closing the sidebar
+      navigate("/login"); // Navigate to login if not authenticated
     }
   };
+
+  const menuItems = [
+    { name: t("sidebar.dashboard"), icon: LayoutDashboard, path: "/dashboard" },
+    { name: t("sidebar.invoice"), icon: FileText, path: "/dashboard/invoices" },
+    { name: t("sidebar.employee"), icon: UserSearch, path: "/dashboard/employee" },
+    { name: t("sidebar.clients"), icon: Building2, path: "/dashboard/clients" },
+    { name: t("sidebar.categories"), icon: FolderKanban, path: "/dashboard/categories" },
+    { name: t("sidebar.login"), icon: LogIn, path: "/login" },
+  ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -40,18 +42,18 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     } else {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    setSidebarWidth(isOpen ? '250px' : '80px');
+    setSidebarWidth(isOpen ? "250px" : "80px");
   }, [isOpen]);
 
   return (
@@ -59,7 +61,7 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
       ref={sidebarRef}
       style={{
         width: sidebarWidth,
-        transition: 'width 0.6s ease',
+        transition: "width 0.6s ease",
       }}
       className="fixed top-0 left-0 h-screen bg-slate-50 dark:bg-stone-950 flex flex-col border-r border-stone-200 dark:border-stone-700 z-50"
     >
@@ -68,20 +70,30 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
         onClick={onClose}
       >
         {isOpen ? (
-          <span className="text-stone-50 dark:text-stone-950 text-lg">{'←'}</span>
+          <span className="text-stone-50 dark:text-stone-950 text-lg">{"←"}</span>
         ) : (
-          <span className="text-stone-50 dark:text-stone-950 text-lg">{'→'}</span>
+          <span className="text-stone-50 dark:text-stone-950 text-lg">{"→"}</span>
         )}
       </div>
 
       <ul className="flex flex-col items-start gap-[20px] p-4 mt-[60px]">
         {menuItems.map((item) => {
           const Icon = item.icon;
+
+          // Custom onClick behavior for the "login" menu item
+          const handleClick = () => {
+            if (item.path === "/login") {
+              logOut(); // Call logOut function for login
+            } else {
+              navigate(item.path); // Navigate for other items
+            }
+          };
+
           return (
             <li
               key={item.name}
               className="flex items-center gap-[10px] px-2 py-2 rounded-md hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-950 dark:text-stone-50 transition-all cursor-pointer"
-              onClick={() => handleItemClick(item.path)}
+              onClick={handleClick} // Custom handleClick
             >
               <Icon className="text-xl" />
               {isOpen && <span className="ml-2 font-medium">{item.name}</span>}

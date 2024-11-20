@@ -17,6 +17,7 @@
         "actions" : "Acciones",
         "delete" : "Eliminar",
         "edit" : "Editar",
+        "approve" : "Aprobar",
         "dialog" : {
             "sure" : "¿Estás seguro?",
             "confirmation" : "Esta acción no se puede deshacer. Esto eliminará la factura permanentemente.",
