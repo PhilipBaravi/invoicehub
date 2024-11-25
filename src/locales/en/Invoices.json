@@ -9,7 +9,7 @@
         "approved" : "Approved",
         "rejected" : "Rejected",
         "paid" : "Paid",
-        "invoiceNo" : "Invoice No",
+        "invoiceNo" : "Invoice No: ",
         "client" : "Client/Vendor",
         "date" : "Date",
         "total" : "Total",
@@ -17,7 +17,10 @@
         "actions" : "Actions",
         "delete" : "Delete",
         "edit" : "Edit",
+        "sendEmail" : "Send Email",
+        "preview" : "Preview",
         "approve" : "Approve",
+        "editInvoice" : "Edit Invoice",
         "dialog" : {
             "sure" : "Are you sure?",
             "confirmation" : "This actions cannot be undone. This will permanently delete the invoice.",
@@ -67,7 +70,8 @@
             "select" : "Select Product",
             "selectCategory" : "Select Category",
             "addTax" : "Add Taxes",
-            "enterDescription" : "Enter an Item Description"
+            "enterDescription" : "Enter an Item Description",
+            "description" : "Description: "
         },
         "clientSelector" : {
             "billed" : "Billed To",
@@ -88,7 +92,7 @@
         "notesTerms" : {
             "pageTitle" : "Notes",
             "enterNotes" : "Enter notes (optional)",
-            "terms" : "Terms",
+            "terms" : "Payment Terms",
             "enterTerms" : "Enter your terms and conditions"
         },
         "signatures" : {

@@ -16,7 +16,7 @@ export interface Address {
 
 // ClientVendor interface
 export interface ClientVendor {
-  id: number; // Make 'id' required
+  id: number;
   name: string;
   phone: string;
   website: string;
@@ -56,17 +56,17 @@ export interface Product {
   category: Category;
 }
 
-// **LineItem interface**
-export interface LineItem {
-  itemId: number;
-  categoryId: number;
-  name: string;
-  description: string;
-  price: number;
+// Invoice Product interface
+export interface InvoiceProduct {
+  id: number;
   quantity: number;
+  price: number;
   tax: number;
-  maxQuantity?: number; // Optional, used for validation in components
-  error?: string; // Optional, used for validation in components
+  total: number;
+  profitLoss: number;
+  remainingQuantity: number;
+  invoice: Invoice;
+  product: Product;
 }
 
 // Invoice interface
@@ -86,4 +86,16 @@ export interface Invoice {
   total: number;
   businessSignature?: string;
   clientSignature?: string;
+}
+// **LineItem interface**
+export interface LineItem {
+  itemId: number;
+  categoryId: number;
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  tax: number;
+  maxQuantity?: number; // Optional, used for validation in components
+  error?: string; // Optional, used for validation in components
 }

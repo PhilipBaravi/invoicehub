@@ -7,8 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { PlusCircle, Search, MoreHorizontal, Trash2, Pencil, ClipboardCheck } from 'lucide-react';
+import { PlusCircle, Search, MoreHorizontal, Trash2, Pencil, ClipboardCheck, Eye, Mail } from 'lucide-react';
 import { useKeycloak } from '@react-keycloak/web';
+import { useToast } from "@/hooks/use-toast";
+import InvoicePreview from './InvoicePreview';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,8 +35,9 @@ const InvoiceListPage: FC = () => {
   const { t } = useTranslation('invoices');
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
+  const [previewInvoice, setPreviewInvoice] = useState<Invoice | null>(null);
+  const { toast } = useToast();
 
-  // Fetch invoices
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
@@ -66,7 +69,6 @@ const InvoiceListPage: FC = () => {
     }
   }, [keycloak.token]);
 
-  // Filter invoices based on search term and status
   useEffect(() => {
     const filtered = invoices.filter((invoice) => {
       const matchesSearchTerm = 
@@ -128,7 +130,6 @@ const InvoiceListPage: FC = () => {
       const result = await response.json();
 
       if (result.success) {
-        // Update the status of the invoice in the state
         setInvoices((prevInvoices) =>
           prevInvoices.map((invoice) =>
             invoice.id === invoiceId ? { ...invoice, invoiceStatus: 'APPROVED' } : invoice
@@ -146,6 +147,41 @@ const InvoiceListPage: FC = () => {
       console.error("An error occurred while approving invoice:", error);
     } finally {
       setIsApproving(false);
+    }
+  };
+
+  const handleSendEmail = async (invoiceId: number) => {
+    try {
+      const response = await fetch(`http://localhost:9090/api/v1/mailing/send-email/${invoiceId}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: "Email sent successfully",
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send email",
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred while sending the email",
+        variant: "destructive",
+        duration: 3000,
+      });
     }
   };
 
@@ -220,19 +256,23 @@ const InvoiceListPage: FC = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleSendEmail(invoice.id)}>
+                            <Mail className="mr-2 h-4 w-4" />
+                            <span>{t('invoiceList.sendEmail')}</span>
+                          </DropdownMenuItem>
                           {invoice.invoiceStatus !== 'APPROVED' && (
                             <DropdownMenuItem onClick={() => handleApproveInvoice(invoice.id)}>
-                              <ClipboardCheck className="mr-2 h-4 w-4 text-green-700" />
-                              <span className="text-green-700">
-                                {t('invoiceList.approve')}
-                              </span>
+                              <ClipboardCheck className="mr-2 h-4 w-4" />
+                              <span>{t('invoiceList.approve')}</span>
                             </DropdownMenuItem>
                           )}
+                          <DropdownMenuItem onClick={() => setPreviewInvoice(invoice)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            <span>{t('invoiceList.preview')}</span>
+                          </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
-                            <Pencil className="mr-2 h-4 w-4 text-yellow-700" />
-                            <span className='text-yellow-700'>
-                              {t('invoiceList.edit')}
-                            </span>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            <span>{t('invoiceList.edit')}</span>
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             onClick={() => openDeleteDialog(invoice.id)}
@@ -240,7 +280,7 @@ const InvoiceListPage: FC = () => {
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
                             {t('invoiceList.delete')}
-                          </DropdownMenuItem>                          
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -253,7 +293,6 @@ const InvoiceListPage: FC = () => {
       </Card>
       <Outlet />
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -268,6 +307,13 @@ const InvoiceListPage: FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {previewInvoice && (
+        <InvoicePreview
+          invoice={previewInvoice}
+          isOpen={!!previewInvoice}
+          onClose={() => setPreviewInvoice(null)}
+        />
+      )}
     </div>
   );
 };

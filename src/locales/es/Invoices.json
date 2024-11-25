@@ -9,7 +9,7 @@
         "approved" : "Aprobado",
         "rejected" : "Rechazado",
         "paid" : "Pagado",
-        "invoiceNo" : "No. de Factura",
+        "invoiceNo" : "No. de Factura: ",
         "client" : "Cliente/Vendedor",
         "date" : "Fecha",
         "total" : "Total",
@@ -17,7 +17,10 @@
         "actions" : "Acciones",
         "delete" : "Eliminar",
         "edit" : "Editar",
+        "sendEmail": "Enviar correo electrónico",
+        "preview": "Vista previa",
         "approve" : "Aprobar",
+        "editInvoice": "Editar factura",
         "dialog" : {
             "sure" : "¿Estás seguro?",
             "confirmation" : "Esta acción no se puede deshacer. Esto eliminará la factura permanentemente.",
@@ -67,7 +70,8 @@
             "select" : "Seleccionar Producto",
             "selectCategory" : "Seleccionar Categoría",
             "addTax" : "Añadir Impuestos",
-            "enterDescription" : "Ingresar una descripción del ítem"
+            "enterDescription" : "Ingresar una descripción del ítem",
+            "description" : "Descripción: "
         },
         "clientSelector" : {
             "billed" : "Facturado a",

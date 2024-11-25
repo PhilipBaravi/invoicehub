@@ -887,7 +887,7 @@ const InvoiceComponent: FC = () => {
       <Card className="w-full max-w-5xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
-            {isEditMode ? t('invoice.editInvoice') : t('invoice.newInvoice')}
+            {isEditMode ? t('invoiceList.editInvoice') : t('invoice.newInvoice')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
