@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
+import { useAuth } from "@/useAuth";
 
 interface LargeScreenSidebarProps {
   isOpen: boolean;
@@ -10,8 +11,8 @@ interface LargeScreenSidebarProps {
 }
 
 const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) => {
-  const { keycloak } = useKeycloak(); // Get the Keycloak instance
-
+  const { keycloak } = useKeycloak();
+  const { isAdmin } = useAuth();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [sidebarWidth, setSidebarWidth] = useState(isOpen ? "250px" : "80px");
@@ -19,19 +20,49 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
 
   const logOut = () => {
     if (keycloak?.authenticated) {
-      keycloak.logout({ redirectUri: window.location.origin + "/login" }); // Log out and redirect
+      keycloak.logout({ redirectUri: window.location.origin + "/login" });
     } else {
-      navigate("/login"); // Navigate to login if not authenticated
+      navigate("/login");
     }
   };
 
   const menuItems = [
-    { name: t("sidebar.dashboard"), icon: LayoutDashboard, path: "/dashboard" },
-    { name: t("sidebar.invoice"), icon: FileText, path: "/dashboard/invoices" },
-    { name: t("sidebar.employee"), icon: UserSearch, path: "/dashboard/employee" },
-    { name: t("sidebar.clients"), icon: Building2, path: "/dashboard/clients" },
-    { name: t("sidebar.categories"), icon: FolderKanban, path: "/dashboard/categories" },
-    { name: t("sidebar.login"), icon: LogIn, path: "/login" },
+    { 
+      name: t("sidebar.dashboard"), 
+      icon: LayoutDashboard, 
+      path: "/dashboard",
+      showAlways: true
+    },
+    { 
+      name: t("sidebar.invoice"), 
+      icon: FileText, 
+      path: "/dashboard/invoices",
+      showAlways: true
+    },
+    { 
+      name: t("sidebar.employee"), 
+      icon: UserSearch, 
+      path: "/dashboard/employee",
+      adminOnly: true
+    },
+    { 
+      name: t("sidebar.clients"), 
+      icon: Building2, 
+      path: "/dashboard/clients",
+      showAlways: true
+    },
+    { 
+      name: t("sidebar.categories"), 
+      icon: FolderKanban, 
+      path: "/dashboard/categories",
+      showAlways: true
+    },
+    { 
+      name: t("sidebar.login"), 
+      icon: LogIn, 
+      path: "/login",
+      showAlways: true
+    },
   ];
 
   useEffect(() => {
@@ -56,6 +87,10 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     setSidebarWidth(isOpen ? "250px" : "80px");
   }, [isOpen]);
 
+  const filteredMenuItems = menuItems.filter(item => 
+    item.showAlways || (item.adminOnly && isAdmin)
+  );
+
   return (
     <div
       ref={sidebarRef}
@@ -77,15 +112,14 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
       </div>
 
       <ul className="flex flex-col items-start gap-[20px] p-4 mt-[60px]">
-        {menuItems.map((item) => {
+        {filteredMenuItems.map((item) => {
           const Icon = item.icon;
 
-          // Custom onClick behavior for the "login" menu item
           const handleClick = () => {
             if (item.path === "/login") {
-              logOut(); // Call logOut function for login
+              logOut();
             } else {
-              navigate(item.path); // Navigate for other items
+              navigate(item.path);
             }
           };
 
@@ -93,7 +127,7 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
             <li
               key={item.name}
               className="flex items-center gap-[10px] px-2 py-2 rounded-md hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-950 dark:text-stone-50 transition-all cursor-pointer"
-              onClick={handleClick} // Custom handleClick
+              onClick={handleClick}
             >
               <Icon className="text-xl" />
               {isOpen && <span className="ml-2 font-medium">{item.name}</span>}
