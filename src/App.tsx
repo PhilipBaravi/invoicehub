@@ -32,17 +32,8 @@ import { useTranslation } from "react-i18next";
 import LandingPage from "./landing-page/LandingPage";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "./useAuth";
+import type { UserFormValues } from "./components/main-authentication/new-register-page/RegisterForm";
 
-// UserDetails interface
-interface UserDetails {
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-}
-
-// ProtectedRoute Component with role-based access
 const ProtectedRoute = ({ 
   element: Element, 
   allowedRoles = ['Admin', 'Employee', 'Manager'] 
@@ -111,9 +102,8 @@ const ProtectedRoute = ({
   return Element;
 };
 
-// Main App Component
 const App: React.FC = () => {
-  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+  const [userDetails, setUserDetails] = useState<UserFormValues | null>(null);
   const { t } = useTranslation();
 
   const eventLogger = (event: any, error: any) => {
@@ -174,10 +164,8 @@ const App: React.FC = () => {
               }
             />
 
-            {/* Protected main dashboard route with nested routes */}
             <Route path="/dashboard/*" element={<ProtectedRoute element={<Dashboard />} />}>
               <Route index element={<DashboardDefault />} />
-              {/* Admin-only routes */}
               <Route 
                 path="employee" 
                 element={
@@ -201,7 +189,6 @@ const App: React.FC = () => {
                 <Route path="payment-methods" element={<ManagePaymentMethods />} />
               </Route>
               
-              {/* Routes accessible by all roles */}
               <Route path="clients" element={<ClientVendorList />} />
               <Route path="invoices" element={<InvoiceListPage />} />
               <Route path="invoices/new-invoice" element={<Invoice />} />

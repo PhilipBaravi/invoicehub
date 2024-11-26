@@ -42,25 +42,8 @@ const HeaderAvatar: FC = () => {
   ];
 
   const logOut = () => {
-    localStorage.removeItem('keycloak_token');
-    localStorage.removeItem('keycloak_refresh_token');
-
-    if (keycloak?.authenticated) {
-      const redirectUri = `${window.location.origin}/login`;
-      console.log('Logging out with redirect to:', redirectUri);
-      
-      keycloak.logout({
-        redirectUri,
-      }).then(() => {
-        console.log('Logout completed');
-        window.location.href = '/login';
-      }).catch((error) => {
-        console.error('Logout failed:', error);
-        window.location.href = '/login';
-      });
-    } else {
-      navigate('/login');
-    }
+    keycloak.logout();
+    navigate('http://localhost:5173/login');
   };
 
   const filteredMenuItems = menuItems.filter(item => 

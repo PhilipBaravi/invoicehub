@@ -7,13 +7,13 @@ import { useMediaQuery } from 'react-responsive';
 import LanguageSelector from "@/components/main-authentication/new-login-page/LanguageSelector";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
 
+
 type HeaderProps = {
   toggleLargeSidebar: () => void;
 };
 
 const Header: FC<HeaderProps> = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' });
 
   const toggleSidebar = () => {
