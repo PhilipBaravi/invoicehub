@@ -8,7 +8,7 @@ interface AuthTokens {
 }
 
 const keycloakConfig = {
-  url: 'http://3.73.125.19:8080/auth',
+  url: 'https://3.73.125.19:8080/auth',
   realm: 'e-invoices',
   clientId: 'invoicing-app-react-login',
   enableCors: true,
