@@ -1,7 +1,5 @@
 // products-types.ts
 
-import { LucideIcon } from "lucide-react";
-
 export interface Category {
   id: number;
   description: string;
