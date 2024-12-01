@@ -129,8 +129,8 @@ const App: React.FC = () => {
       onEvent={eventLogger}
       onTokens={tokenLogger}
       initOptions={{
-        onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+        onLoad: 'login-required',
+        // silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
         pkceMethod: 'S256',
         checkLoginIframe: false,
       }}
