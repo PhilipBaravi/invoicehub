@@ -31,7 +31,7 @@ const InvoiceListPage: FC = () => {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'ALL_STATUSES'>('ALL_STATUSES');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
-  const [, setIsApproving] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
   const { t } = useTranslation('invoices');
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
@@ -270,10 +270,12 @@ const InvoiceListPage: FC = () => {
                             <Eye className="mr-2 h-4 w-4" />
                             <span>{t('invoiceList.preview')}</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            <span>{t('invoiceList.edit')}</span>
-                          </DropdownMenuItem>
+                          {invoice.invoiceStatus !== 'APPROVED' && (
+                            <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
+                              <Pencil className="mr-2 h-4 w-4" />
+                              <span>{t('invoiceList.edit')}</span>
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem
                             onClick={() => openDeleteDialog(invoice.id)}
                             className="text-red-600 focus:text-red-600"

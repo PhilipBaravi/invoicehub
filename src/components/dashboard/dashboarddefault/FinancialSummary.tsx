@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react"
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
+import { PieChart, Pie, Cell, Legend, Tooltip } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChartContainer } from "@/components/ui/chart"
 import { useKeycloak } from "@react-keycloak/web"
@@ -80,7 +80,7 @@ const FinancialSummaryChart: FC = () => {
             }}
             className="h-[300px]"
           >
-            <ResponsiveContainer width="100%" height="100%">
+           
               <PieChart>
                 <Pie
                   data={data}
@@ -92,7 +92,7 @@ const FinancialSummaryChart: FC = () => {
                   dataKey="value"
                   label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 >
-                  {data.map((index:any) => (
+                  {data.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
@@ -128,7 +128,7 @@ const FinancialSummaryChart: FC = () => {
                 />
                 <Legend />
               </PieChart>
-            </ResponsiveContainer>
+            
           </ChartContainer>
         )}
       </CardContent>

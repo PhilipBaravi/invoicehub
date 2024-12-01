@@ -29,6 +29,14 @@ import {
   AlertDescription,
 } from '@/components/ui/alert';
 import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from '@/components/ui/alert-dialog';
+import {
   LineItem,
   Invoice,
   ClientVendor,
@@ -695,6 +703,8 @@ const InvoiceComponent: FC = () => {
     t,
   ]);
 
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+
   const handleSaveInvoice = useCallback(async () => {
     if (!selectedClient) {
       setErrorMessage(t('invoice.errors.selectClient'));
@@ -858,12 +868,7 @@ const InvoiceComponent: FC = () => {
 
       await fetchProductsAndCategories();
 
-      alert(
-        isEditMode
-          ? 'Invoice updated successfully'
-          : 'Invoice saved successfully'
-      );
-      navigate('/dashboard/invoices');
+      setShowSuccessDialog(true);
     } catch (error) {
       console.error(error);
       setErrorMessage(t('invoice.errors.errorSavingInvoice'));
@@ -877,7 +882,6 @@ const InvoiceComponent: FC = () => {
     fetchProductsAndCategories,
     isEditMode,
     id,
-    navigate,
     t,
     businessInformation,
   ]);
@@ -1009,12 +1013,12 @@ const InvoiceComponent: FC = () => {
         </CardContent>
         <Separator />
         
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex items-center justify-between pt-4">
           <Button variant="outline" onClick={() => navigate('/dashboard/invoices')}>
             {t('invoice.cancel')}
           </Button>
           <div className="space-x-2">
-            <Button variant="outline" onClick={generatePDFAndZip}>
+            <Button variant="outline" className='hidden' onClick={generatePDFAndZip}>
               {t('invoice.generatePDF')}
             </Button>
             <Button onClick={handleSaveInvoice}>
@@ -1029,6 +1033,28 @@ const InvoiceComponent: FC = () => {
           setTaxDetails={setTaxDetails}
           applyTaxes={applyTaxes}
         />
+        <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t('invoice.successTitle')}</AlertDialogTitle>
+              <AlertDialogDescription>
+                {isEditMode
+                  ? t('invoice.invoiceUpdatedSuccessfully')
+                  : t('invoice.invoiceSavedSuccessfully')}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <Button
+                onClick={() => {
+                  setShowSuccessDialog(false);
+                  navigate('/dashboard/invoices');
+                }}
+              >
+                {t('invoice.ok')}
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </Card>
     </div>
   );

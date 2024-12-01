@@ -23,13 +23,19 @@
     },
     "transactionsCard": {
         "title": "ტრანზაქციები",
-        "titleDescription": "ბოლო ტრანზაქციები თქვენი მაღაზიიდან.",
+        "titleDescription": "ბოლო ტრანზაქციები.",
         "viewAll": "ყველას ნახვა",
         "customer": "მომხმარებელი",
         "customerType": "ტიპი",
         "customerStatus": "სტატუსი",
         "customerDate": "თარიღი",
-        "customerAmount": "თანხა"
+        "customerAmount": "თანხა",
+        "invoiceNo": "ინვოისის ნომერი",
+        "dateOfIssue": "გაცემის თარიღი",
+        "dueDate": "ვადაგასვლის თარიღი",
+        "invoiceType": "ინვოისის ტიპი",
+        "invoiceStatus": "ინვოისის სტატუსი",
+        "totalAmount": "სრული თანხა"
     },
     "sidebar": {
     "dashboard": "მთავარი",

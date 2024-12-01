@@ -1,0 +1,115 @@
+import { FC } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Bot, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { AnimatedSection } from "./AnimatedSection";
+import { Link } from "react-router-dom";
+
+const AboutAi: FC = () => {
+  return (
+    <section className="py-16">
+      <div className="container mx-auto px-4">
+        <AnimatedSection>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <motion.div
+              initial={{ scale: 0.5, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">AI-Powered Experience</span>
+            </motion.div>
+          </motion.div>
+        </AnimatedSection>
+
+        <div className="flex flex-col md:flex-row gap-12 items-center">
+          {/* Right Column - Chat Interface */}
+          <div className="w-full md:w-1/2">
+            <AnimatedSection delay={0.2}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <Card className="border-2">
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex items-center gap-3 pb-4 border-b">
+                      <Bot className="w-6 h-6 text-primary" />
+                      <span className="font-semibold">AI Assistant</span>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div className="flex gap-3">
+                        <Bot className="w-6 h-6 text-primary shrink-0 mt-1" />
+                        <p className="text-sm bg-secondary/50 rounded-lg p-3">
+                          Hello! I'm your AI assistant. How can I help you with your invoices today?
+                        </p>
+                      </div>
+                      
+                      <div className="flex gap-3 justify-end">
+                        <p className="text-sm bg-primary/10 rounded-lg p-3">
+                          I need to find all unpaid invoices from last month.
+                        </p>
+                      </div>
+                      
+                      <div className="flex gap-3">
+                        <Bot className="w-6 h-6 text-primary shrink-0 mt-1" />
+                        <p className="text-sm bg-secondary/50 rounded-lg p-3">
+                          I'll help you with that. I found 5 unpaid invoices from last month. Would you like me to display them or send a summary report?
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </AnimatedSection>
+          </div>
+
+          {/* Left Column - Content */}
+          <div className="w-full md:w-1/2">
+            <AnimatedSection>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <h2 className="text-4xl font-bold tracking-tight mb-6">
+                  Smart AI Assistant
+                </h2>
+                <p className="text-lg text-muted-foreground mb-8">
+                  Your personal AI-powered assistant is here to simplify your invoicing process. From retrieving and updating invoices to approving and sending them via email, our AI Assistant is designed to handle key tasks seamlessly, saving you time and ensuring accuracy.
+                </p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                  className="mt-8"
+                >
+                  <Link to="/register">
+                    <Button
+                      size="lg"
+                      className="group"
+                    >
+                      Try AI Assistant
+                      <Bot className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </motion.div>
+              </motion.div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AboutAi;

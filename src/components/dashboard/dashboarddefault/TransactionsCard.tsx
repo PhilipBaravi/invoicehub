@@ -1,11 +1,11 @@
-import { FC } from "react"
-import { useTranslation } from "react-i18next"
-import { Link } from "react-router-dom"
-import { ArrowUpRight } from "lucide-react"
+import { FC, useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -13,26 +13,68 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
-interface Transaction {
-  id: string
-  customer: string
-  email: string
-  type: string
-  status: "approved" | "pending" | "rejected"
-  amount: number
-}
-
-const transactions: Transaction[] = [
-  { id: "1", customer: "Liam Johnson", email: "liam@example.com", type: "Sale", status: "approved", amount: 250.00 },
-  { id: "2", customer: "Emma Wilson", email: "emma@example.com", type: "Refund", status: "pending", amount: 180.00 },
-  { id: "3", customer: "Noah Brown", email: "noah@example.com", type: "Purchase", status: "approved", amount: 350.00 },
-  { id: "4", customer: "Olivia Davis", email: "olivia@example.com", type: "Sale", status: "rejected", amount: 120.00 },
-]
+import { useKeycloak } from '@react-keycloak/web';
+import { Invoice, InvoiceStatus } from "../invoice/invoice-types";
 
 const TransactionsCard: FC = () => {
-  const { t } = useTranslation('dashboardDefault')
+  const { t } = useTranslation('dashboardDefault');
+  const { keycloak } = useKeycloak();
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        const response = await fetch('http://localhost:9090/api/v1/dashboard/lastThreeApproved', {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          const formattedData: Invoice[] = data.data.map((invoice: any) => ({
+            ...invoice,
+            dateOfIssue: new Date(invoice.dateOfIssue),
+            dueDate: new Date(invoice.dueDate),
+          }));
+          setInvoices(formattedData);
+        } else {
+          console.error("Failed to fetch invoices:", data.message);
+        }
+      } catch (error) {
+        console.error("An error occurred while fetching invoices:", error);
+      }
+    };
+
+    if (keycloak && keycloak.token) {
+      fetchInvoices();
+    }
+  }, [keycloak.token]);
+
+  const getStatusBadge = (status: InvoiceStatus) => {
+    const statusColors: Record<InvoiceStatus, string> = {
+      'APPROVED': 'bg-green-500',
+      'AWAITING_APPROVAL': 'bg-yellow-500',
+      'REJECTED': 'bg-red-500',
+      'PAID': 'bg-blue-500',
+    };
+    const badgeVariant: Record<InvoiceStatus, "default" | "secondary" | "destructive" | "outline" | null | undefined> = {
+      'APPROVED': 'default',
+      'AWAITING_APPROVAL': 'secondary',
+      'REJECTED': 'destructive',
+      'PAID': 'default',
+    };
+    return (
+      <Badge
+        variant={badgeVariant[status] || 'default'}
+        className={statusColors[status] || ''}
+      >
+        {status.replace('_', ' ')}
+      </Badge>
+    );
+  };
 
   return (
     <Card className="h-full">
@@ -42,7 +84,7 @@ const TransactionsCard: FC = () => {
           <CardDescription>{t('transactionsCard.titleDescription')}</CardDescription>
         </div>
         <Button asChild size="sm">
-          <Link to="/transactions" className="inline-flex items-center">
+          <Link to="/dashboard/invoices" className="inline-flex items-center">
             {t('transactionsCard.viewAll')}
             <ArrowUpRight className="ml-2 h-4 w-4" />
           </Link>
@@ -52,36 +94,31 @@ const TransactionsCard: FC = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[40%]">{t('transactionsCard.customer')}</TableHead>
-              <TableHead className="hidden md:table-cell">{t('transactionsCard.customerType')}</TableHead>
-              <TableHead className="hidden md:table-cell">{t('transactionsCard.customerStatus')}</TableHead>
-              <TableHead className="text-right">{t('transactionsCard.customerAmount')}</TableHead>
+              <TableHead>{t('transactionsCard.invoiceNo')}</TableHead>
+              <TableHead>{t('transactionsCard.customer')}</TableHead>
+              <TableHead>{t('transactionsCard.dateOfIssue')}</TableHead>
+              <TableHead>{t('transactionsCard.dueDate')}</TableHead>
+              <TableHead className="hidden md:table-cell">{t('transactionsCard.invoiceType')}</TableHead>
+              <TableHead className="hidden md:table-cell">{t('transactionsCard.invoiceStatus')}</TableHead>
+              <TableHead className="text-right">{t('transactionsCard.totalAmount')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((transaction) => (
-              <TableRow key={transaction.id}>
+            {invoices.map((invoice) => (
+              <TableRow key={invoice.id}>
+                <TableCell>{invoice.invoiceNo}</TableCell>
                 <TableCell className="font-medium">
-                  <div>{transaction.customer}</div>
-                  <div className="text-sm text-muted-foreground">{transaction.email}</div>
+                  <div>{invoice.clientVendor?.name}</div>
+                  <div className="text-sm text-muted-foreground">{invoice.clientVendor?.email}</div>
                 </TableCell>
-                <TableCell className="hidden md:table-cell">{transaction.type}</TableCell>
+                <TableCell>{invoice.dateOfIssue?.toLocaleDateString()}</TableCell>
+                <TableCell>{invoice.dueDate?.toLocaleDateString()}</TableCell>
+                <TableCell className="hidden md:table-cell">{invoice.invoiceType}</TableCell>
                 <TableCell className="hidden md:table-cell">
-                  <Badge 
-                    variant={
-                      transaction.status === "approved" ? "default" : 
-                      transaction.status === "pending" ? "secondary" : "destructive"
-                    }
-                    className={
-                      transaction.status === "approved" ? "bg-green-500" :
-                      transaction.status === "pending" ? "bg-yellow-500" : ""
-                    }
-                  >
-                    {transaction.status}
-                  </Badge>
+                  {getStatusBadge(invoice.invoiceStatus as InvoiceStatus)}
                 </TableCell>
                 <TableCell className="text-right">
-                  ${transaction.amount.toFixed(2)}
+                  ${invoice.total.toFixed(2)}
                 </TableCell>
               </TableRow>
             ))}
@@ -89,7 +126,7 @@ const TransactionsCard: FC = () => {
         </Table>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default TransactionsCard
+export default TransactionsCard;

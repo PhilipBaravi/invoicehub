@@ -23,13 +23,19 @@
     },
     "transactionsCard": {
         "title": "Transacciones",
-        "titleDescription": "Transacciones recientes de tu tienda.",
+        "titleDescription": "Transacciones recientes.",
         "viewAll": "Ver todo",
         "customer": "Cliente",
         "customerType": "Tipo",
         "customerStatus": "Estado",
         "customerDate": "Fecha",
-        "customerAmount": "Monto"
+        "customerAmount": "Monto",
+        "invoiceNo": "Número de Factura",
+        "dateOfIssue": "Fecha de Emisión",
+        "dueDate": "Fecha de Vencimiento",
+        "invoiceType": "Tipo de Factura",
+        "invoiceStatus": "Estado de la Factura",
+        "totalAmount": "Monto Total"
     },
     "sidebar": {
     "dashboard": "Tablero",

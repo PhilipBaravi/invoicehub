@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from "react"
 import * as React from "react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { useTranslation } from "react-i18next"
+import keycloak from "@/components/main-authentication/new-login-page/keycloak"
 
 import {
   Card,
@@ -16,40 +17,72 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 
-// Sample product sales data
-const productSalesData = [
-  { date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },{ date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },{ date: "2024-04-01", productsSold: 150, totalSales: 7500 },
-  { date: "2024-04-02", productsSold: 180, totalSales: 9000 },
-  { date: "2024-04-03", productsSold: 120, totalSales: 6000 },
-  { date: "2024-04-04", productsSold: 260, totalSales: 13000 },
-  { date: "2024-04-05", productsSold: 290, totalSales: 14500 },
-  { date: "2024-04-06", productsSold: 340, totalSales: 17000 },
-  { date: "2024-04-07", productsSold: 180, totalSales: 9000 },
+// Mock data for sales
+const totalSalesData = [
+  { date: "2024-11-13", totalSales: 7500 },
+  { date: "2024-11-14", totalSales: 9000 },
+  { date: "2024-11-15", totalSales: 6000 },
+  { date: "2024-11-16", totalSales: 13000 },
+  { date: "2024-11-17", totalSales: 14500 },
 ]
 
 const ProductSalesChart: FC = () => {
   const [activeChart, setActiveChart] = React.useState<keyof typeof chartConfig>("productsSold")
   const [loading, setLoading] = useState(false)
+  const [productSalesData, setProductSalesData] = useState<any[]>([])
   const { t } = useTranslation('dashboardDefault')
+
+  useEffect(() => {
+    const fetchProductSalesData = async () => {
+      setLoading(true)
+      try {
+        const year = 2024
+        const month = 11
+        const response = await fetch(`http://localhost:9090/api/v1/dashboard/soldProductsBy/${year}/${month}`, {
+          headers: {
+            'Authorization': `Bearer ${keycloak.token}`,
+            'Content-Type': 'application/json'
+          }
+        })
+        const data = await response.json()
+        if (data.success && data.data) {
+          const fetchedData = data.data
+          const productsSoldArray = Object.keys(fetchedData).map((key) => {
+            const dateStr = key // e.g., "November 13"
+            const day = parseInt(dateStr.split(' ')[1])
+            const monthName = dateStr.split(' ')[0]
+            const date = new Date(`${monthName} ${day}, ${year}`)
+            const formattedDate = date.toISOString().split('T')[0] 
+            return {
+              date: formattedDate,
+              productsSold: fetchedData[key],
+            }
+          })
+
+          const mergedData = productsSoldArray.map(item => {
+            const totalSalesItem = totalSalesData.find(tsItem => tsItem.date === item.date)
+            return {
+              date: item.date,
+              productsSold: item.productsSold,
+              totalSales: totalSalesItem ? totalSalesItem.totalSales : 0
+            }
+          })
+
+          setProductSalesData(mergedData)
+        } else {
+          // Handle error or empty data
+          setProductSalesData([])
+        }
+      } catch (error) {
+        console.error('Error fetching product sales data:', error)
+        setProductSalesData([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProductSalesData()
+  }, [])
 
   // Trigger loading on window resize
   useEffect(() => {
@@ -78,7 +111,7 @@ const ProductSalesChart: FC = () => {
       productsSold: productSalesData.reduce((acc, curr) => acc + curr.productsSold, 0),
       totalSales: productSalesData.reduce((acc, curr) => acc + curr.totalSales, 0),
     }),
-    []
+    [productSalesData]
   )
 
   return (
@@ -109,7 +142,7 @@ const ProductSalesChart: FC = () => {
           ))}
         </div>
       </CardHeader>
-      
+
       <CardContent className="px-2 sm:p-6">
         {loading ? (
           <div className="flex items-center justify-center h-[250px]">

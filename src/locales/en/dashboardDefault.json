@@ -23,13 +23,19 @@
     },
     "transactionsCard" : {
         "title" : "Transactions",
-        "titleDescription" : "Recent transactions from your store.",
+        "titleDescription" : "Recent transactions.",
         "viewAll" : "View All",
         "customer" : "Customer",
         "customerType" : "Type",
         "customerStatus" : "Status",
         "customerDate" : "Date",
-        "customerAmount" : "Amount"
+        "customerAmount" : "Amount",
+        "invoiceNo" : "Invoice No",
+        "dateOfIssue" : "Date Of Issue",
+        "dueDate" : "Due Date",
+        "invoiceType" : "Invoice Type",
+        "invoiceStatus" : "Invoice Status",
+        "totalAmount" : "Total Amount"
     },
     "sidebar" : {
         "dashboard" : "Dashboard",
