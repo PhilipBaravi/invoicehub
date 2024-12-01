@@ -31,7 +31,7 @@ const InvoiceListPage: FC = () => {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'ALL_STATUSES'>('ALL_STATUSES');
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null);
-  const [isApproving, setIsApproving] = useState(false);
+  const [, setIsApproving] = useState(false);
   const { t } = useTranslation('invoices');
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
