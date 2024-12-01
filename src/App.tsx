@@ -136,7 +136,7 @@ const App: React.FC = () => {
       }}
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <Router>
+        <Router basename="/invoicing-app">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route 
