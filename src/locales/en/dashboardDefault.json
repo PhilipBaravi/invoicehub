@@ -37,6 +37,21 @@
         "invoiceStatus" : "Invoice Status",
         "totalAmount" : "Total Amount"
     },
+    "financialSummary": {
+    "title": "Financial Summary",
+    "description": "An overview of costs, profit/loss, and sales",
+    "loading": "Loading...",
+    "chart": {
+        "totalCost": "Total Cost",
+        "profitLoss": "Total Profit/Loss",
+        "totalSales": "Total Sales",
+        "tooltip": {
+            "name": "Name",
+            "value": "Value",
+            "percentage": "Percentage"
+        }
+    }
+},
     "sidebar" : {
         "dashboard" : "Dashboard",
         "employee" : "Employees",

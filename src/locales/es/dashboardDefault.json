@@ -37,6 +37,21 @@
         "invoiceStatus": "Estado de la Factura",
         "totalAmount": "Monto Total"
     },
+    "financialSummary": {
+    "title": "Resumen Financiero",
+    "description": "Una visión general de costos, ganancias/pérdidas y ventas",
+    "loading": "Cargando...",
+    "chart": {
+        "totalCost": "Costo Total",
+        "profitLoss": "Ganancias/Pérdidas Totales",
+        "totalSales": "Ventas Totales",
+        "tooltip": {
+            "name": "Nombre",
+            "value": "Valor",
+            "percentage": "Porcentaje"
+        }
+    }
+},
     "sidebar": {
     "dashboard": "Tablero",
     "employee": "Empleados",

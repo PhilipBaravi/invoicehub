@@ -37,6 +37,21 @@
         "invoiceStatus": "ინვოისის სტატუსი",
         "totalAmount": "სრული თანხა"
     },
+    "financialSummary": {
+    "title": "ფინანსური შეჯამება",
+    "description": "ხარჯების, მოგების/ზარალისა და გაყიდვების მიმოხილვა",
+    "loading": "იტვირთება...",
+    "chart": {
+        "totalCost": "ჯამური ხარჯი",
+        "profitLoss": "მოგება/ზარალი ჯამში",
+        "totalSales": "სულ გაყიდვები",
+        "tooltip": {
+            "name": "დასახელება",
+            "value": "მნიშვნელობა",
+            "percentage": "პროცენტული მაჩვენებელი"
+        }
+    }
+},
     "sidebar": {
     "dashboard": "მთავარი",
     "employee": "თანამშრომლები",
