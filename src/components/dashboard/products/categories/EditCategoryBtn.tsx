@@ -49,7 +49,7 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
     };
 
     try {
-      const response = await fetch(`http://localhost:9090/api/v1/category/update/${category.id}`, {
+      const response = await fetch(`https://3.120.116.20:9090/api/v1/category/update/${category.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

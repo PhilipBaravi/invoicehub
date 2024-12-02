@@ -42,7 +42,7 @@ const Categories: FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:9090/api/v1/category/list", {
+        const response = await fetch("https://3.120.116.20:9090/api/v1/category/list", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -75,7 +75,7 @@ const Categories: FC = () => {
   const confirmDeleteCategory = async () => {
     if (categoryToDelete) {
       try {
-        await fetch(`http://localhost:9090/api/v1/category/delete/${categoryToDelete.id}`, {
+        await fetch(`https://3.120.116.20:9090/api/v1/category/delete/${categoryToDelete.id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${keycloak.token}`,

@@ -25,7 +25,7 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice, isEditMo
         if (isEditMode) {
           // Do nothing, data is already fetched
         } else {
-          const response = await fetch('http://localhost:9090/api/v1/invoice/generate', {
+          const response = await fetch('https://3.120.116.20:9090/api/v1/invoice/generate', {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
             },

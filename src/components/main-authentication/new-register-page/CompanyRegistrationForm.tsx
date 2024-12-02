@@ -114,7 +114,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     };
 
     try {
-      const response = await fetch('http://localhost:9090/api/v1/user/create', {
+      const response = await fetch('https://3.120.116.20:9090/api/v1/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

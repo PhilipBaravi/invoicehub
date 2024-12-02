@@ -21,7 +21,7 @@ export const useAuth = () => {
       if (!keycloak.token) return;
 
       try {
-        const response = await fetch('http://localhost:9090/api/v1/user/loggedInUser', {
+        const response = await fetch('https://3.120.116.20:9090/api/v1/user/loggedInUser', {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },

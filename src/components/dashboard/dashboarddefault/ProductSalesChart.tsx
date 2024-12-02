@@ -38,7 +38,7 @@ const ProductSalesChart: FC = () => {
       try {
         const year = 2024
         const month = 11
-        const response = await fetch(`http://localhost:9090/api/v1/dashboard/soldProductsBy/${year}/${month}`, {
+        const response = await fetch(`https://3.120.116.20:9090/api/v1/dashboard/soldProductsBy/${year}/${month}`, {
           headers: {
             'Authorization': `Bearer ${keycloak.token}`,
             'Content-Type': 'application/json'

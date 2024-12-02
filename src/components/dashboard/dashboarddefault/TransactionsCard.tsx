@@ -26,7 +26,7 @@ const TransactionsCard: FC = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch('http://localhost:9090/api/v1/dashboard/lastThreeApproved', {
+        const response = await fetch('https://3.120.116.20:9090/api/v1/dashboard/lastThreeApproved', {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },

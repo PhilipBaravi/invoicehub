@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
 import { useAuth } from "@/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 
 const HeaderAvatar: FC = () => {
   const { keycloak } = useKeycloak();
-  const navigate = useNavigate();
   const { isAdmin, user } = useAuth();
 
   const menuItems = [
@@ -42,10 +41,13 @@ const HeaderAvatar: FC = () => {
   ];
 
   const logOut = () => {
-    keycloak.logout();
-    navigate('http://localhost:5173/login');
+    localStorage.removeItem('keycloak_token');
+    localStorage.removeItem('keycloak_refresh_token');
+    keycloak.token = '';
+    keycloak.refreshToken = '';
+    keycloak.authenticated = false;
+    keycloak.logout({ redirectUri: 'http://localhost:5173/login' });
   };
-
   const filteredMenuItems = menuItems.filter(item => 
     !item.adminOnly || (item.adminOnly && isAdmin)
   );

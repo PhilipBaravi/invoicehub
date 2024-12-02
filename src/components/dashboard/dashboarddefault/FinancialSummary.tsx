@@ -18,7 +18,7 @@ const FinancialSummaryChart: FC = () => {
 
   const fetchFinancialSummary = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/dashboard/summaryNumbers', {
+      const response = await fetch('https://3.120.116.20:9090/api/v1/dashboard/summaryNumbers', {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
         },

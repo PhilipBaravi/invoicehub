@@ -120,7 +120,7 @@ export default function AddClientVendorSheet({
     if (!validateForm()) return;
 
     try {
-      await apiFetch('http://localhost:9090/api/v1/clientVendor/create', {
+      await apiFetch('https://3.120.116.20:9090/api/v1/clientVendor/create', {
         method: 'POST',
         body: JSON.stringify(newClientVendor),
       });

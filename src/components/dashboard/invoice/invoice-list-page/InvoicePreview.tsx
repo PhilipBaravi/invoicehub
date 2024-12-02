@@ -24,7 +24,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
   useEffect(() => {
     const fetchLineItems = async () => {
       try {
-        const response = await fetch(`http://localhost:9090/api/v1/invoice/product/list/${invoice.id}`, {
+        const response = await fetch(`https://3.120.116.20:9090/api/v1/invoice/product/list/${invoice.id}`, {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },
