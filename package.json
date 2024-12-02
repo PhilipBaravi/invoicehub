@@ -51,6 +51,7 @@
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "cmdk": "^1.0.0",
+        "cross-spawn": "^7.0.5",
         "date-fns": "^3.6.0",
         "file-saver": "^2.0.5",
         "framer-motion": "^11.11.17",
