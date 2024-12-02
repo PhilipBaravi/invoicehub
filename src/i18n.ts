@@ -44,7 +44,7 @@ i18n
         invoices: invoicesEN,
         globalMenu: globalMenuEN,
         landingPage: landingPageEN,
-        terms: termsGE
+        terms: termsEN
       },
       es: {
         authorization: authorizationES,
