@@ -66,12 +66,17 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
   };
 
   const handleLogout = () => {
-    if (keycloak?.authenticated) {
-      keycloak.logout({ redirectUri: window.location.origin + "/login" });
-    } else {
-      navigate("/login");
-    }
-    onClose();
+    keycloak.logout({
+      redirectUri: 'http://localhost:5173/login', // Specify the redirect URI
+    }).then(() => {
+      // Clear tokens stored in localStorage
+      localStorage.removeItem('keycloak_token');
+      localStorage.removeItem('keycloak_refresh_token');
+      // Optional: Confirm logout by reloading the page
+      window.location.href = 'http://localhost:5173/login';
+    }).catch(err => {
+      console.error('Logout failed:', err);
+    });
   };
 
   const filteredMenuItems = menuItems.filter(item => 
