@@ -12,41 +12,48 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 const HeaderAvatar: FC = () => {
   const { keycloak } = useKeycloak();
   const { isAdmin, user } = useAuth();
+  const { t } = useTranslation('settings')
 
   const menuItems = [
     {
-      label: 'Team',
+      label: t('menu.team'),
       path: 'employee',
       adminOnly: true
     },
     {
-      label: 'Payment Method',
+      label: t('menu.payment'),
       path: 'settings/payment-methods',
       adminOnly: true
     },
     {
-      label: 'Subscription',
+      label: t('menu.subscription'),
       path: 'settings/profile-subscription',
       adminOnly: true
     },
     {
-      label: 'Settings',
+      label: t('menu.settings'),
       path: 'settings',
       adminOnly: true
     }
   ];
 
   const logOut = () => {
-    localStorage.removeItem('keycloak_token');
-    localStorage.removeItem('keycloak_refresh_token');
-    keycloak.token = '';
-    keycloak.refreshToken = '';
-    keycloak.authenticated = false;
-    keycloak.logout({ redirectUri: 'http://localhost:5173/login' });
+    keycloak.logout({
+      redirectUri: 'http://localhost:5173/login', // Specify the redirect URI
+    }).then(() => {
+      // Clear tokens stored in localStorage
+      localStorage.removeItem('keycloak_token');
+      localStorage.removeItem('keycloak_refresh_token');
+      // Optional: Confirm logout by reloading the page
+      window.location.href = 'http://localhost:5173/login';
+    }).catch(err => {
+      console.error('Logout failed:', err);
+    });
   };
   const filteredMenuItems = menuItems.filter(item => 
     !item.adminOnly || (item.adminOnly && isAdmin)
@@ -85,7 +92,7 @@ const HeaderAvatar: FC = () => {
         ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logOut} className="cursor-pointer">
-          Log out
+          {t('menu.logout')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

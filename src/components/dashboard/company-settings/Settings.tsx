@@ -5,15 +5,18 @@ import {
   Card,
   CardContent,
 } from '@/components/ui/card'
-
-const settingsNavItems = [
-  { title: 'Company Settings', to: '', icon: Building2 },
-  { title: 'Profile Subscription', to: 'profile-subscription', icon: User },
-  { title: 'Payment Methods', to: 'payment-methods', icon: CreditCard },
-]
+import { useTranslation } from 'react-i18next'
 
 const Settings: React.FC = () => {
   const location = useLocation()
+  const { t } = useTranslation('settings');
+
+const settingsNavItems = [
+  { title: t('settings.company'), to: '', icon: Building2 },
+  { title: t('settings.profile'), to: 'profile-subscription', icon: User },
+  { title: t('settings.payment'), to: 'payment-methods', icon: CreditCard },
+]
+
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-2 md:p-8">

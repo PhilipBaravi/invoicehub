@@ -9,7 +9,8 @@ import employeesEN from './locales/en/employees.json';
 import invoicesEN from './locales/en/invoices.json';
 import globalMenuEN from './locales/en/globalMenu.json';
 import landingPageEN from './locales/en/landingPage.json';
-import termsEN from './locales/en/terms.json'
+import termsEN from './locales/en/terms.json';
+import settingsEN from './locales/en/settings.json';
 
 import authorizationES from './locales/es/authorization.json';
 import categoriesAndProductsES from './locales/es/categoriesAndProducts.json';
@@ -19,7 +20,8 @@ import employeesES from './locales/es/employees.json';
 import invoicesES from './locales/es/invoices.json';
 import globalMenuES from './locales/es/globalMenu.json';
 import landingPageES from './locales/es/landingPage.json';
-import termsES from './locales/es/terms.json'
+import termsES from './locales/es/terms.json';
+import settingsES from './locales/es/settings.json';
 
 import authorizationGE from './locales/ge/authorization.json';
 import categoriesAndProductsGE from './locales/ge/categoriesAndProducts.json';
@@ -29,7 +31,8 @@ import employeesGE from './locales/ge/employees.json';
 import invoicesGE from './locales/ge/invoices.json';
 import globalMenuGE from './locales/ge/globalMenu.json';
 import landingPageGE from './locales/ge/landingPage.json';
-import termsGE from './locales/ge/terms.json'
+import termsGE from './locales/ge/terms.json';
+import settingsGE from './locales/ge/settings.json';
 
 i18n
   .use(initReactI18next)
@@ -44,7 +47,8 @@ i18n
         invoices: invoicesEN,
         globalMenu: globalMenuEN,
         landingPage: landingPageEN,
-        terms: termsEN
+        terms: termsEN,
+        settings: settingsEN
       },
       es: {
         authorization: authorizationES,
@@ -55,7 +59,8 @@ i18n
         invoices: invoicesES,
         globalMenu: globalMenuES,
         landingPage: landingPageES,
-        terms: termsES
+        terms: termsES,
+        settings: settingsES
       },
       ge: {
         authorization: authorizationGE,
@@ -66,7 +71,8 @@ i18n
         invoices: invoicesGE,
         globalMenu: globalMenuGE,
         landingPage: landingPageGE,
-        terms: termsGE
+        terms: termsGE,
+        settings: settingsGE
       },
     },
     lng: localStorage.getItem('language') || 'en',
@@ -81,8 +87,8 @@ i18n
       'invoices',
       'globalMenu',
       'landingPage',
-      'privacyPolicy',
-      'terms'
+      'terms',
+      'settings'
     ], 
     defaultNS: 'authorization',
     interpolation: {

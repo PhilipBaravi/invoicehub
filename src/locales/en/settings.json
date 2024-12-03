@@ -1,0 +1,60 @@
+{
+    "menu" : {
+        "team" : "Team",
+        "payment" : "Payment Method",
+        "subscription" : "Subscription",
+        "settings" : "Settings",
+        "logout" : "Log Out"
+    },
+    "settings" : {
+        "company" : "Company Settings",
+        "profile" : "Profile Subscription",
+        "payment" : "Payment Methods"
+    },
+    "company" : {
+        "title" : "Company Name",
+        "address1" : "Address Line 1",
+        "address2" : "Address Line 2 (Optional)",
+        "city" : "City",
+        "state" : "State",
+        "zip" : "Zip Code",
+        "selectCountry" : "Select Country",
+        "website" : "Company Website (Optional)",
+        "save" : "Save",
+        "errors" : {
+            "name" : "Company name is required.",
+            "phone" : "Invalid company phone number for the selected country.",
+            "address" : "Company address is required.",
+            "city" : "City is required.",
+            "state" : "State is required.",
+            "zip" : "Zip code is required."
+        }
+    },
+    "payment" : {
+        "paymentSuccess" : "Payment method added succesfully!",
+        "paymentDeleted" : "Payment method deleted succesfully!",
+        "paymentDefault" : "Default payment method updated!",
+        "paymentUpdate" : "Payment method updated succesfully!",
+        "success" : "Success",
+        "creditCard" : "Credit Card",
+        "bankAccount" : "Bank Account",
+        "editMethod" : "Edit Payment Method",
+        "nameOn" : "Name on",
+        "card" : "Card",
+        "account" : "Account",
+        "cardNumber" : "Card Number",
+        "expiryDate" : "Expiry Date",
+        "accountNo" : "Account Number",
+        "save" : "Save Changes",
+        "name" : "Name: ",
+        "expiry" : "Expiry: ",
+        "setDefault" : "Set as default",
+        "addNew" : "Add New Payment Method",
+        "cvv" : "CVV",
+        "routingNo" : "Routing Number",
+        "bankName" : "Bank Name",
+        "checkins" : "Checking",
+        "savings" : "Savings",
+        "addPaymentMethod" : "Add Payment Method"
+    }
+}

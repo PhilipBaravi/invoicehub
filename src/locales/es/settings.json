@@ -1,0 +1,60 @@
+{
+    "menu": {
+        "team": "Equipo",
+        "payment": "Método de Pago",
+        "subscription": "Suscripción",
+        "settings": "Configuración",
+        "logout": "Cerrar Sesión"
+    },
+    "settings": {
+        "company": "Configuración de la Empresa",
+        "profile": "Suscripción de Perfil",
+        "payment": "Métodos de Pago"
+    },
+    "company": {
+        "title": "Nombre de la Empresa",
+        "address1": "Línea de Dirección 1",
+        "address2": "Línea de Dirección 2 (Opcional)",
+        "city": "Ciudad",
+        "state": "Estado",
+        "zip": "Código Postal",
+        "selectCountry": "Seleccionar País",
+        "website": "Sitio Web de la Empresa (Opcional)",
+        "save": "Guardar",
+        "errors": {
+            "name": "El nombre de la empresa es obligatorio.",
+            "phone": "Número de teléfono de la empresa no válido para el país seleccionado.",
+            "address": "La dirección de la empresa es obligatoria.",
+            "city": "La ciudad es obligatoria.",
+            "state": "El estado es obligatorio.",
+            "zip": "El código postal es obligatorio."
+        }
+    },
+    "payment": {
+        "paymentSuccess": "¡Método de pago agregado con éxito!",
+        "paymentDeleted": "¡Método de pago eliminado con éxito!",
+        "paymentDefault": "¡Método de pago predeterminado actualizado!",
+        "paymentUpdate": "¡Método de pago actualizado con éxito!",
+        "success": "Éxito",
+        "creditCard": "Tarjeta de Crédito",
+        "bankAccount": "Cuenta Bancaria",
+        "editMethod": "Editar Método de Pago",
+        "nameOn": "Nombre en",
+        "card": "Tarjeta",
+        "account": "Cuenta",
+        "cardNumber": "Número de Tarjeta",
+        "expiryDate": "Fecha de Expiración",
+        "accountNo": "Número de Cuenta",
+        "save": "Guardar Cambios",
+        "name": "Nombre: ",
+        "expiry": "Expiración: ",
+        "setDefault": "Establecer como predeterminado",
+        "addNew": "Agregar Nuevo Método de Pago",
+        "cvv": "CVV",
+        "routingNo": "Número de Enrutamiento",
+        "bankName": "Nombre del Banco",
+        "checkins": "Corriente",
+        "savings": "Ahorros",
+        "addPaymentMethod": "Agregar Método de Pago"
+    }
+}

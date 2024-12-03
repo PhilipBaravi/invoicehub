@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 interface UpdateCompanyDetailsProps {
   initialValues?: {
@@ -38,7 +39,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
     zipCode: '',
     phone: '',
   });
-
+  const { t } = useTranslation('settings');
   const companyPhoneCode = `+${getCountryCallingCode(companyCountry)}`;
 
   const handleSubmit = (e?: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
@@ -53,33 +54,33 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
   
     // Validations
     if (!title) {
-      newErrors.title = 'Company name is required.';
+      newErrors.title = t('company.errors.name');
       valid = false;
     }
   
     const fullCompanyPhoneNumber = companyPhoneCode + phone;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
-      newErrors.phone = 'Invalid company phone number for the selected country.';
+      newErrors.phone = t('company.errors.phone');
       valid = false;
     }
   
     if (!addressLine1) {
-      newErrors.addressLine1 = 'Company address is required.';
+      newErrors.addressLine1 = t('company.errors.address');
       valid = false;
     }
   
     if (!city) {
-      newErrors.city = 'City is required.';
+      newErrors.city = t('company.errors.city');
       valid = false;
     }
   
     if (!state) {
-      newErrors.state = 'State is required.';
+      newErrors.state = t('company.errors.state');
       valid = false;
     }
   
     if (!zipCode) {
-      newErrors.zipCode = 'Zip code is required.';
+      newErrors.zipCode = t('company.errors.zip');
       valid = false;
     }
   
@@ -106,14 +107,14 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
       {/* Company Name */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium mb-1">
-          Company Name
+          {t('company.title')}
         </label>
         <Input
           id="title"
           name="title"
           value={formValues.title}
           onChange={handleChange}
-          placeholder="Company Name"
+          placeholder={t('company.title')}
           className="w-full"
           required
         />
@@ -128,7 +129,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
             name="addressLine1"
             value={formValues.addressLine1}
             onChange={handleChange}
-            placeholder="Address Line 1"
+            placeholder={t('company.address1')}
             className="w-full"
             required
           />
@@ -140,7 +141,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
             name="addressLine2"
             value={formValues.addressLine2}
             onChange={handleChange}
-            placeholder="Address Line 2 (Optional)"
+            placeholder={t('company.address2')}
             className="w-full"
           />
         </div>
@@ -154,7 +155,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
             name="city"
             value={formValues.city}
             onChange={handleChange}
-            placeholder="City"
+            placeholder={t('company.city')}
             className="w-full"
             required
           />
@@ -166,7 +167,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
             name="state"
             value={formValues.state}
             onChange={handleChange}
-            placeholder="State"
+            placeholder={t('company.state')}
             className="w-full"
             required
           />
@@ -178,7 +179,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
             name="zipCode"
             value={formValues.zipCode}
             onChange={handleChange}
-            placeholder="Zip Code"
+            placeholder={t('company.zip')}
             className="w-full"
             required
           />
@@ -190,7 +191,7 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
       <div className="flex space-x-2">
         <Select onValueChange={handleCompanyCountryChange}>
           <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder={countryList.find((c) => c.code === companyCountry)?.name || 'Select country'} />
+            <SelectValue placeholder={countryList.find((c) => c.code === companyCountry)?.name || t('company.selectCountry')} />
           </SelectTrigger>
           <SelectContent>
             {countryList.map((c) => (
@@ -219,11 +220,11 @@ const UpdateCompanyDetails: FC<UpdateCompanyDetailsProps> = ({ initialValues }) 
           name="website"
           value={formValues.website}
           onChange={handleChange}
-          placeholder="Company Website (Optional)"
+          placeholder={t('company.website')}
           className="w-full"
         />
       </div>
-      <Button onClick={handleSubmit}>Save</Button>
+      <Button onClick={handleSubmit}>{t('company.save')}</Button>
     </form>
     </div>
   );
