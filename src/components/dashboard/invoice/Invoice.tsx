@@ -127,7 +127,7 @@ const InvoiceComponent: FC = () => {
   const fetchProductsAndCategories = useCallback(async () => {
     try {
       const response = await fetch(
-        'https://3.120.116.20:9090/api/v1/product/list',
+        'https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/product/list',
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -166,7 +166,7 @@ const InvoiceComponent: FC = () => {
       setIsLoadingClients(true);
       try {
         const response = await fetch(
-          'https://3.120.116.20:9090/api/v1/clientVendor/list',
+          'https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/clientVendor/list',
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -190,7 +190,7 @@ const InvoiceComponent: FC = () => {
     const fetchLoggedInCompanyDetails = async () => {
       try {
         const response = await fetch(
-          'https://3.120.116.20:9090/api/v1/company/loggedInUserCompany',
+          'https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/company/loggedInUserCompany',
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -236,7 +236,7 @@ const InvoiceComponent: FC = () => {
     const fetchInvoiceDetails = async () => {
       try {
         if (isEditMode) {
-          const response = await fetch('https://3.120.116.20:9090/api/v1/invoice/list', {
+          const response = await fetch('https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/list', {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
             },
@@ -265,7 +265,7 @@ const InvoiceComponent: FC = () => {
 
               setSelectedClient(fetchedInvoice.clientVendor);
 
-              const lineItemsResponse = await fetch(`https://3.120.116.20:9090/api/v1/invoice/product/list/${id}`, {
+              const lineItemsResponse = await fetch(`https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/product/list/${id}`, {
                 headers: {
                   Authorization: `Bearer ${keycloak.token}`,
                 },
@@ -296,7 +296,7 @@ const InvoiceComponent: FC = () => {
             console.error('Failed to fetch invoice list');
           }
         } else {
-          const response = await fetch('https://3.120.116.20:9090/api/v1/invoice/generate', {
+          const response = await fetch('https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/generate', {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
             },
@@ -776,8 +776,8 @@ const InvoiceComponent: FC = () => {
 
       const response = await fetch(
         isEditMode
-          ? `https://3.120.116.20:9090/api/v1/invoice/update/${id}`
-          : 'https://3.120.116.20:9090/api/v1/invoice/create',
+          ? `https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/update/${id}`
+          : 'https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/create',
         {
           method: isEditMode ? 'PUT' : 'POST',
           headers: {
@@ -801,7 +801,7 @@ const InvoiceComponent: FC = () => {
 
       if (isEditMode) {
         const existingLineItemsResponse = await fetch(
-          `https://3.120.116.20:9090/api/v1/invoice/product/list/${id}`,
+          `https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/product/list/${id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -814,7 +814,7 @@ const InvoiceComponent: FC = () => {
 
         for (const item of existingLineItems) {
           await fetch(
-            `https://3.120.116.20:9090/api/v1/invoice/remove/product/${item.id}`,
+            `https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/remove/product/${item.id}`,
             {
               method: 'DELETE',
               headers: {
@@ -844,7 +844,7 @@ const InvoiceComponent: FC = () => {
         };
 
         const productResponse = await fetch(
-          `https://3.120.116.20:9090/api/v1/invoice/add/product/${invoiceId}`,
+          `https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/add/product/${invoiceId}`,
           {
             method: 'POST',
             headers: {

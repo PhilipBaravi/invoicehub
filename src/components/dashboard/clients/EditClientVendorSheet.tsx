@@ -111,7 +111,7 @@ export default function EditClientVendorSheet({
     if (!validateForm()) return;
 
     try {
-      await apiFetch(`https://3.120.116.20:9090/api/v1/clientVendor/update/${editedClientVendor.id}`, {
+      await apiFetch(`https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/clientVendor/update/${editedClientVendor.id}`, {
         method: 'PUT',
         body: JSON.stringify(editedClientVendor),
       });

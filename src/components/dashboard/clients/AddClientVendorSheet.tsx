@@ -120,7 +120,7 @@ export default function AddClientVendorSheet({
     if (!validateForm()) return;
 
     try {
-      await apiFetch('https://3.120.116.20:9090/api/v1/clientVendor/create', {
+      await apiFetch('https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/clientVendor/create', {
         method: 'POST',
         body: JSON.stringify(newClientVendor),
       });
