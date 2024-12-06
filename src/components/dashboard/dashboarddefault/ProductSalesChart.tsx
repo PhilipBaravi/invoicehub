@@ -38,7 +38,7 @@ const ProductSalesChart: FC = () => {
       try {
         const year = 2024
         const month = 11
-        const response = await fetch(`https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/dashboard/soldProductsBy/${year}/${month}`, {
+        const response = await fetch(`https://api.invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${month}`, {
           headers: {
             'Authorization': `Bearer ${keycloak.token}`,
             'Content-Type': 'application/json'

@@ -24,7 +24,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
   useEffect(() => {
     const fetchLineItems = async () => {
       try {
-        const response = await fetch(`https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/invoice/product/list/${invoice.id}`, {
+        const response = await fetch(`https://api.invoicehub.space/api/v1/invoice/product/list/${invoice.id}`, {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },

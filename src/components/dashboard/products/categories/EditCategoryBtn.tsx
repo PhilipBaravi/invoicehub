@@ -49,7 +49,7 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
     };
 
     try {
-      const response = await fetch(`https://invoicehub-lb-1106916193.us-east-1.elb.amazonaws.com/api/v1/category/update/${category.id}`, {
+      const response = await fetch(`https://api.invoicehub.space/api/v1/category/update/${category.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
