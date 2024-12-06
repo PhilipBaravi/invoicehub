@@ -56,7 +56,7 @@ const AboutInvoices: FC = () => {
               <Card className="overflow-hidden hover:shadow-xl transition-shadow">
                 <CardContent className="p-0">
                   <img
-                    src={`${process.env.PUBLIC_URL}/images/invoiceGeneration.png`}
+                    src="/invoicing-app/images/invoiceGeneration.png"
                     alt="Invoice generation interface"
                     className="w-full h-auto object-cover"
                   />
@@ -125,7 +125,7 @@ const AboutInvoices: FC = () => {
               <Card className="overflow-hidden hover:shadow-xl transition-shadow">
                 <CardContent className="p-0">
                   <img
-                    src={`${process.env.PUBLIC_URL}/images/productManagement.png"`}
+                    src="/invoicing-app/images/productManagement.png"
                     alt="Invoice management dashboard"
                     className="w-full h-auto object-cover"
                   />
@@ -176,7 +176,7 @@ const AboutInvoices: FC = () => {
               <Card className="overflow-hidden hover:shadow-xl transition-shadow">
                 <CardContent className="p-0">
                   <img
-                    src={`${process.env.PUBLIC_URL}/images/track.png"`}
+                    src="/invoicing-app/images/track.png"
                     alt="Invoice tracking and analytics"
                     className="w-full h-auto object-cover"
                   />
