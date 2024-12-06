@@ -44,13 +44,13 @@ const HeaderAvatar: FC = () => {
 
   const logOut = () => {
     keycloak.logout({
-      redirectUri: 'http://localhost:5173/login', // Specify the redirect URI
+      redirectUri: 'http://invoicehub.space/login', // Specify the redirect URI
     }).then(() => {
       // Clear tokens stored in localStorage
       localStorage.removeItem('keycloak_token');
       localStorage.removeItem('keycloak_refresh_token');
       // Optional: Confirm logout by reloading the page
-      window.location.href = 'http://localhost:5173/login';
+      window.location.href = 'http://invoicehub.space/login';
     }).catch(err => {
       console.error('Logout failed:', err);
     });
