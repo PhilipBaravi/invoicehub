@@ -130,13 +130,13 @@ const App: React.FC = () => {
       onTokens={tokenLogger}
       initOptions={{
         onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: window.location.origin + '/invoicing-app/silent-check-sso.html',
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
         pkceMethod: 'S256',
         checkLoginIframe: false,
       }}
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <Router basename="/invoicing-app">
+        <Router basename="/">
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route 
