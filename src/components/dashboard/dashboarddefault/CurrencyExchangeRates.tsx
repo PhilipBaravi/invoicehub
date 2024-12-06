@@ -21,6 +21,15 @@ const CurrencyExchangeRates: FC = () => {
   ]);
   const [baseCurrency, setBaseCurrency] = useState<string>("GEL");
 
+  const getExchangeRatesData = async() => {
+      const response = await fetch('https://api.invoicehub.space/api/v1/dashboard/exchangeRates');
+      const data = await response.json();
+      console.log(data)
+  }
+
+  useEffect(() => {
+    getExchangeRatesData();
+  })
   useEffect(() => {
     // Update base currency based on language
     const currentLanguage = i18n.language || "en";
