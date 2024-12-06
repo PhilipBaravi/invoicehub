@@ -18,7 +18,7 @@ const LandingAbout: FC = () => {
         <Card>
         <div className="flex justify-between items-center">   
             <div className="w-full">
-            <img src="/invoicing-app/dashboardDark.png" alt="Dashboard UI" className="w-full rounded-2xl shadow-2xl" /> 
+            <img src={`${process.env.PUBLIC_URL}/images/dashboardDark.png"`} alt="Dashboard UI" className="w-full rounded-2xl shadow-2xl" /> 
             </div>
         </div>
         </Card>
