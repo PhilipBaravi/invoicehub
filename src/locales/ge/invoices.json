@@ -157,11 +157,6 @@
         "loadingClients" : "მომხმარებელთა ჩატვირთვა...",
         "cancel" : "გაუქმება",
         "generatePDF" : "PDF & ZIP-ის გენერირება",
-        "saveInvoice" : "ინვოისის შენახვა",
-        "updateInvoice" : "ინვოისის განახლება",
-        "successTitle": "წარმატება",
-        "invoiceUpdatedSuccessfully": "ინვოისი წარმატებით განახლდა!",
-        "invoiceSavedSuccessfully": "ინვოისი წარმატებით შენახულია!",
-        "ok": "გაგრძელება"
+        "saveInvoice" : "ინვოისის შენახვა"
     }
 }

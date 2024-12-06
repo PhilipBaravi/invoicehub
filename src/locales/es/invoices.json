@@ -157,11 +157,6 @@
         "loadingClients" : "Cargando clientes...",
         "cancel" : "Cancelar",
         "generatePDF" : "Generar PDF & ZIP",
-        "saveInvoice" : "Guardar Factura",
-        "updateInvoice" : "Actualizar Factura",
-        "successTitle": "Éxito",
-        "invoiceUpdatedSuccessfully": "¡Factura actualizada con éxito!",
-        "invoiceSavedSuccessfully": "¡Factura guardada con éxito!",
-        "ok": "Continuar"
+        "saveInvoice" : "Guardar Factura"
     }
 }

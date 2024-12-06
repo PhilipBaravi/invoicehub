@@ -157,11 +157,6 @@
         "loadingClients" : "Loading clients...",
         "cancel" : "Cancel",
         "generatePDF" : "Generate PDF & ZIP",
-        "saveInvoice" : "Save Invoice",
-        "updateInvoice" : "Update Invoice",
-        "successTitle" : "Success",
-        "invoiceUpdatedSuccessfully" : "Invoice updated succesfully!",
-        "invoiceSavedSuccessfully" : "Invoice saved succesfully!",
-        "ok" : "Continue"
+        "saveInvoice" : "Save Invoice"
     }
 }
