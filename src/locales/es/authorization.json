@@ -8,6 +8,9 @@
         "title": "Inicia sesión en tu cuenta",
         "subtitle": "Introduce tu correo electrónico y contraseña para acceder a tu cuenta"
     },
+    "form" : {
+        "error": "¡Error!"
+    },
     "loginForm": {
         "email": "Correo electrónico",
         "password": "Contraseña",

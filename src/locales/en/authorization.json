@@ -8,6 +8,9 @@
         "title": "Login to your account",
         "subtitle": "Enter your email and password to access your account"
     },
+    "form" : {
+        "error" : "Error!"
+    },
     "loginForm" : {
         "email": "Email",
         "password": "Password",

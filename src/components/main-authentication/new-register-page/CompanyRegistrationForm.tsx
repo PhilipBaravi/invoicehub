@@ -8,6 +8,7 @@ import countryList from "../../account-details/profile-form/CountryCodes";
 import { useTranslation } from 'react-i18next';
 import type { UserFormValues } from './RegisterForm';
 import { useKeycloak } from '@react-keycloak/web';
+import { useToast } from '@/hooks/use-toast';
 
 interface CompanyRegistrationFormProps {
   userDetails: UserFormValues | null;
@@ -29,6 +30,7 @@ interface CompanyFormValues {
 
 const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userDetails }) => {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [companyCountry, setCompanyCountry] = useState<CountryCode>('US');
   const { keycloak } = useKeycloak();
@@ -58,34 +60,70 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     if (!formValues.title) {
       newErrors.title = t('companySignUpForm.errors.companyName');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('companySignUpForm.errors.companyName'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     const fullCompanyPhoneNumber = companyPhoneCode + formValues.phone;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
       newErrors.phone = t('companySignUpForm.errors.companyPhone');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('companySignUpForm.errors.companyPhone'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!formValues.address.addressLine1) {
       newErrors.addressLine1 = t('companySignUpForm.errors.companyAddress');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('companySignUpForm.errors.companyAddress'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!formValues.address.city) {
       newErrors.city = t('companySignUpForm.errors.companyCity');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('companySignUpForm.errors.companyCity'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!formValues.address.state) {
       newErrors.state = t('companySignUpForm.errors.companyState');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('companySignUpForm.errors.companyState'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!formValues.address.zipCode) {
       newErrors.zipCode = t('companySignUpForm.errors.zipCode');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('companySignUpForm.errors.zipCode'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!valid) {
       setErrors(newErrors);
       return;

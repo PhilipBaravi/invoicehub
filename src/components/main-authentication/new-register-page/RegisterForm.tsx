@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 
 export interface UserFormValues {
   username: string;
@@ -22,6 +23,7 @@ interface RegisterFormProps {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [formValues, setFormValues] = useState<UserFormValues>({
     username: "",
     password: "",
@@ -57,34 +59,70 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
     if (!validateEmail(username)) {
       newErrors.username = t('signUpForm.errors.validateEmail');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('signUpForm.errors.validateEmail'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!validatePassword(password)) {
       newErrors.password = t('signUpForm.errors.validatePassword');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('signUpForm.errors.validatePassword'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (password !== confirmPassword) {
       newErrors.confirmPassword = t('signUpForm.errors.confirmPassword');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('signUpForm.errors.confirmPassword'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!firstName) {
       newErrors.firstName = t('signUpForm.errors.firstName');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('signUpForm.errors.firstName'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!lastName) {
       newErrors.lastName = t('signUpForm.errors.lastName');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('signUpForm.errors.lastName'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     const fullPhoneNumber = phoneCode + phone;
     if (!isValidPhoneNumber(fullPhoneNumber, country)) {
       newErrors.phone = t('signUpForm.errors.phone');
       valid = false;
+      toast({
+        title: t('form.error'),
+        description: t('signUpForm.errors.phone'),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
-
+    
     if (!valid) {
       setErrors(newErrors);
       return;
