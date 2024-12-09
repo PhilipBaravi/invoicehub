@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { AnimatedSection } from "./AnimatedSection";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import AboutAi from "./AboutAi";
 
 const AboutInvoices: FC = () => {
   const { t } = useTranslation('landingPage');
@@ -185,7 +184,6 @@ const AboutInvoices: FC = () => {
             </motion.div>
           </AnimatedSection>
         </div>
-    <AboutAi />
         {/* Call to Action */}
         <AnimatedSection className="relative flex items-center pt-24" delay={0.6}>
           <div className="mx-auto max-w-7xl px-2 lg:px-4">

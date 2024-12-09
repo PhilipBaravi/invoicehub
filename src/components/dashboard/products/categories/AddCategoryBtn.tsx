@@ -1,5 +1,3 @@
-// AddCategoryBtn.tsx
-
 import { FC, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,7 +27,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
   const [error, setError] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { keycloak } = useKeycloak();
-  const { t } = useTranslation('categoriesAndProducts')
+  const { t } = useTranslation('categoriesAndProducts');
   const { toast } = useToast();
 
   const handleCategoryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +51,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
     };
 
     try {
-      const response = await fetch("https://api.invoicehub.space/api/v1/category/create", {
+      const response = await fetch("http://localhost:9090/api/v1/category/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,16 +63,16 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
       if (!response.ok) throw new Error("Failed to add category");
 
       const createdCategory = await response.json();
-      onAddCategory(createdCategory.data); // Add the new category to the state immediately
+      onAddCategory(createdCategory.data);
       setIsDialogOpen(false);
       setCategoryName("");
       setSelectedIcon(null);
       toast({
-              title: t('products.success'),
-              description: t('products.categoryMessage'),
-              variant: "success",
-              duration: 3000,
-      })
+        title: t('products.success'),
+        description: t('products.categoryMessage'),
+        variant: "success",
+        duration: 3000,
+      });
     } catch (error) {
       setError("An error occurred while adding the category.");
       console.error(error);
@@ -84,29 +82,30 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" /> {t('categories.addCategory.addCategory')}
         </Button>
       </DialogTrigger>
-      <DialogContent className="min-w-[60%] max-h-[80%]">
+      <DialogContent className="w-[95vw] max-w-[600px] max-h-[90vh] overflow-y-auto sm:w-[90vw] md:w-[80vw] lg:w-[60vw]">
         <DialogHeader>
-          <DialogTitle>{t('categories.addCategory.addNewCategory')}</DialogTitle>
-          <DialogDescription>
-          {t('categories.addCategory.details')}
+          <DialogTitle className="text-lg sm:text-xl">{t('categories.addCategory.addNewCategory')}</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
+            {t('categories.addCategory.details')}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="flex items-center">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
             <Input
               type="text"
               placeholder={t('categories.addCategory.name')}
               value={categoryName}
               onChange={handleCategoryInput}
+              className="w-full sm:flex-1"
             />
             <Button
-              className="ml-2"
               onClick={handleAddCategory}
               disabled={!categoryName || !selectedIcon}
+              className="w-full sm:w-auto"
             >
               <Plus className="mr-2 h-4 w-4" />
               {t('categories.addCategory.add')}
@@ -117,18 +116,18 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
         <div>
           <h3 className="mb-2 text-sm font-medium">{t('categories.addCategory.icon')}</h3>
           <Card>
-            <CardContent className="grid grid-cols-8 gap-2 p-2">
+            <CardContent className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 p-2">
               {categoryIcons.map((icon, index) => {
                 const IconComponent = iconMap[icon];
                 return (
                   <Button
-                      key={index}
-                      variant="ghost"
-                      className={`p-2 hover:bg-secondary ${
-                        selectedIcon === icon ? "bg-secondary" : ""
-                      }`}
-                      onClick={() => handleIconSelect(icon)}
-                       >
+                    key={index}
+                    variant="ghost"
+                    className={`p-2 hover:bg-secondary ${
+                      selectedIcon === icon ? "bg-secondary" : ""
+                    }`}
+                    onClick={() => handleIconSelect(icon)}
+                  >
                     {IconComponent && <IconComponent className="min-w-[20px] min-h-[20px]" />}
                   </Button>
                 );

@@ -20,7 +20,8 @@
         "loginGoogle": "შესვლა Google-ით",
         "loginApple": "შესვლა Apple-ით",
         "haveAnAccount": "არ გაქვთ ანგარიში?",
-        "signUp": "რეგისტრაცია"
+        "signUp": "რეგისტრაცია",
+        "login": "შესვლის პროცესი"
     },
     "signUpForm": {
         "title": "ახალი ანგარიშის შექმნა",

@@ -31,11 +31,10 @@ export default function EmployeeList() {
     { value: 'status', label: t('filterOptions.status') },
   ];
 
-  // Fetch employee data from API with bearer token
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch('https://api.invoicehub.space/api/v1/user/list', {
+        const response = await fetch('http://localhost:9090/api/v1/user/list', {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },
@@ -48,7 +47,7 @@ export default function EmployeeList() {
           ...user,
           id: user.id.toString(),
           dateOfEmployment: new Date(user.dateOfEmployment),
-          status: user.userStatus, // Map userStatus from API to status in Employee object
+          status: user.userStatus,
         }));
         setEmployees(users);
       } catch (error) {
@@ -61,7 +60,6 @@ export default function EmployeeList() {
     }
   }, [keycloak.token]);
 
-  // Re-filter employees when search term, employee list, or filter category changes
   useEffect(() => {
     const filtered = employees.filter((employee) => {
       const value = employee[filterCategory]?.toString().toLowerCase() ?? '';
@@ -72,10 +70,9 @@ export default function EmployeeList() {
     setCurrentPage(1);
   }, [searchTerm, employees, filterCategory]);
 
-  // Delete employee by ID
   const deleteEmployee = async (id: string) => {
     try {
-      const response = await fetch(`https://api.invoicehub.space/api/v1/user/delete/${id}`, {
+      const response = await fetch(`http://localhost:9090/api/v1/user/delete/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -86,21 +83,18 @@ export default function EmployeeList() {
         throw new Error('Failed to delete employee');
       }
 
-      // If the deletion is successful, remove the employee from the local state
       setEmployees(employees.filter((emp) => emp.id !== id));
     } catch (error) {
       console.error('Error deleting employee:', error);
     }
   };
 
-  // Handle selecting an individual employee
   const handleSelectEmployee = (id: string) => {
     setSelectedEmployees((prev) =>
       prev.includes(id) ? prev.filter((empId) => empId !== id) : [...prev, id]
     );
   };
 
-  // Handle selecting all employees
   const handleSelectAll = () => {
     if (selectedEmployees.length === filteredEmployees.length) {
       setSelectedEmployees([]);
@@ -109,19 +103,16 @@ export default function EmployeeList() {
     }
   };
 
-  // Calculate total pages for pagination
   const totalPages = Math.ceil(filteredEmployees.length / rowsPerPage);
 
-  // Slice the employees array for pagination
   const paginatedEmployees = filteredEmployees.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
 
-  // Refresh employees after adding or editing
   const refreshEmployees = async () => {
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/user/list', {
+      const response = await fetch('http://localhost:9090/api/v1/user/list', {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
         },
@@ -143,15 +134,15 @@ export default function EmployeeList() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">{t('pageTitle')} ({filteredEmployees.length})</h1>
+    <div className="flex flex-1 flex-col gap-4 p-2 md:p-4 lg:p-8 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4 sm:gap-0">
+        <h1 className="text-2xl sm:text-3xl font-bold">{t('pageTitle')} ({filteredEmployees.length})</h1>
         <AddEmployeeSheet
           isOpen={isAddEmployeeOpen}
           onOpenChange={(open) => {
             setIsAddEmployeeOpen(open);
             if (!open) {
-              refreshEmployees(); // Refresh the employee list after adding
+              refreshEmployees();
             }
           }}
         />
@@ -165,16 +156,18 @@ export default function EmployeeList() {
         setRowsPerPage={setRowsPerPage}
         filterOptions={filterOptions}
       />
-      <EmployeeTable
-        paginatedEmployees={paginatedEmployees}
-        selectedEmployees={selectedEmployees}
-        handleSelectEmployee={handleSelectEmployee}
-        handleSelectAll={handleSelectAll}
-        deleteEmployee={deleteEmployee}
-        setEditingEmployee={setEditingEmployee}
-        setIsEditEmployeeOpen={setIsEditEmployeeOpen}
-        filteredEmployees={filteredEmployees}
-      />
+      <div className="overflow-x-auto">
+        <EmployeeTable
+          paginatedEmployees={paginatedEmployees}
+          selectedEmployees={selectedEmployees}
+          handleSelectEmployee={handleSelectEmployee}
+          handleSelectAll={handleSelectAll}
+          deleteEmployee={deleteEmployee}
+          setEditingEmployee={setEditingEmployee}
+          setIsEditEmployeeOpen={setIsEditEmployeeOpen}
+          filteredEmployees={filteredEmployees}
+        />
+      </div>
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -188,7 +181,7 @@ export default function EmployeeList() {
           onOpenChange={(open) => {
             setIsEditEmployeeOpen(open);
             if (!open) {
-              refreshEmployees(); // Refresh the employee list after editing
+              refreshEmployees();
             }
           }}
           employee={editingEmployee}

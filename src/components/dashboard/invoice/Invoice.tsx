@@ -129,7 +129,7 @@ const InvoiceComponent: FC = () => {
   const fetchProductsAndCategories = useCallback(async () => {
     try {
       const response = await fetch(
-        'https://api.invoicehub.space/api/v1/product/list',
+        'http://localhost:9090/api/v1/product/list',
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -168,7 +168,7 @@ const InvoiceComponent: FC = () => {
       setIsLoadingClients(true);
       try {
         const response = await fetch(
-          'https://api.invoicehub.space/api/v1/clientVendor/list',
+          'http://localhost:9090/api/v1/clientVendor/list',
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -192,7 +192,7 @@ const InvoiceComponent: FC = () => {
     const fetchLoggedInCompanyDetails = async () => {
       try {
         const response = await fetch(
-          'https://api.invoicehub.space/api/v1/user/loggedInUser',
+          'http://localhost:9090/api/v1/user/loggedInUser',
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -238,7 +238,7 @@ const InvoiceComponent: FC = () => {
     const fetchInvoiceDetails = async () => {
       try {
         if (isEditMode) {
-          const response = await fetch('https://api.invoicehub.space/api/v1/invoice/list', {
+          const response = await fetch('http://localhost:9090/api/v1/invoice/list', {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
             },
@@ -267,7 +267,7 @@ const InvoiceComponent: FC = () => {
 
               setSelectedClient(fetchedInvoice.clientVendor);
 
-              const lineItemsResponse = await fetch(`https://api.invoicehub.space/api/v1/invoice/product/list/${id}`, {
+              const lineItemsResponse = await fetch(`http://localhost:9090/api/v1/invoice/product/list/${id}`, {
                 headers: {
                   Authorization: `Bearer ${keycloak.token}`,
                 },
@@ -298,7 +298,7 @@ const InvoiceComponent: FC = () => {
             console.error('Failed to fetch invoice list');
           }
         } else {
-          const response = await fetch('https://api.invoicehub.space/api/v1/invoice/generate', {
+          const response = await fetch('http://localhost:9090/api/v1/invoice/generate', {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
             },
@@ -810,8 +810,8 @@ const InvoiceComponent: FC = () => {
 
       const response = await fetch(
         isEditMode
-          ? `https://api.invoicehub.space/api/v1/invoice/update/${id}`
-          : 'https://api.invoicehub.space/api/v1/invoice/create',
+          ? `http://localhost:9090/api/v1/invoice/update/${id}`
+          : 'http://localhost:9090/api/v1/invoice/create',
         {
           method: isEditMode ? 'PUT' : 'POST',
           headers: {
@@ -850,7 +850,7 @@ const InvoiceComponent: FC = () => {
 
       if (isEditMode) {
         const existingLineItemsResponse = await fetch(
-          `https://api.invoicehub.space/api/v1/invoice/product/list/${id}`,
+          `http://localhost:9090/api/v1/invoice/product/list/${id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -863,7 +863,7 @@ const InvoiceComponent: FC = () => {
 
         for (const item of existingLineItems) {
           await fetch(
-            `https://api.invoicehub.space/api/v1/invoice/remove/product/${item.id}`,
+            `http://localhost:9090/api/v1/invoice/remove/product/${item.id}`,
             {
               method: 'DELETE',
               headers: {
@@ -893,7 +893,7 @@ const InvoiceComponent: FC = () => {
         };
 
         const productResponse = await fetch(
-          `https://api.invoicehub.space/api/v1/invoice/add/product/${invoiceId}`,
+          `http://localhost:9090/api/v1/invoice/add/product/${invoiceId}`,
           {
             method: 'POST',
             headers: {
@@ -957,19 +957,19 @@ const InvoiceComponent: FC = () => {
   ]);
 
   return (
-    <div className="p-4">
+    <div className="p-2 sm:p-4">
       <Card className="w-full max-w-5xl mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-xl sm:text-2xl font-bold">
             {isEditMode ? t('invoiceList.editInvoice') : t('invoice.newInvoice')}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-8">
-          <div className="flex justify-between items-start">
-            <div className="w-1/2">
+        <CardContent className="space-y-4 sm:space-y-6 lg:space-y-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+            <div className="w-full lg:w-1/2">
               <InvoiceDetails invoice={invoice} setInvoice={setInvoice} isEditMode={isEditMode} />
             </div>
-            <div className="w-1/2 flex justify-end">
+            <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
               <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
             </div>
           </div>    
@@ -987,18 +987,18 @@ const InvoiceComponent: FC = () => {
           />
           <Separator />
           <Totals invoice={invoice} setInvoice={setInvoice} />
-          <div className="flex justify-between items-center mt-6">
-            <div className="w-1/2">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
+            <div className="w-full lg:w-1/2">
               <ClientSelector
                 selectedClient={selectedClient}
                 handleClientSelect={handleClientSelect}
                 clients={clients}
               />
             </div>
-            <div className="w-1/2 text-right flex flex-col justify-start pt-16">
+            <div className="w-full lg:w-1/2 text-left lg:text-right">
               {businessInformation ? (
-                <>
-                  <h2 className="text-xl font-bold">
+                <div className="space-y-2">
+                  <h2 className="text-lg sm:text-xl font-bold">
                     {t('invoice.companyName')} {businessInformation.title}
                   </h2>
                   <p className="font-[600]">{t('invoice.phone')} {businessInformation.phone}</p>
@@ -1041,7 +1041,7 @@ const InvoiceComponent: FC = () => {
                       {businessInformation.address.addressLine1}
                     </span>
                   </p>
-                </>
+                </div>
               ) : (
                 <div>{t('invoice.loadingData')}</div>
               )}
@@ -1083,15 +1083,26 @@ const InvoiceComponent: FC = () => {
         </CardContent>
         <Separator />
         
-        <CardFooter className="flex items-center justify-between pt-4">
-          <Button variant="outline" onClick={() => navigate('/dashboard/invoices')}>
+        <CardFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/dashboard/invoices')}
+            className="w-full sm:w-auto"
+          >
             {t('invoice.cancel')}
           </Button>
-          <div className="space-x-2">
-            <Button variant="outline" className='hidden' onClick={generatePDFAndZip}>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              className="hidden" 
+              onClick={generatePDFAndZip}
+            >
               {t('invoice.generatePDF')}
             </Button>
-            <Button onClick={handleSaveInvoice}>
+            <Button 
+              onClick={handleSaveInvoice}
+              className="w-full sm:w-auto"
+            >
               {isEditMode ? t('invoiceList.edit') : t('invoice.saveInvoice')}
             </Button>
           </div>
@@ -1104,7 +1115,7 @@ const InvoiceComponent: FC = () => {
           applyTaxes={applyTaxes}
         />
         <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-          <AlertDialogContent>
+          <AlertDialogContent className="sm:max-w-[425px]">
             <AlertDialogHeader>
               <AlertDialogTitle>{t('invoice.success')}</AlertDialogTitle>
               <AlertDialogDescription>
@@ -1119,6 +1130,7 @@ const InvoiceComponent: FC = () => {
                   setShowSuccessDialog(false);
                   navigate('/dashboard/invoices');
                 }}
+                className="w-full sm:w-auto"
               >
                 {t('invoiceList.dialog.continue')}
               </Button>

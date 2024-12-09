@@ -40,24 +40,24 @@ export default function EmployeeTable({
   };
 
   return (
-    <div className="border rounded-md">
+    <div className="border rounded-md w-full overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[50px]">
+            <TableHead className="w-[50px] min-w-[50px]">
               <Checkbox
                 checked={selectedEmployees.length === filteredEmployees.length}
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>{t('table.name')}</TableHead>
-            <TableHead>{t('table.email')}</TableHead>
-            <TableHead>{t('table.password')}</TableHead>
-            <TableHead>{t('table.phone')}</TableHead>
-            <TableHead>{t('table.role')}</TableHead>
-            <TableHead>{t('table.dateOfEmployment')}</TableHead>
-            <TableHead>{t('table.status')}</TableHead>
-            <TableHead>{t('table.actions')}</TableHead>
+            <TableHead className="min-w-[120px]">{t('table.name')}</TableHead>
+            <TableHead className="min-w-[180px]">{t('table.email')}</TableHead>
+            <TableHead className="min-w-[150px]">{t('table.password')}</TableHead>
+            <TableHead className="min-w-[120px]">{t('table.phone')}</TableHead>
+            <TableHead className="min-w-[100px]">{t('table.role')}</TableHead>
+            <TableHead className="min-w-[150px]">{t('table.dateOfEmployment')}</TableHead>
+            <TableHead className="min-w-[100px]">{t('table.status')}</TableHead>
+            <TableHead className="min-w-[80px]">{t('table.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -69,20 +69,25 @@ export default function EmployeeTable({
                   onCheckedChange={() => handleSelectEmployee(employee.id)}
                 />
               </TableCell>
-              <TableCell>{employee.firstName} {employee.lastName}</TableCell>
-              <TableCell>{employee.username}</TableCell>
-              <TableCell className="relative flex items-center">
-                {visiblePasswords[employee.id] ? employee.password : '••••••••'}
-                <button
-                  onClick={() => togglePasswordVisibility(employee.id)}
-                >
-                  {visiblePasswords[employee.id] ? <Eye className="w-4 h-4 ml-4" /> : <EyeOff className="w-4 h-4 ml-4" />}
-                </button>
+              <TableCell className="whitespace-nowrap">{employee.firstName} {employee.lastName}</TableCell>
+              <TableCell className="break-all">{employee.username}</TableCell>
+              <TableCell className="relative">
+                <div className="flex items-center space-x-2">
+                  <span className="truncate max-w-[100px]">
+                    {visiblePasswords[employee.id] ? employee.password : '••••••••'}
+                  </span>
+                  <button
+                    onClick={() => togglePasswordVisibility(employee.id)}
+                    className="flex-shrink-0"
+                  >
+                    {visiblePasswords[employee.id] ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                  </button>
+                </div>
               </TableCell>
-              <TableCell>{employee.phone}</TableCell>
-              <TableCell>{employee.role.description}</TableCell>
-              <TableCell>{format(new Date(employee.dateOfEmployment), 'PP')}</TableCell>
-              <TableCell>{employee.status}</TableCell>
+              <TableCell className="whitespace-nowrap">{employee.phone}</TableCell>
+              <TableCell className="whitespace-nowrap">{employee.role.description}</TableCell>
+              <TableCell className="whitespace-nowrap">{format(new Date(employee.dateOfEmployment), 'PP')}</TableCell>
+              <TableCell className="whitespace-nowrap">{employee.status}</TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

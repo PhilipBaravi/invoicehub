@@ -23,10 +23,11 @@ export default function SearchAndFilter<T>({
   filterOptions,
 }: SearchAndFilterProps<T>) {
   const { t } = useTranslation('employees')
+  
   return (
-    <div className="flex justify-between items-center mb-4">
-      <div className="flex items-center space-x-2">
-        <div className="relative">
+    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+        <div className="relative w-full sm:w-64">
           <Input
             id="searchTerm"
             name="searchTerm"
@@ -34,13 +35,16 @@ export default function SearchAndFilter<T>({
             placeholder={t('searchAndFilter.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 w-64"
+            className="pl-10 pr-4 py-2 w-full"
             autoComplete="off"
           />
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         </div>
-        <Select value={filterCategory as string} onValueChange={(value) => setFilterCategory(value as keyof T)}>
-          <SelectTrigger className="w-[180px]">
+        <Select 
+          value={filterCategory as string} 
+          onValueChange={(value) => setFilterCategory(value as keyof T)}
+        >
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder={t('searchAndFilter.filterBy')} />
           </SelectTrigger>
           <SelectContent>
@@ -52,8 +56,11 @@ export default function SearchAndFilter<T>({
           </SelectContent>
         </Select>
       </div>
-      <Select value={rowsPerPage.toString()} onValueChange={(value) => setRowsPerPage(Number(value))}>
-        <SelectTrigger className="w-[180px]">
+      <Select 
+        value={rowsPerPage.toString()} 
+        onValueChange={(value) => setRowsPerPage(Number(value))}
+      >
+        <SelectTrigger className="w-full sm:w-[180px]">
           <SelectValue placeholder={t('searchAndFilter.rowsPerPage')} />
         </SelectTrigger>
         <SelectContent>

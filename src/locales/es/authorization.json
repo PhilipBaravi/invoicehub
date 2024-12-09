@@ -20,7 +20,8 @@
         "loginGoogle": "Iniciar sesión con Google",
         "loginApple": "Iniciar sesión con Apple",
         "haveAnAccount": "¿No tienes una cuenta?",
-        "signUp": "Regístrate"
+        "signUp": "Regístrate",
+        "login": "Iniciando sesión"
     },
     "signUpForm": {
         "title": "Crear una cuenta nueva",

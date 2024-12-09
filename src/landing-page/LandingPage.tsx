@@ -3,6 +3,7 @@ import LandingNavigation from "./LandingNavigation";
 import LandingAbout from "./LandingAbout";
 import DataVisualizationShowcase from "./AboutData";
 import AboutInvoices from "./AboutInvoices";
+import AboutAi from "./AboutAi";
 
 const LangindPage : FC = () => {
     return (
@@ -10,7 +11,7 @@ const LangindPage : FC = () => {
             <LandingNavigation />
             <LandingAbout />
             <div className="bg-gradient-to-b from-background to-muted w-full">
-            
+            <AboutAi />
             <DataVisualizationShowcase />
             <AboutInvoices />
             </div>

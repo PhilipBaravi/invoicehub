@@ -20,7 +20,8 @@
         "loginGoogle": "Login with Google",
         "loginApple": "Login with Apple",
         "haveAnAccount": "Don't have an account?",
-        "signUp": "Sign Up"
+        "signUp": "Sign Up",
+        "login": "Signing In"
     },
     "signUpForm" : {
         "title": "Create a New Account",

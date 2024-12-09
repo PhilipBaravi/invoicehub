@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { PanelRightOpen, LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/useAuth";
@@ -10,48 +11,48 @@ interface SideBarProps {
   onClose: () => void;
 }
 
-const SideBar: FC<SideBarProps> = ({ onClose }) => {
+const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const { t } = useTranslation("dashboardDefault");
   const { isAdmin } = useAuth();
   const { keycloak } = useKeycloak();
-  
+
   const menuItems = [
-    { 
-      name: t("sidebar.dashboard"), 
-      icon: LayoutDashboard, 
+    {
+      name: t("sidebar.dashboard"),
+      icon: LayoutDashboard,
       path: "/dashboard",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.invoice"), 
-      icon: FileText, 
+    {
+      name: t("sidebar.invoice"),
+      icon: FileText,
       path: "/dashboard/invoices",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.employee"), 
-      icon: UserSearch, 
+    {
+      name: t("sidebar.employee"),
+      icon: UserSearch,
       path: "/dashboard/employee",
-      adminOnly: true
+      adminOnly: true,
     },
-    { 
-      name: t("sidebar.clients"), 
-      icon: Building2, 
+    {
+      name: t("sidebar.clients"),
+      icon: Building2,
       path: "/dashboard/clients",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.categories"), 
-      icon: FolderKanban, 
+    {
+      name: t("sidebar.categories"),
+      icon: FolderKanban,
       path: "/dashboard/categories",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.login"), 
-      icon: LogIn, 
+    {
+      name: t("sidebar.login"),
+      icon: LogIn,
       path: "/login",
-      showAlways: true
+      showAlways: true,
     },
   ];
 
@@ -66,25 +67,34 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
   };
 
   const handleLogout = () => {
-    keycloak.logout({
-      redirectUri: 'http://invoicehub.space/login', // Specify the redirect URI
-    }).then(() => {
-      // Clear tokens stored in localStorage
-      localStorage.removeItem('keycloak_token');
-      localStorage.removeItem('keycloak_refresh_token');
-      // Optional: Confirm logout by reloading the page
-      window.location.href = 'http://invoicehub.space/login';
-    }).catch(err => {
-      console.error('Logout failed:', err);
-    });
+    keycloak
+      .logout({
+        redirectUri: "https://invoicehub.space/login", // Specify the redirect URI
+      })
+      .then(() => {
+        // Clear tokens stored in localStorage
+        localStorage.removeItem("keycloak_token");
+        localStorage.removeItem("keycloak_refresh_token");
+        // Optional: Confirm logout by reloading the page
+        window.location.href = "https://invoicehub.space/login";
+      })
+      .catch((err) => {
+        console.error("Logout failed:", err);
+      });
   };
 
-  const filteredMenuItems = menuItems.filter(item => 
-    item.showAlways || (item.adminOnly && isAdmin)
+  const filteredMenuItems = menuItems.filter(
+    (item) => item.showAlways || (item.adminOnly && isAdmin)
   );
 
   return (
-    <div className="fixed top-0 left-0 w-[23.75rem] h-screen bg-slate-50 dark:bg-stone-950 flex flex-col border-r dark:border-stone-100 border-stone-900 z-50">
+    <motion.div
+      initial={{ x: isOpen ? "-100%" : "0" }}
+      animate={{ x: isOpen ? "0" : "-100%" }} 
+      exit={{ x: "-100%" }} 
+      transition={{ duration: 0.5, ease: "easeInOut" }} 
+      className="fixed top-0 left-0 w-[20rem] h-screen bg-slate-50 dark:bg-stone-950 flex flex-col border-r dark:border-stone-100 border-stone-900 z-50"
+    >
       <PanelRightOpen
         className="ml-auto cursor-pointer text-stone-950 dark:text-stone-50 mt-[20px] mr-[20px]"
         onClick={onClose}
@@ -109,7 +119,7 @@ const SideBar: FC<SideBarProps> = ({ onClose }) => {
           })}
         </ul>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -33,7 +33,7 @@ export default function ClientVendorList() {
   useEffect(() => {
     const fetchClientVendors = async () => {
       try {
-        const response = await fetch('https://api.invoicehub.space/api/v1/clientVendor/list', {
+        const response = await fetch('http://localhost:9090/api/v1/clientVendor/list', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${keycloak.token}`,
@@ -70,7 +70,7 @@ export default function ClientVendorList() {
   // Delete client/vendor by ID
   const deleteClientVendor = async (id: number) => {
     try {
-      const response = await fetch(`https://api.invoicehub.space/api/v1/clientVendor/delete/${id}`, {
+      const response = await fetch(`http://localhost:9090/api/v1/clientVendor/delete/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -116,7 +116,7 @@ export default function ClientVendorList() {
   // Refresh the client/vendors list
   const refreshClientVendors = async () => {
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/clientVendor/list', {
+      const response = await fetch('http://localhost:9090/api/v1/clientVendor/list', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${keycloak.token}`,
@@ -135,9 +135,9 @@ export default function ClientVendorList() {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">
+    <div className="flex flex-1 flex-col gap-4 p-2 md:p-4 lg:p-8 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4 sm:gap-0">
+        <h1 className="text-2xl sm:text-3xl font-bold">
           {t('pageTitle')} ({filteredClientVendors.length})
         </h1>
         <AddClientVendorSheet

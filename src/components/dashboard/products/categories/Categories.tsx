@@ -44,7 +44,7 @@ const Categories: FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://api.invoicehub.space/api/v1/category/list", {
+        const response = await fetch("http://localhost:9090/api/v1/category/list", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -77,7 +77,7 @@ const Categories: FC = () => {
   const confirmDeleteCategory = async () => {
     if (categoryToDelete) {
       try {
-        const response = await fetch(`https://api.invoicehub.space/api/v1/category/delete/${categoryToDelete.id}`, {
+        const response = await fetch(`http://localhost:9090/api/v1/category/delete/${categoryToDelete.id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -126,33 +126,39 @@ const Categories: FC = () => {
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8 w-full px-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">{t('categories.pageTitle')} ({productCategories.length})</h1>
-        <AddCategoryBtn onAddCategory={handleAddCategory} />
+    <div className="flex flex-1 flex-col gap-2 p-2 sm:gap-4 sm:p-4 md:gap-6 md:p-6 lg:gap-8 lg:p-8 w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
+          {t('categories.pageTitle')} ({productCategories.length})
+        </h1>
+        <div className="w-full sm:w-auto">
+          <AddCategoryBtn onAddCategory={handleAddCategory} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">
         {productCategories.map((category) => {
           const Icon = iconMap[category.icon];
           return (
             <ContextMenu key={category.id}>
               <ContextMenuTrigger>
                 <Card
-                  className={`cursor-pointer transition-colors ${
+                  className={`cursor-pointer transition-colors h-full ${
                     selectedCategoryId === category.id
                       ? "bg-primary text-primary-foreground"
                       : "hover:bg-secondary"
                   }`}
                   onClick={() => handleSelectCategory(category.id)}
                 >
-                  <CardContent className="flex flex-col items-center justify-center p-6">
-                    {Icon && <Icon className="h-6 w-6" />}
-                    <h2 className="mt-2 font-semibold">{category.description}</h2>
+                  <CardContent className="flex flex-col items-center justify-center p-4 sm:p-6">
+                    {Icon && <Icon className="h-5 w-5 sm:h-6 sm:w-6" />}
+                    <h2 className="mt-2 font-semibold text-sm sm:text-base text-center">
+                      {category.description}
+                    </h2>
                   </CardContent>
                 </Card>
               </ContextMenuTrigger>
-              <ContextMenuContent>
+              <ContextMenuContent className="min-w-[160px]">
                 <ContextMenuItem onClick={() => openDeleteDialog(category)}>
                   <Trash2 className="mr-2 h-4 w-4" />
                   {t('categories.delete')}
@@ -176,17 +182,21 @@ const Categories: FC = () => {
         />
       )}
 
-<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent className="sm:max-w-[425px]">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('categories.alert.title')}</AlertDialogTitle>
             <AlertDialogDescription>
               {t('categories.alert.message')}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>{t('categories.alert.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteCategory}>{t('categories.alert.continue')}</AlertDialogAction>
+          <AlertDialogFooter className="sm:space-x-2">
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
+              {t('categories.alert.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteCategory}>
+              {t('categories.alert.continue')}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
