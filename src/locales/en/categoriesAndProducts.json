@@ -71,11 +71,12 @@
             "productUnit" : "Product Unit",
             "description" : "Description",
             "cancel" : "Cancel",
-            "updateProdcut" : "Update Product",
+            "updateProduct" : "Update Product",
             "addProduct" : "Add Product"
         },
         "success": "Success!",
         "message": "Product has been added successfully!",
-        "categoryMessage" : "Category has been added succesfully!"
+        "categoryMessage" : "Category has been added succesfully!",
+        "productDelete" : "Product deleted succesfully!"
     }
 }

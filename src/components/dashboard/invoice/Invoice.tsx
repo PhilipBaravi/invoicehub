@@ -46,6 +46,7 @@ import {
 } from './invoice-types';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const InvoiceComponent: FC = () => {
   const [invoice, setInvoice] = useState<Invoice>({
@@ -102,6 +103,7 @@ const InvoiceComponent: FC = () => {
   const [isLoadingClients, setIsLoadingClients] = useState<boolean>(false);
   const [businessInformation, setBusinessInformation] = useState<BusinessInfo | null>(null);
   const { t } = useTranslation('invoices');
+  const { toast } = useToast();
 
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id);
@@ -187,27 +189,27 @@ const InvoiceComponent: FC = () => {
       }
     };
 
-const fetchLoggedInCompanyDetails = async () => {
-  try {
-    const response = await fetch(
-      'https://api.invoicehub.space/api/v1/user/loggedInUser',
-      {
-        headers: {
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-      }
-    );
-    const data = await response.json();
+    const fetchLoggedInCompanyDetails = async () => {
+      try {
+        const response = await fetch(
+          'https://api.invoicehub.space/api/v1/user/loggedInUser',
+          {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          }
+        );
+        const data = await response.json();
 
-    if (data.success) {
-      setBusinessInformation(data.data.company);
-    } else {
-      setErrorMessage(t('invoice.errors.failedFetchBusiness'));
-    }
-  } catch (error) {
-    setErrorMessage(t('invoice.errors.failedFetchBusiness'));
-  }
-};
+        if (data.success) {
+          setBusinessInformation(data.data.company);
+        } else {
+          setErrorMessage(t('invoice.errors.failedFetchBusiness'));
+        }
+      } catch (error) {
+        setErrorMessage(t('invoice.errors.failedFetchBusiness'));
+      }
+    };
 
     if (keycloak && keycloak.token) {
       fetchLoggedInCompanyDetails();
@@ -468,6 +470,14 @@ const fetchLoggedInCompanyDetails = async () => {
         });
 
         if (invalidFiles.length > 0) {
+          toast({
+            title: t('invoice.error'),
+            description: `${t('invoice.errors.invalidFileTypes')} ${invalidFiles.join(
+              ', '
+            )}. ${t('invoice.errors.fileTypes')}`,
+            variant: 'destructive',
+            duration: 3000
+          })
           setErrorMessage(
             `${t('invoice.errors.invalidFileTypes')} ${invalidFiles.join(
               ', '
@@ -516,6 +526,12 @@ const fetchLoggedInCompanyDetails = async () => {
           return updatedLineItems;
         });
       } else {
+        toast({
+          title: t('invoice.error'),
+          description: t('invoice.errors.productNotFound'),
+          variant: 'destructive',
+          duration: 3000
+        })
         setErrorMessage(`${t('invoice.errors.productNotFound')}`);
       }
     },
@@ -708,17 +724,35 @@ const fetchLoggedInCompanyDetails = async () => {
   const handleSaveInvoice = useCallback(async () => {
     if (!selectedClient) {
       setErrorMessage(t('invoice.errors.selectClient'));
+      toast({
+        title: t('invoice.error'),
+        description: t('invoice.errors.selectClient'),
+        variant: 'destructive',
+        duration: 3000
+      })
       return;
     }
 
     const hasErrors = lineItems.some((item) => item.error);
     if (hasErrors) {
       setErrorMessage(t('invoice.errors.lineItems'));
+      toast({
+        title: t('invoice.error'),
+        description: t('invoice.errors.lineItems'),
+        variant: 'destructive',
+        duration: 3000
+      })
       return;
     }
 
     if (!invoice.notes || !invoice.paymentTerms) {
       setErrorMessage(t('invoice.errors.notesTerms'));
+      toast({
+        title: t('invoice.error'),
+        description: t('invoice.errors.notesTerms'),
+        variant: 'destructive',
+        duration: 3000
+      })
       return;
     }
 
@@ -789,6 +823,21 @@ const fetchLoggedInCompanyDetails = async () => {
       );
 
       if (!response.ok) {
+        if(isEditMode){
+          toast({
+            title: t('invoice.error'),
+            description: t('invoice.errors.errorUpdating'),
+            variant: 'destructive',
+            duration: 3000
+          })
+        }else{
+          toast({
+            title: t('invoice.error'),
+            description: t('invoice.errors.errorAdding'),
+            variant: 'destructive',
+            duration: 3000
+          })
+        }
         const errorResponse = await response.json();
         setErrorMessage(
           `Server Error: ${errorResponse.message || 'Unknown error'}`
@@ -856,6 +905,12 @@ const fetchLoggedInCompanyDetails = async () => {
         );
 
         if (!productResponse.ok) {
+          toast({
+            title: t('invoice.error'),
+            description: t('invoice.errors.errorAddingProduct'),
+            variant: 'destructive',
+            duration: 3000
+          })
           const errorResponse = await productResponse.json();
           setErrorMessage(
             `${t('invoice.errors.errorAddingProduct')} ${
@@ -869,7 +924,22 @@ const fetchLoggedInCompanyDetails = async () => {
       await fetchProductsAndCategories();
 
       setShowSuccessDialog(true);
+
+      toast({
+        title: t('invoice.success'),
+        description: isEditMode
+          ? t('invoice.updateSuccess')
+          : t('invoice.saveSuccess'),
+        variant: 'success',
+        duration: 3000,
+      });
     } catch (error) {
+      toast({
+        title: t('invoice.error'),
+        description: t('invoice.errors.errorSavingInvoice'),
+        variant: 'destructive',
+        duration: 3000
+      })
       console.error(error);
       setErrorMessage(t('invoice.errors.errorSavingInvoice'));
     }
@@ -1022,7 +1092,7 @@ const fetchLoggedInCompanyDetails = async () => {
               {t('invoice.generatePDF')}
             </Button>
             <Button onClick={handleSaveInvoice}>
-              {isEditMode ? t('invoice.updateInvoice') : t('invoice.saveInvoice')}
+              {isEditMode ? t('invoiceList.edit') : t('invoice.saveInvoice')}
             </Button>
           </div>
         </CardFooter>
@@ -1036,11 +1106,11 @@ const fetchLoggedInCompanyDetails = async () => {
         <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t('invoice.successTitle')}</AlertDialogTitle>
+              <AlertDialogTitle>{t('invoice.success')}</AlertDialogTitle>
               <AlertDialogDescription>
                 {isEditMode
-                  ? t('invoice.invoiceUpdatedSuccessfully')
-                  : t('invoice.invoiceSavedSuccessfully')}
+                  ? t('invoice.updateSuccess')
+                  : t('invoice.saveSuccess')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -1050,7 +1120,7 @@ const fetchLoggedInCompanyDetails = async () => {
                   navigate('/dashboard/invoices');
                 }}
               >
-                {t('invoice.ok')}
+                {t('invoiceList.dialog.continue')}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

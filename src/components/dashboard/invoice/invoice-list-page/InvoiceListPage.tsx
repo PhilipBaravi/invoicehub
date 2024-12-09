@@ -109,8 +109,20 @@ const InvoiceListPage: FC = () => {
         setFilteredInvoices((prev) => prev.filter((invoice) => invoice.id !== selectedInvoiceId));
         setIsDeleteDialogOpen(false);
         setSelectedInvoiceId(null);
+        toast({
+          title: t('invoice.success'),
+          description: t('invoice.successDeleteMessage'),
+          variant: 'success',
+          duration: 3000
+        })
       } else {
         console.error("Failed to delete invoice:", result?.message || "Unknown error");
+        toast({
+          title: t('invoice.error'),
+          description: t('invoice.errorMessage'),
+          variant: "destructive",
+          duration: 3000
+        })
       }
     } catch (error) {
       console.error("An error occurred while deleting invoice:", error);
@@ -140,11 +152,29 @@ const InvoiceListPage: FC = () => {
             invoice.id === invoiceId ? { ...invoice, invoiceStatus: 'APPROVED' } : invoice
           )
         );
+        toast({
+          title: t('invoice.success'),
+          description: t('invoiceList.approveSuccess'),
+          variant: 'success',
+          duration: 3000
+        })
       } else {
         console.error("Failed to approve invoice:", result.message);
+        toast({
+          title: t('invoice.error'),
+          description: t('invoiceList.approveError'),
+          variant: 'destructive',
+          duration: 3000
+        })
       }
     } catch (error) {
       console.error("An error occurred while approving invoice:", error);
+      toast({
+        title: t('invoice.error'),
+        description: t('invoiceList.approveError'),
+        variant: 'destructive',
+        duration: 3000
+      })
     } finally {
       setIsApproving(false);
     }
@@ -163,22 +193,23 @@ const InvoiceListPage: FC = () => {
 
       if (result.success) {
         toast({
-          title: "Success",
-          description: "Email sent successfully",
+          title: t('invoice.success'),
+          description: t('invoiceList.sendEmailSuccess'),
+          variant: 'success',
           duration: 3000,
         });
       } else {
         toast({
-          title: "Error",
-          description: "Failed to send email",
+          title: t('invoice.error'),
+          description: t('invoiceList.sendEmailError'),
           variant: "destructive",
           duration: 3000,
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An error occurred while sending the email",
+        title: t('invoice.error'),
+        description: t('invoiceList.sendEmailError'),
         variant: "destructive",
         duration: 3000,
       });

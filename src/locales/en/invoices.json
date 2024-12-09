@@ -18,8 +18,12 @@
         "delete" : "Delete",
         "edit" : "Edit",
         "sendEmail" : "Send Email",
+        "sendEmailSuccess" : "Email sent successfully!",
+        "sendEmailError" : "Failed to send email",
         "preview" : "Preview",
         "approve" : "Approve",
+        "approveSuccess" : "Invoice approved!",
+        "approveError" : "An error occurred while approving invoice",
         "editInvoice" : "Edit Invoice",
         "dialog" : {
             "sure" : "Are you sure?",
@@ -45,7 +49,9 @@
             "lineItems" : "Please fix errors in line items before saving.",
             "notesTerms" : "Please fill in both Notes and Terms.",
             "errorAddingProduct" : "Error adding prodcut to invoice:",
-            "errorSavingInvoice" : "An error occured while saving the invoice."
+            "errorSavingInvoice" : "An error occured while saving the invoice.",
+            "errorAdding" : "Failed to create invoice.",
+            "errorUpdating" : "Failed to update invoice."
         },
         "attachments" : {
             "pageTitle" : "Attachments",
@@ -157,6 +163,12 @@
         "loadingClients" : "Loading clients...",
         "cancel" : "Cancel",
         "generatePDF" : "Generate PDF & ZIP",
-        "saveInvoice" : "Save Invoice"
+        "saveInvoice" : "Save Invoice",
+        "success" : "Success!",
+        "successDeleteMessage" : "Invoice deleted succesfully!",
+        "error" : "Error!",
+        "errorMessage" : "Failed to delete invoice",
+        "saveSuccess" : "Invoice saved succesfully!",
+        "updateSuccess" : "Invoice updated succesfully!"
     }
 }

@@ -53,7 +53,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
     };
 
     try {
-      const response = await fetch("https://invoicehub.space/api/v1/category/create", {
+      const response = await fetch("https://api.invoicehub.space/api/v1/category/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,13 +122,13 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
                 const IconComponent = iconMap[icon];
                 return (
                   <Button
-                    key={index}
-                    variant="ghost"
-                    className={`p-2 hover:bg-secondary${
-                      selectedIcon === icon ? "bg-primary text-primary-foreground" : ""
-                    }`}
-                    onClick={() => handleIconSelect(icon)}
-                  >
+                      key={index}
+                      variant="ghost"
+                      className={`p-2 hover:bg-secondary ${
+                        selectedIcon === icon ? "bg-secondary" : ""
+                      }`}
+                      onClick={() => handleIconSelect(icon)}
+                       >
                     {IconComponent && <IconComponent className="min-w-[20px] min-h-[20px]" />}
                   </Button>
                 );

@@ -187,6 +187,12 @@ const ProductsPage: FC = () => {
       }
   
       setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
+      toast({
+        title: t('products.success'),
+        description: t('products.productDelete'),
+        variant: "success",
+        duration: 3000,
+      })
       console.log("Product deleted successfully.");
     } catch (error) {
       console.error("Unexpected error while deleting product:", error);

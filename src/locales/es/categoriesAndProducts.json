@@ -72,11 +72,12 @@
             "productUnit": "Unidad del Producto",
             "description": "Descripción",
             "cancel": "Cancelar",
-            "updateProdcut": "Actualizar Producto",
+            "updateProduct": "Actualizar Producto",
             "addProduct": "Agregar Producto"
         },
         "success": "¡Éxito!",
         "message": "¡El producto se ha añadido con éxito!",
-        "categoryMessage": "¡La categoría se ha añadido con éxito!"
+        "categoryMessage": "¡La categoría se ha añadido con éxito!",
+        "productDelete": "¡Producto eliminado con éxito!"
     }
 }
