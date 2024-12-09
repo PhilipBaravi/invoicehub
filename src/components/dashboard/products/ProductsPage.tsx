@@ -49,7 +49,7 @@ const ProductsPage: FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://localhost:9090/api/v1/product/list", {
+      const response = await fetch("https://api.invoicehub.space/api/v1/product/list", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -101,7 +101,7 @@ const ProductsPage: FC = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:9090/api/v1/product/create", {
+      const response = await fetch("https://api.invoicehub.space/api/v1/product/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ const ProductsPage: FC = () => {
   const handleEditProduct = async () => {
     if (editingProduct && editingProduct.id) {
       try {
-        const response = await fetch(`http://localhost:9090/api/v1/product/update/${editingProduct.id}`, {
+        const response = await fetch(`https://api.invoicehub.space/api/v1/product/update/${editingProduct.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -165,7 +165,7 @@ const ProductsPage: FC = () => {
 
   const handleDeleteProduct = async (productId: number) => {
     try {
-      const response = await fetch(`http://localhost:9090/api/v1/product/delete/${productId}`, {
+      const response = await fetch(`https://api.invoicehub.space/api/v1/product/delete/${productId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${keycloak.token}`,

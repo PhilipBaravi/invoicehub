@@ -34,7 +34,7 @@ export default function EmployeeList() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch('http://localhost:9090/api/v1/user/list', {
+        const response = await fetch('https://api.invoicehub.space/api/v1/user/list', {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },
@@ -72,7 +72,7 @@ export default function EmployeeList() {
 
   const deleteEmployee = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:9090/api/v1/user/delete/${id}`, {
+      const response = await fetch(`https://api.invoicehub.space/api/v1/user/delete/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -112,7 +112,7 @@ export default function EmployeeList() {
 
   const refreshEmployees = async () => {
     try {
-      const response = await fetch('http://localhost:9090/api/v1/user/list', {
+      const response = await fetch('https://api.invoicehub.space/api/v1/user/list', {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
         },
