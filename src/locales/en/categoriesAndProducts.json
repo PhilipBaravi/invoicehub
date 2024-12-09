@@ -1,4 +1,8 @@
 {
+    "error" : {
+        "title" : "Error!",
+        "message" : "Product is already used in invoice(s) and cannot be deleted."
+    },
     "categories" : {
         "pageTitle" : "Categories",
         "delete" : "Delete",
@@ -62,6 +66,8 @@
             "cancel" : "Cancel",
             "updateProdcut" : "Update Product",
             "addProduct" : "Add Product"
-        }
+        },
+        "success": "Success!",
+        "message": "Product has been added successfully!"
     }
 }

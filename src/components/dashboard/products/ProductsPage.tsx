@@ -10,6 +10,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useKeycloak } from "@react-keycloak/web";
 import { Product } from "./products-types";
 import { useTranslation } from "react-i18next";
+import { useToast } from "@/hooks/use-toast";
 
 const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");
@@ -18,6 +19,7 @@ const ProductsPage: FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const { t } = useTranslation("categoriesAndProducts");
+  const { toast } = useToast();
 
   const [newProduct, setNewProduct] = useState<Omit<Product, "id" | "createdAt">>({
     name: "",
@@ -114,6 +116,12 @@ const ProductsPage: FC = () => {
         await fetchProducts();
         setIsDialogOpen(false);
         resetProductForm();
+        toast({
+          title: t('products.success'),
+          description: t('products.message'),
+          variant: "default",
+          duration: 3000,
+      })
       } else {
         console.error("Error adding product:", createdProduct);
       }
@@ -162,15 +170,29 @@ const ProductsPage: FC = () => {
           Authorization: `Bearer ${keycloak.token}`,
         },
       });
-      if (response.ok) {
-        setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
-      } else {
-        console.error("Failed to delete product:", await response.json());
+  
+      if (!response.ok) {
+        const data = await response.json();
+        if (response.status === 409 && data.message === "Product is already used in invoice(s) and cannot be deleted.") {
+          toast({
+            title: t('error.title'),
+            description: t('error.message'),
+            variant: "destructive",
+            duration: 3000,
+          })
+        } else {
+          console.error("Failed to delete product:", data.message);
+        }
+        return;
       }
+  
+      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
+      console.log("Product deleted successfully.");
     } catch (error) {
-      console.error("Failed to delete product:", error);
+      console.error("Unexpected error while deleting product:", error);
     }
   };
+  
 
   const resetProductForm = () => {
     setNewProduct({

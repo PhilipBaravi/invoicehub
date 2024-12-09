@@ -187,27 +187,27 @@ const InvoiceComponent: FC = () => {
       }
     };
 
-    const fetchLoggedInCompanyDetails = async () => {
-      try {
-        const response = await fetch(
-          'https://api.invoicehub.space/api/v1/company/loggedInUserCompany',
-          {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
-        const data = await response.json();
-
-        if (data.success) {
-          setBusinessInformation(data.data);
-        } else {
-          setErrorMessage(t('invoice.errors.failedFetchBusiness'));
-        }
-      } catch (error) {
-        setErrorMessage(t('invoice.errors.failedFetchBusiness'));
+const fetchLoggedInCompanyDetails = async () => {
+  try {
+    const response = await fetch(
+      'https://api.invoicehub.space/api/v1/user/loggedInUser',
+      {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
       }
-    };
+    );
+    const data = await response.json();
+
+    if (data.success) {
+      setBusinessInformation(data.data.company);
+    } else {
+      setErrorMessage(t('invoice.errors.failedFetchBusiness'));
+    }
+  } catch (error) {
+    setErrorMessage(t('invoice.errors.failedFetchBusiness'));
+  }
+};
 
     if (keycloak && keycloak.token) {
       fetchLoggedInCompanyDetails();

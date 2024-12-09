@@ -1,4 +1,8 @@
 {
+    "error": {
+    "title": "¡Error!",
+    "message": "El producto ya está utilizado en una(s) factura(s) y no se puede eliminar."
+},
     "categories": {
         "pageTitle": "Categorías",
         "delete": "Eliminar",
@@ -62,6 +66,8 @@
             "cancel": "Cancelar",
             "updateProdcut": "Actualizar Producto",
             "addProduct": "Agregar Producto"
-        }
+        },
+        "success": "¡Éxito!",
+        "message": "¡El producto se ha añadido con éxito!"
     }
 }
