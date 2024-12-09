@@ -1,7 +1,8 @@
 {
     "error": {
     "title": "¡Error!",
-    "message": "El producto ya está utilizado en una(s) factura(s) y no se puede eliminar."
+    "message": "El producto ya está utilizado en una(s) factura(s) y no se puede eliminar.",
+    "categoryMessage": "¡Hay al menos un producto que está utilizado en una factura!"
 },
     "categories": {
         "pageTitle": "Categorías",
@@ -20,7 +21,14 @@
             "details": "Modifique los detalles de la categoría y elija un icono.",
             "save": "Guardar",
             "icon": "Elegir icono de categoría:"
-        }
+        },
+        "alert": {
+    "title": "¿Estás seguro?",
+    "message": "Esta acción no se puede deshacer. Esto eliminará la categoría de forma permanente.",
+    "cancel": "Cancelar",
+    "continue": "Continuar"
+}
+
     },
     "products": {
         "pageTitle": "Productos",
@@ -68,6 +76,7 @@
             "addProduct": "Agregar Producto"
         },
         "success": "¡Éxito!",
-        "message": "¡El producto se ha añadido con éxito!"
+        "message": "¡El producto se ha añadido con éxito!",
+        "categoryMessage": "¡La categoría se ha añadido con éxito!"
     }
 }

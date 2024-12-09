@@ -119,7 +119,7 @@ const ProductsPage: FC = () => {
         toast({
           title: t('products.success'),
           description: t('products.message'),
-          variant: "default",
+          variant: "success",
           duration: 3000,
       })
       } else {

@@ -26,6 +26,7 @@ import { useTranslation } from "react-i18next";
 // Import types and icon map
 import { Category } from "./categories-types";
 import iconMap from "./icons-map";
+import { useToast } from "@/hooks/use-toast";
 
 const Categories: FC = () => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);
@@ -35,6 +36,7 @@ const Categories: FC = () => {
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const { t } = useTranslation('categoriesAndProducts')
+  const { toast } = useToast();
 
   const navigate = useNavigate();
   const { keycloak } = useKeycloak();
@@ -75,12 +77,28 @@ const Categories: FC = () => {
   const confirmDeleteCategory = async () => {
     if (categoryToDelete) {
       try {
-        await fetch(`https://api.invoicehub.space/api/v1/category/delete/${categoryToDelete.id}`, {
+        const response = await fetch(`https://invoicehub.space/api/v1/category/delete/${categoryToDelete.id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },
         });
+        if (!response.ok) {
+          const data = await response.json();
+          if (response.status === 409 && data.message === "There is at least one product that is used in invoice!") {
+            toast({
+              title: t('error.title'),
+              description: t('error.categoryMessage'),
+              variant: "destructive",
+              duration: 3000,
+            })
+          } else {
+            console.error("Failed to delete product:", data.message);
+          }
+          return;
+        }
+    
+
         setProductCategories((prevCategories) =>
           prevCategories.filter((category) => category.id !== categoryToDelete.id)
         );
@@ -158,17 +176,17 @@ const Categories: FC = () => {
         />
       )}
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+<AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('categories.alert.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the category.
+              {t('categories.alert.message')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteCategory}>Continue</AlertDialogAction>
+            <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>{t('categories.alert.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteCategory}>{t('categories.alert.continue')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

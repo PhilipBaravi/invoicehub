@@ -1,7 +1,8 @@
 {
     "error" : {
         "title" : "Error!",
-        "message" : "Product is already used in invoice(s) and cannot be deleted."
+        "message" : "Product is already used in invoice(s) and cannot be deleted.",
+        "categoryMessage" : "There is at least one product that is used in invoice!"
     },
     "categories" : {
         "pageTitle" : "Categories",
@@ -20,6 +21,12 @@
             "details" : "Modify the details for the category and choose an icon.",
             "save" : "Save",
             "icon" : "Choose category icon:"
+        },
+        "alert" : {
+            "title" : "Are you sure?",
+            "message" : "This action cannot be undone. This will permanently delete the category.",
+            "cancel" : "Cancel",
+            "continue" : "Continue"
         }
     },
     "products" : {
@@ -68,6 +75,7 @@
             "addProduct" : "Add Product"
         },
         "success": "Success!",
-        "message": "Product has been added successfully!"
+        "message": "Product has been added successfully!",
+        "categoryMessage" : "Category has been added succesfully!"
     }
 }

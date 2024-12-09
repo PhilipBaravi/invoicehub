@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 // Import types and icon map
 import { AddCategoryBtnProps } from "./categories-types";
 import iconMap from "./icons-map";
+import { useToast } from "@/hooks/use-toast";
 
 const categoryIcons = Object.keys(iconMap);
 
@@ -29,6 +30,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { keycloak } = useKeycloak();
   const { t } = useTranslation('categoriesAndProducts')
+  const { toast } = useToast();
 
   const handleCategoryInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCategoryName(e.target.value);
@@ -51,7 +53,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
     };
 
     try {
-      const response = await fetch("https://api.invoicehub.space/api/v1/category/create", {
+      const response = await fetch("https://invoicehub.space/api/v1/category/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,6 +69,12 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
       setIsDialogOpen(false);
       setCategoryName("");
       setSelectedIcon(null);
+      toast({
+              title: t('products.success'),
+              description: t('products.categoryMessage'),
+              variant: "success",
+              duration: 3000,
+      })
     } catch (error) {
       setError("An error occurred while adding the category.");
       console.error(error);
