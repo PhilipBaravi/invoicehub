@@ -1,72 +1,34 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { FC, FormEvent, useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MessageSquare, Send, X } from 'lucide-react'
-import { Rnd } from 'react-rnd'
+import { Bot, Send, X } from 'lucide-react'
 import HeaderAvatar from '../layout/header/HeaderAvatar'
-import { useMediaQuery } from 'react-responsive'
 
-type Message = {
+interface Message {
   id: number
   type: 'user' | 'bot'
   content: string
 }
 
-const ChatMessage: React.FC<{ message: Message }> = ({ message }) => (
-  <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} mb-4`}>
-    <div className={`flex items-center ${message.type === 'user' ? 'flex-row-reverse' : 'flex-row'} max-w-[80%]`}>
-      {message.type === 'user' ? (
-        <HeaderAvatar />
-      ) : (
-        <Avatar className="w-8 h-8 flex-shrink-0">
-          <AvatarImage src="/bot-avatar.png" />
-          <AvatarFallback>B</AvatarFallback>
-        </Avatar>
-      )}
-      <div className={`mx-2 p-3 rounded-lg ${message.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-        <p>{message.content}</p>
-      </div>
-    </div>
-  </div>
-)
-
-const ChatInput: React.FC<{ onSendMessage: (message: string) => void }> = ({ onSendMessage }) => {
-  const [input, setInput] = useState('')
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (input.trim()) {
-      onSendMessage(input)
-      setInput('')
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="flex items-center space-x-2">
-      <Input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type your message..."
-        className="flex-grow"
-      />
-      <Button type="submit" size="icon">
-        <Send className="h-4 w-4" />
-      </Button>
-    </form>
-  )
+interface AIChatbotProps {
+  isOpen: boolean
+  onClose: () => void
 }
 
-export default function AIChatbot() {
-  const [isOpen, setIsOpen] = useState(false)
+const AIChatbot: FC<AIChatbotProps> = ({ isOpen, onClose }) => {
+  const [input, setInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, type: 'bot', content: "Hello! I'm your AI assistant. How can I help you today with invoices, products, customers, or team management?" }
+    {
+      id: 1,
+      type: 'bot',
+      content: "Hello! I'm your AI assistant. How can I help you today with invoices, products, customers, or team management?"
+    }
   ])
+
   const scrollAreaRef = useRef<HTMLDivElement>(null)
-  
-  // Detect screen size
-  const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' })
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -74,25 +36,30 @@ export default function AIChatbot() {
     }
   }, [messages])
 
-  const handleSendMessage = async (content: string) => {
-    const newUserMessage: Message = { id: messages.length + 1, type: 'user', content }
-    setMessages([...messages, newUserMessage])
-  
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!input.trim()) return
+
+    const newUserMessage: Message = { 
+      id: messages.length + 1, 
+      type: 'user', 
+      content: input 
+    }
+    setMessages(prev => [...prev, newUserMessage])
+    setInput('')
+
     try {
-      const response = await fetch(`http://localhost:1010/assistant?q=${encodeURIComponent(content)}`)
+      const response = await fetch(`http://localhost:1010/assistant?q=${encodeURIComponent(input)}`)
       if (response.ok) {
         const data = await response.json()
-        console.log(data);
-        console.log(data.data);
-        const botResponse: Message = { 
-          id: messages.length + 2, 
-          type: 'bot', 
+        const botResponse: Message = {
+          id: messages.length + 2,
+          type: 'bot',
           content: data.data || "I'm sorry, I didn't understand that."
         }
         setMessages(prev => [...prev, botResponse])
-      } 
+      }
     } catch (error) {
-      console.error('Fetch error:', error)
       const errorResponse: Message = {
         id: messages.length + 2,
         type: 'bot',
@@ -102,70 +69,61 @@ export default function AIChatbot() {
     }
   }
 
-  return (
-    <>
-      {!isOpen && (
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 z-50"
-          size="icon"
-        >
-          <MessageSquare className="h-6 w-6" />
-        </Button>
-      )}
+  if (!isOpen) return null
 
-      {isOpen && (
-        <>
-          {isLargeScreen ? (
-            <Rnd
-              default={{
-                x: 200,
-                y: 100,
-                width: 400,
-                height: 500,
-              }}
-              minWidth={300}
-              minHeight={300}
-              bounds="window"
-              dragHandleClassName="drag-handle"
-            >
-              <div className="bg-background flex flex-col w-full h-full rounded-lg shadow-lg border-2 border-blue-700">
-                <div className="flex items-center justify-between p-4 border-b drag-handle cursor-move">
-                  <h2 className="text-lg font-semibold">AI Assistant</h2>
-                  <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-                    <X className="h-4 w-4" />
-                  </Button>
+  return (
+    <Card className="border-0 w-full h-full flex flex-col shadow-lg">
+      <CardContent className="p-0 flex flex-col h-full">
+        <div className="flex items-center justify-between p-4 bg-primary text-primary-foreground">
+          <div className="flex items-center gap-3">
+            <Bot className="w-6 h-6" />
+            <span className="font-semibold">AI Assistant</span>
+          </div>
+          <Button
+            onClick={onClose}
+            variant="ghost"
+            size="icon"
+            className="text-primary-foreground hover:bg-primary/90"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <ScrollArea className="flex-grow px-4 py-6" ref={scrollAreaRef}>
+          <div className="space-y-6">
+            {messages.map((message) => (
+              <div key={message.id} className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {message.type === 'bot' && (
+                  <Avatar className="w-8 h-8 shrink-0">
+                    <AvatarImage src="/bot-avatar.png" />
+                    <AvatarFallback>
+                      <Bot className="w-4 h-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                )}
+                <div className={`max-w-[80%] ${message.type === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'} rounded-2xl p-3`}>
+                  <p className="text-sm">{message.content}</p>
                 </div>
-                <ScrollArea className="flex-grow p-4" ref={scrollAreaRef}>
-                  {messages.map((message) => (
-                    <ChatMessage key={message.id} message={message} />
-                  ))}
-                </ScrollArea>
-                <div className="p-4 border-t">
-                  <ChatInput onSendMessage={handleSendMessage} />
-                </div>
+                {message.type === 'user' && <HeaderAvatar />}
               </div>
-            </Rnd>
-          ) : (
-            <div className="fixed bottom-4 right-4 w-80 h-96 bg-background rounded-lg shadow-lg border-2 border-blue-700 z-50">
-              <div className="flex items-center justify-between p-4 border-b">
-                <h2 className="text-lg font-semibold">AI Assistant</h2>
-                <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <ScrollArea className="flex-grow p-4" ref={scrollAreaRef}>
-                {messages.map((message) => (
-                  <ChatMessage key={message.id} message={message} />
-                ))}
-              </ScrollArea>
-              <div className="p-4 border-t">
-                <ChatInput onSendMessage={handleSendMessage} />
-              </div>
-            </div>
-          )}
-        </>
-      )}
-    </>
+            ))}
+          </div>
+        </ScrollArea>
+
+        <form onSubmit={handleSubmit} className="flex items-center gap-2 p-4 bg-background border-t">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-grow rounded-full"
+          />
+          <Button type="submit" size="icon" className="shrink-0 rounded-full">
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
+
+export default AIChatbot
