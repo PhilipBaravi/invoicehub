@@ -9,7 +9,7 @@
         "subtitle": "Introduce tu correo electrónico y contraseña para acceder a tu cuenta"
     },
     "form" : {
-        "error": "¡Error!"
+        "error": "¡Failed."
     },
     "loginForm": {
         "email": "Correo electrónico",

@@ -20,6 +20,7 @@ import {
 import { apiFetch } from '@/utils/api';
 import { useKeycloak } from '@react-keycloak/web';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AddClientVendorSheet({
   isOpen,
@@ -49,6 +50,7 @@ export default function AddClientVendorSheet({
   const { t } = useTranslation('clients')
   const [newClientVendor, setNewClientVendor] = useState(initialClientVendorState);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -124,13 +126,24 @@ export default function AddClientVendorSheet({
         method: 'POST',
         body: JSON.stringify(newClientVendor),
       });
-
+      toast({
+        title: t('addClient.success'),
+        description: t('addClient.addSuccess'),
+        variant: 'destructive',
+        duration: 3000
+      })
       // Close the form
       onOpenChange(false);
       // Reset the form
       setNewClientVendor(initialClientVendorState);
       setErrors({});
     } catch (error) {
+      toast({
+        title: t('addClient.error'),
+        description: t('addClient.addError'),
+        variant: 'success',
+        duration: 3000
+      })
       console.error('Error adding client/vendor:', error);
     }
   };

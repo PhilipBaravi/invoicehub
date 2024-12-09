@@ -7,6 +7,7 @@ import Pagination from '../employee/Pagination';
 import SearchAndFilter from '../employee/SearchAndFilter';
 import { useKeycloak } from '@react-keycloak/web';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ClientVendorList() {
   const { keycloak } = useKeycloak();
@@ -21,6 +22,7 @@ export default function ClientVendorList() {
   const [isEditClientVendorOpen, setIsEditClientVendorOpen] = useState(false);
   const [editingClientVendor, setEditingClientVendor] = useState<ClientVendor | null>(null);
   const [filterCategory, setFilterCategory] = useState<keyof ClientVendor>('name');
+  const { toast } = useToast()
 
   const filterOptions: Array<{ value: keyof ClientVendor; label: string }> = [
     { value: 'name', label: t('clientFilter.name') },
@@ -71,20 +73,37 @@ export default function ClientVendorList() {
   const deleteClientVendor = async (id: number) => {
     try {
       const response = await fetch(`https://api.invoicehub.space/api/v1/clientVendor/delete/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
         },
       });
-
-      if (response.ok) {
-        // Remove the client/vendor from the state
-        setClientVendors(clientVendors.filter((cv) => cv.id !== id));
-      } else {
-        console.error('Failed to delete client/vendor');
+  
+      if (!response.ok) {
+        const data = await response.json();
+        if (response.status === 409 && data.message === "Client has invoice(s) and cannot be deleted.") {
+          toast({
+            title: t("addClient.error"),
+            description: t("addClient.deleteError"),
+            variant: "destructive",
+            duration: 3000,
+          });
+        } else {
+          console.error("Failed to delete client/vendor:", data.message);
+        }
+        return;
       }
+      toast({
+        title: t('addClient.success'),
+        description: t('addClient.deleteSuccess'),
+        variant: 'success',
+        duration: 3000
+      })
+      setClientVendors((prevClientVendors) =>
+        prevClientVendors.filter((cv) => cv.id !== id)
+      );
     } catch (error) {
-      console.error('Error deleting client/vendor:', error);
+      console.error("Error deleting client/vendor:", error);
     }
   };
 

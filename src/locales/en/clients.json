@@ -42,7 +42,13 @@
         "city" : "City",
         "state" : "State",
         "country" : "Country",
-        "zipCode" : "Zip Code"
+        "zipCode" : "Zip Code",
+        "error" : "Failed.",
+        "success" : "Success!",
+        "addError" : "Failed adding client/vendor.",
+        "addSuccess" : "Client/Vendor added succesfully!",
+        "deleteSuccess" : "Client/Vendor deleted succesfully.",
+        "deleteError" : "Client has invoice(s) and cannot be deleted."
     },
     "editValidations" : {
         "name" : "Names is required.",

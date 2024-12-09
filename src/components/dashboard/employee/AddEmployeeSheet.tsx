@@ -30,6 +30,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { useKeycloak } from '@react-keycloak/web';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 
 // Types for errors
 type EmployeeErrors = {
@@ -63,6 +64,7 @@ export default function AddEmployeeSheet({
   const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
   const [errors, setErrors] = useState<EmployeeErrors>({});
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
+  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -118,13 +120,24 @@ export default function AddEmployeeSheet({
         },
         body: JSON.stringify(completeEmployeeData),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
+        toast({
+          title: t('addEmployee.error'),
+          description: t('addEmployee.errorAdding'),
+          variant: 'destructive',
+          duration: 3000
+        })
         console.error('Error adding employee:', errorData);
         return;
       }
 
+      toast({
+        title: t('addEmployee.success'),
+        description: t('addEmployee.successMessage'),
+        variant: 'success',
+        duration: 3000
+      })
       // Close the sheet and reset the form
       onOpenChange(false);
       setNewEmployee({

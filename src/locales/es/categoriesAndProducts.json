@@ -1,6 +1,6 @@
 {
     "error": {
-    "title": "¡Error!",
+    "title": "¡Failed.",
     "message": "El producto ya está utilizado en una(s) factura(s) y no se puede eliminar.",
     "categoryMessage": "¡Hay al menos un producto que está utilizado en una factura!"
 },

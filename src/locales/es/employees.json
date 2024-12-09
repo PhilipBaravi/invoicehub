@@ -1,12 +1,12 @@
 {
-    "pageTitle": "Lista de empleados",
+    "pageTitle": "Lista de Empleados",
     "table": {
         "name": "Nombre",
-        "email": "Correo electrónico",
+        "email": "Correo Electrónico",
         "password": "Contraseña",
         "phone": "Teléfono",
         "role": "Rol",
-        "dateOfEmployment": "Fecha de empleo",
+        "dateOfEmployment": "Fecha de contratación",
         "status": "Estado",
         "actions": "Acciones",
         "delete": "Eliminar",
@@ -19,14 +19,14 @@
     },
     "searchAndFilter": {
         "searchPlaceholder": "Buscar...",
-        "filterBy": "Filtrar por",
+        "filterBy": "Filtrar Por",
         "rowsPerPage": "Filas por página",
         "rows": "filas"
     },
     "filterOptions": {
         "firstName": "Nombre",
         "lastName": "Apellido",
-        "username": "Correo electrónico",
+        "username": "Correo Electrónico",
         "phone": "Teléfono",
         "role": "Rol",
         "status": "Estado"
@@ -36,19 +36,25 @@
         "password": "La contraseña es obligatoria.",
         "firstName": "El nombre es obligatorio.",
         "lastName": "El apellido es obligatorio.",
-        "phone": "Número de teléfono no válido para el país seleccionado."
+        "phone": "Número de teléfono inválido para el país seleccionado."
     },
     "addEmployee": {
         "addEmployee": "Agregar Empleado",
         "addNewEmployee": "Agregar Nuevo Empleado",
         "details": "Ingrese los detalles del nuevo empleado a continuación.",
-        "email": "Correo electrónico",
+        "email": "Correo Electrónico",
         "password": "Contraseña",
         "firstName": "Nombre",
         "lastName": "Apellido",
         "role": "Rol",
         "selectRole": "Seleccionar rol",
-        "dateOfEmployment": "Fecha de empleo",
-        "pickADate": "Seleccionar una fecha"
+        "dateOfEmployment": "Fecha de Contratación",
+        "pickADate": "Elija una fecha",
+        "error": "Falló.",
+        "errorAdding": "Error al agregar empleado.",
+        "success": "¡Éxito!",
+        "successMessage": "¡Empleado agregado exitosamente!",
+        "deleteError": "Error al eliminar empleado.",
+        "deleteSuccess": "¡Empleado eliminado exitosamente!"
     }
 }

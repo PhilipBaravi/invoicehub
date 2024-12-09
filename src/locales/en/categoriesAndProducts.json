@@ -1,6 +1,6 @@
 {
     "error" : {
-        "title" : "Error!",
+        "title" : "Failed.",
         "message" : "Product is already used in invoice(s) and cannot be deleted.",
         "categoryMessage" : "There is at least one product that is used in invoice!"
     },

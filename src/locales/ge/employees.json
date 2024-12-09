@@ -2,7 +2,7 @@
     "pageTitle": "თანამშრომლების სია",
     "table": {
         "name": "სახელი",
-        "email": "ელ. ფოსტა",
+        "email": "ელ.ფოსტა",
         "password": "პაროლი",
         "phone": "ტელეფონი",
         "role": "როლი",
@@ -13,20 +13,20 @@
         "edit": "რედაქტირება"
     },
     "pagination": {
-         "showingEntries": "ჩვენება {{start}} -დან {{end}} -მდე, სულ {{total}} ჩანაწერი",
+        "showingEntries": "აჩვენებს {{start}}-დან {{end}}-მდე {{total}} ჩანაწერს",
         "previous": "წინა",
         "next": "შემდეგი"
     },
     "searchAndFilter": {
         "searchPlaceholder": "ძიება...",
-        "filterBy": "ფილტრი",
-        "rowsPerPage": "სტრიქონები თითო გვერდზე",
-        "rows": "სტრიქონი"
+        "filterBy": "გაფილტვრა",
+        "rowsPerPage": "სტრიქონები გვერდზე",
+        "rows": "სტრიქონები"
     },
     "filterOptions": {
         "firstName": "სახელი",
         "lastName": "გვარი",
-        "username": "ელ. ფოსტა",
+        "username": "ელ.ფოსტა",
         "phone": "ტელეფონი",
         "role": "როლი",
         "status": "სტატუსი"
@@ -42,13 +42,19 @@
         "addEmployee": "თანამშრომლის დამატება",
         "addNewEmployee": "ახალი თანამშრომლის დამატება",
         "details": "შეიყვანეთ ახალი თანამშრომლის დეტალები ქვემოთ.",
-        "email": "ელ. ფოსტა",
+        "email": "ელ.ფოსტა",
         "password": "პაროლი",
         "firstName": "სახელი",
         "lastName": "გვარი",
         "role": "როლი",
-        "selectRole": "როლის არჩევა",
+        "selectRole": "არჩევა როლი",
         "dateOfEmployment": "დასაქმების თარიღი",
-        "pickADate": "თარიღის არჩევა"
+        "pickADate": "აირჩიეთ თარიღი",
+        "error": "შეცდომა.",
+        "errorAdding": "ვერ დაემატა თანამშრომელი.",
+        "success": "წარმატება!",
+        "successMessage": "თანამშრომელი წარმატებით დაემატა!",
+        "deleteError": "ვერ წაიშალა თანამშრომელი.",
+        "deleteSuccess": "თანამშრომელი წარმატებით წაიშალა!"
     }
 }

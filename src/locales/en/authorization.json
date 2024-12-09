@@ -9,7 +9,7 @@
         "subtitle": "Enter your email and password to access your account"
     },
     "form" : {
-        "error" : "Error!"
+        "error" : "Failed."
     },
     "loginForm" : {
         "email": "Email",

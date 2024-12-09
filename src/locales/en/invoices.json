@@ -166,7 +166,7 @@
         "saveInvoice" : "Save Invoice",
         "success" : "Success!",
         "successDeleteMessage" : "Invoice deleted succesfully!",
-        "error" : "Error!",
+        "error" : "Failed.",
         "errorMessage" : "Failed to delete invoice",
         "saveSuccess" : "Invoice saved succesfully!",
         "updateSuccess" : "Invoice updated succesfully!"

@@ -166,7 +166,7 @@
         "saveInvoice": "Guardar Factura",
         "success": "¡Éxito!",
         "successDeleteMessage": "¡Factura eliminada con éxito!",
-        "error": "¡Error!",
+        "error": "¡Failed.",
         "errorMessage": "No se pudo eliminar la factura",
         "saveSuccess": "¡Factura guardada con éxito!",
         "updateSuccess": "¡Factura actualizada con éxito!"

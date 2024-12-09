@@ -49,6 +49,12 @@
         "role" : "Role",
         "selectRole" : "Select role",
         "dateOfEmployment" : "Date of Employment",
-        "pickADate" : "Pick a date"
+        "pickADate" : "Pick a date",
+        "error" : "Failed.",
+        "errorAdding" : "Failed to add employee.",
+        "success" : "Success!",
+        "successMessage" : "Employee added succesfully!",
+        "deleteError" : "Failed to delete employee.",
+        "deleteSuccess" : "Employee deleted succesfully."
     }
 }

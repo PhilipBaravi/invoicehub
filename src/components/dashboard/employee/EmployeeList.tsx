@@ -7,6 +7,7 @@ import EmployeeTable from './EmployeeTable';
 import Pagination from './Pagination';
 import SearchAndFilter from './SearchAndFilter';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 
 export default function EmployeeList() {
   const { keycloak } = useKeycloak();
@@ -21,6 +22,7 @@ export default function EmployeeList() {
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [filterCategory, setFilterCategory] = useState<keyof Employee>('firstName');
   const { t } = useTranslation('employees')
+  const { toast } = useToast()
 
   const filterOptions: Array<{ value: keyof Employee; label: string }> = [
     { value: 'firstName', label: t('filterOptions.firstName') },
@@ -80,9 +82,20 @@ export default function EmployeeList() {
       });
 
       if (!response.ok) {
+          toast({
+            title: t('addEmployee.error'),
+            description: t('addEmployee.deleteError'),
+            variant: "destructive",
+            duration: 3000,
+          })
         throw new Error('Failed to delete employee');
       }
-
+      toast({
+        title: t('addEmployee.success'),
+        description: t('addEmployee.deleteSuccess'),
+        variant: 'success',
+        duration: 3000
+      })
       setEmployees(employees.filter((emp) => emp.id !== id));
     } catch (error) {
       console.error('Error deleting employee:', error);
