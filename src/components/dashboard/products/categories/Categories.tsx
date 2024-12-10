@@ -44,7 +44,7 @@ const Categories: FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://api.invoicehub.space/category/list", {
+        const response = await fetch("https://api.invoicehub.space/api/v1/category/list", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -77,7 +77,7 @@ const Categories: FC = () => {
   const confirmDeleteCategory = async () => {
     if (categoryToDelete) {
       try {
-        const response = await fetch(`https://api.invoicehub.space/category/delete/${categoryToDelete.id}`, {
+        const response = await fetch(`https://api.invoicehub.space/api/v1/category/delete/${categoryToDelete.id}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${keycloak.token}`,

@@ -156,7 +156,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     console.log('Sending registration data to deployment endpoint:', registrationData);
 
     try {
-      const response = await fetch('https://api.invoicehub.space/user/create', {
+      const response = await fetch('https://api.invoicehub.space/api/v1/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

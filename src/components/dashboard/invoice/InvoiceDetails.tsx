@@ -25,7 +25,7 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({ invoice, setInvoice, isEditMo
         if (isEditMode) {
           // Do nothing, data is already fetched
         } else {
-          const response = await fetch('https://api.invoicehub.space/invoice/generate', {
+          const response = await fetch('https://api.invoicehub.space/api/v1/invoice/generate', {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
             },

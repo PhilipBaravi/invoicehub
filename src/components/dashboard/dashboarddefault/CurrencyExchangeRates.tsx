@@ -25,7 +25,7 @@ const CurrencyExchangeRates: FC = () => {
 
   const getExchangeRatesData = async () => {
     try {
-      const response = await fetch('https://api.invoicehub.space/dashboard/exchangeRates', {
+      const response = await fetch('https://api.invoicehub.space/api/v1/dashboard/exchangeRates', {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
         },

@@ -21,7 +21,7 @@ export const useAuth = () => {
       if (!keycloak.token) return;
 
       try {
-        const response = await fetch('https://api.invoicehub.space/user/loggedInUser', {
+        const response = await fetch('https://api.invoicehub.space/api/v1/user/loggedInUser', {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },

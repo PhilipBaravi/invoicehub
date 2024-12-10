@@ -20,7 +20,7 @@ const FinancialSummaryChart: FC = () => {
 
   const fetchFinancialSummary = async () => {
     try {
-      const response = await fetch('https://api.invoicehub.space/dashboard/summaryNumbers', {
+      const response = await fetch('https://api.invoicehub.space/api/v1/dashboard/summaryNumbers', {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
         },
