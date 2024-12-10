@@ -33,7 +33,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [companyCountry, setCompanyCountry] = useState<CountryCode>('US');
-    
+
   const [formValues, setFormValues] = useState<CompanyFormValues>({
     title: '',
     phone: '',
@@ -56,7 +56,8 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     e.preventDefault();
     let valid = true;
     const newErrors: Record<string, string> = {};
-  
+
+    // Client-side validation
     if (!formValues.title) {
       newErrors.title = t('companySignUpForm.errors.companyName');
       valid = false;
@@ -67,7 +68,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         duration: 3000,
       });
     }
-    
+
     const fullCompanyPhoneNumber = companyPhoneCode + formValues.phone;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
       newErrors.phone = t('companySignUpForm.errors.companyPhone');
@@ -79,7 +80,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         duration: 3000,
       });
     }
-    
+
     if (!formValues.address.addressLine1) {
       newErrors.addressLine1 = t('companySignUpForm.errors.companyAddress');
       valid = false;
@@ -90,7 +91,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         duration: 3000,
       });
     }
-    
+
     if (!formValues.address.city) {
       newErrors.city = t('companySignUpForm.errors.companyCity');
       valid = false;
@@ -101,7 +102,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         duration: 3000,
       });
     }
-    
+
     if (!formValues.address.state) {
       newErrors.state = t('companySignUpForm.errors.companyState');
       valid = false;
@@ -112,7 +113,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         duration: 3000,
       });
     }
-    
+
     if (!formValues.address.zipCode) {
       newErrors.zipCode = t('companySignUpForm.errors.zipCode');
       valid = false;
@@ -123,12 +124,12 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         duration: 3000,
       });
     }
-    
+
     if (!valid) {
       setErrors(newErrors);
       return;
     }
-  
+
     const registrationData = {
       username: userDetails?.username,
       password: userDetails?.password,
@@ -151,7 +152,9 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         }
       }
     };
-  
+
+    console.log('Sending registration data to deployment endpoint:', registrationData);
+
     try {
       const response = await fetch('https://api.invoicehub.space/user/create', {
         method: 'POST',
@@ -160,12 +163,26 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         },
         body: JSON.stringify(registrationData),
       });
-  
-      // Check if response has a JSON body
-      const isJson = response.headers.get('Content-Type')?.includes('application/json');
-      const data = isJson ? await response.json() : null;
-  
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
+      let data: any = null;
+      const contentType = response.headers.get('Content-Type');
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+          console.log('Response data:', data);
+        } catch (jsonError) {
+          console.error('Failed to parse JSON response:', jsonError);
+        }
+      } else {
+        console.warn('Response not in JSON format');
+      }
+
       if (!response.ok) {
+        console.error('Server returned an error response:', response.status, data);
+        
         if (response.status === 409 && data?.message === `"${userDetails?.username}" is already exists in a system.`) {
           toast({
             title: t('form.error'),
@@ -180,11 +197,11 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             variant: "destructive",
             duration: 3000,
           });
-          throw new Error(data?.message || 'Registration failed');
         }
-        return;
+
+        throw new Error(data?.message || 'Registration failed with server error.');
       }
-  
+
       console.log('Registration successful:', data);
       toast({
         title: t('form.success'),
@@ -193,11 +210,17 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         duration: 3000,
       });
       navigate('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error during registration:', error);
-      console.log(registrationData)
+      console.log('Request payload that caused the error:', registrationData);
       setErrors({
         title: t('companySignUpForm.errors.registrationFailed'),
+      });
+      toast({
+        title: t('form.error'),
+        description: error.message || t('companySignUpForm.errors.registrationFailed'),
+        variant: "destructive",
+        duration: 3000,
       });
     }
   };
@@ -247,7 +270,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
 
       <div>
         <Input
-          id="companyEmail"
+          id="email"
           name="email"
           value={formValues.email}
           onChange={handleChange}
@@ -255,7 +278,6 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           className="w-full"
           required
         />
-        {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">

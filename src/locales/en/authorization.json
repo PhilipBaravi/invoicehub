@@ -64,7 +64,8 @@
             "companyAddress" : "Company address is required.",
             "companyCity" : "City is required.",
             "companyState" : "State is required.",
-            "zipCode" : "Zip code is required."
+            "zipCode" : "Zip code is required.",
+            "registrationFailed" : "Failed to register an account."
         }
     } 
 }

@@ -64,7 +64,8 @@
             "companyAddress": "La dirección de la empresa es obligatoria.",
             "companyCity": "La ciudad es obligatoria.",
             "companyState": "El estado es obligatorio.",
-            "zipCode": "El código postal es obligatorio."
+            "zipCode": "El código postal es obligatorio.",
+            "registrationFaied" : "No se pudo registrar la cuenta."
         }
     }
 }
