@@ -7,7 +7,6 @@ import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphone
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { useTranslation } from 'react-i18next';
 import type { UserFormValues } from './RegisterForm';
-import { useKeycloak } from '@react-keycloak/web';
 import { useToast } from '@/hooks/use-toast';
 
 interface CompanyRegistrationFormProps {
@@ -34,7 +33,6 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [companyCountry, setCompanyCountry] = useState<CountryCode>('US');
-  const { keycloak } = useKeycloak();
     
   const [formValues, setFormValues] = useState<CompanyFormValues>({
     title: '',
@@ -159,7 +157,6 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Removed Authorization header here
         },
         body: JSON.stringify(registrationData),
       });
