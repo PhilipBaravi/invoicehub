@@ -5,7 +5,7 @@ import CurrencyExchangeRates from "./CurrencyExchangeRates";
 import StatisticsGrid from "./StatisticsGrid";
 import TransactionsCard from "./TransactionsCard";
 import ProductSalesChart from "./ProductSalesChart";
-import FinancialSummaryChart from "./FinancialSummary";
+// import FinancialSummaryChart from "./FinancialSummary";
 
 const DashboardDefault: FC = () => {
   const { t } = useTranslation('dashboardDefault');
@@ -19,14 +19,14 @@ const DashboardDefault: FC = () => {
       <main className="w-[95%] flex flex-col gap-4 pt-4 mx-auto">
       <CurrencyExchangeRates />
   <div className="w-full flex flex-col xl:flex-row gap-4 justify-between items-center">
-    <div className="flex flex-col gap-4 w-full xl:w-[70%]">
+    <div className="flex flex-col gap-4 w-full">
     <ProductSalesChart />
     
       
     </div>
-    <div className="w-full w-full xl:w-[30%]">
+    {/* <div className="w-full w-full xl:w-[30%]">
       <FinancialSummaryChart />
-    </div>
+    </div> */}
   </div>
   <StatisticsGrid />
   <TransactionsCard />

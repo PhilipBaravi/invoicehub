@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Euro, PoundSterling, JapaneseYen, TrendingUp, TrendingDown } from "lucide-react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
-import { useKeycloak } from "@react-keycloak/web";
 
 interface ExchangeRate {
   code: string;
@@ -13,7 +12,6 @@ interface ExchangeRate {
 }
 
 const CurrencyExchangeRates: FC = () => {
-  const { keycloak } = useKeycloak();
   const { t, i18n } = useTranslation("dashboardDefault");
   const [rates, setRates] = useState<ExchangeRate[]>([
     { code: "USD", rate: 0, change: 0, icon: <DollarSign className="h-5 w-5" /> },
@@ -23,26 +21,8 @@ const CurrencyExchangeRates: FC = () => {
   ]);
   const [baseCurrency, setBaseCurrency] = useState<string>("GEL");
 
-  const getExchangeRatesData = async () => {
-    try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/dashboard/exchangeRates', {
-        headers: {
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch employees');
-      }
-      const data = await response.json();
-      console.log(data)
-    } catch (error) {
-      console.error('Error fetching data', error);
-    }
-  };
+ 
 
-  useEffect(() => {
-    getExchangeRatesData();
-  })
   useEffect(() => {
     // Update base currency based on language
     const currentLanguage = i18n.language || "en";
