@@ -40,7 +40,8 @@
             "confirmPassword": "Las contraseñas no coinciden",
             "firstName": "El nombre es obligatorio.",
             "lastName": "El apellido es obligatorio.",
-            "phone": "Número de teléfono no válido para el país seleccionado."
+            "phone": "Número de teléfono no válido para el país seleccionado.",
+            "exists": "ya existe en el sistema."
         }
     },
     "companySignUpForm": {

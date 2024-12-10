@@ -18,6 +18,7 @@ interface CompanyFormValues {
   title: string;
   phone: string;
   website: string;
+  email: string;
   address: {
     addressLine1: string;
     addressLine2: string;
@@ -29,8 +30,8 @@ interface CompanyFormValues {
 }
 
 const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userDetails }) => {
-  const { t } = useTranslation();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [companyCountry, setCompanyCountry] = useState<CountryCode>('US');
   const { keycloak } = useKeycloak();
@@ -39,6 +40,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     title: '',
     phone: '',
     website: '',
+    email: '',
     address: {
       addressLine1: '',
       addressLine2: '',
@@ -140,6 +142,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         title: formValues.title,
         phone: fullCompanyPhoneNumber,
         website: formValues.website || "",
+        email: formValues.email,
         address: {
           addressLine1: formValues.address.addressLine1,
           addressLine2: formValues.address.addressLine2 || "",
@@ -162,13 +165,23 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
       });
 
       if (!response.ok) {
-        throw new Error('Registration failed');
+        const data = await response.json();
+        if (response.status === 409 && data.message === `"${userDetails?.username}" is already exists in a system.`) {
+          toast({
+            title: t('form.error'),
+            description: `${userDetails?.username} ${t('signUpForm.errors.exists')}`,
+            variant: "destructive",
+            duration: 3000,
+          })
+        } else{
+          throw new Error('Registration failed');
+        }
       }
-
       const data = await response.json();
       console.log('Registration successful:', data);
       navigate('/dashboard');
     } catch (error) {
+      console.log(registrationData)
       console.error('Error during registration:', error);
       setErrors({
         title: t('companySignUpForm.errors.registrationFailed')
@@ -213,6 +226,19 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           value={formValues.title}
           onChange={handleChange}
           placeholder={t('companySignUpForm.companyName')}
+          className="w-full"
+          required
+        />
+        {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
+      </div>
+
+      <div>
+        <Input
+          id="companyEmail"
+          name="email"
+          value={formValues.email}
+          onChange={handleChange}
+          placeholder={t('loginForm.email')}
           className="w-full"
           required
         />
@@ -318,7 +344,6 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           className="w-full"
         />
       </div>
-
       <Button className="w-full">{t('companySignUpForm.submitBtn')}</Button>
     </form>
   );

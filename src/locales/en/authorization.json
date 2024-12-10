@@ -40,7 +40,8 @@
             "confirmPassword": "Passwords do not match",
             "firstName" : "First name is required.",
             "lastName" : "Last name is required",
-            "phone": "Invalid phone number for the selected country."
+            "phone": "Invalid phone number for the selected country.",
+            "exists" : "already exists in a system."
     }
     },
     "companySignUpForm" : {

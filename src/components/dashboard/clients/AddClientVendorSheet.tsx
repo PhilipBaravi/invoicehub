@@ -129,7 +129,7 @@ export default function AddClientVendorSheet({
       toast({
         title: t('addClient.success'),
         description: t('addClient.addSuccess'),
-        variant: 'destructive',
+        variant: 'success',
         duration: 3000
       })
       // Close the form
