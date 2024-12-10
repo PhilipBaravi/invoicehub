@@ -164,30 +164,45 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         body: JSON.stringify(registrationData),
       });
 
+      // Check if response has a JSON body
+      const isJson = response.headers.get('Content-Type')?.includes('application/json');
+      const data = isJson ? await response.json() : null;
+
       if (!response.ok) {
-        const data = await response.json();
-        if (response.status === 409 && data.message === `"${userDetails?.username}" is already exists in a system.`) {
+        if (response.status === 409 && data?.message === `"${userDetails?.username}" is already exists in a system.`) {
           toast({
             title: t('form.error'),
             description: `${userDetails?.username} ${t('signUpForm.errors.exists')}`,
             variant: "destructive",
             duration: 3000,
-          })
-        } else{
-          throw new Error('Registration failed');
+          });
+        } else {
+          toast({
+            title: t('form.error'),
+            description: data?.message || t('companySignUpForm.errors.registrationFailed'),
+            variant: "destructive",
+            duration: 3000,
+          });
+          throw new Error(data?.message || 'Registration failed');
         }
+        return;
       }
-      const data = await response.json();
+
       console.log('Registration successful:', data);
+      toast({
+        title: t('form.success'),
+        description: t('companySignUpForm.successMessage'),
+        variant: "success",
+        duration: 3000,
+      });
       navigate('/dashboard');
     } catch (error) {
-      console.log(registrationData)
       console.error('Error during registration:', error);
       setErrors({
-        title: t('companySignUpForm.errors.registrationFailed')
+        title: t('companySignUpForm.errors.registrationFailed'),
       });
     }
-  };
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
