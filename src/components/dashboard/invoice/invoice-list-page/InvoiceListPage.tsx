@@ -41,7 +41,7 @@ const InvoiceListPage: FC = () => {
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch("https://api.invoicehub.space/api/v1/invoice/list", {
+        const response = await fetch("https://api.invoicehub.space/invoice/list", {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
           },
@@ -92,7 +92,7 @@ const InvoiceListPage: FC = () => {
   const confirmDeleteInvoice = async () => {
     if (selectedInvoiceId === null) return;
     try {
-      const response = await fetch(`https://api.invoicehub.space/api/v1/invoice/delete/${selectedInvoiceId}`, {
+      const response = await fetch(`https://api.invoicehub.space/invoice/delete/${selectedInvoiceId}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -132,7 +132,7 @@ const InvoiceListPage: FC = () => {
   const handleApproveInvoice = async (invoiceId: number) => {
     setIsApproving(true);
     try {
-      const response = await fetch(`https://api.invoicehub.space/api/v1/invoice/approve/${invoiceId}`, {
+      const response = await fetch(`https://api.invoicehub.space/invoice/approve/${invoiceId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -182,7 +182,7 @@ const InvoiceListPage: FC = () => {
 
   const handleSendEmail = async (invoiceId: number) => {
     try {
-      const response = await fetch(`https://api.invoicehub.space/api/v1/mailing/send-email/${invoiceId}`, {
+      const response = await fetch(`https://api.invoicehub.space/mailing/send-email/${invoiceId}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${keycloak.token}`,

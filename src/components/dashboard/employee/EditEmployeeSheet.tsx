@@ -103,7 +103,7 @@ export default function EditEmployeeSheet({
 
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/user/update/${employee.id}`,
+        `https://api.invoicehub.space/user/update/${employee.id}`,
         {
           method: 'PUT',
           headers: {

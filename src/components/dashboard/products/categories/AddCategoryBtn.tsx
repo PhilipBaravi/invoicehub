@@ -51,7 +51,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
     };
 
     try {
-      const response = await fetch("https://api.invoicehub.space/api/v1/category/create", {
+      const response = await fetch("https://api.invoicehub.space/category/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

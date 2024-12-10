@@ -58,7 +58,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     e.preventDefault();
     let valid = true;
     const newErrors: Record<string, string> = {};
-
+  
     if (!formValues.title) {
       newErrors.title = t('companySignUpForm.errors.companyName');
       valid = false;
@@ -130,7 +130,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
       setErrors(newErrors);
       return;
     }
-
+  
     const registrationData = {
       username: userDetails?.username,
       password: userDetails?.password,
@@ -153,21 +153,21 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         }
       }
     };
-
+  
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/user/create', {
+      const response = await fetch('https://api.invoicehub.space/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${keycloak.token}`,
+          // Removed Authorization header here
         },
         body: JSON.stringify(registrationData),
       });
-
+  
       // Check if response has a JSON body
       const isJson = response.headers.get('Content-Type')?.includes('application/json');
       const data = isJson ? await response.json() : null;
-
+  
       if (!response.ok) {
         if (response.status === 409 && data?.message === `"${userDetails?.username}" is already exists in a system.`) {
           toast({
@@ -187,7 +187,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
         }
         return;
       }
-
+  
       console.log('Registration successful:', data);
       toast({
         title: t('form.success'),
@@ -198,11 +198,12 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
       navigate('/dashboard');
     } catch (error) {
       console.error('Error during registration:', error);
+      console.log(registrationData)
       setErrors({
         title: t('companySignUpForm.errors.registrationFailed'),
       });
     }
-};
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

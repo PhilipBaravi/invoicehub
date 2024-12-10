@@ -35,7 +35,7 @@ export default function ClientVendorList() {
   useEffect(() => {
     const fetchClientVendors = async () => {
       try {
-        const response = await fetch('https://api.invoicehub.space/api/v1/clientVendor/list', {
+        const response = await fetch('https://api.invoicehub.space/clientVendor/list', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${keycloak.token}`,
@@ -72,7 +72,7 @@ export default function ClientVendorList() {
   // Delete client/vendor by ID
   const deleteClientVendor = async (id: number) => {
     try {
-      const response = await fetch(`https://api.invoicehub.space/api/v1/clientVendor/delete/${id}`, {
+      const response = await fetch(`https://api.invoicehub.space/clientVendor/delete/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -135,7 +135,7 @@ export default function ClientVendorList() {
   // Refresh the client/vendors list
   const refreshClientVendors = async () => {
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/clientVendor/list', {
+      const response = await fetch('https://api.invoicehub.space/clientVendor/list', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${keycloak.token}`,

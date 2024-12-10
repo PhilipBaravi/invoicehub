@@ -112,7 +112,7 @@ export default function AddEmployeeSheet({
     };
 
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/user/create', {
+      const response = await fetch('https://api.invoicehub.space/user/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
