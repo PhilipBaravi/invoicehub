@@ -8,7 +8,7 @@ interface AuthTokens {
 }
 
 const keycloakConfig = {
-  url: 'https://invoicehub.space/auth',
+  url: 'https://api.invoicehub.space/auth',
   realm: 'e-invoices',
   clientId: 'invoicing-app-react-login',
   enableCors: true,
