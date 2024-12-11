@@ -3,7 +3,7 @@ import { useMediaQuery } from "react-responsive";
 import GlobalContextMenu from "../GlobalContextMenu";
 import MainContent from "./MainContent";
 import RotationMessage from "./RotationMessage";
-import ResizableChatLayout from "../dashboarddefault/ResizableChatLayout";
+import ResizableChatLayout from "../dashboarddefault/aichatbot/ResizableChatLayout";
 
 const Dashboard: FC = () => {
   const [isLargeSidebarOpen, setIsLargeSidebarOpen] = useState(false);
