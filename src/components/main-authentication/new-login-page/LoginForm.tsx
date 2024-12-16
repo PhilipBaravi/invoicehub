@@ -8,7 +8,7 @@ import GoogleIcon from '../GoogleIcon';
 import AppleIcon from '../AppleIcon';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
-import { directLogin } from './keycloak';
+import { directLogin } from '@/utils/keycloak';
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -36,7 +36,6 @@ const LoginForm = () => {
 
     try {
       const tokens = await directLogin(loginEmail, loginPassword);
-      
       if (tokens.access_token) {
         toast({
           title: "Success",

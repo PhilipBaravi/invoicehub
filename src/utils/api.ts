@@ -1,5 +1,5 @@
 // utils/api.ts
-import keycloak from "../components/main-authentication/new-login-page/keycloak"; // Adjust the path based on Keycloak initialization file
+import keycloak from "./keycloak"; // Adjust the path based on Keycloak initialization file
 
 export const apiFetch = async (url: string, options: RequestInit = {}) => {
   const token = keycloak.token;

@@ -11,8 +11,9 @@ import {
   FileText,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { useKeycloak } from "@react-keycloak/web";
+import { eraseCookie } from "@/utils/cookiesUtils";
 
 interface SideBarProps {
   isOpen: boolean;
@@ -44,15 +45,26 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleLogout = () => {
-    keycloak
-      .logout({ redirectUri: "https://invoicehub.space/login" })
-      .then(() => {
-        localStorage.removeItem("keycloak_token");
-        localStorage.removeItem("keycloak_refresh_token");
-        window.location.href = "https://invoicehub.space/login";
-      })
-      .catch((err) => console.error("Logout failed:", err));
+  const handleLogout = async () => {
+    if (!keycloak) return;
+
+    const idToken = keycloak.idToken;
+    const postLogoutRedirectUri = "https://invoicehub.space";
+
+    if (!idToken) {
+      console.error("No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred.");
+      return;
+    }
+
+    const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
+      idToken
+    )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
+
+    eraseCookie("keycloak_token");
+    eraseCookie("keycloak_refresh_token");
+    eraseCookie("keycloak_id_token");
+
+    window.location.href = logoutUrl;
   };
 
   const filteredMenuItems = menuItems.filter((item) => item.showAlways || (item.adminOnly && isAdmin));
@@ -62,7 +74,7 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={onClose} // Closes sidebar on backdrop click
+          onClick={onClose} 
         />
       )}
       <motion.div

@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
 import { useKeycloak } from "@react-keycloak/web";
-import { useAuth } from "@/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { eraseCookie } from "@/utils/cookiesUtils";
 
 const HeaderAvatar: FC = () => {
   const { keycloak } = useKeycloak();
   const { isAdmin, user } = useAuth();
-  const { t } = useTranslation('settings')
+  const { t } = useTranslation('settings');
 
   const menuItems = [
     {
@@ -42,19 +43,27 @@ const HeaderAvatar: FC = () => {
     }
   ];
 
-  const logOut = () => {
-    keycloak.logout({
-      redirectUri: 'http://invoicehub.space/login', // Specify the redirect URI
-    }).then(() => {
-      // Clear tokens stored in localStorage
-      localStorage.removeItem('keycloak_token');
-      localStorage.removeItem('keycloak_refresh_token');
-      // Optional: Confirm logout by reloading the page
-      window.location.href = 'http://invoicehub.space/login';
-    }).catch(err => {
-      console.error('Logout failed:', err);
-    });
+  const logOut = async () => {
+    if (!keycloak) return;
+
+    const idToken = keycloak.idToken;
+    const postLogoutRedirectUri = 'https://invoicehub.space';
+
+    if (!idToken) {
+      console.error('No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred.');
+      return;
+    }
+
+    const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
+
+    // Clear tokens 
+    eraseCookie('keycloak_token');
+    eraseCookie('keycloak_refresh_token');
+    eraseCookie('keycloak_id_token');
+
+    window.location.href = logoutUrl;
   };
+
   const filteredMenuItems = menuItems.filter(item => 
     !item.adminOnly || (item.adminOnly && isAdmin)
   );

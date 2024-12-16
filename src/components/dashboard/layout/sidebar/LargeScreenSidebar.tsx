@@ -1,9 +1,10 @@
-import { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
-import { useAuth } from "@/useAuth";
+import { useAuth } from "@/hooks/useAuth";
+import { eraseCookie } from "@/utils/cookiesUtils";
 
 interface LargeScreenSidebarProps {
   isOpen: boolean;
@@ -18,18 +19,26 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
   const [sidebarWidth, setSidebarWidth] = useState(isOpen ? "250px" : "80px");
   const { t } = useTranslation("dashboardDefault");
 
-  const logOut = () => {
-    keycloak.logout({
-      redirectUri: 'http://invoicehub.space/login', // Specify the redirect URI
-    }).then(() => {
-      // Clear tokens stored in localStorage
-      localStorage.removeItem('keycloak_token');
-      localStorage.removeItem('keycloak_refresh_token');
-      // Optional: Confirm logout by reloading the page
-      window.location.href = 'http://invoicehub.space/login';
-    }).catch(err => {
-      console.error('Logout failed:', err);
-    });
+  const logOut = async () => {
+    if (!keycloak) return;
+
+    const idToken = keycloak.idToken;
+    const postLogoutRedirectUri = "https://invoicehub.space";
+
+    if (!idToken) {
+      console.error("No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred.");
+      return;
+    }
+
+    const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
+      idToken
+    )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
+
+    eraseCookie("keycloak_token");
+    eraseCookie("keycloak_refresh_token");
+    eraseCookie("keycloak_id_token");
+
+    window.location.href = logoutUrl;
   };
 
   const menuItems = [
@@ -97,6 +106,16 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     item.showAlways || (item.adminOnly && isAdmin)
   );
 
+  const handleItemClick = (path: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    if (path === "/login") {
+      logOut();
+    } else {
+      navigate(path);
+      onClose();
+    }
+  };
+
   return (
     <div
       ref={sidebarRef}
@@ -121,19 +140,11 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
         {filteredMenuItems.map((item) => {
           const Icon = item.icon;
 
-          const handleClick = () => {
-            if (item.path === "/login") {
-              logOut();
-            } else {
-              navigate(item.path);
-            }
-          };
-
           return (
             <li
               key={item.name}
               className="flex items-center gap-[10px] px-2 py-2 rounded-md hover:bg-stone-200 dark:hover:bg-stone-800 text-stone-950 dark:text-stone-50 transition-all cursor-pointer"
-              onClick={handleClick}
+              onClick={(event) => handleItemClick(item.path, event)}
             >
               <Icon className="text-xl" />
               {isOpen && <span className="ml-2 font-medium">{item.name}</span>}

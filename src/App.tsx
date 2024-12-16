@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useKeycloak } from "@react-keycloak/web";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
-import keycloak from "./components/main-authentication/new-login-page/keycloak";
+import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
+import keycloak from "./utils/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
 import BusinessForm from "./components/account-details/business-form/BusinessFormDetails";
 import IntentFormDetails from "./components/account-details/IntentForm.tsx/IntentFormDetails";
@@ -31,8 +30,9 @@ import './i18n';
 import { useTranslation } from "react-i18next";
 import LandingPage from "./landing-page/LandingPage";
 import { Toaster } from "@/components/ui/toaster";
-import { useAuth } from "./useAuth";
+import { useAuth } from "./hooks/useAuth";
 import type { UserFormValues } from "./components/main-authentication/new-register-page/RegisterForm";
+import { getCookie, eraseCookie, setCookie } from "./utils/cookiesUtils";
 
 const ProtectedRoute = ({ 
   element: Element, 
@@ -45,18 +45,20 @@ const ProtectedRoute = ({
   const { user, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const checkAuth = async () => {
       if (!initialized) return;
 
       if (!keycloak.authenticated) {
-        const storedToken = localStorage.getItem('keycloak_token');
-        const storedRefreshToken = localStorage.getItem('keycloak_refresh_token');
+        const storedToken = getCookie('keycloak_token');
+        const storedRefreshToken = getCookie('keycloak_refresh_token');
+        const storedIdToken = getCookie('keycloak_id_token');
 
-        if (storedToken && storedRefreshToken) {
+        if (storedToken && storedRefreshToken && storedIdToken) {
           console.log('Found stored tokens, attempting to restore session');
           keycloak.token = storedToken;
           keycloak.refreshToken = storedRefreshToken;
+          keycloak.idToken = storedIdToken;
           keycloak.authenticated = true;
 
           try {
@@ -64,14 +66,20 @@ const ProtectedRoute = ({
             console.log('Token refresh attempt result:', refreshed);
             if (!refreshed) {
               console.log('Token refresh failed, clearing stored tokens');
-              localStorage.removeItem('keycloak_token');
-              localStorage.removeItem('keycloak_refresh_token');
+              eraseCookie('keycloak_token');
+              eraseCookie('keycloak_refresh_token');
+              eraseCookie('keycloak_id_token');
               keycloak.authenticated = false;
+            } else {
+              setCookie('keycloak_token', keycloak.token!, 7);
+              setCookie('keycloak_refresh_token', keycloak.refreshToken!, 7);
+              setCookie('keycloak_id_token', keycloak.idToken!, 7);
             }
           } catch (error) {
             console.error('Token refresh failed:', error);
-            localStorage.removeItem('keycloak_token');
-            localStorage.removeItem('keycloak_refresh_token');
+            eraseCookie('keycloak_token');
+            eraseCookie('keycloak_refresh_token');
+            eraseCookie('keycloak_id_token');
             keycloak.authenticated = false;
           }
         }
@@ -116,10 +124,13 @@ const App: React.FC = () => {
   const tokenLogger = (tokens: any) => {
     console.log('Received new tokens');
     if (tokens.token) {
-      localStorage.setItem('keycloak_token', tokens.token);
+      setCookie('keycloak_token', tokens.token, 7);
     }
     if (tokens.refreshToken) {
-      localStorage.setItem('keycloak_refresh_token', tokens.refreshToken);
+      setCookie('keycloak_refresh_token', tokens.refreshToken, 7);
+    }
+    if (tokens.idToken) {
+      setCookie('keycloak_id_token', tokens.idToken, 7);
     }
   };
 

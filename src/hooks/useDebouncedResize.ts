@@ -1,4 +1,3 @@
-// useDebouncedResize.ts
 
 import { useState, useEffect } from "react";
 
