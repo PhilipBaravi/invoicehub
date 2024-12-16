@@ -1,14 +1,10 @@
+"use client"
+
 import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { useKeycloak } from "@react-keycloak/web"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
@@ -17,15 +13,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle } from 'lucide-react'
+import { YearMonthCurrencySelect } from "./YearMonthCurrencySelect"
+import { NoDataDisplay } from "./NoDataDisplay"
 
 interface ChartDataItem {
   year: number
@@ -57,12 +46,6 @@ const chartConfig: ChartConfig = {
   },
 }
 
-const currencies = ["USD", "EUR", "GEL"]
-const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-]
-
 const currencySymbols: { [key: string]: string } = {
   USD: "$",
   EUR: "€",
@@ -82,68 +65,47 @@ const ProductSalesChart: React.FC = () => {
 
   const fetchData = async (year: number, month: number, currency: string) => {
     if (!initialized || !keycloak.authenticated) {
-      console.log("Keycloak not initialized or not authenticated")
       return null
     }
-
-    try {
-      console.log(`Fetching data for ${year}/${month}/${currency}`)
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${month}/${currency}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${keycloak.token}`
-          }
+    const response = await fetch(
+      `https://api.invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${month}/${currency}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${keycloak.token}`
         }
-      )
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
       }
-
-      const result: ApiResponse = await response.json()
-      console.log("API Response:", result)
-      
-      if (!result.success) {
-        throw new Error(result.message || 'Failed to fetch data')
-      }
-
-      return result.data
-    } catch (error) {
-      console.error("Error fetching data:", error)
-      throw error
+    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
+    const result: ApiResponse = await response.json()
+    if (!result.success) {
+      throw new Error(result.message || 'Failed to fetch data')
+    }
+    return result.data
   }
 
   React.useEffect(() => {
     const loadData = async () => {
       if (!initialized || !keycloak.authenticated) {
-        console.log("Keycloak not initialized or not authenticated")
         return
       }
-
       setIsLoading(true)
       setError(null)
-
       try {
-        console.log(`Fetching data for ${year}/${month}/${currency}`)
         const data = await fetchData(year, month, currency)
         if (data && data.length > 0) {
-          console.log("Fetched data:", data)
           setChartData(data)
           setDisplayedData(data)
         } else {
-          console.log("No data returned from fetchData")
-          setError(`No data available for ${months[month - 1]} ${year}`)
+          setError(`No data available`)
         }
       } catch (err) {
-        console.error("Error in loadData:", err)
-        setError(err instanceof Error ? err.message : 'An error occurred while fetching data')
+        setError(err instanceof Error ? err.message : 'An error occurred')
       } finally {
         setIsLoading(false)
       }
     }
-
     loadData()
   }, [initialized, keycloak.authenticated, year, month, currency])
 
@@ -178,42 +140,16 @@ const ProductSalesChart: React.FC = () => {
       <CardHeader className="flex flex-col gap-2 space-y-0 border-b py-5">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>Product Sales Chart - Interactive</CardTitle>
-          <CardDescription>
-            Showing product sales for selected year, month, and currency
-          </CardDescription>
+          <CardDescription>Showing product sales for selected year, month, and currency</CardDescription>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Select value={year.toString()} onValueChange={(value) => setYear(parseInt(value))}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Select Year" />
-            </SelectTrigger>
-            <SelectContent>
-              {[currentYear - 1, currentYear, currentYear + 1].map((y) => (
-                <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={month.toString()} onValueChange={(value) => setMonth(parseInt(value))}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Select Month" />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((m, index) => (
-                <SelectItem key={index} value={(index + 1).toString()}>{m}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={currency} onValueChange={setCurrency}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Select Currency" />
-            </SelectTrigger>
-            <SelectContent>
-              {currencies.map((c) => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <YearMonthCurrencySelect
+          year={year}
+          month={month}
+          currency={currency}
+          onYearChange={setYear}
+          onMonthChange={setMonth}
+          onCurrencyChange={setCurrency}
+        />
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {isLoading ? (
@@ -221,11 +157,7 @@ const ProductSalesChart: React.FC = () => {
             <p>Loading chart data...</p>
           </div>
         ) : error ? (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <NoDataDisplay />
         ) : formattedChartData.length > 0 ? (
           <ChartContainer
             config={chartConfig}
@@ -283,7 +215,7 @@ const ProductSalesChart: React.FC = () => {
                         day: "numeric",
                       })
                     }}
-                    formatter={(value, name, ) => {
+                    formatter={(value, name) => {
                       if (name === 'amount') {
                         return [`${currencySymbols[currency]}${value} `, 'Amount']
                       }
@@ -305,7 +237,6 @@ const ProductSalesChart: React.FC = () => {
                 fill="url(#fillAmount)"
                 stroke="var(--color-amount)"
                 stackId="a"
-                
               />
               <ChartLegend content={<ChartLegendContent />} />
             </AreaChart>
@@ -317,4 +248,3 @@ const ProductSalesChart: React.FC = () => {
 }
 
 export default ProductSalesChart
-

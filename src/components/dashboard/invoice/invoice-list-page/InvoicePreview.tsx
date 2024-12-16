@@ -1,16 +1,22 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, Fragment } from 'react';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Invoice, InvoiceProduct } from '../invoice-types';
 import { useKeycloak } from '@react-keycloak/web';
 import { useTranslation } from 'react-i18next';
-import { DialogTitle } from '@radix-ui/react-dialog';
+import { Description, DialogTitle } from '@radix-ui/react-dialog';
 
 interface InvoicePreviewProps {
   invoice: Invoice;
   isOpen: boolean;
   onClose: () => void;
 }
+
+const currencyIcons: Record<string, string> = {
+  'USD': '$',
+  'EUR': '€',
+  'GEL': '₾',
+};
 
 const InvoicePreview: FC<InvoicePreviewProps> = ({
   invoice,
@@ -20,6 +26,8 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
   const [lineItems, setLineItems] = useState<InvoiceProduct[]>([]);
   const { keycloak } = useKeycloak();
   const { t } = useTranslation('invoices');
+
+  const currencyIcon = currencyIcons[invoice.currency] || '';
 
   useEffect(() => {
     const fetchLineItems = async () => {
@@ -45,9 +53,10 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
+      <Description></Description>
       <DialogContent className="max-w-4xl">
-        <DialogTitle>
-            Preview Invoice
+        <DialogTitle className='hidden'>
+          Preview Invoice
         </DialogTitle>
         <ScrollArea className="h-[80vh] w-full rounded-md p-4">
           <div className="max-w-[800px] mx-auto bg-white rounded-lg shadow-sm p-12">
@@ -82,23 +91,25 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {lineItems.map((item) => (
-                    <>
-                    <tr key={item.id}>
-                      <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950" key={`product-${item.id}`}>{item.product.category.description}</td>
-                      <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950" key={`companyName-${item.id}`}>{item.product.name}</td>
-                      <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950" key={`price-${item.id}`}>${item.price.toFixed(2)}</td>
-                      <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950" key={`quantity-${item.id}`}>{item.quantity}</td>
-                      <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950" key={`tax-${item.id}`}>${item.tax.toFixed(2)}</td>
-                      <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950" key={`total-${item.id}`}>${item.total.toFixed(2)}</td>
-                    </tr>
-                    <tr key={`desc-${item.id}`}>
-                    <td colSpan={6} className="py-3 px-3 text-left border-b border-[#e5e7eb] bg-[#f9f9f9] text-stone-950 dark:text-stone-950" key={`desc-item-${item.id}`} >
-                      {t('invoice.lineItems.description')} <span>{item.product.description}</span>
-                    </td>
-                  </tr>
-                  </>
-                  ))}
+                  {lineItems.map((item) => {
+                    return (
+                      <Fragment key={item.id}>
+                        <tr key={item.id}>
+                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{item.product.category.description}</td>
+                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{item.product.name}</td>
+                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{currencyIcon}{item.price.toFixed(2)}</td>
+                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{item.quantity}</td>
+                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{currencyIcon}{item.tax.toFixed(2)}</td>
+                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{currencyIcon}{item.total.toFixed(2)}</td>
+                        </tr>
+                        <tr key={`desc-${item.id}`}>
+                          <td colSpan={6} className="py-3 px-3 text-left border-b border-[#e5e7eb] bg-[#f9f9f9] text-stone-950 dark:text-stone-950">
+                            {t('invoice.lineItems.description')} <span>{item.product.description}</span>
+                          </td>
+                        </tr>
+                      </Fragment>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
@@ -124,19 +135,19 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                   <div className="p-3 px-6 border-b border-[#e5e7eb]">
                     <div className="flex justify-between">
                       <span className="text-[#94a3b8]">{t('invoice.totals.subtotal')}</span>
-                      <span className="text-[#5c6ac4] dark:text-[#5c6ac4] font-bold">${invoice.price.toFixed(2)}</span>
+                      <span className="text-[#5c6ac4] dark:text-[#5c6ac4] font-bold">{currencyIcon}{invoice.price.toFixed(2)}</span>
                     </div>
                   </div>
                   <div className="p-3 px-6 border-b border-[#e5e7eb]">
                     <div className="flex justify-between">
                       <span className="text-[#94a3b8]">{t('invoice.totals.tax')}</span>
-                      <span className="text-[#5c6ac4] dark:text-[#5c6ac4] font-bold">${invoice.tax.toFixed(2)}</span>
+                      <span className="text-[#5c6ac4] dark:text-[#5c6ac4] font-bold">{currencyIcon}{invoice.tax.toFixed(2)}</span>
                     </div>
                   </div>
                   <div className="p-3 px-6 bg-[#5c6ac4] rounded-b-lg">
                     <div className="flex justify-between">
                       <span className="text-white font-bold text-[1.1rem]">{t('invoice.totals.total')}</span>
-                      <span className="text-white font-bold text-[1.1rem]">${invoice.total.toFixed(2)}</span>
+                      <span className="text-white font-bold text-[1.1rem]">{currencyIcon}{invoice.total.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

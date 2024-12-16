@@ -12,9 +12,10 @@ import { useTranslation } from 'react-i18next';
 interface TotalsProps {
   invoice: any;
   setInvoice: any;
+  currencySymbol: string;
 }
 
-const Totals: FC<TotalsProps> = ({ invoice, setInvoice }) => {
+const Totals: FC<TotalsProps> = ({ invoice, setInvoice, currencySymbol }) => {
   const { t } = useTranslation('invoices');
   return (
     <Card className="w-full mt-4 sm:mt-6 lg:mt-8">
@@ -31,17 +32,17 @@ const Totals: FC<TotalsProps> = ({ invoice, setInvoice }) => {
               <div className="flex justify-between items-center mb-2 sm:mb-3">
                 <span className="text-sm sm:text-base text-muted-foreground">{t('invoice.totals.subtotal')}</span>
                 <span className="font-medium text-sm sm:text-base">
-                  ${invoice.price.toFixed(2)}
+                  {currencySymbol}{invoice.price.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between items-center mb-2 sm:mb-3">
                 <span className="text-sm sm:text-base text-muted-foreground">{t('invoice.totals.tax')}</span>
-                <span className="font-medium text-sm sm:text-base">${invoice.tax.toFixed(2)}</span>
+                <span className="font-medium text-sm sm:text-base">{currencySymbol}{invoice.tax.toFixed(2)}</span>
               </div>
               <Separator className="my-2 sm:my-3" />
               <div className="flex justify-between items-center font-bold">
                 <span className="text-base sm:text-lg">{t('invoice.totals.total')}</span>
-                <span className="text-lg sm:text-xl">${invoice.total.toFixed(2)}</span>
+                <span className="text-lg sm:text-xl">{currencySymbol}{invoice.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

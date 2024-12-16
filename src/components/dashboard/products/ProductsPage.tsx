@@ -27,6 +27,7 @@ const ProductsPage: FC = () => {
     description: "",
     status: "DRAFT",
     price: 0,
+    currency: "USD",
     quantityInStock: 0,
     lowLimitAlert: 0,
     productUnit: "PCS",
@@ -113,7 +114,6 @@ const ProductsPage: FC = () => {
       const createdProduct = await response.json();
 
       if (response.ok && createdProduct.success) {
-        // Product created successfully; re-fetch products to ensure we have the proper id
         await fetchProducts();
         setIsDialogOpen(false);
         resetProductForm();
@@ -151,7 +151,7 @@ const ProductsPage: FC = () => {
           );
           setIsDialogOpen(false);
           resetProductForm();
-          setEditingProduct(null); // Clear editing state after successful edit
+          setEditingProduct(null);
         } else {
           console.error("Error updating product:", updatedProduct);
         }
@@ -200,14 +200,13 @@ const ProductsPage: FC = () => {
     }
   };
   
-  
-
   const resetProductForm = () => {
     setNewProduct({
       name: "",
       description: "",
       status: "DRAFT",
       price: 0,
+      currency: "USD",
       quantityInStock: 0,
       lowLimitAlert: 0,
       productUnit: "PCS",

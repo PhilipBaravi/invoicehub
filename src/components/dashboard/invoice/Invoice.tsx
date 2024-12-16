@@ -1,7 +1,4 @@
 import React, { useState, useRef, FC, useEffect, useCallback } from 'react';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
-import { PDFDocument } from 'pdf-lib';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -19,8 +16,6 @@ import Totals from './Totals';
 import Signatures from './Signatures';
 import Attachments from './Attachments';
 import TaxDialog from './TaxDialog';
-import { pdf } from '@react-pdf/renderer';
-import InvoicePDF from './InvoicePdf';
 import LogoUploader from './LogoUploader';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -45,8 +40,14 @@ import {
   Product,
 } from './invoice-types';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+
+const currencies = {
+  USD: { symbol: "$", rate: 1 },
+  EUR: { symbol: "€", rate: 0.92 },
+  GEL: { symbol: "₾", rate: 2.65 },
+};
 
 const InvoiceComponent: FC = () => {
   const [invoice, setInvoice] = useState<Invoice>({
@@ -64,24 +65,19 @@ const InvoiceComponent: FC = () => {
     total: 0,
     businessSignature: '',
     clientSignature: '',
+    currency: ''
   });
 
   const [lineItems, setLineItems] = useState<LineItem[]>([]);
-  const [currentItemIndex, setCurrentItemIndex] = useState<number | null>(
-    null
-  );
+  const [currentItemIndex, setCurrentItemIndex] = useState<number | null>(null);
   const [showTaxDialog, setShowTaxDialog] = useState(false);
   const [taxDetails, setTaxDetails] = useState({
     percentage: 0,
     name: '',
     number: '',
   });
-  const [businessSignatureImage, setBusinessSignatureImage] = useState<
-    string | null
-  >(null);
-  const [clientSignatureImage, setClientSignatureImage] = useState<
-    string | null
-  >(null);
+  const [businessSignatureImage, setBusinessSignatureImage] = useState<string | null>(null);
+  const [clientSignatureImage, setClientSignatureImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const sigCanvasBusinessRef = useRef<any>(null);
   const sigCanvasClientRef = useRef<any>(null);
@@ -107,6 +103,11 @@ const InvoiceComponent: FC = () => {
 
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const selectedCurrency = (queryParams.get('currency') as keyof typeof currencies) || 'USD';
+  const { symbol, rate } = currencies[selectedCurrency];
 
   const updateTotals = useCallback((items: LineItem[]) => {
     const subtotal = items.reduce(
@@ -139,12 +140,23 @@ const InvoiceComponent: FC = () => {
       const data = await response.json();
 
       if (data.success) {
-        setProducts(data.data);
+        const fetchedProducts: Product[] = data.data;
+        const convertedProducts = fetchedProducts.map((product) => {
+          const productRate = currencies[product.currency as keyof typeof currencies].rate;
+          const convertedPrice = product.price * (rate / productRate);
+          return {
+            ...product,
+            price: convertedPrice
+          }
+        });
+
+        setProducts(convertedProducts);
+
         const uniqueCategories = Array.from(
-          new Set(data.data.map((product: Product) => product.category.id))
+          new Set(convertedProducts.map((product: Product) => product.category.id))
         )
           .map((id) =>
-            data.data.find(
+            convertedProducts.find(
               (product: Product) => product.category.id === id
             )?.category
           )
@@ -161,7 +173,7 @@ const InvoiceComponent: FC = () => {
     } catch (error) {
       setErrorMessage(t('invoice.errors.failedFetchingProducts'));
     }
-  }, [keycloak.token, t]);
+  }, [keycloak.token, t, rate]);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -263,6 +275,7 @@ const InvoiceComponent: FC = () => {
                 total: fetchedInvoice.total,
                 businessSignature: fetchedInvoice.businessSignature,
                 clientSignature: fetchedInvoice.clientSignature,
+                currency: fetchedInvoice.currency
               });
 
               setSelectedClient(fetchedInvoice.clientVendor);
@@ -280,7 +293,7 @@ const InvoiceComponent: FC = () => {
                   categoryId: item.product.category.id,
                   name: item.product.name,
                   description: item.product.description || '',
-                  price: item.price,
+                  price: item.price * (rate / currencies[item.product.currency as keyof typeof currencies].rate),
                   quantity: item.quantity,
                   tax: item.tax,
                   maxQuantity: item.product.quantityInStock,
@@ -321,7 +334,7 @@ const InvoiceComponent: FC = () => {
     if (keycloak.token) {
       fetchInvoiceDetails();
     }
-  }, [isEditMode, id, keycloak.token, updateTotals]);
+  }, [isEditMode, id, keycloak.token, updateTotals, rate]);
 
   const { theme } = useTheme();
   const penColor = theme === 'dark' ? 'white' : 'black';
@@ -492,7 +505,7 @@ const InvoiceComponent: FC = () => {
         event.target.value = '';
       }
     },
-    [t]
+    [t, toast]
   );
 
   const handleRemoveAttachment = useCallback((index: number) => {
@@ -535,7 +548,7 @@ const InvoiceComponent: FC = () => {
         setErrorMessage(`${t('invoice.errors.productNotFound')}`);
       }
     },
-    [products, updateTotals, t]
+    [products, updateTotals, t, toast]
   );
 
   const handleClearSignature = useCallback(
@@ -608,116 +621,6 @@ const InvoiceComponent: FC = () => {
     },
     []
   );
-
-  const createCombinedPDF = useCallback(
-    async (invoiceBlob: Blob, attachments: File[]): Promise<Uint8Array> => {
-      const combinedPdf = await PDFDocument.create();
-      const invoicePdf = await PDFDocument.load(
-        await invoiceBlob.arrayBuffer()
-      );
-      const invoicePages = await combinedPdf.copyPages(
-        invoicePdf,
-        invoicePdf.getPageIndices()
-      );
-      invoicePages.forEach((page: any) => combinedPdf.addPage(page));
-
-      for (const file of attachments) {
-        if (file.type === 'application/pdf') {
-          const attachmentPdf = await PDFDocument.load(
-            await file.arrayBuffer()
-          );
-          const attachmentPages = await combinedPdf.copyPages(
-            attachmentPdf,
-            attachmentPdf.getPageIndices()
-          );
-          attachmentPages.forEach((page: any) => combinedPdf.addPage(page));
-        } else if (
-          file.type === 'image/jpeg' ||
-          file.type === 'image/png' ||
-          file.type === 'image/gif'
-        ) {
-          const imageBytes = await file.arrayBuffer();
-          let image;
-          if (file.type === 'image/jpeg') {
-            image = await combinedPdf.embedJpg(imageBytes);
-          } else if (
-            file.type === 'image/png' ||
-            file.type === 'image/gif'
-          ) {
-            image = await combinedPdf.embedPng(imageBytes);
-          } else {
-            continue;
-          }
-
-          const imgDims = image.scale(1);
-
-          const page = combinedPdf.addPage([imgDims.width, imgDims.height]);
-          page.drawImage(image, {
-            x: 0,
-            y: 0,
-            width: imgDims.width,
-            height: imgDims.height,
-          });
-        }
-      }
-
-      const combinedPdfBytes = await combinedPdf.save();
-      return combinedPdfBytes;
-    },
-    []
-  );
-
-  const generatePDFAndZip = useCallback(async () => {
-    try {
-      const invoicePdfBlob = await pdf(
-        <InvoicePDF
-          invoice={invoice}
-          lineItems={lineItems}
-          selectedClient={selectedClient}
-          businessSignatureImage={businessSignatureImage}
-          clientSignatureImage={clientSignatureImage}
-          logo={logo}
-          businessInformation={businessInformation}
-          categories={categories}
-        />
-      ).toBlob();
-
-      const zip = new JSZip();
-
-      zip.file(`Invoice_${invoice.invoiceNo}.pdf`, invoicePdfBlob);
-
-      attachments.forEach((file) => {
-        zip.file(file.name, file);
-      });
-
-      const combinedPdfBytes = await createCombinedPDF(
-        invoicePdfBlob,
-        attachments
-      );
-      zip.file(
-        `Invoice_and_Attachments_${invoice.invoiceNo}.pdf`,
-        combinedPdfBytes
-      );
-
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-
-      saveAs(zipBlob, `Invoice_${invoice.invoiceNo}.zip`);
-    } catch (error) {
-      setErrorMessage(t('invoice.errors.errorGenerating'));
-    }
-  }, [
-    invoice,
-    lineItems,
-    selectedClient,
-    businessSignatureImage,
-    clientSignatureImage,
-    logo,
-    attachments,
-    createCombinedPDF,
-    businessInformation,
-    categories,
-    t,
-  ]);
 
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
@@ -806,6 +709,7 @@ const InvoiceComponent: FC = () => {
         tax: invoice.tax,
         total: invoice.total,
         company: companyData,
+        currency: selectedCurrency // Add currency to the invoice data
       };
 
       const response = await fetch(
@@ -954,6 +858,8 @@ const InvoiceComponent: FC = () => {
     id,
     t,
     businessInformation,
+    selectedCurrency,
+    toast
   ]);
 
   return (
@@ -984,9 +890,19 @@ const InvoiceComponent: FC = () => {
             categories={categories}
             products={products}
             isEditMode={isEditMode}
+            currencySymbol={symbol}
           />
           <Separator />
-          <Totals invoice={invoice} setInvoice={setInvoice} />
+          <Totals 
+            invoice={{
+              ...invoice,
+              price: invoice.price * rate,
+              tax: invoice.tax * rate,
+              total: invoice.total * rate
+            }} 
+            setInvoice={setInvoice} 
+            currencySymbol={symbol} 
+          />
           <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
             <div className="w-full lg:w-1/2">
               <ClientSelector
@@ -1092,13 +1008,6 @@ const InvoiceComponent: FC = () => {
             {t('invoice.cancel')}
           </Button>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Button 
-              variant="outline" 
-              className="hidden" 
-              onClick={generatePDFAndZip}
-            >
-              {t('invoice.generatePDF')}
-            </Button>
             <Button 
               onClick={handleSaveInvoice}
               className="w-full sm:w-auto"

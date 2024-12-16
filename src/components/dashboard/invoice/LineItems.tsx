@@ -18,6 +18,7 @@ interface LineItemsProps {
   categories: Category[];
   products: Product[];
   isEditMode: boolean;
+  currencySymbol: string;
 }
 
 const LineItems: FC<LineItemsProps> = ({
@@ -30,117 +31,131 @@ const LineItems: FC<LineItemsProps> = ({
   categories,
   products,
   isEditMode,
+  currencySymbol
 }) => {
   const { t } = useTranslation('invoices');
+
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
-    <Label htmlFor="lineItems">{t('invoice.lineItems.pageTitle')}</Label>
-    <div className="overflow-x-auto">
-      <table className="w-full mb-2 min-w-[640px]">
-        <thead>
-          <tr>
-            <th className="text-left w-[20%]">{t('invoice.lineItems.category')}</th>
-            <th className="text-left w-[20%]">{t('invoice.lineItems.product')}</th>
-            <th className="text-left w-[15%]">{t('invoice.lineItems.price')}</th>
-            <th className="text-left w-[15%]">{t('invoice.lineItems.quantity')}</th>
-            <th className="text-center w-[15%]">{t('invoice.lineItems.lineTotal')}</th>
-            <th className="w-[15%]">{t('invoice.lineItems.actions')}</th>
-          </tr>
-        </thead>
-      </table>
-
-      {lineItems.length === 0 ? (
-        !isEditMode && (
-          <Button onClick={handleAddLineItem} id="lineItems" className="mb-4">
-            <PlusIcon className="mr-2 h-4 w-4" /> {t('invoice.lineItems.add')}
-          </Button>
-        )
-      ) : (
-        <div className="space-y-4">
-          {lineItems.map((item, index) => (
-            <div key={index} className="mb-4">
-              <div className="flex flex-col sm:flex-row gap-2 mb-2">
-                <Select
-                  value={item.categoryId ? item.categoryId.toString() : undefined}
-                  onValueChange={(value) => handleLineItemChange(index, 'categoryId', Number(value))}
-                  disabled={isEditMode}
-                >
-                  <SelectTrigger className="w-full sm:w-[20%]">
-                    <SelectValue placeholder={t('invoice.lineItems.selectCategory')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category.id} value={category.id.toString()}>
-                        {category.description}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  value={item.itemId ? item.itemId.toString() : undefined}
-                  onValueChange={(value) => handleItemSelect(index, item.categoryId, Number(value))}
-                  disabled={!item.categoryId || isEditMode}
-                >
-                  <SelectTrigger className="w-full sm:w-[20%]">
-                    <SelectValue placeholder={t('invoice.lineItems.select')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {products
-                      .filter((product) => product.category.id === item.categoryId)
-                      .map((product) => (
-                        <SelectItem key={product.id} value={product.id.toString()}>
-                          {product.name}
+    <div className="w-full space-y-4">
+      <Label id='invoice-line-items-title' className="text-lg font-semibold">
+        {t('invoice.lineItems.pageTitle')}
+      </Label>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[640px] border-collapse">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-2 text-left">{t('invoice.lineItems.category')}</th>
+              <th className="p-2 text-left">{t('invoice.lineItems.product')}</th>
+              <th className="p-2 text-left">{t('invoice.lineItems.price')}</th>
+              <th className="p-2 text-left">{t('invoice.lineItems.quantity')}</th>
+              <th className="p-2 text-center">{t('invoice.lineItems.lineTotal')}</th>
+              <th className="p-2 text-center">{t('invoice.lineItems.actions')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lineItems.map((item, index) => (
+              <tr key={index} className="border-b border-gray-200">
+                <td className="p-2">
+                  <Select
+                    value={item.categoryId ? item.categoryId.toString() : undefined}
+                    onValueChange={(value) => handleLineItemChange(index, 'categoryId', Number(value))}
+                    disabled={isEditMode}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={t('invoice.lineItems.selectCategory')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.id.toString()} id={`line-item-category${category.id.toString()}`}>
+                          {category.description}
                         </SelectItem>
                       ))}
-                  </SelectContent>
-                </Select>
-
-                <Input
-                  className="w-full sm:w-[15%]"
-                  type="number"
-                  min="0"
-                  value={item.price}
-                  onChange={(e) => handleLineItemChange(index, 'price', e.target.value)}
-                />
-                <Input
-                  className="w-full sm:w-[15%]"
-                  type="number"
-                  min="0"
-                  value={item.quantity}
-                  onChange={(e) => handleLineItemChange(index, 'quantity', e.target.value)}
-                />
-                <div className="w-full sm:w-[15%] flex items-center justify-center font-bold">
-                  ${(item.price * item.quantity).toFixed(2)}
-                </div>
-                <div className="w-full sm:w-[15%] flex items-center justify-center gap-2">
-                  <Button variant="link" onClick={() => handleAddTaxes(index)} className="text-blue-700">
-                    {t('invoice.lineItems.addTax')}
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleRemoveLineItem(index)} disabled={isEditMode}>
-                    <Trash2Icon className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <Textarea
-                placeholder={t('invoice.lineItems.enterDescription')}
-                value={item.description}
-                onChange={(e) => handleLineItemChange(index, 'description', e.target.value)}
-                className="w-full"
-              />
-              {item.error && <p className="text-red-500 mt-1">{item.error}</p>}
-            </div>
-          ))}
-          {!isEditMode && (
-            <Button onClick={handleAddLineItem} className="mt-2">
-              <PlusIcon className="mr-2 h-4 w-4" /> {t('invoice.lineItems.add')}
-            </Button>
-          )}
+                    </SelectContent>
+                  </Select>
+                </td>
+                <td className="p-2">
+                  <Select
+                    value={item.itemId ? item.itemId.toString() : undefined}
+                    onValueChange={(value) => handleItemSelect(index, item.categoryId, Number(value))}
+                    disabled={!item.categoryId || isEditMode}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={t('invoice.lineItems.select')} id={`lineitem-item-select-invoice`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {products
+                        .filter((product) => product.category.id === item.categoryId)
+                        .map((product) => (
+                          <SelectItem key={product.id} value={product.id.toString()} id={`line-items-product-${product.id.toString()}`}>
+                            {product.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </td>
+                <td className="p-2">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={item.price.toFixed(2)}
+                    onChange={(e) => {
+                      const parsedValue = parseFloat(e.target.value);
+                      handleLineItemChange(index, 'price', isNaN(parsedValue) ? 0 : parseFloat(parsedValue.toFixed(2)));
+                    }}
+                    id={`line-items-price${Math.random() * 999999 + 1}`}
+                    className="w-full"
+                  />
+                </td>
+                <td className="p-2">
+                  <Input
+                    type="number"
+                    step="1"
+                    min="0"
+                    value={item.quantity}
+                    onChange={(e) => handleLineItemChange(index, 'quantity', e.target.value)}
+                    id={`line-items-quantity-${Math.random() * 999999 + 1}`}
+                    className="w-full"
+                  />
+                </td>
+                <td className="p-2 text-center font-bold">
+                  {currencySymbol}{(item.price * item.quantity).toFixed(2)}
+                </td>
+                <td className="p-2">
+                  <div className="flex items-center justify-center gap-2">
+                    <Button variant="link" onClick={() => handleAddTaxes(index)} className="text-blue-700">
+                      {t('invoice.lineItems.addTax')}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => handleRemoveLineItem(index)} disabled={isEditMode}>
+                      <Trash2Icon className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {lineItems.map((item, index) => (
+        <div key={`description-${index}`} className="mt-2">
+          <Textarea
+            placeholder={t('invoice.lineItems.enterDescription')}
+            value={item.description}
+            onChange={(e) => handleLineItemChange(index, 'description', e.target.value)}
+            className="w-full"
+            id={`lineitems-items-description${Math.random() + 99999 + 1}`}
+          />
+          {item.error && <p className="text-red-500 mt-1">{item.error}</p>}
         </div>
+      ))}
+      {!isEditMode && (
+        <Button onClick={handleAddLineItem} className="mt-4">
+          <PlusIcon className="mr-2 h-4 w-4" /> {t('invoice.lineItems.add')}
+        </Button>
       )}
     </div>
-  </div>
   );
 };
 
 export default LineItems;
+

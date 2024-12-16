@@ -1,4 +1,4 @@
-import { FC} from "react";
+import { FC } from "react";
 import {
   Card,
   CardContent,
@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { NoDataDisplay } from "./charts/NoDataDisplay";
 
 interface Sale {
   customer: {
@@ -62,7 +63,7 @@ const sales: Sale[] = [
 
 const RecentSales: FC = () => {
   return (
-    <Card className="w-full max-w-2xl overflow-hidden">
+    <Card className="w-full overflow-hidden h-[500px]">
       <CardHeader className="pb-4 bg-gradient-to-r from-primary/10 to-primary/5">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold">Recent Sales</CardTitle>
@@ -75,37 +76,41 @@ const RecentSales: FC = () => {
         </p>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="space-y-4">
-          {sales.map((sale) => (
-            <div
-              key={sale.customer.email}
-              className="flex items-center p-2 rounded-lg hover:bg-muted/50 transition-colors"
-            >
-              <Avatar className="h-10 w-10 mr-4">
-                <AvatarImage src={sale.customer.avatar} alt="Avatar" />
-                <AvatarFallback>
-                  {sale.customer.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium truncate">
-                    {sale.customer.name}
+        {sales.length === 0 ? (
+          <NoDataDisplay />
+        ) : (
+          <div className="space-y-4">
+            {sales.map((sale) => (
+              <div
+                key={sale.customer.email}
+                className="flex items-center p-2 rounded-lg hover:bg-muted/50 transition-colors"
+              >
+                <Avatar className="h-10 w-10 mr-4">
+                  <AvatarImage src={sale.customer.avatar} alt="Avatar" />
+                  <AvatarFallback>
+                    {sale.customer.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium truncate">
+                      {sale.customer.name}
+                    </p>
+                    <Badge variant="default" className="ml-2">
+                      +${sale.amount.toFixed(2)}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {sale.customer.email}
                   </p>
-                  <Badge variant="default" className="ml-2">
-                    +${sale.amount.toFixed(2)}
-                  </Badge>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {sale.customer.email}
-                </p>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

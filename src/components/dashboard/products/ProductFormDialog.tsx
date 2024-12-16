@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ProductFormDialogProps } from "./products-types";
 import { useTranslation } from "react-i18next";
+import CurrencySelect from "./CurrencySelect";
 
 const ProductFormDialog: FC<ProductFormDialogProps> = ({
   isDialogOpen,
@@ -16,7 +17,8 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
   handleEditProduct,
   editingProduct,
 }) => {
-  const { t } = useTranslation('categoriesAndProducts')
+  const { t } = useTranslation('categoriesAndProducts');
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogContent>
@@ -57,16 +59,25 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               </SelectContent>
             </Select>
           </div>
-          <div>
-            <Label htmlFor="price">{t('products.formDialog.price')}</Label>
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              value={newProduct.price}
-              onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
-              required
-            />
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Label htmlFor="price">{t('products.formDialog.price')}</Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.01"
+                value={newProduct.price}
+                onChange={(e) => setNewProduct({ ...newProduct, price: parseFloat(e.target.value) })}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="currency">Currency</Label>
+              <CurrencySelect
+                value={newProduct.currency}
+                onChange={(value) => setNewProduct({ ...newProduct, currency: value })}
+              />
+            </div>
           </div>
           <div>
             <Label htmlFor="quantity">{t('products.formDialog.inStock')}</Label>
@@ -107,9 +118,11 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
           </div>
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-            {t('products.formDialog.cancel')}
+              {t('products.formDialog.cancel')}
             </Button>
-            <Button type="submit">{editingProduct ? t('products.formDialog.updateProduct') : t('products.formDialog.addProduct')}</Button>
+            <Button type="submit">
+              {editingProduct ? t('products.formDialog.updateProduct') : t('products.formDialog.addProduct')}
+            </Button>
           </div>
         </form>
       </DialogContent>

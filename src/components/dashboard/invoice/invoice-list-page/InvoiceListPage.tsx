@@ -24,6 +24,12 @@ import {
 import { Invoice, InvoiceStatus } from '../invoice-types';
 import { useTranslation } from 'react-i18next';
 
+const currencyIcons: Record<string, string> = {
+  'USD': '$',
+  'EUR': '€',
+  'GEL': '₾',
+};
+
 const InvoiceListPage: FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [filteredInvoices, setFilteredInvoices] = useState<Invoice[]>([]);
@@ -37,6 +43,8 @@ const InvoiceListPage: FC = () => {
   const navigate = useNavigate();
   const [previewInvoice, setPreviewInvoice] = useState<Invoice | null>(null);
   const { toast } = useToast();
+  const [showCurrencyDialog, setShowCurrencyDialog] = useState(false);
+  const [newInvoiceCurrency, setNewInvoiceCurrency] = useState<'USD' | 'EUR' | 'GEL'>('USD');
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -71,7 +79,7 @@ const InvoiceListPage: FC = () => {
 
   useEffect(() => {
     const filtered = invoices.filter((invoice) => {
-      const matchesSearchTerm = 
+      const matchesSearchTerm =
         invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         invoice.clientVendor?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         invoice.dateOfIssue?.toLocaleDateString().includes(searchTerm);
@@ -226,12 +234,21 @@ const InvoiceListPage: FC = () => {
     return <Badge className={`${statusColors[status]} text-white`}>{status.replace('_', ' ')}</Badge>;
   };
 
+  const handleCreateNewInvoice = () => {
+    setShowCurrencyDialog(true);
+  };
+
+  const handleConfirmCurrency = () => {
+    setShowCurrencyDialog(false);
+    navigate(`/dashboard/invoices/new-invoice?currency=${newInvoiceCurrency}`);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card>
         <CardHeader className="flex flex-col sm:flex-row justify-between items-center">
           <CardTitle className="text-2xl font-bold mb-4 sm:mb-0">{t('invoiceList.pageTitle')}</CardTitle>
-          <Button className="w-full sm:w-auto" onClick={() => navigate('/dashboard/invoices/new-invoice')}>
+          <Button className="w-full sm:w-auto" onClick={handleCreateNewInvoice}>
             <PlusCircle className="mr-2 h-4 w-4" /> {t('invoiceList.createNew')}
           </Button>
         </CardHeader>
@@ -241,9 +258,10 @@ const InvoiceListPage: FC = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <Input
                 className="pl-10"
-                placeholder={t('invoiceList.search')}
+                placeholder={t('invoiceList.search')!}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                id='search-invoices-input'
               />
             </div>
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as InvoiceStatus | 'ALL_STATUSES')}>
@@ -272,53 +290,57 @@ const InvoiceListPage: FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredInvoices.map((invoice) => (
-                  <TableRow key={invoice.id}>
-                    <TableCell>{invoice.invoiceNo}</TableCell>
-                    <TableCell>{invoice.clientVendor?.name}</TableCell>
-                    <TableCell>{invoice.dateOfIssue?.toLocaleDateString()}</TableCell>
-                    <TableCell>${invoice.total.toFixed(2)}</TableCell>
-                    <TableCell>{getStatusBadge(invoice.invoiceStatus)}</TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleSendEmail(invoice.id)}>
-                            <Mail className="mr-2 h-4 w-4" />
-                            <span>{t('invoiceList.sendEmail')}</span>
-                          </DropdownMenuItem>
-                          {invoice.invoiceStatus !== 'APPROVED' && (
-                            <DropdownMenuItem onClick={() => handleApproveInvoice(invoice.id)}>
-                              <ClipboardCheck className="mr-2 h-4 w-4" />
-                              <span>{t('invoiceList.approve')}</span>
+                {filteredInvoices.map((invoice, index) => {
+                  const currencyIcon = currencyIcons[invoice.currency] || '';
+                  const displayTotal = `${currencyIcon}${invoice.total.toFixed(2)}`;
+                  return (
+                    <TableRow key={invoice.id || index}>
+                      <TableCell key={`${invoice.id}${invoice.invoiceNo}`}>{invoice.invoiceNo}</TableCell>
+                      <TableCell key={`${invoice.id}${invoice.clientVendor?.name}`}>{invoice.clientVendor?.name}</TableCell>
+                      <TableCell key={`${invoice.id}${invoice.dateOfIssue}`}>{invoice.dateOfIssue?.toLocaleDateString()}</TableCell>
+                      <TableCell key={`${invoice.id}total`}>{displayTotal}</TableCell>
+                      <TableCell key={`${invoice.id}${invoice.invoiceStatus}`}>{getStatusBadge(invoice.invoiceStatus)}</TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0" key={`button${index}${invoice.id}`}>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleSendEmail(invoice.id)}>
+                              <Mail className="mr-2 h-4 w-4" />
+                              <span>{t('invoiceList.sendEmail')}</span>
                             </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem onClick={() => setPreviewInvoice(invoice)}>
-                            <Eye className="mr-2 h-4 w-4" />
-                            <span>{t('invoiceList.preview')}</span>
-                          </DropdownMenuItem>
-                          {invoice.invoiceStatus !== 'APPROVED' && (
-                            <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
-                              <Pencil className="mr-2 h-4 w-4" />
-                              <span>{t('invoiceList.edit')}</span>
+                            {invoice.invoiceStatus !== 'APPROVED' && (
+                              <DropdownMenuItem onClick={() => handleApproveInvoice(invoice.id)}>
+                                <ClipboardCheck className="mr-2 h-4 w-4" />
+                                <span>{t('invoiceList.approve')}</span>
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem onClick={() => setPreviewInvoice(invoice)}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              <span>{t('invoiceList.preview')}</span>
                             </DropdownMenuItem>
-                          )}
-                          <DropdownMenuItem
-                            onClick={() => openDeleteDialog(invoice.id)}
-                            className="text-red-600 focus:text-red-600"
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            {t('invoiceList.delete')}
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                            {invoice.invoiceStatus !== 'APPROVED' && (
+                              <DropdownMenuItem onClick={() => navigate(`/dashboard/invoices/edit/${invoice.id}`)}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                <span>{t('invoiceList.edit')}</span>
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem
+                              onClick={() => openDeleteDialog(invoice.id)}
+                              className="text-red-600 focus:text-red-600"
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              {t('invoiceList.delete')}
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </div>
@@ -340,6 +362,7 @@ const InvoiceListPage: FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       {previewInvoice && (
         <InvoicePreview
           invoice={previewInvoice}
@@ -347,6 +370,30 @@ const InvoiceListPage: FC = () => {
           onClose={() => setPreviewInvoice(null)}
         />
       )}
+
+      {/* Currency selection dialog before creating new invoice */}
+      <AlertDialog open={showCurrencyDialog} onOpenChange={setShowCurrencyDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Choose currency</AlertDialogTitle>
+            <AlertDialogDescription>Select Currency</AlertDialogDescription>
+          </AlertDialogHeader>
+          <Select value={newInvoiceCurrency} onValueChange={(val) => setNewInvoiceCurrency(val as 'USD' | 'EUR' | 'GEL')}>
+            <SelectTrigger className="w-full mt-4">
+              <SelectValue placeholder="Currency" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="USD">USD</SelectItem>
+              <SelectItem value="EUR">EUR</SelectItem>
+              <SelectItem value="GEL">GEL</SelectItem>
+            </SelectContent>
+          </Select>
+          <AlertDialogFooter className="mt-4">
+            <AlertDialogCancel onClick={() => setShowCurrencyDialog(false)}>{t('invoiceList.dialog.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmCurrency}>{t('invoiceList.dialog.continue')}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

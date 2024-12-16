@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useTranslation } from 'react-i18next';
+import { Description } from '@radix-ui/react-dialog';
 
 interface TaxDialogProps {
   showTaxDialog: boolean;
@@ -23,6 +24,8 @@ const TaxDialog: FC<TaxDialogProps> = ({
   const { t } = useTranslation('invoices')
   return (
     <Dialog open={showTaxDialog} onOpenChange={setShowTaxDialog}>
+      <Description>
+      </Description>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('invoice.taxDialog.addTax')}</DialogTitle>

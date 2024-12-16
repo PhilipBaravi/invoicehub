@@ -50,6 +50,7 @@ export interface Product {
   quantityInStock: number;
   lowLimitAlert: number;
   price: number;
+  currency: string; // added currency field
   createdAt: string;
   productUnit: string;
   status: string;
@@ -71,6 +72,7 @@ export interface InvoiceProduct {
 
 // Invoice interface
 export interface Invoice {
+  currency: string;
   id: number;
   invoiceNo: string;
   invoiceStatus: InvoiceStatus;
@@ -87,7 +89,8 @@ export interface Invoice {
   businessSignature?: string;
   clientSignature?: string;
 }
-// **LineItem interface**
+
+// LineItem interface
 export interface LineItem {
   itemId: number;
   categoryId: number;

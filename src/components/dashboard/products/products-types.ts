@@ -1,5 +1,3 @@
-// products-types.ts
-
 export interface Category {
   id: number;
   description: string;
@@ -13,6 +11,7 @@ export interface Product {
   description: string;
   status: "ACTIVE" | "DRAFT";
   price: number;
+  currency: string;
   quantityInStock: number;
   lowLimitAlert: number;
   productUnit: string;
@@ -27,7 +26,6 @@ export interface ProductTableProps {
   lowStockProducts: Product[];
 }
 
-// Modify the type of newProduct to allow omitting id and createdAt
 export interface ProductFormDialogProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;

@@ -7,19 +7,15 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Package2, TrendingUp } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useKeycloak } from "@react-keycloak/web";
+import { NoDataDisplay } from "./charts/NoDataDisplay";
+import { YearMonthCurrencySelect } from "./charts/YearMonthCurrencySelect";
 
 interface Product {
   name: string;
   quantity: number;
   estimatedRevenue: number;
+  amount: number;
 }
 
 const currencies = {
@@ -28,17 +24,12 @@ const currencies = {
   GEL: { symbol: "₾", rate: 2.65 },
 };
 
-const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
-];
-
 const TopSoldProducts: FC = () => {
   const { keycloak } = useKeycloak();
   const currentYear = new Date().getFullYear();
-  const [year, setYear] = useState(currentYear.toString());
-  const [month, setMonth] = useState((new Date().getMonth() + 1).toString().padStart(2, "0"));
-  const [currency, setCurrency] = useState("USD");
+  const [year, setYear] = useState<number>(currentYear);
+  const [month, setMonth] = useState<number>(new Date().getMonth() + 1);
+  const [currency, setCurrency] = useState<string>("USD");
   const [products, setProducts] = useState<Product[]>([]);
   const [totalSold, setTotalSold] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -50,7 +41,7 @@ const TopSoldProducts: FC = () => {
 
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/dashboard/topSellingProducts/${year}/${month}/${currency}`,
+        `https://api.invoicehub.space/api/v1/dashboard/topSellingProducts/${year.toString()}/${month.toString().padStart(2, "0")}/${currency}`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -71,10 +62,12 @@ const TopSoldProducts: FC = () => {
         );
       } else {
         setProducts([]);
+        setError("No data available");
       }
     } catch (err) {
       console.error("An error occurred while fetching top-selling products:", err);
       setProducts([]);
+      setError("An error occurred");
     } finally {
       setLoading(false);
     }
@@ -92,12 +85,12 @@ const TopSoldProducts: FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-2xl overflow-hidden">
+    <Card className="w-full overflow-hidden h-[500px]">
       <CardHeader className="pb-4 bg-gradient-to-r from-primary/10 to-primary/5">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
             <TrendingUp className="w-6 h-6 text-primary" />
-            Top Sold Products
+            Top Selling Products
           </CardTitle>
           <Badge variant="secondary" className="text-sm font-medium">
             {totalSold} Total
@@ -107,43 +100,21 @@ const TopSoldProducts: FC = () => {
           Best performing products for the selected period
         </p>
         <div className="flex gap-2 mt-4">
-          <Select value={year} onValueChange={setYear}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Year" />
-            </SelectTrigger>
-            <SelectContent>
-              {[currentYear - 1, currentYear, currentYear + 1].map((y) => (
-                <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={month} onValueChange={setMonth}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Month" />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((m, index) => (
-                <SelectItem key={index} value={(index + 1).toString().padStart(2, "0")}>
-                  {m}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={currency} onValueChange={setCurrency}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Currency" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.keys(currencies).map((c) => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <YearMonthCurrencySelect
+            year={year}
+            month={month}
+            currency={currency}
+            onYearChange={setYear}
+            onMonthChange={setMonth}
+            onCurrencyChange={setCurrency}
+          />
         </div>
       </CardHeader>
       <CardContent className="p-6">
         {loading ? (
           <div className="text-center">Loading...</div>
+        ) : products.length === 0 ? (
+          <NoDataDisplay />
         ) : (
           <div className="space-y-4">
             {products.map((product, index) => (
@@ -169,9 +140,9 @@ const TopSoldProducts: FC = () => {
                     <p className="text-sm font-semibold">{product.quantity}</p>
                   </div>
                   <div className="flex items-center justify-between mt-1">
-                    <p className="text-xs text-muted-foreground">Estimated revenue</p>
+                    <p className="text-xs text-muted-foreground">Total Revenue</p>
                     <p className="text-sm font-semibold">
-                      {formatCurrency(product.estimatedRevenue)}
+                      {formatCurrency(product.amount)}
                     </p>
                   </div>
                   <div className="w-full bg-secondary h-1.5 rounded-full mt-2 overflow-hidden">
