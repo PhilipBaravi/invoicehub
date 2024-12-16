@@ -75,19 +75,33 @@ const CurrencyExchangeRates: FC = () => {
           const targetCurrencies = currenciesToShow[baseCurrency] || [];
           const newRates: ExchangeRate[] = targetCurrencies
             .filter((code) => data[code] !== undefined)
-            .map((code) => ({
-              code,
-              rate: data[code],
-              icon: currencyIcons[code] || null,
-            }));
+            .map((code) => {
+              let displayedRate = data[code];
+              let displayedCodePair: string;
+              
+              if (baseCurrency === "GEL") {
+                // Currently data[code] = 1 GEL = data[code] * {code}
+                // If {code}/GEL, so 1 {code} = 1/data[code] GEL
+                displayedRate = 1 / displayedRate;
+                displayedCodePair = `${code} / ${baseCurrency}`;
+              } else {
+                displayedCodePair = `${baseCurrency} / ${code}`;
+              }
 
-          setRates(newRates); 
+              return {
+                code: displayedCodePair,
+                rate: displayedRate,
+                icon: currencyIcons[code] || null,
+              };
+            });
+
+          setRates(newRates);
         } else {
           throw new Error(result.message || "Failed to fetch exchange rates");
         }
       } catch (err) {
         console.error("An error occurred while fetching exchange rates", err);
-        setRates([]); 
+        setRates([]);
       } finally {
         setLoading(false);
       }
@@ -103,12 +117,12 @@ const CurrencyExchangeRates: FC = () => {
       ) : (
         rates.map((rate, index) => (
           <Card
-            key={`${baseCurrency}-${rate.code}-${index}`}
+            key={`${rate.code}-${index}`}
             className="overflow-hidden transition-all hover:shadow-lg"
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                {baseCurrency} / {rate.code}
+                {rate.code}
               </CardTitle>
               <div className="rounded-full bg-primary/10 p-1">{rate.icon}</div>
             </CardHeader>
