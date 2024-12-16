@@ -32,6 +32,7 @@ import LandingPage from "./landing-page/LandingPage";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "./hooks/useAuth";
 import type { UserFormValues } from "./components/main-authentication/new-register-page/RegisterForm";
+import { CookieConsent } from "./CookiesConsent";
 import { getCookie, eraseCookie, setCookie } from "./utils/cookiesUtils";
 
 const ProtectedRoute = ({ 
@@ -210,6 +211,7 @@ const App: React.FC = () => {
             </Route>
           </Routes>
           <Toaster />
+          <CookieConsent />
         </Router>
       </ThemeProvider>
     </ReactKeycloakProvider>
