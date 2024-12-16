@@ -14,7 +14,7 @@ import { YearMonthCurrencySelect } from "./charts/YearMonthCurrencySelect";
 interface Product {
   name: string;
   quantity: number;
-  estimatedRevenue: number;
+  estimatedRevenue?: number;
   amount: number;
 }
 
@@ -41,7 +41,7 @@ const TopSoldProducts: FC = () => {
 
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/dashboard/topSellingProducts/${year.toString()}/${month.toString().padStart(2, "0")}/${currency}`,
+        `http://localhost:9090/api/v1/dashboard/topSellingProducts/${year.toString()}/${month.toString().padStart(2, "0")}/${currency}`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -56,9 +56,10 @@ const TopSoldProducts: FC = () => {
       const result = await response.json();
 
       if (result.success && result.data) {
-        setProducts(result.data);
+        const sortedProducts = result.data.sort((a: Product, b: Product) => b.quantity - a.quantity);
+        setProducts(sortedProducts);
         setTotalSold(
-          result.data.reduce((sum: number, product: Product) => sum + product.quantity, 0)
+          sortedProducts.reduce((sum: number, product: Product) => sum + product.quantity, 0)
         );
       } else {
         setProducts([]);
@@ -85,7 +86,7 @@ const TopSoldProducts: FC = () => {
   };
 
   return (
-    <Card className="w-full overflow-hidden h-[500px]">
+    <Card className="w-full h-[500px] flex flex-col">
       <CardHeader className="pb-4 bg-gradient-to-r from-primary/10 to-primary/5">
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
@@ -110,7 +111,7 @@ const TopSoldProducts: FC = () => {
           />
         </div>
       </CardHeader>
-      <CardContent className="p-6">
+      <CardContent className="p-6 overflow-y-auto flex-grow">
         {loading ? (
           <div className="text-center">Loading...</div>
         ) : products.length === 0 ? (
@@ -128,10 +129,7 @@ const TopSoldProducts: FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-medium truncate">{product.name}</p>
-                    <Badge
-                      variant={index === 0 ? "default" : "outline"}
-                      className="ml-2"
-                    >
+                    <Badge variant={index === 0 ? "default" : "outline"} className="ml-2">
                       #{index + 1}
                     </Badge>
                   </div>

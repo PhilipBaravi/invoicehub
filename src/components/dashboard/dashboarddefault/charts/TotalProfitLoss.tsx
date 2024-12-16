@@ -45,6 +45,10 @@ const chartConfig: ChartConfig = {
     label: "Total Loss",
     color: "hsl(var(--chart-1))",
   },
+  total_spent: {
+    label: "Total Spent",
+    color: "hsl(var(--chart-3))",
+  }
 }
 
 const currencySymbols: { [key: string]: string } = {
@@ -68,7 +72,7 @@ const TotalProfitLoss = () => {
       return null
     }
     const response = await fetch(
-      `https://api.invoicehub.space/api/v1/dashboard/financialSummary/${year}/${month}/${currency}`,
+      `http://localhost:9090/api/v1/dashboard/financialSummary/${year}/${month}/${currency}`,
       {
         headers: {
           'Authorization': `Bearer ${keycloak.token}`
@@ -111,11 +115,26 @@ const TotalProfitLoss = () => {
 
   const formattedChartData = React.useMemo(() => {
     if (!chartData) return []
-    const totalProfit = Math.max(0, chartData.total_profit_loss)
-    const totalLoss = Math.max(0, chartData.total_sales - chartData.total_profit_loss)
+    const { total_sales, total_profit_loss } = chartData
+
+    const isLoss = total_profit_loss < 0
+    const profitLossValue = isLoss ? Math.abs(total_profit_loss) : total_profit_loss
+    const profitLossLabel = isLoss ? "Total Loss" : "Total Profit"
+
+    // Calculate total spent (cost) from the formula: total_sales - total_profit_loss
+    const totalSpent = total_sales - total_profit_loss
+
     return [
-      { name: "Total Profit", value: totalProfit, fill: "var(--color-total_profit)" },
-      { name: "Total Loss", value: totalLoss, fill: "var(--color-total_loss)" },
+      {
+        name: profitLossLabel,
+        value: profitLossValue,
+        fill: isLoss ? "var(--color-total_loss)" : "var(--color-total_profit)",
+      },
+      {
+        name: "Total Spent",
+        value: totalSpent,
+        fill: "var(--color-total_spent)",
+      },
     ]
   }, [chartData])
 
@@ -140,6 +159,14 @@ const TotalProfitLoss = () => {
   }
 
   const showFooter = !error && chartData && chartData.total_sales > 0
+  const isLoss = (chartData?.total_profit_loss ?? 0) < 0
+  const profitLossLabel = isLoss ? "Total Loss" : "Total Profit"
+  const profitLossValue = isLoss
+    ? Math.abs(chartData?.total_profit_loss ?? 0)
+    : chartData?.total_profit_loss ?? 0
+
+  // Compute total spent dynamically
+  const totalSpent = chartData ? chartData.total_sales - chartData.total_profit_loss : 0
 
   return (
     <Card className="flex flex-col">
@@ -194,7 +221,7 @@ const TotalProfitLoss = () => {
                           <tspan
                             x={viewBox.cx}
                             y={viewBox.cy}
-                            className={`fill-foreground font-bold`}
+                            className="fill-foreground font-bold"
                             style={{ fontSize: `${fontSize}px` }}
                           >
                             {currencySymbols[currency]}{totalSalesString}
@@ -209,6 +236,7 @@ const TotalProfitLoss = () => {
                         </text>
                       )
                     }
+                    return null
                   }}
                 />
               </Pie>
@@ -216,15 +244,19 @@ const TotalProfitLoss = () => {
           </ChartContainer>
         ) : null}
       </CardContent>
-      {showFooter && (
+      {showFooter && chartData && (
         <CardFooter className="flex-col gap-2 text-sm">
           <div className="flex items-center gap-2 font-medium leading-none">
-            <TrendingUp className="h-4 w-4 text-green-500" />
-            Total Profit: {currencySymbols[currency]}{Math.max(0, chartData!.total_profit_loss).toLocaleString()}
+            {isLoss ? (
+              <TrendingDown className="h-4 w-4 text-red-500" />
+            ) : (
+              <TrendingUp className="h-4 w-4 text-green-500" />
+            )}
+            {profitLossLabel}: {currencySymbols[currency]}{profitLossValue.toLocaleString()}
           </div>
           <div className="flex items-center gap-2 font-medium leading-none">
-            <TrendingDown className="h-4 w-4 text-red-500" />
-            Total Loss: {currencySymbols[currency]}{Math.max(0, chartData!.total_sales - chartData!.total_profit_loss).toLocaleString()}
+            <TrendingDown className="h-4 w-4 text-yellow-500" />
+            Total Spent: {currencySymbols[currency]}{totalSpent.toLocaleString()}
           </div>
         </CardFooter>
       )}
@@ -233,4 +265,3 @@ const TotalProfitLoss = () => {
 }
 
 export default TotalProfitLoss
-
