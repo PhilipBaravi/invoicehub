@@ -72,7 +72,7 @@ const TotalProfitLoss = () => {
       return null
     }
     const response = await fetch(
-      `http://localhost:9090/api/v1/dashboard/financialSummary/${year}/${month}/${currency}`,
+      `https://api.invoicehub.space/api/v1/dashboard/financialSummary/${year}/${month}/${currency}`,
       {
         headers: {
           'Authorization': `Bearer ${keycloak.token}`

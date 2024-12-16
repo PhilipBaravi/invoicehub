@@ -67,7 +67,7 @@ const RecentSales: FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("http://localhost:9090/api/v1/dashboard/recentlyApproved", {
+      const response = await fetch("https://api.invoicehub.space/api/v1/dashboard/recentlyApproved", {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
         },

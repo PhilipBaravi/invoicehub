@@ -14,8 +14,16 @@ import { YearMonthCurrencySelect } from "./charts/YearMonthCurrencySelect";
 interface Product {
   name: string;
   quantity: number;
-  estimatedRevenue?: number;
   amount: number;
+  currency: string;
+}
+
+interface ApiData {
+  [productName: string]: {
+    quantity: number;
+    amount: number;
+    currency: string;
+  };
 }
 
 const currencies = {
@@ -41,7 +49,7 @@ const TopSoldProducts: FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:9090/api/v1/dashboard/topSellingProducts/${year.toString()}/${month.toString().padStart(2, "0")}/${currency}`,
+        `https://api.invoicehub.space/api/v1/dashboard/topSellingProducts/${year.toString()}/${month.toString().padStart(2, "0")}/${currency}`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -56,11 +64,21 @@ const TopSoldProducts: FC = () => {
       const result = await response.json();
 
       if (result.success && result.data) {
-        const sortedProducts = result.data.sort((a: Product, b: Product) => b.quantity - a.quantity);
+        const data: ApiData = result.data;
+
+        // Transform the data object into an array of Product objects.
+        const productArray: Product[] = Object.entries(data).map(([name, details]) => ({
+          name,
+          quantity: details.quantity,
+          amount: details.amount,
+          currency: details.currency,
+        }));
+
+        // Sort products by quantity in descending order
+        const sortedProducts = productArray.sort((a, b) => b.quantity - a.quantity);
+
         setProducts(sortedProducts);
-        setTotalSold(
-          sortedProducts.reduce((sum: number, product: Product) => sum + product.quantity, 0)
-        );
+        setTotalSold(sortedProducts.reduce((sum, product) => sum + product.quantity, 0));
       } else {
         setProducts([]);
         setError("No data available");
