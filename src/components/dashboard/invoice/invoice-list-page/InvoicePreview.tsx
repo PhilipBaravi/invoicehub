@@ -24,6 +24,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
   onClose,
 }) => {
   const [lineItems, setLineItems] = useState<InvoiceProduct[]>([]);
+  const [businessInfo, setBusinessInfo] = useState<any>(null);
   const { keycloak } = useKeycloak();
   const { t } = useTranslation('invoices');
 
@@ -46,8 +47,26 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
       }
     };
 
+    const fetchBusinessInfo = async () => {
+      try {
+        const response = await fetch('https://api.invoicehub.space/api/v1/user/loggedInUser', {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
+        const result = await response.json();
+        if (result.success) {
+          setBusinessInfo(result.data.company);
+          console.log(businessInfo)
+        }
+      } catch (error) {
+        console.error('Error fetching business information:', error);
+      }
+    };
+
     if (isOpen && invoice.id) {
       fetchLineItems();
+      fetchBusinessInfo();
     }
   }, [isOpen, invoice.id, keycloak.token]);
 
@@ -55,9 +74,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <Description></Description>
       <DialogContent className="max-w-4xl">
-        <DialogTitle className='hidden'>
-          Preview Invoice
-        </DialogTitle>
+        <DialogTitle className='hidden'>Preview Invoice</DialogTitle>
         <ScrollArea className="h-[80vh] w-full rounded-md p-4">
           <div className="max-w-[800px] mx-auto bg-white rounded-lg shadow-sm p-12">
             {/* Header Section */}
@@ -91,25 +108,29 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {lineItems.map((item) => {
-                    return (
-                      <Fragment key={item.id}>
-                        <tr key={item.id}>
-                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{item.product.category.description}</td>
-                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{item.product.name}</td>
-                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{currencyIcon}{item.price.toFixed(2)}</td>
-                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{item.quantity}</td>
-                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{currencyIcon}{item.tax.toFixed(2)}</td>
-                          <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950 dark:text-stone-950">{currencyIcon}{item.total.toFixed(2)}</td>
-                        </tr>
-                        <tr key={`desc-${item.id}`}>
-                          <td colSpan={6} className="py-3 px-3 text-left border-b border-[#e5e7eb] bg-[#f9f9f9] text-stone-950 dark:text-stone-950">
-                            {t('invoice.lineItems.description')} <span>{item.product.description}</span>
-                          </td>
-                        </tr>
-                      </Fragment>
-                    )
-                  })}
+                  {lineItems.map((item) => (
+                    <Fragment key={item.id}>
+                      <tr>
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">{item.product.category.description}</td>
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">{item.product.name}</td>
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                          {currencyIcon}{item.price.toFixed(2)}
+                        </td>
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">{item.quantity}</td>
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                          {currencyIcon}{item.tax.toFixed(2)}
+                        </td>
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                          {currencyIcon}{item.total.toFixed(2)}
+                        </td>
+                      </tr>
+                      <tr key={`desc-${item.id}`}>
+                    <td colSpan={6} className="py-3 px-3 text-left border-b border-[#e5e7eb] bg-[#f9f9f9] text-stone-950 dark:text-stone-950" key={`desc-item-${item.id}`} >
+                      {t('invoice.lineItems.description')} <span>{item.product.description}</span>
+                    </td>
+                  </tr>
+                    </Fragment>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -120,13 +141,13 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                 <div className="mb-8">
                   <div className="bg-[#f1f5f9] p-6 rounded-lg">
                     <h3 className="text-[#5c6ac4] dark:text-[#5c6ac4] mb-4 text-[1.1rem] font-bold">{t('invoice.notesTerms.pageTitle')}</h3>
-                    <p className='text-stone-950 dark:text-stone-950'>{invoice.notes}</p>
+                    <p className="text-stone-950 dark:text-stone-950">{invoice.notes}</p>
                   </div>
                 </div>
                 <div>
                   <div className="bg-[#f1f5f9] p-6 rounded-lg">
                     <h3 className="text-[#5c6ac4] dark:text-[#5c6ac4] mb-4 text-[1.1rem] font-bold">{t('invoice.notesTerms.terms')}</h3>
-                    <p className='text-stone-950 dark:text-stone-950'>{invoice.paymentTerms}</p>
+                    <p className="text-stone-950 dark:text-stone-950">{invoice.paymentTerms}</p>
                   </div>
                 </div>
               </div>
@@ -154,57 +175,68 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
               </div>
             </div>
 
-            {/* Address Section */}
-            <div className="flex mb-12">
-              <div className="w-1/2 pr-6">
-                <h2 className="text-[#5c6ac4] dark:text-[#5c6ac4] mb-4 text-[1.25rem] font-bold">{t('invoice.pdf.bill')}</h2>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.name')}</strong> {invoice.clientVendor?.name}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.phone')}</strong> {invoice.clientVendor?.phone}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.website')}</strong> {invoice.clientVendor?.website}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.email')}</strong> {invoice.clientVendor?.email}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.country')}</strong> {invoice.clientVendor?.address.country}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.city')}</strong> {invoice.clientVendor?.address.city}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.address')}</strong> {invoice.clientVendor?.address.addressLine1}
-                </p>
-              </div>
-              <div className="w-1/2 pl-6 text-right">
-                <h2 className="text-[#5c6ac4] dark:text-[#5c6ac4] mb-4 text-[1.25rem] font-bold">{t('invoice.pdf.businessInfo')}</h2>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.name')}</strong> {invoice.clientVendor?.name}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.phone')}</strong> {invoice.clientVendor?.phone}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.website')}</strong> {invoice.clientVendor?.website}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.email')}</strong> {invoice.clientVendor?.email}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.country')}</strong> {invoice.clientVendor?.address.country}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.city')}</strong> {invoice.clientVendor?.address.city}
-                </p>
-                <p className="mb-2 text-[0.875rem] text-[#525252]">
-                  <strong>{t('invoice.pdf.address')}</strong> {invoice.clientVendor?.address.addressLine1}
-                </p>
-              </div>
-            </div>
+{/* Business Information Section */}
+<div className="flex mb-12 flex-row justify-between items-start">
+  <div className="flex-1 pr-6">
+    <h2 className="text-[#5c6ac4] dark:text-[#5c6ac4] mb-4 text-lg font-bold">
+      {t('invoice.pdf.bill')}
+    </h2>
+    <p className="mb-2 text-sm text-[#525252]">
+      <strong>{t('invoice.pdf.name')}</strong> {invoice.clientVendor?.name}
+    </p>
+    <p className="mb-2 text-sm text-[#525252]">
+      <strong>{t('invoice.pdf.phone')}</strong> {invoice.clientVendor?.phone}
+    </p>
+    <p className="mb-2 text-sm text-[#525252]">
+      <strong>{t('invoice.pdf.website')}</strong> {invoice.clientVendor?.website}
+    </p>
+    <p className="mb-2 text-sm text-[#525252]">
+      <strong>{t('invoice.email')}</strong> {invoice.clientVendor?.email}
+    </p>
+    <p className="mb-2 text-sm text-[#525252]">
+      <strong>{t('invoice.pdf.country')}</strong> {invoice.clientVendor?.address.country}
+    </p>
+    <p className="mb-2 text-sm text-[#525252]">
+      <strong>{t('invoice.pdf.city')}</strong> {invoice.clientVendor?.address.city}
+    </p>
+    <p className="mb-2 text-sm text-[#525252]">
+      <strong>{t('invoice.pdf.address')}</strong> {invoice.clientVendor?.address.addressLine1}
+    </p>
+  </div>
+  <div className="flex-1 pl-6 text-right">
+    <h2 className="text-[#5c6ac4] dark:text-[#5c6ac4] mb-4 text-lg font-bold">
+      {t('invoice.pdf.businessInfo')}
+    </h2>
+    {businessInfo ? (
+      <div>
+        <p className="mb-2 text-sm text-[#525252]">
+          <strong>{t('invoice.pdf.name')}</strong> {businessInfo.title}
+        </p>
+        <p className="mb-2 text-sm text-[#525252]">
+          <strong>{t('invoice.pdf.phone')}</strong> {businessInfo.phone}
+        </p>
+        <p className="mb-2 text-sm text-[#525252]">
+          <strong>{t('invoice.pdf.website')}</strong> {businessInfo.website}
+        </p>
+        <p className="mb-2 text-sm text-[#525252]">
+          <strong>{t('invoice.email')}</strong> {businessInfo.email}
+        </p>
+        <p className="mb-2 text-sm text-[#525252]">
+          <strong>{t('invoice.country')}</strong> {businessInfo.address.country}
+        </p>
+        <p className="mb-2 text-sm text-[#525252]">
+          <strong>{t('invoice.city')}</strong> {businessInfo.address.city}
+        </p>
+        <p className="mb-2 text-sm text-[#525252]">
+          <strong>{t('invoice.address')}</strong> {businessInfo.address.addressLine1}
+        </p>
+      </div>
+    ) : (
+      <p className="text-red-500">{t('invoice.errors.businessInfoNotFound')}</p>
+    )}
+  </div>
+</div>
+
 
             {/* Signature Section */}
             <div className="flex">

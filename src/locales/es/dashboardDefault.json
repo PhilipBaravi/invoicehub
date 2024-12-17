@@ -6,30 +6,30 @@
         "lastMonth": "del mes pasado"
     },
     "productSalesChart": {
-        "productsSold": "Productos vendidos",
-        "totalSales": "Ventas totales",
-        "title": "Gráfico de ventas de productos",
-        "dataDescription": "Mostrando datos de ventas de productos del último mes"
-        },
-        "statisticsGrid": {
-        "title": "Productos principales",
-        "titleDescription": "Ventas totales",
+        "productsSold": "Productos Vendidos",
+        "totalSales": "Ventas Totales",
+        "title": "Gráfico de Ventas de Productos",
+        "dataDescription": "Mostrando datos de ventas de productos del mes pasado"
+    },
+    "statisticsGrid": {
+        "title": "Productos Vendidos",
+        "titleDescription": "Resumen de Total de Productos Vendidos",
         "employees": "Empleados",
-        "employeesDescription": "Miembros activos",
+        "employeesDescription": "Resumen de Empleados Activos",
         "clients": "Clientes",
-        "clientsDescription": "Total de clientes",
-        "salesTitle": "Ventas",
-        "salesDescription": "Ingresos totales"
+        "clientsDescription": "Resumen de Total de Clientes",
+        "salesTitle": "Productos Totales",
+        "salesDescription": "Resumen de Total de Productos Disponibles"
     },
     "transactionsCard": {
         "title": "Transacciones",
         "titleDescription": "Transacciones recientes.",
-        "viewAll": "Ver todo",
+        "viewAll": "Ver Todo",
         "customer": "Cliente",
         "customerType": "Tipo",
         "customerStatus": "Estado",
         "customerDate": "Fecha",
-        "customerAmount": "Monto",
+        "customerAmount": "Cantidad",
         "invoiceNo": "Número de Factura",
         "dateOfIssue": "Fecha de Emisión",
         "dueDate": "Fecha de Vencimiento",
@@ -38,26 +38,28 @@
         "totalAmount": "Monto Total"
     },
     "financialSummary": {
-    "title": "Resumen Financiero",
-    "description": "Una visión general de costos, ganancias/pérdidas y ventas",
-    "loading": "Cargando...",
-    "chart": {
-        "totalCost": "Costo Total",
-        "profitLoss": "Ganancias/Pérdidas Totales",
-        "totalSales": "Ventas Totales",
-        "tooltip": {
-            "name": "Nombre",
-            "value": "Valor",
-            "percentage": "Porcentaje"
+        "title": "Resumen Financiero",
+        "description": "Una visión general de costos, ganancias/pérdidas y ventas",
+        "loading": "Cargando...",
+        "chart": {
+            "totalCost": "Costo Total",
+            "profitLoss": "Ganancia/Pérdida Total",
+            "totalSales": "Ventas Totales",
+            "tooltip": {
+                "name": "Nombre",
+                "value": "Valor",
+                "percentage": "Porcentaje"
+            }
         }
-    }
-},
+    },
     "sidebar": {
-    "dashboard": "Tablero",
-    "employee": "Empleados",
-    "clients": "Clientes",
-    "invoice": "Factura",
-    "categories": "Categorías",
-    "login": "Cerrar sesión"
-}
+        "dashboard": "Tablero",
+        "employee": "Empleados",
+        "clients": "Clientes",
+        "invoice": "Factura",
+        "categories": "Categorías",
+        "login": "Cerrar sesión"
+    },
+    "noData": "No hay datos disponibles",
+    "selectOtherOption": "Por favor, intenta seleccionar un período de tiempo diferente o verifica tu conexión."
 }

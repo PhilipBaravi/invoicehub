@@ -73,12 +73,12 @@ const StatisticsGrid: FC = () => {
       <StatCard
         title={t('statisticsGrid.employees')}
         value={summary.total_employees.toString()}
-        description={t('statisticsGrid.titleDescription')}
+        description={t('statisticsGrid.employeesDescription')}
         icon={<Users className="h-4 w-4 text-muted-foreground" />} trend={""}      />
       <StatCard
         title={t('statisticsGrid.clients')}
         value={summary.total_clients.toString()}
-        description={t('statisticsGrid.employeesDescription')}
+        description={t('statisticsGrid.clientsDescription')}
         icon={<Users className="h-4 w-4 text-muted-foreground" />} 
         // trend={""}      
         />

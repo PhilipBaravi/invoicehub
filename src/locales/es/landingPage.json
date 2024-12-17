@@ -1,38 +1,48 @@
 {
     "main": {
-        "title": "Facturación y Gestión Sin Esfuerzo para Empresas en Crecimiento",
-        "subtitle": "Mejora la eficiencia de tu negocio con una plataforma centralizada diseñada para pequeñas y medianas empresas. Automatiza la facturación, la gestión de clientes, el seguimiento de empleados y el inventario de productos.",
-        "btn": "Comienza ahora"
+        "title": "Facturación y Gestión Sencillas para Empresas en Crecimiento",
+        "subtitle": "Aumente la eficiencia de su negocio con una plataforma centralizada diseñada para pequeñas y medianas empresas. Automatice la facturación, la gestión de clientes, el seguimiento de empleados y el inventario de productos.",
+        "btn": "Comenzar"
     },
     "aboutData": {
-        "title": "Tu flujo de trabajo, Simplificado en Gráficas",
-        "numberOfProducts": "Número de Productos",
-        "numberSold": "Número de Productos Vendidos",
-        "90d": "90 días",
-        "30d": "30 días",
-        "7d": "7 días",
-        "chartTitle": "Gráfica de Área - Interactiva",
+        "title": "Su flujo de trabajo, Simplificado en Gráficos",
+        "numberOfProducts": "Número de productos",
+        "numberSold": "Número de productos vendidos",
+        "90d": "90d",
+        "30d": "30d",
+        "7d": "7d",
+        "chartTitle": "Gráfico de Área - Interactivo",
         "chartDescription": "Mostrando datos de productos y ventas en los últimos 3 meses",
-        "select": "Selecciona un valor",
+        "select": "Seleccione un valor",
         "last3Months": "Últimos 3 meses",
         "last30Days": "Últimos 30 días",
         "last7Days": "Últimos 7 días"
     },
+    "aboutAI": {
+        "title": "Experiencia Impulsada por IA",
+        "aiAssistant": "Asistente de IA",
+        "aiMsg": "¡Hola! Soy tu asistente de IA. ¿Cómo puedo ayudarte hoy con tus facturas?",
+        "userMsg": "Necesito encontrar todas las facturas no pagadas del mes pasado.",
+        "aiResponse": "Te ayudaré con eso. Encontré 5 facturas no pagadas del mes pasado. ¿Te gustaría que las muestre o envíe un informe resumido?",
+        "name": "Asistente Inteligente de IA",
+        "about": "Tu asistente personal impulsado por IA está aquí para simplificar tu proceso de facturación. Desde recuperar y actualizar facturas hasta aprobarlas y enviarlas por correo electrónico, nuestro Asistente de IA está diseñado para manejar tareas clave sin problemas, ahorrándote tiempo y garantizando precisión.",
+        "try": "Prueba el Asistente de IA"
+    },
     "section": {
-        "generate": "Genera Facturas en Segundos",
-        "generateText": "Crea facturas profesionales con unos pocos clics. Nuestra interfaz intuitiva hace que la generación de facturas sea muy sencilla.",
+        "generate": "Genere Facturas en Segundos",
+        "generateText": "Cree facturas profesionales con unos pocos clics. Nuestra interfaz intuitiva hace que la generación de facturas sea fácil.",
         "generateBtn": "Nueva Factura",
-        "product": "Gestión de Productos Fácil",
-        "productText": "Organiza, edita y añade productos fácilmente. Mantén todos tus documentos financieros en un solo lugar.",
+        "product": "Gestión de Productos Sencilla",
+        "productText": "Organice, edite y agregue productos con facilidad. Mantenga sus documentos financieros en un solo lugar.",
         "total": "Total",
-        "active": "Activos",
-        "draft": "Borradores",
+        "active": "Activo",
+        "draft": "Borrador",
         "tracking": "Seguimiento de Facturas en Tiempo Real",
-        "trackingText": "Monitorea el estado de los pagos y envía recordatorios automáticamente. Mantente al tanto de tu flujo de caja con herramientas de seguimiento avanzadas.",
-        "trackingBtn": "Seguir Facturas"
+        "trackingText": "Monitoree el estado de pagos y envíe recordatorios automáticamente. Manténgase al tanto de su flujo de caja con potentes herramientas de seguimiento.",
+        "trackingBtn": "Seguimiento de Facturas"
     },
     "footer": {
         "more": "¡Y Mucho Más!",
-        "btn": "Comienza ahora"
+        "btn": "Comenzar"
     }
 }

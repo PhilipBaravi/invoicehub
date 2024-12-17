@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   CardContent,
@@ -6,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Package2, TrendingUp } from "lucide-react";
+import { Package2, TrendingUp } from 'lucide-react';
 import { useKeycloak } from "@react-keycloak/web";
 import { NoDataDisplay } from "./charts/NoDataDisplay";
 import { YearMonthCurrencySelect } from "./charts/YearMonthCurrencySelect";
@@ -26,13 +27,8 @@ interface ApiData {
   };
 }
 
-const currencies = {
-  USD: { symbol: "$", rate: 1 },
-  EUR: { symbol: "€", rate: 0.92 },
-  GEL: { symbol: "₾", rate: 2.65 },
-};
-
 const TopSoldProducts: FC = () => {
+  const { t } = useTranslation('charts');
   const { keycloak } = useKeycloak();
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState<number>(currentYear);
@@ -81,12 +77,12 @@ const TopSoldProducts: FC = () => {
         setTotalSold(sortedProducts.reduce((sum, product) => sum + product.quantity, 0));
       } else {
         setProducts([]);
-        setError("No data available");
+        setError(t('topSoldProducts.noDataAvailable'));
       }
     } catch (err) {
-      console.error("An error occurred while fetching top-selling products:", err);
+      console.error(t('topSoldProducts.fetchError'), err);
       setProducts([]);
-      setError("An error occurred");
+      setError(t('topSoldProducts.errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -96,11 +92,21 @@ const TopSoldProducts: FC = () => {
     if (keycloak && keycloak.token) {
       fetchTopProducts();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [year, month, currency, keycloak.token]);
 
-  const formatCurrency = (amount: number) => {
-    const { symbol, rate } = currencies[currency as keyof typeof currencies];
-    return `${symbol}${(amount * rate).toFixed(2)}`;
+  const formatCurrency = (amount: number, currencyCode: string) => {
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: 'currency',
+        currency: currencyCode,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(amount);
+    } catch (e) {
+      console.error(`Error formatting currency: ${currencyCode}`, e);
+      return `${currencyCode} ${amount.toFixed(2)}`;
+    }
   };
 
   return (
@@ -109,14 +115,14 @@ const TopSoldProducts: FC = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
             <TrendingUp className="w-6 h-6 text-primary" />
-            Top Selling Products
+            {t('topSoldProducts.title')}
           </CardTitle>
           <Badge variant="secondary" className="text-sm font-medium">
-            {totalSold} Total
+            {t('topSoldProducts.totalBadge', { total: totalSold })}
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
-          Best performing products for the selected period
+          {t('topSoldProducts.description')}
         </p>
         <div className="flex gap-2 mt-4">
           <YearMonthCurrencySelect
@@ -131,7 +137,7 @@ const TopSoldProducts: FC = () => {
       </CardHeader>
       <CardContent className="p-6 overflow-y-auto flex-grow">
         {loading ? (
-          <div className="text-center">Loading...</div>
+          <div className="text-center">{t('topSoldProducts.loading')}</div>
         ) : products.length === 0 ? (
           <NoDataDisplay />
         ) : (
@@ -152,20 +158,20 @@ const TopSoldProducts: FC = () => {
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between mt-1">
-                    <p className="text-xs text-muted-foreground">Quantity sold</p>
+                    <p className="text-xs text-muted-foreground">{t('topSoldProducts.quantitySold')}</p>
                     <p className="text-sm font-semibold">{product.quantity}</p>
                   </div>
                   <div className="flex items-center justify-between mt-1">
-                    <p className="text-xs text-muted-foreground">Total Revenue</p>
+                    <p className="text-xs text-muted-foreground">{t('topSoldProducts.totalRevenue')}</p>
                     <p className="text-sm font-semibold">
-                      {formatCurrency(product.amount)}
+                      {formatCurrency(product.amount, product.currency)}
                     </p>
                   </div>
                   <div className="w-full bg-secondary h-1.5 rounded-full mt-2 overflow-hidden">
                     <div
                       className="bg-primary h-full rounded-full"
                       style={{
-                        width: `${(product.quantity / products[0].quantity) * 100}%`,
+                        width: `${(product.quantity / (products[0]?.quantity || 1)) * 100}%`,
                       }}
                     />
                   </div>

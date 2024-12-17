@@ -7,6 +7,7 @@
         "logout": "Cerrar Sesión"
     },
     "settings": {
+        "user" : "Configuración de Usuario",
         "company": "Configuración de la Empresa",
         "profile": "Suscripción de Perfil",
         "payment": "Métodos de Pago"

@@ -1,20 +1,25 @@
 {
-    "languageSelector" : {
-        "ENGLISH" : "English",
-        "GEORGIAN" : "Georgian",
-        "SPANISH" : "Spanish"
+    "languageSelector": {
+        "ENGLISH": "Inglés",
+        "GEORGIAN": "Georgiano",
+        "SPANISH": "Español"
     },
-    "loginRegisterLayout" : {
-        "title": "Inicia sesión en tu cuenta",
-        "subtitle": "Introduce tu correo electrónico y contraseña para acceder a tu cuenta"
+    "loginRegisterLayout": {
+        "title": "Iniciar sesión en su cuenta",
+        "subtitle": "Ingrese su correo electrónico y contraseña para acceder a su cuenta"
     },
-    "form" : {
-        "error": "¡Failed."
+    "form": {
+        "error": "Fallido.",
+        "success": "¡Éxito!",
+        "companyUpdateError": "No se pudieron actualizar los detalles de la empresa.",
+        "companyUpdateSuccess": "Detalles de la empresa actualizados con éxito.",
+        "userUpdateSuccess": "Detalles actualizados con éxito.",
+        "userUpdateError": "No se pudieron actualizar los detalles."
     },
     "loginForm": {
         "email": "Correo electrónico",
         "password": "Contraseña",
-        "privacyPolicy": "Acepto los términos de servicio y la política de privacidad",
+        "privacyPolicy": "Estoy de acuerdo con los términos de servicio y la política de privacidad",
         "loginBtn": "Iniciar sesión",
         "continueWith": "O CONTINUAR CON",
         "loginGoogle": "Iniciar sesión con Google",
@@ -24,10 +29,11 @@
         "login": "Iniciando sesión"
     },
     "signUpForm": {
-        "title": "Crear una cuenta nueva",
+        "title": "Crear una nueva cuenta",
         "firstName": "Nombre",
         "lastName": "Apellido",
         "email": "Correo electrónico",
+        "phone": "Teléfono",
         "selectCountry": "Seleccionar país",
         "password": "Contraseña",
         "confirmPassword": "Confirmar contraseña",
@@ -35,7 +41,7 @@
         "haveAnAccount": "¿Ya tienes una cuenta?",
         "login": "Iniciar sesión",
         "errors": {
-            "validateEmail": "Por favor, introduce una dirección de correo electrónico válida.",
+            "validateEmail": "Por favor, introduzca una dirección de correo electrónico válida.",
             "validatePassword": "La contraseña debe contener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.",
             "confirmPassword": "Las contraseñas no coinciden",
             "firstName": "El nombre es obligatorio.",
@@ -45,9 +51,9 @@
         }
     },
     "companySignUpForm": {
-        "company" : {
-            "title": "Registra tu empresa",
-            "subtitle": "Introduce los detalles de tu empresa para registrarte"
+        "company": {
+            "title": "Registrar su empresa",
+            "subtitle": "Ingrese los detalles de su empresa para registrarse"
         },
         "companyName": "Nombre de la empresa",
         "addressLine1": "Dirección Línea 1",
@@ -55,9 +61,11 @@
         "city": "Ciudad",
         "state": "Estado",
         "zipCode": "Código postal",
+        "phone": "Teléfono",
         "selectCountry": "Seleccionar país",
         "website": "Sitio web de la empresa (Opcional)",
         "submitBtn": "Enviar",
+        "updateBtn": "Actualizar detalles",
         "errors": {
             "companyName": "El nombre de la empresa es obligatorio.",
             "companyPhone": "Número de teléfono de la empresa no válido para el país seleccionado.",
@@ -65,7 +73,25 @@
             "companyCity": "La ciudad es obligatoria.",
             "companyState": "El estado es obligatorio.",
             "zipCode": "El código postal es obligatorio.",
-            "registrationFaied" : "No se pudo registrar la cuenta."
+            "registrationFailed": "No se pudo registrar la cuenta."
+        }
+    },
+    "cookies": {
+        "title": "Mejora Tu Experiencia",
+        "titleMsg": "Usamos cookies para mantenerte conectado y mejorar tu experiencia en nuestro sitio.",
+        "accept": "Aceptar Todo",
+        "descline": "Rechazar",
+        "more": "Aprende Más",
+        "about": {
+            "title": "Cómo Usamos las Cookies",
+            "learnMore": "Aprende más sobre cómo usamos las cookies para mejorar tu experiencia en nuestro sitio.",
+            "authentication": "Autenticación",
+            "authenticationMsg": "Usamos cookies para mantenerte conectado, asegurando una experiencia fluida mientras navegas por nuestro sitio.",
+            "personalization": "Personalización",
+            "personalizationMsg": "Las cookies nos ayudan a recordar tus preferencias y adaptar el sitio a tus necesidades, mejorando tu experiencia general.",
+            "improvements": "Mejoras del Sitio",
+            "improvementsMsg": "Analizamos cómo usas nuestro sitio para mejorarlo. Esta información nos ayuda a optimizar funciones y funcionalidades."
         }
     }
+
 }

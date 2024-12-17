@@ -32,8 +32,9 @@ import LandingPage from "./landing-page/LandingPage";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "./hooks/useAuth";
 import type { UserFormValues } from "./components/main-authentication/new-register-page/RegisterForm";
-import { CookieConsent } from "./CookiesConsent";
 import { getCookie, eraseCookie, setCookie } from "./utils/cookiesUtils";
+import { CookieConsent } from "./CookiesConsent";
+import UpdateUserSettings from "./components/dashboard/company-settings/UpdateUserSettings";
 
 const ProtectedRoute = ({ 
   element: Element, 
@@ -196,7 +197,8 @@ const App: React.FC = () => {
                   />
                 }
               >
-                <Route index element={<UpdateCompanyDetails />} />
+                <Route index element={<UpdateUserSettings />}/>
+                <Route path= "company-settings" element={<UpdateCompanyDetails />} />
                 <Route path="profile-subscription" element={<ProfileSubscription />} />
                 <Route path="payment-methods" element={<ManagePaymentMethods />} />
               </Route>

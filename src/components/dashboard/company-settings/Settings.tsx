@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Building2, CreditCard, User } from 'lucide-react'
+import { Building2, CreditCard, User, UserPen } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -12,7 +12,8 @@ const Settings: React.FC = () => {
   const { t } = useTranslation('settings');
 
 const settingsNavItems = [
-  { title: t('settings.company'), to: '', icon: Building2 },
+  {title: t('settings.user'), to:'', icon: UserPen},
+  { title: t('settings.company'), to: 'company-settings', icon: Building2 },
   { title: t('settings.profile'), to: 'profile-subscription', icon: User },
   { title: t('settings.payment'), to: 'payment-methods', icon: CreditCard },
 ]
@@ -21,7 +22,7 @@ const settingsNavItems = [
   return (
     <div className="flex flex-1 flex-col gap-4 p-4 md:gap-2 md:p-8">
       <div className="flex items-center justify-between mb-2">
-        <h1 className="text-2xl font-semibold">Settings</h1>
+        <h1 className="text-2xl font-semibold">{t('menu.settings')}</h1>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[240px_1fr]">

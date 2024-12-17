@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 interface CookieConsentProps {
   className?: string;
@@ -21,6 +22,7 @@ interface CookieConsentProps {
 export function CookieConsent({ className }: CookieConsentProps) {
   const [showConsent, setShowConsent] = React.useState(false);
   const [showDetails, setShowDetails] = React.useState(false);
+  const { t } = useTranslation()
 
   React.useEffect(() => {
     const hasConsent = localStorage.getItem('cookieConsent');
@@ -52,7 +54,7 @@ export function CookieConsent({ className }: CookieConsentProps) {
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className={cn(
-              "fixed bottom-4 right-4 w-[400px] bg-stone-50 dark:bg-stone-900 rounded-lg shadow-lg p-6 border border-stone-200 dark:border-stone-800",
+              "fixed bottom-4 right-12 md:right-4 w-[400px] bg-stone-50 dark:bg-stone-900 rounded-lg shadow-lg p-6 border border-stone-200 dark:border-stone-800",
               className
             )}
           >
@@ -61,16 +63,16 @@ export function CookieConsent({ className }: CookieConsentProps) {
                 <Cookie className="w-6 h-6 text-stone-600 dark:text-stone-400" />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-lg mb-2 text-stone-900 dark:text-stone-100">Enhance Your Experience</h3>
+                <h3 className="font-semibold text-lg mb-2 text-stone-900 dark:text-stone-100">{t('cookies.title')}</h3>
                 <p className="text-sm text-stone-600 dark:text-stone-400 mb-4">
-                  We use cookies to keep you logged in and improve your experience on our site.
+                  {t('cookies.titleMsg')}
                 </p>
                 <div className="flex flex-col gap-2">
                   <Button 
                     onClick={handleAccept}
                     className="w-full bg-stone-900 hover:bg-stone-800 dark:bg-stone-700 dark:hover:bg-stone-600 text-white"
                   >
-                    Accept All
+                    {t('cookies.accept')}
                   </Button>
                   <div className="flex gap-2">
                     <Button 
@@ -78,14 +80,14 @@ export function CookieConsent({ className }: CookieConsentProps) {
                       onClick={handleDecline}
                       className="flex-1 border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800"
                     >
-                      Decline
+                      {t('cookies.decline')}
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={() => setShowDetails(true)}
                       className="flex-1 border-stone-300 dark:border-stone-600 text-stone-800 dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800"
                     >
-                      Learn More <ChevronRight className="ml-2 w-4 h-4" />
+                      {t('cookies.more')} <ChevronRight className="ml-2 w-4 h-4" />
                     </Button>
                   </div>
                 </div>
@@ -106,40 +108,34 @@ export function CookieConsent({ className }: CookieConsentProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="w-5 h-5" />
-              How We Use Cookies
+              {t('cookies.about.title')}
             </DialogTitle>
             <DialogDescription className="text-stone-600 dark:text-stone-400">
-              Learn more about how we use cookies to enhance your experience on our site.
+              {t('cookies.about.learnMore')}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <h4 className="font-medium">Authentication</h4>
+              <h4 className="font-medium">{t('cookies.about.authentication')}</h4>
               <p className="text-sm text-stone-600 dark:text-stone-400">
-                We use cookies to keep you logged in, ensuring a seamless experience as you navigate through our site.
+                {t('cookies.about.authenticationMsg')}
               </p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">Personalization</h4>
+              <h4 className="font-medium">{t('cookies.about.personalization')}</h4>
               <p className="text-sm text-stone-600 dark:text-stone-400">
-                Cookies help us remember your preferences and tailor the site to your needs, improving your overall experience.
+                {t('cookies.about.personalizationMsg')}
               </p>
             </div>
             <div className="space-y-2">
-              <h4 className="font-medium">Site Improvements</h4>
+              <h4 className="font-medium">{t('cookies.about.improvements')}</h4>
               <p className="text-sm text-stone-600 dark:text-stone-400">
-                We analyze how you use our site to make it better. This information helps us optimize features and functionality.
-              </p>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium">Your Choice</h4>
-              <p className="text-sm text-stone-600 dark:text-stone-400">
-                While cookies enhance your experience, you can choose to decline. However, this may limit some site functionality.
+                {t('cookies.about.improvementsMsg')}
               </p>
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleAccept} className="bg-stone-900 hover:bg-stone-800 dark:bg-stone-700 dark:hover:bg-stone-600 text-white">Accept All</Button>
+            <Button onClick={handleAccept} className="bg-stone-900 hover:bg-stone-800 dark:bg-stone-700 dark:hover:bg-stone-600 text-white">{t('cookies.accept')}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

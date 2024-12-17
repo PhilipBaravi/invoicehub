@@ -5,8 +5,10 @@ import { Bot, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { AnimatedSection } from "./AnimatedSection";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const AboutAi: FC = () => {
+  const { t } = useTranslation('landingPage')
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
@@ -24,7 +26,7 @@ const AboutAi: FC = () => {
               className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-4"
             >
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">AI-Powered Experience</span>
+              <span className="text-sm font-medium">{t('aboutAI.title')}</span>
             </motion.div>
           </motion.div>
         </AnimatedSection>
@@ -42,27 +44,27 @@ const AboutAi: FC = () => {
                   <CardContent className="p-6 space-y-4">
                     <div className="flex items-center gap-3 pb-4 border-b">
                       <Bot className="w-6 h-6 text-primary" />
-                      <span className="font-semibold">AI Assistant</span>
+                      <span className="font-semibold">{t('aboutAI.aiAssistant')}</span>
                     </div>
                     
                     <div className="space-y-4">
                       <div className="flex gap-3">
                         <Bot className="w-6 h-6 text-primary shrink-0 mt-1" />
                         <p className="text-sm bg-secondary/50 rounded-lg p-3">
-                          Hello! I'm your AI assistant. How can I help you with your invoices today?
+                          {t('aboutAI.aiMsg')}
                         </p>
                       </div>
                       
                       <div className="flex gap-3 justify-end">
                         <p className="text-sm bg-primary/10 rounded-lg p-3">
-                          I need to find all unpaid invoices from last month.
+                          {t('aboutAI.userMsg')}
                         </p>
                       </div>
                       
                       <div className="flex gap-3">
                         <Bot className="w-6 h-6 text-primary shrink-0 mt-1" />
                         <p className="text-sm bg-secondary/50 rounded-lg p-3">
-                          I'll help you with that. I found 5 unpaid invoices from last month. Would you like me to display them or send a summary report?
+                          {t('aboutAI.aiResponse')}
                         </p>
                       </div>
                     </div>
@@ -81,10 +83,10 @@ const AboutAi: FC = () => {
                 transition={{ duration: 0.6 }}
               >
                 <h2 className="text-4xl font-bold tracking-tight mb-6">
-                  Smart AI Assistant
+                  {t('aboutAI.name')}
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
-                  Your personal AI-powered assistant is here to simplify your invoicing process. From retrieving and updating invoices to approving and sending them via email, our AI Assistant is designed to handle key tasks seamlessly, saving you time and ensuring accuracy.
+                 {t('aboutAI.about')}
                 </p>
 
                 <motion.div
@@ -98,7 +100,7 @@ const AboutAi: FC = () => {
                       size="lg"
                       className="group"
                     >
-                      Try AI Assistant
+                      {t('aboutAI.try')}
                       <Bot className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>

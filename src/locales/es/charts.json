@@ -1,0 +1,67 @@
+{
+    "productSales" : {
+        "initializing": "Inicializando...",
+    "authentication": "Por favor, inicie sesión para ver el gráfico.",
+    "title": "Gráfico de Ventas de Productos",
+    "titleAbout": "Mostrando las ventas de productos para el año, mes y moneda seleccionados",
+    "loadingData": "Cargando datos del gráfico...",
+    "amount": " Cantidad",
+    "quantity": " Cantidad"
+    },
+    "dateSelect": {
+    "selectYear": "Seleccionar Año",
+    "selectMonth": "Seleccionar Mes",
+    "selectCurrency": "Seleccionar Moneda",
+    "months": {
+      "1": "Enero",
+      "2": "Febrero",
+      "3": "Marzo",
+      "4": "Abril",
+      "5": "Mayo",
+      "6": "Junio",
+      "7": "Julio",
+      "8": "Agosto",
+      "9": "Septiembre",
+      "10": "Octubre",
+      "11": "Noviembre",
+      "12": "Diciembre"
+    },
+    "currencies": {
+      "USD": "Dólar Estadounidense",
+      "EUR": "Euro",
+      "GEL": "Lari Georgiano"
+    }
+  },
+  "profitLoss": {
+  "financialSummary": "Resumen Financiero",
+  "totalProfit": "Ganancia Total",
+  "totalLoss": "Pérdida Total",
+  "totalSpent": "Total Gastado",
+  "totalSales": "Ventas Totales",
+  "noDataAvailable": "No hay datos disponibles",
+  "initializing": "Iniciando...",
+  "pleaseLogIn": "Por favor, inicie sesión para ver el gráfico.",
+  "loadingChartData": "Cargando datos del gráfico..."
+},
+"topSoldProducts": {
+  "title": "Productos Más Vendidos",
+  "totalBadge": "{{total}} en Total",
+  "description": "Mejores productos para el período seleccionado",
+  "loading": "Cargando...",
+  "noDataAvailable": "No hay datos disponibles",
+  "fetchError": "Ocurrió un error al obtener los productos más vendidos:",
+  "errorOccurred": "Ocurrió un error",
+  "quantitySold": "Cantidad Vendida",
+  "totalRevenue": "Ingresos Totales"
+},
+    "recentSales": {
+      "title": "Recientemente Aprobado",
+      "invoiceCount": "{{count}} Facturas",
+      "description": "Resumen de facturas recientemente aprobadas y sus detalles",
+      "loading": "Cargando...",
+      "noDataAvailable": "No hay datos disponibles",
+      "fetchError": "Error al obtener facturas recientemente aprobadas:",
+      "errorOccurred": "Ocurrió un error",
+      "avatarAlt": "Avatar"
+    }
+}

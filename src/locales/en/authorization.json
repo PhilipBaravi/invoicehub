@@ -9,7 +9,12 @@
         "subtitle": "Enter your email and password to access your account"
     },
     "form" : {
-        "error" : "Failed."
+        "error" : "Failed.",
+        "success": "Success!",
+        "companyUpdateError" : "Failed to update company details.",
+        "companyUpdateSuccess" : "Company details updated succesfully.",
+        "userUpdateSuccess" : "Details updated successfully.",
+        "userUpdateError" : "Failed to update details."
     },
     "loginForm" : {
         "email": "Email",
@@ -28,6 +33,7 @@
         "firstName": "First Name",
         "lastName" : "Last Name",
         "email" : "Email",
+        "phone" : "Phone",
         "selectCountry": "Select country",
         "password": "Password",
         "confirmPassword": "Confirm Password",
@@ -55,9 +61,11 @@
         "city" : "City",
         "state" : "State",
         "zipCode" : "Zip Code",
+        "phone" : "Phone",
         "selectCountry" : "Select Country",
         "website": "Company Website (Optional)",
         "submitBtn" : "Submit",
+        "updateBtn" : "Update Details",
         "errors" : {
             "companyName" : "Company name is required.",
             "companyPhone": "Invalid company phone number for the selected country.",
@@ -67,5 +75,22 @@
             "zipCode" : "Zip code is required.",
             "registrationFailed" : "Failed to register an account."
         }
-    } 
+    },
+    "cookies" : {
+        "title" : "Enhance Your Experience",
+        "titleMsg" : "We use cookies to keep you logged in and improve your experience on our site.",
+        "accept" : "Accept All",
+        "decline" : "Decline",
+        "more" : "Learn More",
+        "about" : {
+            "title" : "How We Use Cookies",
+            "learnMore" : "Learn more about how we use cookies to enhance your experiencce on our site.",
+            "authentication" : "Authentication",
+            "authenticationMsg" : "We use cookies to keep you logged in, ensuring a seamless experience as you navigate throught our site.",
+            "personalization" : "Personalization",
+            "personalizationMsg":"Cookies help us remember your preferences and tailor the site to your needs, improving your overall experience",
+            "improvements" : "Site Improvements",
+            "improvementsMsg" : "We analyze how you use our site to make it better. This information helps us optimize features and functionality."
+        }
+    }
 }

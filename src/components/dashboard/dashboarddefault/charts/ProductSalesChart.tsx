@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { useKeycloak } from "@react-keycloak/web"
@@ -15,6 +13,8 @@ import {
 } from "@/components/ui/chart"
 import { YearMonthCurrencySelect } from "./YearMonthCurrencySelect"
 import { NoDataDisplay } from "./NoDataDisplay"
+import { useTranslation } from "react-i18next"
+import { TFunction } from "i18next"
 
 interface ChartDataItem {
   year: number
@@ -32,24 +32,32 @@ interface ApiResponse {
   data: ChartDataItem[]
 }
 
-const chartConfig: ChartConfig = {
-  soldProducts: {
-    label: "Sold Products",
-  },
+const getChartConfig = (t: TFunction): ChartConfig => ({
   quantity: {
-    label: "Quantity",
+    label: t('productSales.quantity'),
     color: "hsl(var(--chart-1))",
   },
   amount: {
-    label: "Amount",
+    label: t('productSales.amount'),
     color: "hsl(var(--chart-2))",
   },
-}
+})
 
 const currencySymbols: { [key: string]: string } = {
   USD: "$",
   EUR: "€",
   GEL: "₾"
+}
+
+const getLocale = (lang: string): string => {
+  switch (lang) {
+    case 'es':
+      return 'es-ES'
+    case 'ka':
+      return 'ka-GE'
+    default:
+      return 'en-US'
+  }
 }
 
 const ProductSalesChart: React.FC = () => {
@@ -62,6 +70,10 @@ const ProductSalesChart: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const { keycloak, initialized } = useKeycloak()
+  const { t, i18n } = useTranslation('charts')
+
+  const chartConfig = React.useMemo(() => getChartConfig(t), [t])
+  const locale = React.useMemo(() => getLocale(i18n.language), [i18n.language])
 
   const fetchData = async (year: number, month: number, currency: string) => {
     if (!initialized || !keycloak.authenticated) {
@@ -115,11 +127,19 @@ const ProductSalesChart: React.FC = () => {
     amount: item.amount
   }))
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString(locale, {
+      month: "short",
+      day: "numeric",
+    })
+  }
+
   if (!initialized) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-[400px]">
-          <p>Initializing...</p>
+          <p>{t('productSales.initializing')}</p>
         </CardContent>
       </Card>
     )
@@ -129,7 +149,7 @@ const ProductSalesChart: React.FC = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-[400px]">
-          <p>Please log in to view the chart.</p>
+          <p>{t('productSales.authentication')}</p>
         </CardContent>
       </Card>
     )
@@ -139,8 +159,8 @@ const ProductSalesChart: React.FC = () => {
     <Card>
       <CardHeader className="flex flex-col gap-2 space-y-0 border-b py-5">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>Product Sales Chart - Interactive</CardTitle>
-          <CardDescription>Showing product sales for selected year, month, and currency</CardDescription>
+          <CardTitle>{t('productSales.title')}</CardTitle>
+          <CardDescription>{t('productSales.titleAbout')}</CardDescription>
         </div>
         <YearMonthCurrencySelect
           year={year}
@@ -154,7 +174,7 @@ const ProductSalesChart: React.FC = () => {
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {isLoading ? (
           <div className="flex items-center justify-center h-[250px]">
-            <p>Loading chart data...</p>
+            <p>{t('productSales.loadingData')}</p>
           </div>
         ) : error ? (
           <NoDataDisplay />
@@ -197,29 +217,18 @@ const ProductSalesChart: React.FC = () => {
                 axisLine={false}
                 tickMargin={8}
                 minTickGap={32}
-                tickFormatter={(value) => {
-                  const date = new Date(value)
-                  return date.toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })
-                }}
+                tickFormatter={formatDate}
               />
               <ChartTooltip
                 cursor={false}
                 content={
                   <ChartTooltipContent
-                    labelFormatter={(value) => {
-                      return new Date(value).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                      })
-                    }}
+                    labelFormatter={formatDate}
                     formatter={(value, name) => {
                       if (name === 'amount') {
-                        return [`${currencySymbols[currency]}${value} `, 'Amount']
+                        return [`${currencySymbols[currency]}${value}`, chartConfig.amount.label]
                       }
-                      return [value, name === 'quantity' ? ' Quantity' : name]
+                      return [value, name === 'quantity' ? chartConfig.quantity.label : name]
                     }}
                   />
                 }
@@ -238,7 +247,9 @@ const ProductSalesChart: React.FC = () => {
                 stroke="var(--color-amount)"
                 stackId="a"
               />
-              <ChartLegend content={<ChartLegendContent />} />
+              <ChartLegend 
+                content={<ChartLegendContent />} 
+              />
             </AreaChart>
           </ChartContainer>
         ) : null}
@@ -248,3 +259,4 @@ const ProductSalesChart: React.FC = () => {
 }
 
 export default ProductSalesChart
+

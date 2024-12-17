@@ -1,64 +1,65 @@
 {
     "dashboard": {
-        "greetings": "გამარჯობა, კეთილი დაბრუნება"
+        "greetings": "გამარჯობა, დაბრუნდით"
     },
     "currencyExchanges": {
-        "lastMonth": "წინა თვესთან შედარებით"
+        "lastMonth": "წინა თვე"
     },
     "productSalesChart": {
         "productsSold": "გაყიდული პროდუქტები",
-        "totalSales": "საერთო გაყიდვები",
-        "title": "პროდუქტების გაყიდვების გრაფიკი",
-        "dataDescription": "ბოლო თვის პროდუქტის გაყიდვების მონაცემების ჩვენება"
+        "totalSales": "სულ გაყიდვები",
+        "title": "პროდუქტების გაყიდვების დიაგრამა",
+        "dataDescription": "წინამდგომარ თვეში პროდუქტის გაყიდვების მონაცემების ჩვენება"
     },
     "statisticsGrid": {
-        "title": "მოწინავე პროდუქტები",
-        "titleDescription": "საერთო გაყიდვები",
-        "employees": "თანამშრომლები",
-        "employeesDescription": "აქტიური წევრები",
+        "title": "გაყიდული პროდუქტები",
+        "titleDescription": "სულ გაყიდული პროდუქტების შეჯამება",
+        "employees": "დამსაქმებლები",
+        "employeesDescription": "აქტიური დამსაქმებლების შეჯამება",
         "clients": "კლიენტები",
-        "clientsDescription": "საერთო კლიენტები",
-        "salesTitle": "გაყიდვები",
-        "salesDescription": "საერთო შემოსავალი"
+        "clientsDescription": "სულ კლიენტების შეჯამება",
+        "salesTitle": "სულ პროდუქტები",
+        "salesDescription": "ხელმისაწვდომი პროდუქციის საერთო შეჯამება"
     },
     "transactionsCard": {
-        "title": "ტრანზაქციები",
-        "titleDescription": "ბოლო ტრანზაქციები.",
-        "viewAll": "ყველას ნახვა",
+        "title": "გარიგებები",
+        "titleDescription": "ბოლო გარიგებები.",
+        "viewAll": "იხილეთ ყველა",
         "customer": "მომხმარებელი",
         "customerType": "ტიპი",
         "customerStatus": "სტატუსი",
         "customerDate": "თარიღი",
-        "customerAmount": "თანხა",
+        "customerAmount": "რაოდენობა",
         "invoiceNo": "ინვოისის ნომერი",
-        "dateOfIssue": "გაცემის თარიღი",
-        "dueDate": "ვადაგასვლის თარიღი",
+        "dateOfIssue": "გამოქნების თარიღი",
+        "dueDate": "დასრულების თარიღი",
         "invoiceType": "ინვოისის ტიპი",
         "invoiceStatus": "ინვოისის სტატუსი",
-        "totalAmount": "სრული თანხა"
+        "totalAmount": "სულ თანხა"
     },
     "financialSummary": {
-    "title": "ფინანსური შეჯამება",
-    "description": "ხარჯების, მოგების/ზარალისა და გაყიდვების მიმოხილვა",
-    "loading": "იტვირთება...",
-    "chart": {
-        "totalCost": "ჯამური ხარჯი",
-        "profitLoss": "მოგება/ზარალი ჯამში",
-        "totalSales": "სულ გაყიდვები",
-        "tooltip": {
-            "name": "დასახელება",
-            "value": "მნიშვნელობა",
-            "percentage": "პროცენტული მაჩვენებელი"
+        "title": "ფინანსური შეჯამება",
+        "description": "ხარჯების, მოგების/გატეხის და გაყიდვების მიმოხილვა",
+        "loading": "იტვირთება...",
+        "chart": {
+            "totalCost": "სულ ხარჯი",
+            "profitLoss": "სულ მოგება/გატეხი",
+            "totalSales": "სულ გაყიდვები",
+            "tooltip": {
+                "name": "სახელი",
+                "value": "ღირებულება",
+                "percentage": "პროცენტი"
+            }
         }
-    }
-},
+    },
     "sidebar": {
-    "dashboard": "მთავარი",
-    "employee": "თანამშრომლები",
-    "clients": "კლიენტები",
-    "invoice": "ინვოისი",
-    "categories": "კატეგორიები",
-    "login": "გასვლა"
-}
-
+        "dashboard": "დაშალი",
+        "employee": "დამსაქმებლები",
+        "clients": "კლიენტები",
+        "invoice": "ინვოისი",
+        "categories": "კატეგორიები",
+        "login": "გამოსვლა"
+    },
+    "noData": "მონაცემები არ არის ხელმისაწვდომი",
+    "selectOtherOption": "გთხოვთ, სცადოთ სხვადასხვა დროის პერიოდით მონიშვნა ან შეამოწმოთ თქვენი კავშირი."
 }

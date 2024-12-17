@@ -23,7 +23,7 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     if (!keycloak) return;
 
     const idToken = keycloak.idToken;
-    const postLogoutRedirectUri = "https://invoicehub.space";
+    const postLogoutRedirectUri = "http://localhost:5173/";
 
     if (!idToken) {
       console.error("No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred.");
@@ -112,7 +112,6 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
       logOut();
     } else {
       navigate(path);
-      onClose();
     }
   };
 

@@ -18,6 +18,16 @@
         "last30Days" : "Last 30 days",
         "last7Days" : "Last 7 days"
     },
+    "aboutAI" : {
+        "title" : "AI-Powered Experience",
+        "aiAssistant" : "AI Assistant",
+        "aiMsg" : "Hello! I'm your AI assistant. How can I help you with your invoices today?",
+        "userMsg" : "I need to find all unpaid invoices from last month.",
+        "aiResponse" : "I'll help you with that. I found 5 unpaid invoices from last month. Would you like me to display them or send a summary report?",
+        "name" : "Smart AI Assistant",
+        "about" : "Your personal AI-powered assistant is here to simplify your invoicing process. From retrieving and updating invoices to approving and sending them via email, our AI Assistant is designed to handle key tasks seamlessly, saving you time and ensuring accuracy.",
+        "try" : "Try AI Assistant"
+    },
     "section" : {
         "generate" : "Generate Invoices in Seconds",
         "generateText" : "Create professional invoices with a few clicks. Our intuitive interface makes invoice generation a breeze.",

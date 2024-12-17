@@ -2,6 +2,7 @@ import * as React from "react"
 import { TrendingUp, TrendingDown } from 'lucide-react'
 import { Label, Pie, PieChart } from "recharts"
 import { useKeycloak } from "@react-keycloak/web"
+import { useTranslation } from "react-i18next"
 
 import {
   Card,
@@ -33,24 +34,6 @@ interface ApiResponse {
   data: FinancialSummaryData
 }
 
-const chartConfig: ChartConfig = {
-  financialSummary: {
-    label: "Financial Summary",
-  },
-  total_profit: {
-    label: "Total Profit",
-    color: "hsl(var(--chart-2))",
-  },
-  total_loss: {
-    label: "Total Loss",
-    color: "hsl(var(--chart-1))",
-  },
-  total_spent: {
-    label: "Total Spent",
-    color: "hsl(var(--chart-3))",
-  }
-}
-
 const currencySymbols: { [key: string]: string } = {
   USD: "$",
   EUR: "€",
@@ -66,6 +49,25 @@ const TotalProfitLoss = () => {
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const { keycloak, initialized } = useKeycloak()
+  const { t } = useTranslation('charts')
+
+  const chartConfig: ChartConfig = React.useMemo(() => ({
+    financialSummary: {
+      label: t('profitLoss.financialSummary'),
+    },
+    total_profit: {
+      label: t('profitLoss.totalProfit'),
+      color: "hsl(var(--chart-2))",
+    },
+    total_loss: {
+      label: t('profitLoss.totalLoss'),
+      color: "hsl(var(--chart-1))",
+    },
+    total_spent: {
+      label: t('profitLoss.totalSpent'),
+      color: "hsl(var(--chart-3))",
+    }
+  }), [t])
 
   const fetchData = async (year: number, month: number, currency: string) => {
     if (!initialized || !keycloak.authenticated) {
@@ -101,17 +103,17 @@ const TotalProfitLoss = () => {
         if (data) {
           setChartData(data)
         } else {
-          setError("No data available")
+          setError(t('profitLoss.noDataAvailable'))
         }
       } catch (err) {
         console.error('Error fetching data:', err)
-        setError("No data available")
+        setError(t('profitLoss.noDataAvailable'))
       } finally {
         setIsLoading(false)
       }
     }
     loadData()
-  }, [initialized, keycloak.authenticated, year, month, currency])
+  }, [initialized, keycloak.authenticated, year, month, currency, t])
 
   const formattedChartData = React.useMemo(() => {
     if (!chartData) return []
@@ -119,7 +121,7 @@ const TotalProfitLoss = () => {
 
     const isLoss = total_profit_loss < 0
     const profitLossValue = isLoss ? Math.abs(total_profit_loss) : total_profit_loss
-    const profitLossLabel = isLoss ? "Total Loss" : "Total Profit"
+    const profitLossLabel = isLoss ? t('profitLoss.totalLoss') : t('profitLoss.totalProfit')
 
     // Calculate total spent (cost) from the formula: total_sales - total_profit_loss
     const totalSpent = total_sales - total_profit_loss
@@ -131,18 +133,18 @@ const TotalProfitLoss = () => {
         fill: isLoss ? "var(--color-total_loss)" : "var(--color-total_profit)",
       },
       {
-        name: "Total Spent",
+        name: t('profitLoss.totalSpent'),
         value: totalSpent,
         fill: "var(--color-total_spent)",
       },
     ]
-  }, [chartData])
+  }, [chartData, t])
 
   if (!initialized) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-[400px]">
-          <p>Initializing...</p>
+          <p>{t('profitLoss.initializing')}</p>
         </CardContent>
       </Card>
     )
@@ -152,7 +154,7 @@ const TotalProfitLoss = () => {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-[400px]">
-          <p>Please log in to view the chart.</p>
+          <p>{t('profitLoss.pleaseLogIn')}</p>
         </CardContent>
       </Card>
     )
@@ -160,7 +162,7 @@ const TotalProfitLoss = () => {
 
   const showFooter = !error && chartData && chartData.total_sales > 0
   const isLoss = (chartData?.total_profit_loss ?? 0) < 0
-  const profitLossLabel = isLoss ? "Total Loss" : "Total Profit"
+  const profitLossLabel = isLoss ? t('profitLoss.totalLoss') : t('profitLoss.totalProfit')
   const profitLossValue = isLoss
     ? Math.abs(chartData?.total_profit_loss ?? 0)
     : chartData?.total_profit_loss ?? 0
@@ -171,7 +173,7 @@ const TotalProfitLoss = () => {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0 space-y-2">
-        <CardTitle>Financial Summary</CardTitle>
+        <CardTitle>{t('profitLoss.financialSummary')}</CardTitle>
         <CardDescription>{`${new Date(year, month - 1).toLocaleString('default', { month: 'long' })} ${year}`}</CardDescription>
         <YearMonthCurrencySelect
           year={year}
@@ -185,7 +187,7 @@ const TotalProfitLoss = () => {
       <CardContent className="flex-1 pb-0">
         {isLoading ? (
           <div className="flex items-center justify-center h-[250px]">
-            <p>Loading chart data...</p>
+            <p>{t('profitLoss.loadingChartData')}</p>
           </div>
         ) : error ? (
           <NoDataDisplay />
@@ -231,7 +233,7 @@ const TotalProfitLoss = () => {
                             y={(viewBox.cy || 0) + 24}
                             className="fill-muted-foreground text-sm"
                           >
-                            Total Sales
+                            {t('profitLoss.totalSales')}
                           </tspan>
                         </text>
                       )
@@ -256,7 +258,7 @@ const TotalProfitLoss = () => {
           </div>
           <div className="flex items-center gap-2 font-medium leading-none">
             <TrendingDown className="h-4 w-4 text-yellow-500" />
-            Total Spent: {currencySymbols[currency]}{totalSpent.toLocaleString()}
+            {t('profitLoss.totalSpent')}: {currencySymbols[currency]}{totalSpent.toLocaleString()}
           </div>
         </CardFooter>
       )}
@@ -265,3 +267,4 @@ const TotalProfitLoss = () => {
 }
 
 export default TotalProfitLoss
+

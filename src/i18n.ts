@@ -11,6 +11,7 @@ import globalMenuEN from './locales/en/globalMenu.json';
 import landingPageEN from './locales/en/landingPage.json';
 import termsEN from './locales/en/terms.json';
 import settingsEN from './locales/en/settings.json';
+import chartsEN from './locales/en/charts.json'
 
 import authorizationES from './locales/es/authorization.json';
 import categoriesAndProductsES from './locales/es/categoriesAndProducts.json';
@@ -22,6 +23,7 @@ import globalMenuES from './locales/es/globalMenu.json';
 import landingPageES from './locales/es/landingPage.json';
 import termsES from './locales/es/terms.json';
 import settingsES from './locales/es/settings.json';
+import chartsES from './locales/es/charts.json'
 
 import authorizationGE from './locales/ge/authorization.json';
 import categoriesAndProductsGE from './locales/ge/categoriesAndProducts.json';
@@ -33,6 +35,7 @@ import globalMenuGE from './locales/ge/globalMenu.json';
 import landingPageGE from './locales/ge/landingPage.json';
 import termsGE from './locales/ge/terms.json';
 import settingsGE from './locales/ge/settings.json';
+import chartsGE from './locales/ge/charts.json'
 
 i18n
   .use(initReactI18next)
@@ -48,7 +51,8 @@ i18n
         globalMenu: globalMenuEN,
         landingPage: landingPageEN,
         terms: termsEN,
-        settings: settingsEN
+        settings: settingsEN,
+        charts: chartsEN
       },
       es: {
         authorization: authorizationES,
@@ -60,7 +64,8 @@ i18n
         globalMenu: globalMenuES,
         landingPage: landingPageES,
         terms: termsES,
-        settings: settingsES
+        settings: settingsES,
+        charts: chartsES
       },
       ge: {
         authorization: authorizationGE,
@@ -72,7 +77,8 @@ i18n
         globalMenu: globalMenuGE,
         landingPage: landingPageGE,
         terms: termsGE,
-        settings: settingsGE
+        settings: settingsGE,
+        charts: chartsGE
       },
     },
     lng: localStorage.getItem('language') || 'en',
@@ -88,7 +94,8 @@ i18n
       'globalMenu',
       'landingPage',
       'terms',
-      'settings'
+      'settings',
+      'charts'
     ], 
     defaultNS: 'authorization',
     interpolation: {

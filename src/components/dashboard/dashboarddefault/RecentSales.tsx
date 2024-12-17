@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   CardContent,
@@ -58,6 +59,7 @@ interface Invoice {
 }
 
 const RecentSales: FC = () => {
+  const { t } = useTranslation('charts');
   const { keycloak } = useKeycloak();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,12 +85,12 @@ const RecentSales: FC = () => {
         setInvoices(result.data);
       } else {
         setInvoices([]);
-        setError("No data available");
+        setError(t('recentSales.noDataAvailable'));
       }
     } catch (err) {
-      console.error("Error fetching recently approved invoices:", err);
+      console.error(t('recentSales.fetchError'), err);
       setInvoices([]);
-      setError("An error occurred");
+      setError(t('recentSales.errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -104,18 +106,18 @@ const RecentSales: FC = () => {
     <Card className="w-full h-[500px] flex flex-col">
       <CardHeader className="pb-4 bg-gradient-to-r from-primary/10 to-primary/5">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-bold">Recently Approved</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('recentSales.title')}</CardTitle>
           <Badge variant="secondary" className="text-sm font-medium">
-            {invoices.length} Invoices
+            {t('recentSales.invoiceCount', { count: invoices.length })}
           </Badge>
         </div>
         <p className="text-sm text-muted-foreground mt-1">
-          Overview of recently approved invoices and their details
+          {t('recentSales.description')}
         </p>
       </CardHeader>
       <CardContent className="p-6 overflow-y-auto flex-grow">
         {loading ? (
-          <div className="text-center">Loading...</div>
+          <div className="text-center">{t('recentSales.loading')}</div>
         ) : invoices.length === 0 ? (
           <NoDataDisplay />
         ) : (
@@ -133,8 +135,7 @@ const RecentSales: FC = () => {
                   className="flex items-center p-2 rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <Avatar className="h-10 w-10 mr-4">
-                    {/* No actual avatar provided, use fallback */}
-                    <AvatarImage src={""} alt="Avatar" />
+                    <AvatarImage src={""} alt={t('recentSales.avatarAlt')} />
                     <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
@@ -163,3 +164,4 @@ const RecentSales: FC = () => {
 };
 
 export default RecentSales;
+

@@ -18,7 +18,7 @@ interface ApiResponse {
 }
 
 const CurrencyExchangeRates: FC = () => {
-  const { t, i18n } = useTranslation("dashboardDefault");
+  const { i18n } = useTranslation("dashboardDefault");
   const { keycloak } = useKeycloak();
   const [rates, setRates] = useState<ExchangeRate[]>([]);
   const [baseCurrency, setBaseCurrency] = useState<string>("GEL");
@@ -128,9 +128,6 @@ const CurrencyExchangeRates: FC = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{rate.rate.toFixed(4)}</div>
-              <div className="text-xs text-muted-foreground mt-2">
-                {t("currencyExchanges.lastMonth")}
-              </div>
             </CardContent>
           </Card>
         ))
