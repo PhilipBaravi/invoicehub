@@ -86,7 +86,7 @@
         "logo" : {
             "errorMsg" : "Invalid file type. Only images (PNG, JPEG, JPG, GIF) are allowed.",
             "change" : "Change Logo",
-            "upload" : "Upload Logo",
+            "upload" : "Upload",
             "error" : "Error"
         },
         "notesTerms" : {
