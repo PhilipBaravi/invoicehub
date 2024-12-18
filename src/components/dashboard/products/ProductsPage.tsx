@@ -1,3 +1,4 @@
+// ProductsPage.tsx
 import { FC, useState, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Search, Download, Plus } from "lucide-react";
@@ -21,7 +22,6 @@ const ProductsPage: FC = () => {
   const { t } = useTranslation("categoriesAndProducts");
   const { toast } = useToast();
 
-
   const [newProduct, setNewProduct] = useState<Omit<Product, "id" | "createdAt">>({
     name: "",
     description: "",
@@ -31,6 +31,7 @@ const ProductsPage: FC = () => {
     quantityInStock: 0,
     lowLimitAlert: 0,
     productUnit: "PCS",
+    productCategory: "",
     category: { id: 1, description: "", icon: "" },
     quantity: 0,
   });
@@ -98,8 +99,12 @@ const ProductsPage: FC = () => {
       category: {
         id: selectedCategoryId,
         description: selectedCategoryDescription,
+        icon: "", // Add icon if necessary
       },
     };
+
+    // Exclude productCategory
+    const { productCategory, ...productToSend } = productToAdd;
 
     try {
       const response = await fetch("https://api.invoicehub.space/api/v1/product/create", {
@@ -108,11 +113,11 @@ const ProductsPage: FC = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${keycloak.token}`,
         },
-        body: JSON.stringify(productToAdd),
+        body: JSON.stringify(productToSend),
       });
-
+      console.log(productToSend)
       const createdProduct = await response.json();
-
+      
       if (response.ok && createdProduct.success) {
         await fetchProducts();
         setIsDialogOpen(false);
@@ -134,13 +139,17 @@ const ProductsPage: FC = () => {
   const handleEditProduct = async () => {
     if (editingProduct && editingProduct.id) {
       try {
+        const productToUpdate = { ...newProduct, category: editingProduct.category };
+        // Exclude productCategory
+        const { productCategory, ...productToSend } = productToUpdate;
+
         const response = await fetch(`https://api.invoicehub.space/api/v1/product/update/${editingProduct.id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
-          body: JSON.stringify({ ...newProduct, category: editingProduct.category }),
+          body: JSON.stringify(productToSend),
         });
         const updatedProduct = await response.json();
         if (response.ok) {
@@ -210,7 +219,8 @@ const ProductsPage: FC = () => {
       quantityInStock: 0,
       lowLimitAlert: 0,
       productUnit: "PCS",
-      category: { id: selectedCategoryId, description: "", icon: "" },
+      productCategory: "",
+      category: { id: selectedCategoryId, description: selectedCategoryDescription, icon: "" },
       quantity: 0,
     });
     setEditingProduct(null);

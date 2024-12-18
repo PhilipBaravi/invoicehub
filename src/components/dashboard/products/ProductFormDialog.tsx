@@ -1,3 +1,4 @@
+// ProductFormDialog.tsx
 import { FC, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -188,7 +189,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               value={selectedCategory}
               onValueChange={(value) => {
                 setSelectedCategory(value);
-                setNewProduct({ ...newProduct, productCategory: value });
+                setNewProduct({ ...newProduct, productCategory: "" });
               }}
             >
               <SelectTrigger id="productCategory">
