@@ -1,155 +1,164 @@
-'use client'
-
 import { useState } from 'react'
-import { Check } from 'lucide-react'
+import { Check, AlertCircle } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 
 type PricingPlan = {
   name: string
   price: number
-  salePrice?: number
   description: string
-  credits: string
-  features: string[]
+  features: {
+    text: string
+    included: boolean
+    tooltip?: string
+  }[]
   popular?: boolean
+  highlightFeature?: string
 }
 
 const pricingPlans: PricingPlan[] = [
   {
     name: 'Free',
     price: 0,
-    description: 'For individuals who want to try out the most advanced AI audio',
-    credits: '10k credits limit',
+    description: 'Perfect for small businesses or freelancers just starting out',
     features: [
-      '10 minutes of ultra-high quality text to speech per month',
-      'Generate speech in 32 languages using thousands of unique voices',
-      'Translate content with automatic dubbing',
-      'Create custom, synthetic voices',
-      'Generate sound effects',
-      'API access',
+      { text: 'Manage up to 50 Employees, Clients, and Products each', included: true },
+      { text: 'Create up to 25 invoices per month', included: true },
+      { text: 'Track payments for up to 25 invoices monthly', included: true },
+      { text: 'Access to advanced interactive data charts', included: true, tooltip: 'Full access to our advanced charting capabilities' },
+      { text: 'Basic AI assistant (10 queries/month)', included: true },
+      { text: 'Unlimited entries and invoices', included: false },
+      { text: 'Full AI integration', included: false },
+      { text: 'Priority support', included: false },
     ],
+    highlightFeature: 'Great for testing the waters',
   },
   {
     name: 'Starter',
     price: 5,
-    description: 'For hobbyists creating projects with AI audio',
-    credits: '30k credits limit',
+    description: 'Ideal for growing businesses needing more flexibility',
     features: [
-      '30 minutes of ultra-high quality text to speech per month',
-      'Clone your voice with as little as 1 minute of audio',
-      'Access to the Dubbing Studio for more control over translation & timing',
-      'License to use ElevenLabs for commercial use',
+      { text: 'Unlimited Employees, Clients, and Products', included: true },
+      { text: 'Unlimited invoices and payment tracking', included: true },
+      { text: 'Advanced interactive data charts with custom filters', included: true },
+      { text: 'Enhanced AI assistant (50 queries/month)', included: true },
+      { text: 'Basic email support', included: true },
+      { text: 'Data export capabilities', included: true },
+      { text: 'Full AI integration', included: false },
+      { text: 'Priority support', included: false },
     ],
-  },
-  {
-    name: 'Creator',
-    price: 22,
-    salePrice: 11,
-    description: 'For creators making premium content for global audiences',
-    credits: '100k credits limit',
-    popular: true,
-    features: [
-      '100 minutes of ultra-high quality text to speech per month',
-      'Professional voice cloning to create the most realistic digital replica of your voice',
-      'Projects to create long form content with multiple speakers',
-      'Audio Native to add narration to your website and blogs',
-      'Higher quality audio - 192 kbps',
-      'Usage based billing for additional credits',
-    ],
+    highlightFeature: 'No limits on core features',
   },
   {
     name: 'Pro',
-    price: 99,
-    description: 'For creators ramping up their content production',
-    credits: '500k credits limit',
+    price: 15,
+    description: 'For businesses seeking advanced features and dedicated support',
+    popular: true,
     features: [
-      '500 minutes of ultra-high quality text to speech per month',
-      'Higher quality audio via Projects - 192 kbps',
-      '44.1 kHz PCM audio output via API',
-      'Usage analytics dashboard',
-      'Usage based billing for additional credits',
+      { text: 'All Starter features, plus:', included: true },
+      { text: 'Unlimited AI assistant usage', included: true },
+      { text: 'Full AI integration with all app features', included: true },
+      { text: 'Advanced AI insights and task automation', included: true },
+      { text: 'Priority support with dedicated account manager', included: true },
+      { text: 'Custom report generation', included: true },
+      { text: 'API access for third-party integrations', included: true },
+      { text: 'Early access to new features', included: true },
     ],
+    highlightFeature: 'Unlock the full power of AI',
   },
 ]
 
 export default function ProfileSubscription() {
   const [isYearly, setIsYearly] = useState(false)
-  const [selectedPlan, setSelectedPlan] = useState<string>('Creator')
+  const [selectedPlan, setSelectedPlan] = useState<string>('Starter')
 
   return (
-    <div className="container mx-auto px-4">
-      <div className="flex items-center justify-start mb-8">
-        <span className="mr-2 text-sm font-medium">MONTHLY</span>
-        <Switch checked={isYearly} onCheckedChange={setIsYearly} />
-        <span className="ml-2 text-sm font-medium">YEARLY</span>
-        <span className="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-          2 MONTHS FREE
-        </span>
+    <div className="container mx-auto px-4 py-16">
+      <h1 className="text-4xl font-extrabold text-center mb-4">Choose the Perfect Plan for Your Business</h1>
+      <p className="text-xl text-center text-muted-foreground mb-8">Unlock powerful features to streamline your operations</p>
+      
+      <div className="flex items-center justify-center mb-12">
+        <Label htmlFor="billing-toggle" className="mr-2 text-sm font-medium cursor-pointer">MONTHLY</Label>
+        <Switch id="billing-toggle" checked={isYearly} onCheckedChange={setIsYearly} />
+        <Label htmlFor="billing-toggle" className="ml-2 text-sm font-medium cursor-pointer">YEARLY</Label>
+        <Badge variant="secondary" className="ml-4">
+          SAVE 20%
+        </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {pricingPlans.map((plan) => (
-          <div
-            key={plan.name}
-            className={`border rounded-lg p-6 flex flex-col ${
-              plan.popular ? 'border-black' : ''
-            } ${selectedPlan === plan.name ? 'ring-2 ring-primary' : ''}`}
+          <Card 
+            key={plan.name} 
+            className={`relative overflow-hidden transition-all duration-300 ${
+              plan.popular ? 'border-primary shadow-lg scale-105' : ''
+            } ${selectedPlan === plan.name ? 'ring-2 ring-primary' : ''} 
+            hover:shadow-xl cursor-pointer`}
+            onClick={() => setSelectedPlan(plan.name)}
           >
             {plan.popular && (
-              <div className="bg-black text-white text-center py-1 px-4 rounded-full mb-4 text-sm font-medium">
+              <div className="absolute top-0 right-0 bg-primary text-primary-foreground py-1 px-4 rounded-bl-lg font-medium text-sm">
                 MOST POPULAR
               </div>
             )}
-            <h2 className="text-2xl font-bold mb-2">{plan.name}</h2>
-            <p className="text-gray-600 mb-4">{plan.description}</p>
-            <div className="text-4xl font-bold mb-4">
-              ${isYearly ? (plan.price * 10).toFixed(2) : plan.price}
-              <span className="text-base font-normal">/mo</span>
-            </div>
-            {plan.salePrice && (
-              <div className="mb-4">
-                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                  FIRST MONTH 50% OFF
-                </span>
-                <div className="mt-2">
-                  <span className="text-gray-500 line-through">${plan.price}</span>
-                  <span className="text-4xl font-bold ml-2">
-                    ${plan.salePrice}
-                    <span className="text-base font-normal">/mo</span>
-                  </span>
-                </div>
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
+              <CardDescription>{plan.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-4xl font-bold mb-4">
+                ${isYearly ? ((plan.price * 12) * 0.8).toFixed(2) : plan.price}
+                <span className="text-base font-normal text-muted-foreground">/{isYearly ? 'year' : 'mo'}</span>
               </div>
-            )}
-            <RadioGroup value={selectedPlan} onValueChange={setSelectedPlan} className="mb-6">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value={plan.name} id={`plan-${plan.name}`} />
-                <Label htmlFor={`plan-${plan.name}`}>
-                  <Button
-                    variant={plan.popular ? 'default' : 'outline'}
-                    className="w-full"
-                  >
-                    {selectedPlan === plan.name ? 'SELECTED' : 'SELECT PLAN'}
-                  </Button>
-                </Label>
-              </div>
-            </RadioGroup>
-            <p className="font-medium mb-4">{plan.credits}</p>
-            <h3 className="font-medium mb-2">What's included</h3>
-            <ul className="space-y-2 flex-grow bg-gray-100 p-4 rounded-lg">
-              {plan.features.map((feature, index) => (
-                <li key={index} className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+              {plan.highlightFeature && (
+                <p className="font-medium mb-4 text-primary">{plan.highlightFeature}</p>
+              )}
+              <h3 className="font-medium mb-2">Plan Features:</h3>
+              <ul className="space-y-2">
+                {plan.features.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    {feature.included ? (
+                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
+                    ) : (
+                      <AlertCircle className="h-5 w-5 text-red-500 mr-2 flex-shrink-0" />
+                    )}
+                    <span className={`text-sm ${feature.included ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {feature.tooltip ? (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="cursor-help border-dotted border-b border-gray-400">{feature.text}</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{feature.tooltip}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        feature.text
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button 
+                variant={plan.popular ? "default" : "outline"} 
+                className="w-full"
+              >
+                {selectedPlan === plan.name ? 'Current Plan' : 'Select Plan'}
+              </Button>
+            </CardFooter>
+          </Card>
         ))}
       </div>
     </div>
   )
 }
+
