@@ -1,3 +1,4 @@
+// InvoiceListPage.tsx
 import { FC, useState, useEffect } from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Invoice, InvoiceStatus } from '../invoice-types';
 import { useTranslation } from 'react-i18next';
+import CreateInvoiceDialog from './CreateInvoiceDialog';
 
 const currencyIcons: Record<string, string> = {
   'USD': '$',
@@ -371,29 +373,13 @@ const InvoiceListPage: FC = () => {
         />
       )}
 
-      {/* Currency selection dialog before creating new invoice */}
-      <AlertDialog open={showCurrencyDialog} onOpenChange={setShowCurrencyDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Choose currency</AlertDialogTitle>
-            <AlertDialogDescription>Select Currency</AlertDialogDescription>
-          </AlertDialogHeader>
-          <Select value={newInvoiceCurrency} onValueChange={(val) => setNewInvoiceCurrency(val as 'USD' | 'EUR' | 'GEL')}>
-            <SelectTrigger className="w-full mt-4">
-              <SelectValue placeholder="Currency" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="USD">USD</SelectItem>
-              <SelectItem value="EUR">EUR</SelectItem>
-              <SelectItem value="GEL">GEL</SelectItem>
-            </SelectContent>
-          </Select>
-          <AlertDialogFooter className="mt-4">
-            <AlertDialogCancel onClick={() => setShowCurrencyDialog(false)}>{t('invoiceList.dialog.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmCurrency}>{t('invoiceList.dialog.continue')}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <CreateInvoiceDialog
+        open={showCurrencyDialog}
+        onOpenChange={setShowCurrencyDialog}
+        newInvoiceCurrency={newInvoiceCurrency}
+        setNewInvoiceCurrency={setNewInvoiceCurrency}
+        onConfirm={handleConfirmCurrency}
+      />
     </div>
   );
 };

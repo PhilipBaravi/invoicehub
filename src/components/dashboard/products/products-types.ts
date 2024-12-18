@@ -17,6 +17,7 @@ export interface Product {
   productUnit: string;
   createdAt: string;
   category: Category;
+  productCategory?: string;
 }
 
 export interface ProductTableProps {

@@ -23,6 +23,7 @@ export function CookieConsent({ className }: CookieConsentProps) {
   const [showConsent, setShowConsent] = React.useState(false);
   const [showDetails, setShowDetails] = React.useState(false);
   const { t } = useTranslation()
+  const windowWidth = window.innerWidth;
 
   React.useEffect(() => {
     const hasConsent = localStorage.getItem('cookieConsent');
@@ -54,7 +55,7 @@ export function CookieConsent({ className }: CookieConsentProps) {
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className={cn(
-              "fixed bottom-4 right-12 md:right-4 w-[400px] bg-stone-50 dark:bg-stone-900 rounded-lg shadow-lg p-6 border border-stone-200 dark:border-stone-800",
+              `fixed  bottom-0 md:bottom-4 right-0 md:right-4 w-[${windowWidth}]  md:w-[400px] bg-stone-50 dark:bg-stone-900 rounded-lg shadow-lg p-6 border border-stone-200 dark:border-stone-800`,
               className
             )}
           >

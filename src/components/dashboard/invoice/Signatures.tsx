@@ -35,7 +35,7 @@ const Signatures: FC<SignaturesProps> = ({
   return (
     <div>
     <h3 className="text-lg font-semibold mb-2">{t('invoice.signatures.pageTitle')}</h3>
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
         <Label htmlFor="client-signature-upload" className="mb-2 block">{t('invoice.signatures.clientSignature')}</Label>
         <div className="border-2 border-dashed border-gray-300 p-4 h-32 flex flex-col items-center justify-center relative">
