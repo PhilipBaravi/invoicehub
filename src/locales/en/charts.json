@@ -1,67 +1,77 @@
 {
-    "productSales" : {
-        "initializing" : "Initializing...",
-    "authentication" : "Please log in to view the chart.",
-    "title" : "Product Sales Chart",
-    "titleAbout" : "Showing product sales for selected year, month, and currency",
-    "loadingData" : "Loading chart data...",
-    "amount" : " Amount",
-    "quantity" : " Quantity"
+  "productSales": {
+    "initializing": "Initializing...",
+    "authentication": "Please log in to view the chart.",
+    "title": "Product Sales Chart",
+    "titleAbout": "Showing product sales for selected year, month, and currency",
+    "loadingData": "Loading chart data...",
+    "amount": " Amount",
+    "quantity": " Quantity"
+  },
+  "dateSelect": {
+    "selectYear": "Select Year",
+    "selectMonth": "Select Month",
+    "selectCurrency": "Select Currency",
+    "months": {
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
     },
-    "dateSelect": {
-          "selectYear": "Select Year",
-          "selectMonth": "Select Month",
-          "selectCurrency": "Select Currency",
-          "months": {
-            "1": "January",
-            "2": "February",
-            "3": "March",
-            "4": "April",
-            "5": "May",
-            "6": "June",
-            "7": "July",
-            "8": "August",
-            "9": "September",
-            "10": "October",
-            "11": "November",
-            "12": "December"
-          },
-          "currencies": {
-            "USD": "US Dollar",
-            "EUR": "Euro",
-            "GEL": "Georgian Lari"
-          }
-        },
-        "profitLoss": {
-      "financialSummary": "Financial Summary",
-      "totalProfit": "Total Profit",
-      "totalLoss": "Total Loss",
-      "totalSpent": "Total Spent",
-      "totalSales": "Total Sales",
-      "noDataAvailable": "No data available",
-      "initializing": "Initializing...",
-      "pleaseLogIn": "Please log in to view the chart.",
-      "loadingChartData": "Loading chart data..."
+    "currencies": {
+      "USD": "US Dollar",
+      "EUR": "Euro",
+      "GEL": "Georgian Lari"
     },
-    "topSoldProducts": {
-      "title": "Top Selling Products",
-      "totalBadge": "{{total}} Total",
-      "description": "Best performing products for the selected period",
-      "loading": "Loading...",
-      "noDataAvailable": "No data available",
-      "fetchError": "An error occurred while fetching top-selling products:",
-      "errorOccurred": "An error occurred",
-      "quantitySold": "Quantity sold",
-      "totalRevenue": "Total Revenue"
-    },
-    "recentSales": {
-      "title": "Recently Approved",
-      "invoiceCount": "{{count}} Invoices",
-      "description": "Overview of recently approved invoices and their details",
-      "loading": "Loading...",
-      "noDataAvailable": "No data available",
-      "fetchError": "Error fetching recently approved invoices:",
-      "errorOccurred": "An error occurred",
-      "avatarAlt": "Avatar"
+    "select": {
+      "year": "Select Year",
+      "currency": "Select Currency",
+      "monthRange": "Select Month Range",
+      "type": "Select Type",
+      "singleCurrency": "Single Currency",
+      "totalCurrencies": "Total Currencies",
+      "cancel": "Cancel",
+      "apply": "Apply"
     }
+  },
+  "profitLoss": {
+    "financialSummary": "Financial Summary",
+    "totalProfit": "Total Profit",
+    "totalLoss": "Total Loss",
+    "totalSpent": "Total Spent",
+    "totalSales": "Total Sales",
+    "noDataAvailable": "No data available",
+    "initializing": "Initializing...",
+    "pleaseLogIn": "Please log in to view the chart.",
+    "loadingChartData": "Loading chart data..."
+  },
+  "topSoldProducts": {
+    "title": "Top Selling Products",
+    "totalBadge": "{{total}} Total",
+    "description": "Best performing products for the selected period",
+    "loading": "Loading...",
+    "noDataAvailable": "No data available",
+    "fetchError": "An error occurred while fetching top-selling products:",
+    "errorOccurred": "An error occurred",
+    "quantitySold": "Quantity sold",
+    "totalRevenue": "Total Revenue"
+  },
+  "recentSales": {
+    "title": "Recently Approved",
+    "invoiceCount": "{{count}} Invoices",
+    "description": "Overview of recently approved invoices and their details",
+    "loading": "Loading...",
+    "noDataAvailable": "No data available",
+    "fetchError": "Error fetching recently approved invoices:",
+    "errorOccurred": "An error occurred",
+    "avatarAlt": "Avatar"
+  }
 }

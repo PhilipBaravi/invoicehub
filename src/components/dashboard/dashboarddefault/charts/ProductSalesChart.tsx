@@ -1,8 +1,16 @@
-import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { useKeycloak } from "@react-keycloak/web"
+import React, { useState, useMemo, useEffect } from "react";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { useKeycloak } from "@react-keycloak/web";
+import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
@@ -10,171 +18,187 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
-import { YearMonthCurrencySelect } from "./YearMonthCurrencySelect"
-import { NoDataDisplay } from "./NoDataDisplay"
-import { useTranslation } from "react-i18next"
-import { TFunction } from "i18next"
+} from "@/components/ui/chart";
+import { YearMonthCurrencySelect } from "./YearMonthCurrencySelect";
+import { NoDataDisplay } from "./NoDataDisplay";
 
-interface ChartDataItem {
-  year: number
-  month: number
-  dayOfMonth: number
-  quantity: number
-  amount: number
-  currency: string
-}
+type ChartDataItem = {
+  year: number;
+  month: number;
+  dayOfMonth: number;
+  quantity: number;
+  amount: number;
+  currency: string;
+};
 
-interface ApiResponse {
-  success: boolean
-  message: string
-  code: number
-  data: ChartDataItem[]
-}
+type ApiResponse = {
+  success: boolean;
+  message: string;
+  code: number;
+  data: ChartDataItem[];
+};
 
 const getChartConfig = (t: TFunction): ChartConfig => ({
   quantity: {
-    label: t('productSales.quantity'),
+    label: t("productSales.quantity"),
     color: "hsl(var(--chart-1))",
   },
   amount: {
-    label: t('productSales.amount'),
+    label: t("productSales.amount"),
     color: "hsl(var(--chart-2))",
   },
-})
+});
 
 const currencySymbols: { [key: string]: string } = {
   USD: "$",
   EUR: "€",
-  GEL: "₾"
-}
+  GEL: "₾",
+};
 
 const getLocale = (lang: string): string => {
   switch (lang) {
-    case 'es':
-      return 'es-ES'
-    case 'ka':
-      return 'ka-GE'
+    case "es":
+      return "es-ES";
+    case "ka":
+      return "ka-GE";
     default:
-      return 'en-US'
+      return "en-US";
   }
-}
+};
 
 const ProductSalesChart: React.FC = () => {
-  const currentYear = new Date().getFullYear()
-  const [year, setYear] = React.useState(currentYear)
-  const [month, setMonth] = React.useState(new Date().getMonth() + 1)
-  const [currency, setCurrency] = React.useState("USD")
-  const [, setChartData] = React.useState<ChartDataItem[]>([])
-  const [displayedData, setDisplayedData] = React.useState<ChartDataItem[]>([])
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const { keycloak, initialized } = useKeycloak()
-  const { t, i18n } = useTranslation('charts')
+  const currentYear = new Date().getFullYear();
+  const [year, setYear] = useState(currentYear);
+  const [startMonth, setStartMonth] = useState(new Date().getMonth() + 1);
+  const [endMonth, setEndMonth] = useState(new Date().getMonth() + 1);
+  const [currency, setCurrency] = useState("USD");
+  const [, setChartData] = useState<ChartDataItem[]>([]);
+  const [displayedData, setDisplayedData] = useState<ChartDataItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { keycloak, initialized } = useKeycloak();
+  const { t, i18n } = useTranslation("charts");
 
-  const chartConfig = React.useMemo(() => getChartConfig(t), [t])
-  const locale = React.useMemo(() => getLocale(i18n.language), [i18n.language])
+  const chartConfig = useMemo(() => getChartConfig(t), [t]);
+  const locale = useMemo(() => getLocale(i18n.language), [i18n.language]);
 
-  const fetchData = async (year: number, month: number, currency: string) => {
+  const fetchData = async (
+    year: number,
+    startMonth: number,
+    endMonth: number,
+    currency: string
+  ) => {
     if (!initialized || !keycloak.authenticated) {
-      return null
+      return null;
     }
     const response = await fetch(
-      `https://api.invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${month}/${currency}`,
+      `https://api/invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${startMonth}/${endMonth}/${currency}`,
       {
         headers: {
-          'Authorization': `Bearer ${keycloak.token}`
-        }
+          Authorization: `Bearer ${keycloak.token}`,
+        },
       }
-    )
+    );
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const result: ApiResponse = await response.json()
+    const result: ApiResponse = await response.json();
     if (!result.success) {
-      throw new Error(result.message || 'Failed to fetch data')
+      throw new Error(result.message || "Failed to fetch data");
     }
-    return result.data
-  }
+    return result.data;
+  };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const loadData = async () => {
       if (!initialized || !keycloak.authenticated) {
-        return
+        return;
       }
-      setIsLoading(true)
-      setError(null)
+      setIsLoading(true);
+      setError(null);
       try {
-        const data = await fetchData(year, month, currency)
+        const data = await fetchData(year, startMonth, endMonth, currency);
         if (data && data.length > 0) {
-          setChartData(data)
-          setDisplayedData(data)
+          setChartData(data);
+          setDisplayedData(data);
         } else {
-          setError(`No data available`)
+          setError(`No data available`);
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
+        setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
-    loadData()
-  }, [initialized, keycloak.authenticated, year, month, currency])
+    };
+    loadData();
+  }, [
+    initialized,
+    keycloak.authenticated,
+    year,
+    startMonth,
+    endMonth,
+    currency,
+  ]);
 
-  const formattedChartData = displayedData.map(item => ({
-    date: `${item.year}-${item.month.toString().padStart(2, '0')}-${item.dayOfMonth.toString().padStart(2, '0')}`,
+  const formattedChartData = displayedData.map((item) => ({
+    date: `${item.year}-${item.month
+      .toString()
+      .padStart(2, "0")}-${item.dayOfMonth.toString().padStart(2, "0")}`,
     quantity: item.quantity,
-    amount: item.amount
-  }))
+    amount: item.amount,
+  }));
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+    const date = new Date(dateString);
     return date.toLocaleDateString(locale, {
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   if (!initialized) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-[400px]">
-          <p>{t('productSales.initializing')}</p>
+          <p>{t("productSales.initializing")}</p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (!keycloak.authenticated) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center h-[400px]">
-          <p>{t('productSales.authentication')}</p>
+          <p>{t("productSales.authentication")}</p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
     <Card>
       <CardHeader className="flex flex-col gap-2 space-y-0 border-b py-5">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
-          <CardTitle>{t('productSales.title')}</CardTitle>
-          <CardDescription>{t('productSales.titleAbout')}</CardDescription>
+          <CardTitle>{t("productSales.title")}</CardTitle>
+          <CardDescription>{t("productSales.titleAbout")}</CardDescription>
         </div>
         <YearMonthCurrencySelect
           year={year}
-          month={month}
+          startMonth={startMonth}
+          endMonth={endMonth}
           currency={currency}
           onYearChange={setYear}
-          onMonthChange={setMonth}
+          onStartMonthChange={setStartMonth}
+          onEndMonthChange={setEndMonth}
           onCurrencyChange={setCurrency}
+          id="product-sales-chart"
         />
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {isLoading ? (
           <div className="flex items-center justify-center h-[250px]">
-            <p>{t('productSales.loadingData')}</p>
+            <p>{t("productSales.loadingData")}</p>
           </div>
         ) : error ? (
           <NoDataDisplay />
@@ -225,10 +249,16 @@ const ProductSalesChart: React.FC = () => {
                   <ChartTooltipContent
                     labelFormatter={formatDate}
                     formatter={(value, name) => {
-                      if (name === 'amount') {
-                        return [`${currencySymbols[currency]}${value}`, chartConfig.amount.label]
+                      if (name === "amount") {
+                        return [
+                          `${currencySymbols[currency]}${value}`,
+                          chartConfig.amount.label,
+                        ];
                       }
-                      return [value, name === 'quantity' ? chartConfig.quantity.label : name]
+                      return [
+                        value,
+                        name === "quantity" ? chartConfig.quantity.label : name,
+                      ];
                     }}
                   />
                 }
@@ -247,16 +277,13 @@ const ProductSalesChart: React.FC = () => {
                 stroke="var(--color-amount)"
                 stackId="a"
               />
-              <ChartLegend 
-                content={<ChartLegendContent />} 
-              />
+              <ChartLegend content={<ChartLegendContent />} />
             </AreaChart>
           </ChartContainer>
         ) : null}
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default ProductSalesChart
-
+export default ProductSalesChart;

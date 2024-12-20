@@ -1,33 +1,33 @@
 {
-    "error" : {
-        "title" : "Failed.",
-        "message" : "Product is already used in invoice(s) and cannot be deleted.",
-        "categoryMessage" : "There is at least one product that is used in invoice!"
+  "error": {
+    "title": "Failed.",
+    "message": "Product is already used in invoice(s) and cannot be deleted.",
+    "categoryMessage": "There is at least one product that is used in invoice!"
+  },
+  "categories": {
+    "pageTitle": "Categories",
+    "delete": "Delete",
+    "edit": "Edit",
+    "addCategory": {
+      "addCategory": "New Category",
+      "addNewCategory": "Add New Category",
+      "details": "Enter the details for the new category and choose an icon.",
+      "add": "Add",
+      "icon": "Choose category icon:",
+      "name": "Category Name"
     },
-    "categories" : {
-        "pageTitle" : "Categories",
-        "delete" : "Delete",
-        "edit" : "Edit",
-        "addCategory" : {
-            "addCategory" : "New Category",
-            "addNewCategory" : "Add New Category",
-            "details" : "Enter the details for the new category and choose an icon.",
-            "add" : "Add",
-            "icon" : "Choose category icon:",
-            "name" : "Category Name"
-        },
-        "editCategory" : {
-            "edit" : "Edit Category",
-            "details" : "Modify the details for the category and choose an icon.",
-            "save" : "Save",
-            "icon" : "Choose category icon:"
-        },
-        "alert" : {
-            "title" : "Are you sure?",
-            "message" : "This action cannot be undone. This will permanently delete the category.",
-            "cancel" : "Cancel",
-            "continue" : "Continue"
-        },
+    "editCategory": {
+      "edit": "Edit Category",
+      "details": "Modify the details for the category and choose an icon.",
+      "save": "Save",
+      "icon": "Choose category icon:"
+    },
+    "alert": {
+      "title": "Are you sure?",
+      "message": "This action cannot be undone. This will permanently delete the category.",
+      "cancel": "Cancel",
+      "continue": "Continue"
+    },
     "individual_count": "Individual Count",
     "grouping": "Grouping",
     "packaging": "Packaging",
@@ -41,62 +41,63 @@
     "electronic": "Electronic",
     "packaging_dimensions": "Packaging Dimensions",
     "miscellaneous": "Miscellaneous"
+  },
+  "products": {
+    "pageTitle": "Products",
+    "description": "Manage your products and view their stock levels.",
+    "add": "Add Product",
+    "lowStock": "Low Stock Alert",
+    "lowStockDescription": "Some products are below the low stock limit!",
+    "notFound": "No products found",
+    "notFoundDescription": "No products available for this category.",
+    "export": "Export",
+    "all": "All",
+    "active": "Active",
+    "draft": "Draft",
+    "table": {
+      "name": "Name",
+      "status": "Status",
+      "price": "Price",
+      "quantity": "Quantity in Stock",
+      "description": "Description",
+      "createdAt": "Created at",
+      "edit": "Edit",
+      "delete": "Delete",
+      "showing": "Showing {{count}} products"
     },
-    "products" : {
-        "pageTitle" : "Products",
-        "description" : "Manage your products and view their stock levels.",
-        "add" : "Add Product",
-        "lowStock" : "Low Stock Alert",
-        "lowStockDescription" : "Some products are below the low stock limit!",
-        "notFound" : "No products found",
-        "notFoundDescription" : "No products available for this category.",
-        "export" : "Export",
-        "all" : "All",
-        "active" : "Active",
-        "draft" : "Draft",
-        "table" : {
-            "name" : "Name",
-            "status" : "Status",
-            "price" : "Price",
-            "quantity" : "Quantity in Stock",
-            "description" : "Description",
-            "createdAt" : "Created at",
-            "edit" : "Edit",
-            "delete" : "Delete",
-            "showing": "Showing {{count}} products"
-        },
-        "filter" : {
-            "filter" : "Filter",
-            "dateRange" : "Date Range",
-            "priceRange" : "Price Range",
-            "clear" : "Clear Filters"
-        },
-        "formDialog" : {
-            "edit" : "Edit Products",
-            "add" : "Add New Product",
-            "editDetails" : "Edit the details of the product below.",
-            "enterDetails" : "Enter the details of the new product below.",
-            "name" : "Name",
-            "status" : "Status",
-            "price" : "Price",
-            "inStock" : "Quantity in Stock",
-            "lowStock" : "Low Stock Alert",
-            "productUnit" : "Product Unit",
-            "description" : "Description",
-            "cancel" : "Cancel",
-            "updateProduct" : "Update Product",
-            "addProduct" : "Add Product",
-            "selectCategory" : "Select Category",
-            "selectUnit" : "Select Unit",
-            "selectCategoryFirst" : "First Select Category",
-            "currency" : "Currency"
-        },
-        "success": "Success!",
-        "message": "Product has been added successfully!",
-        "categoryMessage" : "Category has been added succesfully!",
-        "productDelete" : "Product deleted succesfully!"
+    "filter": {
+      "filter": "Filter",
+      "dateRange": "Date Range",
+      "priceRange": "Price Range",
+      "clear": "Clear Filters"
     },
-    "units": {
+    "formDialog": {
+      "edit": "Edit Products",
+      "add": "Add New Product",
+      "editDetails": "Edit the details of the product below.",
+      "enterDetails": "Enter the details of the new product below.",
+      "name": "Name",
+      "status": "Status",
+      "selectStatus": "Select Status",
+      "price": "Price",
+      "inStock": "Quantity in Stock",
+      "lowStock": "Low Stock Alert",
+      "productUnit": "Product Unit",
+      "description": "Description",
+      "cancel": "Cancel",
+      "updateProduct": "Update Product",
+      "addProduct": "Add Product",
+      "selectCategory": "Select Category",
+      "selectUnit": "Select Unit",
+      "selectCategoryFirst": "First Select Category",
+      "currency": "Currency"
+    },
+    "success": "Success!",
+    "message": "Product has been added successfully!",
+    "categoryMessage": "Category has been added succesfully!",
+    "productDelete": "Product deleted succesfully!"
+  },
+  "units": {
     "PCS": "Piece (PCS)",
     "EA": "Each (EA)",
     "UN": "Unit (UN)",

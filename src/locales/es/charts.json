@@ -1,14 +1,14 @@
 {
-    "productSales" : {
-        "initializing": "Inicializando...",
+  "productSales": {
+    "initializing": "Iniciando...",
     "authentication": "Por favor, inicie sesión para ver el gráfico.",
     "title": "Gráfico de Ventas de Productos",
-    "titleAbout": "Mostrando las ventas de productos para el año, mes y moneda seleccionados",
+    "titleAbout": "Mostrando ventas de productos para el año, mes y moneda seleccionados",
     "loadingData": "Cargando datos del gráfico...",
     "amount": " Cantidad",
     "quantity": " Cantidad"
-    },
-    "dateSelect": {
+  },
+  "dateSelect": {
     "selectYear": "Seleccionar Año",
     "selectMonth": "Seleccionar Mes",
     "selectCurrency": "Seleccionar Moneda",
@@ -30,38 +30,48 @@
       "USD": "Dólar Estadounidense",
       "EUR": "Euro",
       "GEL": "Lari Georgiano"
+    },
+    "select": {
+      "year": "Seleccionar Año",
+      "currency": "Seleccionar Moneda",
+      "monthRange": "Seleccionar Rango de Mes",
+      "type": "Seleccionar Tipo",
+      "singleCurrency": "Moneda Única",
+      "totalCurrencies": "Total de Monedas",
+      "cancel": "Cancelar",
+      "apply": "Aplicar"
     }
   },
   "profitLoss": {
-  "financialSummary": "Resumen Financiero",
-  "totalProfit": "Ganancia Total",
-  "totalLoss": "Pérdida Total",
-  "totalSpent": "Total Gastado",
-  "totalSales": "Ventas Totales",
-  "noDataAvailable": "No hay datos disponibles",
-  "initializing": "Iniciando...",
-  "pleaseLogIn": "Por favor, inicie sesión para ver el gráfico.",
-  "loadingChartData": "Cargando datos del gráfico..."
-},
-"topSoldProducts": {
-  "title": "Productos Más Vendidos",
-  "totalBadge": "{{total}} en Total",
-  "description": "Mejores productos para el período seleccionado",
-  "loading": "Cargando...",
-  "noDataAvailable": "No hay datos disponibles",
-  "fetchError": "Ocurrió un error al obtener los productos más vendidos:",
-  "errorOccurred": "Ocurrió un error",
-  "quantitySold": "Cantidad Vendida",
-  "totalRevenue": "Ingresos Totales"
-},
-    "recentSales": {
-      "title": "Recientemente Aprobado",
-      "invoiceCount": "{{count}} Facturas",
-      "description": "Resumen de facturas recientemente aprobadas y sus detalles",
-      "loading": "Cargando...",
-      "noDataAvailable": "No hay datos disponibles",
-      "fetchError": "Error al obtener facturas recientemente aprobadas:",
-      "errorOccurred": "Ocurrió un error",
-      "avatarAlt": "Avatar"
-    }
+    "financialSummary": "Resumen Financiero",
+    "totalProfit": "Beneficio Total",
+    "totalLoss": "Pérdida Total",
+    "totalSpent": "Gasto Total",
+    "totalSales": "Ventas Totales",
+    "noDataAvailable": "No hay datos disponibles",
+    "initializing": "Iniciando...",
+    "pleaseLogIn": "Por favor, inicie sesión para ver el gráfico.",
+    "loadingChartData": "Cargando datos del gráfico..."
+  },
+  "topSoldProducts": {
+    "title": "Productos Más Vendidos",
+    "totalBadge": "{{total}} en Total",
+    "description": "Productos con mejor rendimiento en el período seleccionado",
+    "loading": "Cargando...",
+    "noDataAvailable": "No hay datos disponibles",
+    "fetchError": "Ocurrió un error al obtener los productos más vendidos:",
+    "errorOccurred": "Ocurrió un error",
+    "quantitySold": "Cantidad vendida",
+    "totalRevenue": "Ingresos Totales"
+  },
+  "recentSales": {
+    "title": "Recientemente Aprobados",
+    "invoiceCount": "{{count}} Facturas",
+    "description": "Resumen de las facturas aprobadas recientemente y sus detalles",
+    "loading": "Cargando...",
+    "noDataAvailable": "No hay datos disponibles",
+    "fetchError": "Error al obtener las facturas aprobadas recientemente:",
+    "errorOccurred": "Ocurrió un error",
+    "avatarAlt": "Avatar"
+  }
 }

@@ -1,4 +1,3 @@
-// ProductFormDialog.tsx
 import { FC, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,9 +50,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
         setAvailableUnits(category.units);
         // If the current productUnit is not in the new available units, reset it
         if (
-          !category.units.some(
-            (unit) => unit.value === newProduct.productUnit
-          )
+          !category.units.some((unit) => unit.value === newProduct.productUnit)
         ) {
           setNewProduct({ ...newProduct, productUnit: "" });
         }
@@ -111,11 +108,13 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               }
             >
               <SelectTrigger id="status">
-                <SelectValue placeholder={t("products.formDialog.selectStatus")} />
+                <SelectValue
+                  placeholder={t("products.formDialog.selectStatus")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ACTIVE">{t("status.active")}</SelectItem>
-                <SelectItem value="DRAFT">{t("status.draft")}</SelectItem>
+                <SelectItem value="ACTIVE">Active</SelectItem>
+                <SelectItem value="DRAFT">Draft</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -137,7 +136,9 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               />
             </div>
             <div>
-              <Label htmlFor="currency">{t("products.formDialog.currency")}</Label>
+              <Label htmlFor="currency">
+                {t("products.formDialog.currency")}
+              </Label>
               <CurrencySelect
                 value={newProduct.currency}
                 onChange={(value) =>
@@ -147,9 +148,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
             </div>
           </div>
           <div>
-            <Label htmlFor="quantity">
-              {t("products.formDialog.inStock")}
-            </Label>
+            <Label htmlFor="quantity">{t("products.formDialog.inStock")}</Label>
             <Input
               id="quantity"
               type="number"
@@ -193,7 +192,9 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               }}
             >
               <SelectTrigger id="productCategory">
-                <SelectValue placeholder={t("products.formDialog.selectCategory")} />
+                <SelectValue
+                  placeholder={t("products.formDialog.selectCategory")}
+                />
               </SelectTrigger>
               <SelectContent>
                 {productCategories.map((category) => (

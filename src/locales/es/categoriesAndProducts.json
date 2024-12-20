@@ -1,34 +1,34 @@
 {
-    "error": {
+  "error": {
     "title": "¡Failed.",
     "message": "El producto ya está utilizado en una(s) factura(s) y no se puede eliminar.",
     "categoryMessage": "¡Hay al menos un producto que está utilizado en una factura!"
-},
-    "categories": {
-        "pageTitle": "Categorías",
-        "delete": "Eliminar",
-        "edit": "Editar",
-        "addCategory": {
-            "addCategory": "Nueva Categoría",
-            "addNewCategory": "Agregar Nueva Categoría",
-            "details": "Ingrese los detalles de la nueva categoría y elija un icono.",
-            "add": "Agregar",
-            "icon": "Elegir icono de categoría:",
-            "name" : "Nombre de categoría"
-        },
-        "editCategory": {
-            "edit": "Editar Categoría",
-            "details": "Modifique los detalles de la categoría y elija un icono.",
-            "save": "Guardar",
-            "icon": "Elegir icono de categoría:"
-        },
-        "alert": {
-    "title": "¿Estás seguro?",
-    "message": "Esta acción no se puede deshacer. Esto eliminará la categoría de forma permanente.",
-    "cancel": "Cancelar",
-    "continue": "Continuar"
-},
-"individual_count": "Cuenta Individual",
+  },
+  "categories": {
+    "pageTitle": "Categorías",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "addCategory": {
+      "addCategory": "Nueva Categoría",
+      "addNewCategory": "Agregar Nueva Categoría",
+      "details": "Ingrese los detalles de la nueva categoría y elija un icono.",
+      "add": "Agregar",
+      "icon": "Elegir icono de categoría:",
+      "name": "Nombre de categoría"
+    },
+    "editCategory": {
+      "edit": "Editar Categoría",
+      "details": "Modifique los detalles de la categoría y elija un icono.",
+      "save": "Guardar",
+      "icon": "Elegir icono de categoría:"
+    },
+    "alert": {
+      "title": "¿Estás seguro?",
+      "message": "Esta acción no se puede deshacer. Esto eliminará la categoría de forma permanente.",
+      "cancel": "Cancelar",
+      "continue": "Continuar"
+    },
+    "individual_count": "Cuenta Individual",
     "grouping": "Agrupación",
     "packaging": "Empaque",
     "weight_based": "Basado en Peso",
@@ -41,63 +41,63 @@
     "electronic": "Electrónico",
     "packaging_dimensions": "Dimensiones del Empaque",
     "miscellaneous": "Misceláneo"
+  },
+  "products": {
+    "pageTitle": "Productos",
+    "description": "Administre sus productos y vea sus niveles de stock.",
+    "add": "Agregar Producto",
+    "lowStock": "Alerta de Bajo Stock",
+    "lowStockDescription": "¡Algunos productos están por debajo del límite de stock!",
+    "notFound": "No se encontraron productos",
+    "notFoundDescription": "No hay productos disponibles para esta categoría.",
+    "export": "Exportar",
+    "all": "Todos",
+    "active": "Activo",
+    "draft": "Borrador",
+    "table": {
+      "name": "Nombre",
+      "status": "Estado",
+      "price": "Precio",
+      "quantity": "Cantidad en Stock",
+      "description": "Descripción",
+      "createdAt": "Creado el",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "showing": "Mostrando {{count}} productos"
     },
-    "products": {
-        "pageTitle": "Productos",
-        "description": "Administre sus productos y vea sus niveles de stock.",
-        "add": "Agregar Producto",
-        "lowStock": "Alerta de Bajo Stock",
-        "lowStockDescription": "¡Algunos productos están por debajo del límite de stock!",
-        "notFound": "No se encontraron productos",
-        "notFoundDescription": "No hay productos disponibles para esta categoría.",
-        "export": "Exportar",
-        "all": "Todos",
-        "active": "Activo",
-        "draft": "Borrador",
-        "table": {
-            "name": "Nombre",
-            "status": "Estado",
-            "price": "Precio",
-            "quantity": "Cantidad en Stock",
-            "description": "Descripción",
-            "createdAt": "Creado el",
-            "edit": "Editar",
-            "delete": "Eliminar",
-            "showing": "Mostrando {{count}} productos"
-        },
-        "filter": {
-            "filter": "Filtrar",
-            "dateRange": "Rango de Fechas",
-            "priceRange": "Rango de Precios",
-            "clear": "Borrar Filtros"
-        },
-        "formDialog": {
-            "edit": "Editar Productos",
-            "add": "Agregar Nuevo Producto",
-            "editDetails": "Edite los detalles del producto a continuación.",
-            "enterDetails": "Ingrese los detalles del nuevo producto a continuación.",
-            "name": "Nombre",
-            "status": "Estado",
-            "price": "Precio",
-            "inStock": "Cantidad en Stock",
-            "lowStock": "Alerta de Bajo Stock",
-            "productUnit": "Unidad del Producto",
-            "description": "Descripción",
-            "cancel": "Cancelar",
-            "updateProduct": "Actualizar Producto",
-            "addProduct": "Agregar Producto",
-            "selectCategory" : "Seleccionar categoría",
-            "selectUnit" : "Seleccionar unidad",
-            "selectCategoryFirst" : "Primero seleccionar categoría",
-            "currency" : "Moneda"
-
-        },
-        "success": "¡Éxito!",
-        "message": "¡El producto se ha añadido con éxito!",
-        "categoryMessage": "¡La categoría se ha añadido con éxito!",
-        "productDelete": "¡Producto eliminado con éxito!"
+    "filter": {
+      "filter": "Filtrar",
+      "dateRange": "Rango de Fechas",
+      "priceRange": "Rango de Precios",
+      "clear": "Borrar Filtros"
     },
-    "units": {
+    "formDialog": {
+      "edit": "Editar Productos",
+      "add": "Agregar Nuevo Producto",
+      "editDetails": "Edite los detalles del producto a continuación.",
+      "enterDetails": "Ingrese los detalles del nuevo producto a continuación.",
+      "name": "Nombre",
+      "status": "Estado",
+      "selectStatus": "Seleccionar Estado",
+      "price": "Precio",
+      "inStock": "Cantidad en Stock",
+      "lowStock": "Alerta de Bajo Stock",
+      "productUnit": "Unidad del Producto",
+      "description": "Descripción",
+      "cancel": "Cancelar",
+      "updateProduct": "Actualizar Producto",
+      "addProduct": "Agregar Producto",
+      "selectCategory": "Seleccionar categoría",
+      "selectUnit": "Seleccionar unidad",
+      "selectCategoryFirst": "Primero seleccionar categoría",
+      "currency": "Moneda"
+    },
+    "success": "¡Éxito!",
+    "message": "¡El producto se ha añadido con éxito!",
+    "categoryMessage": "¡La categoría se ha añadido con éxito!",
+    "productDelete": "¡Producto eliminado con éxito!"
+  },
+  "units": {
     "PCS": "Pieza (PCS)",
     "EA": "Cada (EA)",
     "UN": "Unidad (UN)",

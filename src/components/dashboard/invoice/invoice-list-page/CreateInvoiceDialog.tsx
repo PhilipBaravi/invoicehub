@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -7,16 +7,22 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle
+  AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useTranslation } from 'react-i18next';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useTranslation } from "react-i18next";
 
 interface CreateInvoiceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  newInvoiceCurrency: 'USD' | 'EUR' | 'GEL';
-  setNewInvoiceCurrency: (currency: 'USD' | 'EUR' | 'GEL') => void;
+  newInvoiceCurrency: "USD" | "EUR" | "GEL";
+  setNewInvoiceCurrency: (currency: "USD" | "EUR" | "GEL") => void;
   onConfirm: () => void;
 }
 
@@ -25,32 +31,41 @@ const CreateInvoiceDialog: FC<CreateInvoiceDialogProps> = ({
   onOpenChange,
   newInvoiceCurrency,
   setNewInvoiceCurrency,
-  onConfirm
+  onConfirm,
 }) => {
-  const { t } = useTranslation('invoices');
+  const { t } = useTranslation("invoices");
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{t('invoiceList.dialog.chooseCurrencyTitle')}</AlertDialogTitle>
+          <AlertDialogTitle>{t("invoiceList.dialog.title")}</AlertDialogTitle>
           <AlertDialogDescription>
-            {t('invoiceList.dialog.chooseCurrencyDescription')}
+            {t("invoiceList.dialog.description")}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <Select value={newInvoiceCurrency} onValueChange={(val) => setNewInvoiceCurrency(val as 'USD' | 'EUR' | 'GEL')}>
+        <Select
+          value={newInvoiceCurrency}
+          onValueChange={(val) =>
+            setNewInvoiceCurrency(val as "USD" | "EUR" | "GEL")
+          }
+        >
           <SelectTrigger className="w-full mt-4">
-            <SelectValue placeholder={t('invoiceList.dialog.selectCurrency')} />
+            <SelectValue placeholder={t("invoiceList.dialog.select")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="USD">USD</SelectItem>
-            <SelectItem value="EUR">EUR</SelectItem>
-            <SelectItem value="GEL">GEL</SelectItem>
+            <SelectItem value="USD">{t("invoiceList.dialog.USD")}</SelectItem>
+            <SelectItem value="EUR">{t("invoiceList.dialog.EUR")}</SelectItem>
+            <SelectItem value="GEL">{t("invoiceList.dialog.GEL")}</SelectItem>
           </SelectContent>
         </Select>
         <AlertDialogFooter className="mt-4">
-          <AlertDialogCancel onClick={() => onOpenChange(false)}>{t('invoiceList.dialog.cancel')}</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>{t('invoiceList.dialog.continue')}</AlertDialogAction>
+          <AlertDialogCancel onClick={() => onOpenChange(false)}>
+            {t("invoiceList.dialog.cancel")}
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>
+            {t("invoiceList.dialog.continue")}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,60 +1,84 @@
 {
-    "pageTitle": "Lista de Empleados",
-    "table": {
-        "name": "Nombre",
-        "email": "Correo Electrónico",
-        "password": "Contraseña",
-        "phone": "Teléfono",
-        "role": "Rol",
-        "dateOfEmployment": "Fecha de contratación",
-        "status": "Estado",
-        "actions": "Acciones",
-        "delete": "Eliminar",
-        "edit": "Editar"
-    },
-    "pagination": {
-        "showingEntries": "Mostrando {{start}} a {{end}} de {{total}} entradas",
-        "previous": "Anterior",
-        "next": "Siguiente"
-    },
-    "searchAndFilter": {
-        "searchPlaceholder": "Buscar...",
-        "filterBy": "Filtrar Por",
-        "rowsPerPage": "Filas por página",
-        "rows": "filas"
-    },
-    "filterOptions": {
-        "firstName": "Nombre",
-        "lastName": "Apellido",
-        "username": "Correo Electrónico",
-        "phone": "Teléfono",
-        "role": "Rol",
-        "status": "Estado"
-    },
-    "addValidation": {
-        "email": "El correo electrónico es obligatorio.",
-        "password": "La contraseña es obligatoria.",
-        "firstName": "El nombre es obligatorio.",
-        "lastName": "El apellido es obligatorio.",
-        "phone": "Número de teléfono inválido para el país seleccionado."
-    },
-    "addEmployee": {
-        "addEmployee": "Agregar Empleado",
-        "addNewEmployee": "Agregar Nuevo Empleado",
-        "details": "Ingrese los detalles del nuevo empleado a continuación.",
-        "email": "Correo Electrónico",
-        "password": "Contraseña",
-        "firstName": "Nombre",
-        "lastName": "Apellido",
-        "role": "Rol",
-        "selectRole": "Seleccionar rol",
-        "dateOfEmployment": "Fecha de Contratación",
-        "pickADate": "Elija una fecha",
-        "error": "Falló.",
-        "errorAdding": "Error al agregar empleado.",
-        "success": "¡Éxito!",
-        "successMessage": "¡Empleado agregado exitosamente!",
-        "deleteError": "Error al eliminar empleado.",
-        "deleteSuccess": "¡Empleado eliminado exitosamente!"
+  "pageTitle": "Lista de Empleados",
+  "success": "¡Éxito!",
+  "error": "¡Falló!",
+  "table": {
+    "name": "Nombre",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "phone": "Teléfono",
+    "role": "Rol",
+    "dateOfEmployment": "Fecha de Contratación",
+    "status": "Estado",
+    "actions": "Acciones",
+    "delete": "Eliminar",
+    "edit": "Editar"
+  },
+  "pagination": {
+    "showingEntries": "Mostrando {{start}} a {{end}} de {{total}} entradas",
+    "previous": "Anterior",
+    "next": "Siguiente"
+  },
+  "searchAndFilter": {
+    "searchPlaceholder": "Buscar...",
+    "filterBy": "Filtrar por",
+    "rowsPerPage": "Filas por página",
+    "rows": "filas"
+  },
+  "filterOptions": {
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "username": "Correo Electrónico",
+    "phone": "Teléfono",
+    "role": "Rol",
+    "status": "Estado"
+  },
+  "addValidation": {
+    "email": "El correo electrónico es obligatorio.",
+    "password": "La contraseña es obligatoria.",
+    "firstName": "El nombre es obligatorio.",
+    "lastName": "El apellido es obligatorio.",
+    "phone": "Número de teléfono inválido para el país seleccionado."
+  },
+  "addEmployee": {
+    "addEmployee": "Agregar Empleado",
+    "addNewEmployee": "Agregar Nuevo Empleado",
+    "details": "Ingrese los detalles del nuevo empleado a continuación.",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "role": "Rol",
+    "selectRole": "Seleccionar Rol",
+    "dateOfEmployment": "Fecha de Contratación",
+    "pickADate": "Seleccionar Fecha",
+    "error": "Falló.",
+    "errorAdding": "Error al agregar empleado.",
+    "success": "¡Éxito!",
+    "successMessage": "¡Empleado agregado con éxito!",
+    "deleteError": "Error al eliminar empleado.",
+    "deleteSuccess": "Empleado eliminado con éxito."
+  },
+  "edit": {
+    "title": "Editar Empleado",
+    "titleDescription": "Edite los detalles del empleado a continuación.",
+    "email": "Correo Electrónico",
+    "password": "Contraseña",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "selectCountry": "Seleccionar País",
+    "phone": "Teléfono",
+    "role": "Rol",
+    "selectRole": "Seleccionar Rol",
+    "dateOfEmployment": "Fecha de Contratación",
+    "pickDate": "Seleccionar Fecha",
+    "save": "Guardar Cambios",
+    "errors": {
+      "firstName": "El nombre es obligatorio.",
+      "lastName": "El apellido es obligatorio.",
+      "phone": "Número de teléfono inválido.",
+      "updateError": "Error al actualizar empleado.",
+      "updateSuccess": "Empleado actualizado con éxito."
     }
+  }
 }

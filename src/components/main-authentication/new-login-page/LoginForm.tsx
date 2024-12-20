@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { useKeycloak } from '@react-keycloak/web';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import GoogleIcon from '../GoogleIcon';
-import AppleIcon from '../AppleIcon';
-import { useTranslation } from 'react-i18next';
-import { useToast } from '@/hooks/use-toast';
-import { directLogin } from '@/utils/keycloak';
+import { useState } from "react";
+import { useKeycloak } from "@react-keycloak/web";
+import { Link, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import GoogleIcon from "../GoogleIcon";
+import AppleIcon from "../AppleIcon";
+import { useTranslation } from "react-i18next";
+import { useToast } from "@/hooks/use-toast";
+import { directLogin } from "../../../utils/keycloak";
 
 const LoginForm = () => {
   const { t } = useTranslation();
-  const [loginEmail, setLoginEmail] = useState<string>('');
-  const [loginPassword, setLoginPassword] = useState<string>('');
+  const [loginEmail, setLoginEmail] = useState<string>("");
+  const [loginPassword, setLoginPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const LoginForm = () => {
 
   const handleDirectLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!loginEmail || !loginPassword) {
       toast({
         title: "Error",
@@ -42,10 +42,10 @@ const LoginForm = () => {
           description: "Successfully logged in!",
           duration: 3000,
         });
-        navigate('/dashboard');
+        navigate("/dashboard");
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       toast({
         title: "Error",
         description: "Invalid username or password",
@@ -57,19 +57,21 @@ const LoginForm = () => {
     }
   };
 
-  const handleSocialLogin = (provider: 'google' | 'apple') => {
-    keycloak.login({
-      idpHint: provider,
-      redirectUri: `${window.location.origin}/dashboard`,
-    }).catch((error) => {
-      console.error(`${provider} login error:`, error);
-      toast({
-        title: "Error",
-        description: `Failed to login with ${provider}. Please try again.`,
-        variant: "destructive",
-        duration: 3000,
+  const handleSocialLogin = (provider: "google" | "apple") => {
+    keycloak
+      .login({
+        idpHint: provider,
+        redirectUri: `${window.location.origin}/dashboard`,
+      })
+      .catch((error) => {
+        console.error(`${provider} login error:`, error);
+        toast({
+          title: "Error",
+          description: `Failed to login with ${provider}. Please try again.`,
+          variant: "destructive",
+          duration: 3000,
+        });
       });
-    });
   };
 
   return (
@@ -77,7 +79,7 @@ const LoginForm = () => {
       <form onSubmit={handleDirectLogin} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-1">
-            {t('loginForm.email')}
+            {t("loginForm.email")}
           </label>
           <Input
             id="email"
@@ -91,7 +93,7 @@ const LoginForm = () => {
         </div>
         <div>
           <label htmlFor="password" className="block text-sm font-medium mb-1">
-            {t('loginForm.password')}
+            {t("loginForm.password")}
           </label>
           <Input
             id="password"
@@ -110,47 +112,43 @@ const LoginForm = () => {
               htmlFor="terms"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 underline cursor-pointer"
             >
-              {t('loginForm.privacyPolicy')}
+              {t("loginForm.privacyPolicy")}
             </label>
           </Link>
         </div>
-        <Button 
-          type="submit" 
-          className="w-full"
-          disabled={isLoading}
-        >
-          {isLoading ? t('loginForm.loggingIn') : t('loginForm.loginBtn')}
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? t("loginForm.login") : t("loginForm.loginBtn")}
         </Button>
       </form>
 
       <div className="mt-6 pb-6 text-center text-sm">
-        {t('loginForm.continueWith')}
+        {t("loginForm.continueWith")}
       </div>
 
-      <Button 
+      <Button
         type="button"
-        className="w-full mb-4" 
-        onClick={() => handleSocialLogin('google')}
+        className="w-full mb-4"
+        onClick={() => handleSocialLogin("google")}
         disabled={isLoading}
       >
         <GoogleIcon />
-        {t('loginForm.loginGoogle')}
+        {t("loginForm.loginGoogle")}
       </Button>
-      
-      <Button 
+
+      <Button
         type="button"
         className="w-full"
-        onClick={() => handleSocialLogin('apple')}
+        onClick={() => handleSocialLogin("apple")}
         disabled={isLoading}
       >
         <AppleIcon />
-        {t('loginForm.loginApple')}
+        {t("loginForm.loginApple")}
       </Button>
 
       <p className="mt-6 text-center text-xs">
-        {t('loginForm.haveAnAccount')}{' '}
+        {t("loginForm.haveAnAccount")}{" "}
         <Link to="/register" className="underline">
-          {t('loginForm.signUp')}
+          {t("loginForm.signUp")}
         </Link>
       </p>
     </>

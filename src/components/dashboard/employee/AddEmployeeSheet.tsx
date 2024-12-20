@@ -1,227 +1,239 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  CountryCode,
-  getCountryCallingCode,
-  isValidPhoneNumber,
-} from 'libphonenumber-js';
-import countryList from '@/components/account-details/profile-form/CountryCodes';
-import { Employee } from './employeeTypes';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
-import { useKeycloak } from '@react-keycloak/web';
-import { useTranslation } from 'react-i18next';
-import { useToast } from '@/hooks/use-toast';
+} from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  CountryCode,
+  getCountryCallingCode,
+  isValidPhoneNumber,
+} from "libphonenumber-js";
+import countryList from "@/components/account-details/profile-form/CountryCodes";
+import { Employee } from "./employeeTypes";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { useKeycloak } from "@react-keycloak/web";
+import { useTranslation } from "react-i18next";
+import { useToast } from "@/hooks/use-toast";
 
-// Types for errors
 type EmployeeErrors = {
   username?: string;
-  password?: string;
   firstName?: string;
   lastName?: string;
   phone?: string;
+  password?: string;
 };
 
-export default function AddEmployeeSheet({
+export default function EditEmployeeSheet({
   isOpen,
   onOpenChange,
+  employee,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  employee: Employee;
 }) {
   const { keycloak } = useKeycloak();
-  const [newEmployee, setNewEmployee] = useState<Omit<Employee, 'id'>>({
-    username: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
-    role: { description: 'Employee' },
-    dateOfEmployment: new Date(),
-    status: 'INACTIVE',
-  });
-
-  const { t } = useTranslation('employees')
-  const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
-  const [errors, setErrors] = useState<EmployeeErrors>({});
+  const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>("US");
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
+  const [errors, setErrors] = useState<EmployeeErrors>({});
+  const { t } = useTranslation("employees");
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (isOpen) {
+      setEditedEmployee(employee);
+    }
+  }, [isOpen, employee]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewEmployee((prev) => ({ ...prev, [name]: value }));
+    setEditedEmployee((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = () => {
+    const newErrors: EmployeeErrors = {};
+    let valid = true;
+
+    if (!editedEmployee.firstName) {
+      newErrors.firstName = t("edit.errirs.firstName");
+      valid = false;
+    }
+
+    if (!editedEmployee.lastName) {
+      newErrors.lastName = t("edit.errors.lastName");
+      valid = false;
+    }
+
+    const fullPhoneNumber = phoneCode + editedEmployee.phone;
+    if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
+      newErrors.phone = t("edit.errors.phone");
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
 
-    let valid = true;
-    const newErrors: EmployeeErrors = {};
+    const fullPhoneNumber = phoneCode + editedEmployee.phone;
 
-    // Validation
-    if (!newEmployee.username) {
-      newErrors.username = t('addValidation.employee');
-      valid = false;
-    }
-    if (!newEmployee.password) {
-      newErrors.password = t('addValidation.password');
-      valid = false;
-    }
-    if (!newEmployee.firstName) {
-      newErrors.firstName = t('addValidation.firstName');
-      valid = false;
-    }
-    if (!newEmployee.lastName) {
-      newErrors.lastName = t('addValidation.lastName');
-      valid = false;
-    }
-    const fullPhoneNumber = phoneCode + newEmployee.phone;
-    if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
-      newErrors.phone = t('addValidation.phone');
-      valid = false;
-    }
-
-    if (!valid) {
-      setErrors(newErrors);
-      return;
-    }
-
-    const completeEmployeeData = {
-      ...newEmployee,
+    const updatedEmployeeData = {
+      ...editedEmployee,
       phone: fullPhoneNumber,
-      dateOfEmployment: newEmployee.dateOfEmployment.toISOString().split('T')[0],
+      dateOfEmployment: editedEmployee.dateOfEmployment
+        ? editedEmployee.dateOfEmployment.toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
     };
 
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/user/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-        body: JSON.stringify(completeEmployeeData),
-      });
+      const response = await fetch(
+        `https://api/invoicehub.space/api/v1/user/update/${employee.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+          body: JSON.stringify(updatedEmployeeData),
+        }
+      );
+
       if (!response.ok) {
+        toast({
+          title: t("error"),
+          description: t("edit.errors.updateError"),
+          variant: "destructive",
+          duration: 3000,
+        });
         const errorData = await response.json();
         toast({
-          title: t('addEmployee.error'),
-          description: t('addEmployee.errorAdding'),
-          variant: 'destructive',
-          duration: 3000
-        })
-        console.error('Error adding employee:', errorData);
+          title: t("error"),
+          description: t("edit.errors.updateError"),
+          variant: "destructive",
+          duration: 3000,
+        });
+        console.error("Error updating employee:", errorData);
         return;
       }
 
+      // Close the sheet after successful update
       toast({
-        title: t('addEmployee.success'),
-        description: t('addEmployee.successMessage'),
-        variant: 'success',
-        duration: 3000
-      })
-      // Close the sheet and reset the form
-      onOpenChange(false);
-      setNewEmployee({
-        username: '',
-        password: '',
-        firstName: '',
-        lastName: '',
-        phone: '',
-        role: { description: 'Employee' },
-        dateOfEmployment: new Date(),
-        status: 'INACTIVE',
+        title: t("success"),
+        description: t("edit.errors.updateSuccess"),
+        variant: "success",
+        duration: 3000,
       });
-      setErrors({});
+      onOpenChange(false);
     } catch (error) {
-      console.error('Error adding employee:', error);
+      console.error("Error updating employee:", error);
     }
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetTrigger asChild>
-        <Button>{t('addEmployee.addEmployee')}</Button>
-      </SheetTrigger>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>{t('addEmployee.addNewEmployee')}</SheetTitle>
-          <SheetDescription>{t('addEmployee.details')}</SheetDescription>
+          <SheetTitle>{t("edit.title")}</SheetTitle>
+          <SheetDescription>{t("edit.titleDescription")}</SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} id='addEmployeeForm' className="space-y-4 mt-4">
+        <form
+          onSubmit={handleSubmit}
+          id="editEmployeeForm"
+          className="space-y-4 mt-4"
+        >
           <div>
-            <Label htmlFor="username">{t('addEmployee.email')}</Label>
+            <Label htmlFor="username">{t("edit.email")}</Label>
             <Input
               id="username"
               name="username"
-              type="email"
-              value={newEmployee.username}
+              value={editedEmployee.username}
               onChange={handleInputChange}
-              required
               autoComplete="email"
+              readOnly
             />
-            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username}</p>
+            )}
           </div>
           <div className="relative">
-            <Label htmlFor="password">{t('addEmployee.password')}</Label>
+            <Label htmlFor="password">{t("edit.password")}</Label>
             <Input
               id="password"
               name="password"
               type="password"
-              value={newEmployee.password}
+              value={editedEmployee.password}
               onChange={handleInputChange}
-              required
               autoComplete="new-password"
+              required
               className="pr-10"
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
           </div>
           <div>
-            <Label htmlFor="firstName">{t('addEmployee.firstName')}</Label>
+            <Label htmlFor="firstName">{t("edit.firstName")}</Label>
             <Input
               id="firstName"
               name="firstName"
-              value={newEmployee.firstName}
+              value={editedEmployee.firstName}
               onChange={handleInputChange}
-              required
               autoComplete="given-name"
+              required
             />
-            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+            {errors.firstName && (
+              <p className="text-red-500 text-sm">{errors.firstName}</p>
+            )}
           </div>
           <div>
-            <Label htmlFor="lastName">{t('addEmployee.lastName')}</Label>
+            <Label htmlFor="lastName">{t("edit.lastName")}</Label>
             <Input
               id="lastName"
               name="lastName"
-              value={newEmployee.lastName}
+              value={editedEmployee.lastName}
               onChange={handleInputChange}
-              required
               autoComplete="family-name"
+              required
             />
-            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+            {errors.lastName && (
+              <p className="text-red-500 text-sm">{errors.lastName}</p>
+            )}
           </div>
           <div className="flex space-x-2">
-            <Select onValueChange={(value) => setPhoneCountry(value as CountryCode)}>
+            <Select
+              onValueChange={(value) => setPhoneCountry(value as CountryCode)}
+            >
               <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder={countryList.find((c) => c.code === phoneCountry)?.name || 'Select country'} />
+                <SelectValue
+                  placeholder={
+                    countryList.find((c) => c.code === phoneCountry)?.name ||
+                    t("edit.selectCountry")
+                  }
+                />
               </SelectTrigger>
               <SelectContent>
                 {countryList.map((c) => (
@@ -231,28 +243,36 @@ export default function AddEmployeeSheet({
                 ))}
               </SelectContent>
             </Select>
-            <div className='flex flex-col items-center'>
+            <div className="flex flex-col">
               <Input
                 id="phone"
                 name="phone"
-                value={newEmployee.phone}
+                value={editedEmployee.phone}
                 onChange={handleInputChange}
                 placeholder={phoneCode}
-                className="w-full"
-                required
                 autoComplete="tel"
+                required
               />
-              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone}</p>
+              )}
             </div>
           </div>
           <div>
-            <Label htmlFor="role">{t('addEmployee.role')}</Label>
+            <Label htmlFor="role">{t("edit.role")}</Label>
             <Select
-              value={newEmployee.role.description}
-              onValueChange={(value) => setNewEmployee((prev) => ({ ...prev, role: { description: value as 'Admin' | 'Manager' | 'Employee' }}))}
+              value={editedEmployee.role.description}
+              onValueChange={(value) =>
+                setEditedEmployee((prev) => ({
+                  ...prev,
+                  role: {
+                    description: value as "Admin" | "Manager" | "Employee",
+                  },
+                }))
+              }
             >
-              <SelectTrigger id='role'>
-                <SelectValue placeholder={t('addEmployee.selectRole')} />
+              <SelectTrigger id="role">
+                <SelectValue placeholder={t("edit.selectRole")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Admin">Admin</SelectItem>
@@ -262,25 +282,37 @@ export default function AddEmployeeSheet({
             </Select>
           </div>
           <div>
-            <Label htmlFor="dateOfEmployment">{t('addEmployee.dateOfEmployment')}</Label>
+            <Label htmlFor="dateOfEmployment">
+              {t("edit.dateOfEmployment")}
+            </Label>
             <Popover>
-              <PopoverTrigger asChild id='dateOfEmployment'>
-                <Button variant="outline" className="w-full justify-start text-left font-normal">
+              <PopoverTrigger asChild id="dateOfEmployment">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {newEmployee.dateOfEmployment ? format(newEmployee.dateOfEmployment, 'PPP') : <span>{t('addEmployee.pirckADate')}</span>}
+                  {editedEmployee.dateOfEmployment
+                    ? format(editedEmployee.dateOfEmployment, "PPP")
+                    : t("edit.pickDate")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={newEmployee.dateOfEmployment}
-                  onSelect={(date) => setNewEmployee((prev) => ({ ...prev, dateOfEmployment: date || new Date() }))}
+                  selected={editedEmployee.dateOfEmployment}
+                  onSelect={(date) =>
+                    setEditedEmployee((prev) => ({
+                      ...prev,
+                      dateOfEmployment: date || new Date(),
+                    }))
+                  }
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
           </div>
-          <Button type="submit">{t('addEmployee.addEmployee')}</Button>
+          <Button type="submit">{t("edit.save")}</Button>
         </form>
       </SheetContent>
     </Sheet>
