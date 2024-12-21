@@ -1,33 +1,39 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   CountryCode,
   getCountryCallingCode,
   isValidPhoneNumber,
-} from 'libphonenumber-js';
-import countryList from '@/components/account-details/profile-form/CountryCodes';
-import { Employee } from './employeeTypes';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
-import { useKeycloak } from '@react-keycloak/web';
+} from "libphonenumber-js";
+import countryList from "@/components/account-details/profile-form/CountryCodes";
+import { Employee } from "./employeeTypes";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { useKeycloak } from "@react-keycloak/web";
+import { useTranslation } from "react-i18next";
+import { useToast } from "@/hooks/use-toast";
 
 type EmployeeErrors = {
   username?: string;
@@ -48,9 +54,11 @@ export default function EditEmployeeSheet({
 }) {
   const { keycloak } = useKeycloak();
   const [editedEmployee, setEditedEmployee] = useState<Employee>(employee);
-  const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>("US");
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
   const [errors, setErrors] = useState<EmployeeErrors>({});
+  const { t } = useTranslation("employees");
+  const { toast } = useToast();
 
   useEffect(() => {
     if (isOpen) {
@@ -68,18 +76,18 @@ export default function EditEmployeeSheet({
     let valid = true;
 
     if (!editedEmployee.firstName) {
-      newErrors.firstName = 'First name is required.';
+      newErrors.firstName = t("edit.errirs.firstName");
       valid = false;
     }
 
     if (!editedEmployee.lastName) {
-      newErrors.lastName = 'Last name is required.';
+      newErrors.lastName = t("edit.errors.lastName");
       valid = false;
     }
 
     const fullPhoneNumber = phoneCode + editedEmployee.phone;
     if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
-      newErrors.phone = 'Invalid phone number.';
+      newErrors.phone = t("edit.errors.phone");
       valid = false;
     }
 
@@ -97,17 +105,17 @@ export default function EditEmployeeSheet({
       ...editedEmployee,
       phone: fullPhoneNumber,
       dateOfEmployment: editedEmployee.dateOfEmployment
-        ? editedEmployee.dateOfEmployment.toISOString().split('T')[0]
-        : new Date().toISOString().split('T')[0],
+        ? editedEmployee.dateOfEmployment.toISOString().split("T")[0]
+        : new Date().toISOString().split("T")[0],
     };
 
     try {
       const response = await fetch(
         `https://api.invoicehub.space/api/v1/user/update/${employee.id}`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
           body: JSON.stringify(updatedEmployeeData),
@@ -115,15 +123,37 @@ export default function EditEmployeeSheet({
       );
 
       if (!response.ok) {
+        console.log(response);
+        console.log(updatedEmployeeData);
+        toast({
+          title: t("error"),
+          description: t("edit.errors.updateError"),
+          variant: "destructive",
+          duration: 3000,
+        });
+        const data = await response.json();
         const errorData = await response.json();
-        console.error('Error updating employee:', errorData);
+        console.log(data);
+        toast({
+          title: t("error"),
+          description: t("edit.errors.updateError"),
+          variant: "destructive",
+          duration: 3000,
+        });
+        console.error("Error updating employee:", errorData);
         return;
       }
 
       // Close the sheet after successful update
+      toast({
+        title: t("success"),
+        description: t("edit.errors.updateSuccess"),
+        variant: "success",
+        duration: 3000,
+      });
       onOpenChange(false);
     } catch (error) {
-      console.error('Error updating employee:', error);
+      console.error("Error updating employee:", error);
     }
   };
 
@@ -131,12 +161,16 @@ export default function EditEmployeeSheet({
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Edit Employee</SheetTitle>
-          <SheetDescription>Edit the details of the employee below.</SheetDescription>
+          <SheetTitle>{t("edit.title")}</SheetTitle>
+          <SheetDescription>{t("edit.titleDescription")}</SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit} id="editEmployeeForm" className="space-y-4 mt-4">
+        <form
+          onSubmit={handleSubmit}
+          id="editEmployeeForm"
+          className="space-y-4 mt-4"
+        >
           <div>
-            <Label htmlFor="username">Email</Label>
+            <Label htmlFor="username">{t("edit.email")}</Label>
             <Input
               id="username"
               name="username"
@@ -145,10 +179,12 @@ export default function EditEmployeeSheet({
               autoComplete="email"
               readOnly
             />
-            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+            {errors.username && (
+              <p className="text-red-500 text-sm">{errors.username}</p>
+            )}
           </div>
           <div className="relative">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("edit.password")}</Label>
             <Input
               id="password"
               name="password"
@@ -159,10 +195,12 @@ export default function EditEmployeeSheet({
               required
               className="pr-10"
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-red-500 text-sm">{errors.password}</p>
+            )}
           </div>
           <div>
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="firstName">{t("edit.firstName")}</Label>
             <Input
               id="firstName"
               name="firstName"
@@ -171,10 +209,12 @@ export default function EditEmployeeSheet({
               autoComplete="given-name"
               required
             />
-            {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName}</p>}
+            {errors.firstName && (
+              <p className="text-red-500 text-sm">{errors.firstName}</p>
+            )}
           </div>
           <div>
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor="lastName">{t("edit.lastName")}</Label>
             <Input
               id="lastName"
               name="lastName"
@@ -183,13 +223,20 @@ export default function EditEmployeeSheet({
               autoComplete="family-name"
               required
             />
-            {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName}</p>}
+            {errors.lastName && (
+              <p className="text-red-500 text-sm">{errors.lastName}</p>
+            )}
           </div>
           <div className="flex space-x-2">
-            <Select onValueChange={(value) => setPhoneCountry(value as CountryCode)}>
+            <Select
+              onValueChange={(value) => setPhoneCountry(value as CountryCode)}
+            >
               <SelectTrigger className="w-[120px]">
                 <SelectValue
-                  placeholder={countryList.find((c) => c.code === phoneCountry)?.name || 'Select country'}
+                  placeholder={
+                    countryList.find((c) => c.code === phoneCountry)?.name ||
+                    t("edit.selectCountry")
+                  }
                 />
               </SelectTrigger>
               <SelectContent>
@@ -210,22 +257,26 @@ export default function EditEmployeeSheet({
                 autoComplete="tel"
                 required
               />
-              {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone}</p>
+              )}
             </div>
           </div>
           <div>
-            <Label htmlFor="role">Role</Label>
+            <Label htmlFor="role">{t("edit.role")}</Label>
             <Select
               value={editedEmployee.role.description}
               onValueChange={(value) =>
                 setEditedEmployee((prev) => ({
                   ...prev,
-                  role: { description: value as 'Admin' | 'Manager' | 'Employee' },
+                  role: {
+                    description: value as "Admin" | "Manager" | "Employee",
+                  },
                 }))
               }
             >
               <SelectTrigger id="role">
-                <SelectValue placeholder="Select role" />
+                <SelectValue placeholder={t("edit.selectRole")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Admin">Admin</SelectItem>
@@ -235,14 +286,19 @@ export default function EditEmployeeSheet({
             </Select>
           </div>
           <div>
-            <Label htmlFor="dateOfEmployment">Date of Employment</Label>
+            <Label htmlFor="dateOfEmployment">
+              {t("edit.dateOfEmployment")}
+            </Label>
             <Popover>
               <PopoverTrigger asChild id="dateOfEmployment">
-                <Button variant="outline" className="w-full justify-start text-left font-normal">
+                <Button
+                  variant="outline"
+                  className="w-full justify-start text-left font-normal"
+                >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {editedEmployee.dateOfEmployment
-                    ? format(editedEmployee.dateOfEmployment, 'PPP')
-                    : 'Pick a date'}
+                    ? format(editedEmployee.dateOfEmployment, "PPP")
+                    : t("edit.pickDate")}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -260,7 +316,7 @@ export default function EditEmployeeSheet({
               </PopoverContent>
             </Popover>
           </div>
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit">{t("edit.save")}</Button>
         </form>
       </SheetContent>
     </Sheet>

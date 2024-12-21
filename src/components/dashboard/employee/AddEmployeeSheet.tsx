@@ -118,14 +118,17 @@ export default function AddEmployeeSheet({
     };
 
     try {
-      const response = await fetch("http://localhost:9090/api/v1/user/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-        body: JSON.stringify(completeEmployeeData),
-      });
+      const response = await fetch(
+        "https://api.invoicehub.space/api/v1/user/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+          body: JSON.stringify(completeEmployeeData),
+        }
+      );
       if (!response.ok) {
         const errorData = await response.json();
         toast({

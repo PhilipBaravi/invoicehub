@@ -1,6 +1,10 @@
 // Invoice status and type enums
-export type InvoiceStatus = 'AWAITING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'PAID';
-export type InvoiceTypeType = 'SALES' | 'PURCHASE';
+export type InvoiceStatus =
+  | "AWAITING_APPROVAL"
+  | "APPROVED"
+  | "REJECTED"
+  | "PAID";
+export type InvoiceTypeType = "SALES" | "PURCHASE";
 
 // Address interface
 export interface Address {
@@ -21,7 +25,7 @@ export interface ClientVendor {
   phone: string;
   website: string;
   email: string;
-  clientVendorType: 'CLIENT' | 'VENDOR';
+  clientVendorType: "CLIENT" | "VENDOR";
   address: Address;
 }
 
@@ -50,7 +54,7 @@ export interface Product {
   quantityInStock: number;
   lowLimitAlert: number;
   price: number;
-  currency: string; // added currency field
+  currency: "USD" | "EUR" | "GEL"; // updated to specific currencies
   createdAt: string;
   productUnit: string;
   status: string;
@@ -72,7 +76,7 @@ export interface InvoiceProduct {
 
 // Invoice interface
 export interface Invoice {
-  currency: string;
+  currency: "USD" | "EUR" | "GEL"; // updated to specific currencies
   id: number;
   invoiceNo: string;
   invoiceStatus: InvoiceStatus;

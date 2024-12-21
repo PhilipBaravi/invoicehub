@@ -1,28 +1,24 @@
-import React, { useState, useRef, FC, useEffect, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
+import React, { useState, useRef, FC, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { useTheme } from '../layout/ThemeProvider';
-import { useKeycloak } from '@react-keycloak/web';
-import LineItems from './LineItems';
-import ClientSelector from './ClientSelector';
-import InvoiceDetails from './InvoiceDetails';
-import Totals from './Totals';
-import Signatures from './Signatures';
-import Attachments from './Attachments';
-import TaxDialog from './TaxDialog';
-import LogoUploader from './LogoUploader';
-import { Separator } from '@/components/ui/separator';
-import {
-  Alert,
-  AlertTitle,
-  AlertDescription,
-} from '@/components/ui/alert';
+} from "@/components/ui/card";
+import { useTheme } from "../layout/ThemeProvider";
+import { useKeycloak } from "@react-keycloak/web";
+import LineItems from "./LineItems";
+import ClientSelector from "./ClientSelector";
+import InvoiceDetails from "./InvoiceDetails";
+import Totals from "./Totals";
+import Signatures from "./Signatures";
+import Attachments from "./Attachments";
+import TaxDialog from "./TaxDialog";
+import LogoUploader from "./LogoUploader";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -30,7 +26,7 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogDescription,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   LineItem,
   Invoice,
@@ -38,34 +34,36 @@ import {
   BusinessInfo,
   Category,
   Product,
-} from './invoice-types';
-import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
+} from "./invoice-types";
+import { useTranslation } from "react-i18next";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
+import { useCurrencyRates } from "@/hooks/useCurrencyRates";
 
-const currencies = {
-  USD: { symbol: "$", rate: 1 },
-  EUR: { symbol: "€", rate: 0.92 },
-  GEL: { symbol: "₾", rate: 2.65 },
+const symbols: { [key: string]: string } = {
+  USD: "$",
+  EUR: "€",
+  GEL: "₾",
 };
 
 const InvoiceComponent: FC = () => {
   const [invoice, setInvoice] = useState<Invoice>({
     id: 0,
-    invoiceNo: '',
-    invoiceStatus: 'AWAITING_APPROVAL',
-    invoiceType: 'SALES',
+    invoiceNo: "",
+    invoiceStatus: "AWAITING_APPROVAL",
+    invoiceType: "SALES",
     dateOfIssue: null,
     dueDate: new Date(),
-    paymentTerms: '',
-    notes: '',
+    paymentTerms: "",
+    notes: "",
     clientVendor: null,
     price: 0,
     tax: 0,
     total: 0,
-    businessSignature: '',
-    clientSignature: '',
-    currency: ''
+    businessSignature: "",
+    clientSignature: "",
+    currency: "USD",
   });
 
   const [lineItems, setLineItems] = useState<LineItem[]>([]);
@@ -73,21 +71,27 @@ const InvoiceComponent: FC = () => {
   const [showTaxDialog, setShowTaxDialog] = useState(false);
   const [taxDetails, setTaxDetails] = useState({
     percentage: 0,
-    name: '',
-    number: '',
+    name: "",
+    number: "",
   });
-  const [businessSignatureImage, setBusinessSignatureImage] = useState<string | null>(null);
-  const [clientSignatureImage, setClientSignatureImage] = useState<string | null>(null);
+  const [businessSignatureImage, setBusinessSignatureImage] = useState<
+    string | null
+  >(null);
+  const [clientSignatureImage, setClientSignatureImage] = useState<
+    string | null
+  >(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const sigCanvasBusinessRef = useRef<any>(null);
   const sigCanvasClientRef = useRef<any>(null);
   const businessSignatureInputRef = useRef<HTMLInputElement>(null);
   const clientSignatureInputRef = useRef<HTMLInputElement>(null);
-  const [selectedClient, setSelectedClient] = useState<ClientVendor | null>(null);
+  const [selectedClient, setSelectedClient] = useState<ClientVendor | null>(
+    null
+  );
 
   const [logo, setLogo] = useState<string | null>(null);
   const [attachments, setAttachments] = useState<File[]>([]);
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
@@ -97,8 +101,9 @@ const InvoiceComponent: FC = () => {
 
   const [clients, setClients] = useState<ClientVendor[]>([]);
   const [isLoadingClients, setIsLoadingClients] = useState<boolean>(false);
-  const [businessInformation, setBusinessInformation] = useState<BusinessInfo | null>(null);
-  const { t } = useTranslation('invoices');
+  const [businessInformation, setBusinessInformation] =
+    useState<BusinessInfo | null>(null);
+  const { t } = useTranslation("invoices");
   const { toast } = useToast();
 
   const { id } = useParams<{ id: string }>();
@@ -106,8 +111,18 @@ const InvoiceComponent: FC = () => {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const selectedCurrency = (queryParams.get('currency') as keyof typeof currencies) || 'USD';
-  const { symbol, rate } = currencies[selectedCurrency];
+  const selectedCurrencyParam = queryParams.get("currency");
+  const selectedCurrency =
+    selectedCurrencyParam === "USD" ||
+    selectedCurrencyParam === "EUR" ||
+    selectedCurrencyParam === "GEL"
+      ? selectedCurrencyParam
+      : "USD";
+
+  const { rates } = useCurrencyRates(selectedCurrency);
+
+  const symbol = symbols[selectedCurrency] || "$";
+  const rate = rates ? rates[selectedCurrency] : 1;
 
   const updateTotals = useCallback((items: LineItem[]) => {
     const subtotal = items.reduce(
@@ -128,9 +143,10 @@ const InvoiceComponent: FC = () => {
   }, []);
 
   const fetchProductsAndCategories = useCallback(async () => {
+    if (!rates) return;
     try {
       const response = await fetch(
-        'https://api.invoicehub.space/api/v1/product/list',
+        "https://api.invoicehub.space/api/v1/product/list",
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -142,45 +158,48 @@ const InvoiceComponent: FC = () => {
       if (data.success) {
         const fetchedProducts: Product[] = data.data;
         const convertedProducts = fetchedProducts.map((product) => {
-          const productRate = currencies[product.currency as keyof typeof currencies].rate;
-          const convertedPrice = product.price * (rate / productRate);
+          const productRate = rates[product.currency];
+          const convertedPrice = productRate
+            ? product.price * (rate / productRate)
+            : product.price;
           return {
             ...product,
-            price: convertedPrice
-          }
+            price: convertedPrice,
+          };
         });
 
         setProducts(convertedProducts);
 
         const uniqueCategories = Array.from(
-          new Set(convertedProducts.map((product: Product) => product.category.id))
-        )
-          .map((id) =>
-            convertedProducts.find(
-              (product: Product) => product.category.id === id
-            )?.category
+          new Set(
+            convertedProducts.map((product: Product) => product.category.id)
           )
-          .filter(
-            (category): category is Category => category !== undefined
-          );
+        )
+          .map(
+            (id) =>
+              convertedProducts.find(
+                (product: Product) => product.category.id === id
+              )?.category
+          )
+          .filter((category): category is Category => category !== undefined);
 
         setCategories(uniqueCategories);
       } else {
         setErrorMessage(
-          `${t('invoice.errors.failedFetchProducts')} ${data.message}`
+          `${t("invoice.errors.failedFetchProducts")} ${data.message}`
         );
       }
     } catch (error) {
-      setErrorMessage(t('invoice.errors.failedFetchingProducts'));
+      setErrorMessage(t("invoice.errors.failedFetchingProducts"));
     }
-  }, [keycloak.token, t, rate]);
+  }, [keycloak.token, t, rate, rates]);
 
   useEffect(() => {
     const fetchClients = async () => {
       setIsLoadingClients(true);
       try {
         const response = await fetch(
-          'https://api.invoicehub.space/api/v1/clientVendor/list',
+          "https://api.invoicehub.space/api/v1/clientVendor/list",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -192,10 +211,12 @@ const InvoiceComponent: FC = () => {
         if (data.success) {
           setClients(data.data);
         } else {
-          setErrorMessage(`${t('invoice.errors.failedFetchClients')} ${data.message}`);
+          setErrorMessage(
+            `${t("invoice.errors.failedFetchClients")} ${data.message}`
+          );
         }
       } catch (error) {
-        setErrorMessage(t('invoice.errors.failedFetchingClients'));
+        setErrorMessage(t("invoice.errors.failedFetchingClients"));
       } finally {
         setIsLoadingClients(false);
       }
@@ -204,7 +225,7 @@ const InvoiceComponent: FC = () => {
     const fetchLoggedInCompanyDetails = async () => {
       try {
         const response = await fetch(
-          'https://api.invoicehub.space/api/v1/user/loggedInUser',
+          "https://api.invoicehub.space/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -216,10 +237,10 @@ const InvoiceComponent: FC = () => {
         if (data.success) {
           setBusinessInformation(data.data.company);
         } else {
-          setErrorMessage(t('invoice.errors.failedFetchBusiness'));
+          setErrorMessage(t("invoice.errors.failedFetchBusiness"));
         }
       } catch (error) {
-        setErrorMessage(t('invoice.errors.failedFetchBusiness'));
+        setErrorMessage(t("invoice.errors.failedFetchBusiness"));
       }
     };
 
@@ -250,23 +271,32 @@ const InvoiceComponent: FC = () => {
     const fetchInvoiceDetails = async () => {
       try {
         if (isEditMode) {
-          const response = await fetch('https://api.invoicehub.space/api/v1/invoice/list', {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          });
+          const response = await fetch(
+            "https://api.invoicehub.space/api/v1/invoice/list",
+            {
+              headers: {
+                Authorization: `Bearer ${keycloak.token}`,
+              },
+            }
+          );
           if (response.ok) {
             const data = await response.json();
             const invoices = data.data;
-            const fetchedInvoice = invoices.find((inv: any) => inv.id === Number(id));
+            const fetchedInvoice = invoices.find(
+              (inv: any) => inv.id === Number(id)
+            );
             if (fetchedInvoice) {
               setInvoice({
                 id: fetchedInvoice.id,
                 invoiceNo: fetchedInvoice.invoiceNo,
                 invoiceStatus: fetchedInvoice.invoiceStatus,
                 invoiceType: fetchedInvoice.invoiceType,
-                dateOfIssue: fetchedInvoice.dateOfIssue ? new Date(fetchedInvoice.dateOfIssue) : null,
-                dueDate: fetchedInvoice.dueDate ? new Date(fetchedInvoice.dueDate) : null,
+                dateOfIssue: fetchedInvoice.dateOfIssue
+                  ? new Date(fetchedInvoice.dateOfIssue)
+                  : null,
+                dueDate: fetchedInvoice.dueDate
+                  ? new Date(fetchedInvoice.dueDate)
+                  : null,
                 paymentTerms: fetchedInvoice.paymentTerms,
                 notes: fetchedInvoice.notes,
                 clientVendor: fetchedInvoice.clientVendor,
@@ -275,49 +305,67 @@ const InvoiceComponent: FC = () => {
                 total: fetchedInvoice.total,
                 businessSignature: fetchedInvoice.businessSignature,
                 clientSignature: fetchedInvoice.clientSignature,
-                currency: fetchedInvoice.currency
+                currency: fetchedInvoice.currency as "USD" | "EUR" | "GEL",
               });
 
               setSelectedClient(fetchedInvoice.clientVendor);
 
-              const lineItemsResponse = await fetch(`https://api.invoicehub.space/api/v1/invoice/product/list/${id}`, {
-                headers: {
-                  Authorization: `Bearer ${keycloak.token}`,
-                },
-              });
+              const lineItemsResponse = await fetch(
+                `https://api.invoicehub.space/api/v1/invoice/product/list/${id}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${keycloak.token}`,
+                  },
+                }
+              );
 
               if (lineItemsResponse.ok) {
                 const lineItemsData = await lineItemsResponse.json();
-                const fetchedLineItems = lineItemsData.data.map((item: any) => ({
-                  itemId: item.product.id,
-                  categoryId: item.product.category.id,
-                  name: item.product.name,
-                  description: item.product.description || '',
-                  price: item.price * (rate / currencies[item.product.currency as keyof typeof currencies].rate),
-                  quantity: item.quantity,
-                  tax: item.tax,
-                  maxQuantity: item.product.quantityInStock,
-                  error: '',
-                }));
-                setLineItems(fetchedLineItems);
-                updateTotals(fetchedLineItems);
+                if (rates) {
+                  const fetchedLineItems = lineItemsData.data.map(
+                    (item: any) => {
+                      const productRate = rates[item.product.currency];
+                      const convertedPrice = productRate
+                        ? item.price * (rate / productRate)
+                        : item.price;
+                      return {
+                        itemId: item.product.id,
+                        categoryId: item.product.category.id,
+                        name: item.product.name,
+                        description: item.product.description || "",
+                        price: convertedPrice,
+                        quantity: item.quantity,
+                        tax: item.tax,
+                        maxQuantity: item.product.quantityInStock,
+                        error: "",
+                      };
+                    }
+                  );
+                  setLineItems(fetchedLineItems);
+                  updateTotals(fetchedLineItems);
+                } else {
+                  setErrorMessage(t("invoice.errors.ratesUnavailable"));
+                }
               } else {
-                console.error('Failed to fetch line items');
+                console.error("Failed to fetch line items");
               }
             } else {
-              console.error('Invoice not found');
+              console.error("Invoice not found");
             }
           } else {
-            console.error('Failed to fetch invoice list');
+            console.error("Failed to fetch invoice list");
           }
         } else {
-          const response = await fetch('https://api.invoicehub.space/api/v1/invoice/generate', {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          });
+          const response = await fetch(
+            "https://api.invoicehub.space/api/v1/invoice/generate",
+            {
+              headers: {
+                Authorization: `Bearer ${keycloak.token}`,
+              },
+            }
+          );
           if (!response.ok) {
-            throw new Error('Failed to fetch invoice details');
+            throw new Error("Failed to fetch invoice details");
           }
           const data = await response.json();
           setInvoice((prevInvoice: any) => ({
@@ -327,17 +375,17 @@ const InvoiceComponent: FC = () => {
           }));
         }
       } catch (error) {
-        console.error('Error fetching invoice details:', error);
+        console.error("Error fetching invoice details:", error);
       }
     };
 
     if (keycloak.token) {
       fetchInvoiceDetails();
     }
-  }, [isEditMode, id, keycloak.token, updateTotals, rate]);
+  }, [isEditMode, id, keycloak.token, updateTotals, rate, rates, t]);
 
   const { theme } = useTheme();
-  const penColor = theme === 'dark' ? 'white' : 'black';
+  const penColor = theme === "dark" ? "white" : "black";
 
   const handleLogoUpload = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -359,13 +407,13 @@ const InvoiceComponent: FC = () => {
       {
         itemId: 0,
         categoryId: 0,
-        name: '',
-        description: '',
+        name: "",
+        description: "",
         price: 0,
         quantity: 1,
         tax: 0,
         maxQuantity: 0,
-        error: '',
+        error: "",
       },
     ]);
   }, []);
@@ -378,17 +426,17 @@ const InvoiceComponent: FC = () => {
             let updatedItem = {
               ...item,
               [field]:
-                field === 'price' ||
-                field === 'quantity' ||
-                field === 'itemId' ||
-                field === 'categoryId' ||
-                field === 'tax'
+                field === "price" ||
+                field === "quantity" ||
+                field === "itemId" ||
+                field === "categoryId" ||
+                field === "tax"
                   ? Number(value)
                   : value,
-              error: '',
+              error: "",
             };
 
-            if (field === 'quantity') {
+            if (field === "quantity") {
               const selectedProduct = products.find(
                 (product) => product.id === item.itemId
               );
@@ -396,10 +444,12 @@ const InvoiceComponent: FC = () => {
                 const maxQuantity = selectedProduct.quantityInStock;
                 if (Number(value) > maxQuantity) {
                   updatedItem.quantity = maxQuantity;
-                  updatedItem.error = `${t('invoice.errors.maximumQuantity')} ${maxQuantity}`;
+                  updatedItem.error = `${t(
+                    "invoice.errors.maximumQuantity"
+                  )} ${maxQuantity}`;
                 } else if (Number(value) < 1) {
                   updatedItem.quantity = 1;
-                  updatedItem.error = `${t('invoice.errors.minimumQuantity')}`;
+                  updatedItem.error = `${t("invoice.errors.minimumQuantity")}`;
                 }
               }
             }
@@ -451,7 +501,7 @@ const InvoiceComponent: FC = () => {
       });
       setShowTaxDialog(false);
       setCurrentItemIndex(null);
-      setTaxDetails({ percentage: 0, name: '', number: '' });
+      setTaxDetails({ percentage: 0, name: "", number: "" });
     }
   }, [currentItemIndex, taxDetails.percentage, updateTotals]);
 
@@ -466,12 +516,12 @@ const InvoiceComponent: FC = () => {
         const validFiles: File[] = [];
         const invalidFiles: string[] = [];
         const allowedTypes = [
-          'application/pdf',
-          'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'image/jpeg',
-          'image/png',
-          'image/gif',
+          "application/pdf",
+          "application/msword",
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "image/jpeg",
+          "image/png",
+          "image/gif",
         ];
 
         Array.from(files).forEach((file) => {
@@ -484,25 +534,25 @@ const InvoiceComponent: FC = () => {
 
         if (invalidFiles.length > 0) {
           toast({
-            title: t('invoice.error'),
-            description: `${t('invoice.errors.invalidFileTypes')} ${invalidFiles.join(
-              ', '
-            )}. ${t('invoice.errors.fileTypes')}`,
-            variant: 'destructive',
-            duration: 3000
-          })
+            title: t("invoice.error"),
+            description: `${t(
+              "invoice.errors.invalidFileTypes"
+            )} ${invalidFiles.join(", ")}. ${t("invoice.errors.fileTypes")}`,
+            variant: "destructive",
+            duration: 3000,
+          });
           setErrorMessage(
-            `${t('invoice.errors.invalidFileTypes')} ${invalidFiles.join(
-              ', '
-            )}. ${t('invoice.errors.fileTypes')}`
+            `${t("invoice.errors.invalidFileTypes")} ${invalidFiles.join(
+              ", "
+            )}. ${t("invoice.errors.fileTypes")}`
           );
         } else {
-          setErrorMessage('');
+          setErrorMessage("");
         }
 
         setAttachments((prev) => [...prev, ...validFiles]);
 
-        event.target.value = '';
+        event.target.value = "";
       }
     },
     [t, toast]
@@ -526,12 +576,12 @@ const InvoiceComponent: FC = () => {
                   itemId: selectedProduct.id,
                   categoryId: categoryId,
                   name: selectedProduct.name,
-                  description: selectedProduct.description || '',
+                  description: selectedProduct.description || "",
                   price: selectedProduct.price,
                   quantity: 1,
                   tax: 0,
                   maxQuantity: selectedProduct.quantityInStock,
-                  error: '',
+                  error: "",
                 }
               : item
           );
@@ -540,43 +590,38 @@ const InvoiceComponent: FC = () => {
         });
       } else {
         toast({
-          title: t('invoice.error'),
-          description: t('invoice.errors.productNotFound'),
-          variant: 'destructive',
-          duration: 3000
-        })
-        setErrorMessage(`${t('invoice.errors.productNotFound')}`);
+          title: t("invoice.error"),
+          description: t("invoice.errors.productNotFound"),
+          variant: "destructive",
+          duration: 3000,
+        });
+        setErrorMessage(`${t("invoice.errors.productNotFound")}`);
       }
     },
     [products, updateTotals, t, toast]
   );
 
-  const handleClearSignature = useCallback(
-    (type: 'business' | 'client') => {
-      if (type === 'business') {
-        sigCanvasBusinessRef.current?.clear();
-        setBusinessSignatureImage(null);
-        setInvoice((prev) => ({ ...prev, businessSignature: '' }));
-      } else {
-        sigCanvasClientRef.current?.clear();
-        setClientSignatureImage(null);
-        setInvoice((prev) => ({ ...prev, clientSignature: '' }));
-      }
-    },
-    []
-  );
+  const handleClearSignature = useCallback((type: "business" | "client") => {
+    if (type === "business") {
+      sigCanvasBusinessRef.current?.clear();
+      setBusinessSignatureImage(null);
+      setInvoice((prev) => ({ ...prev, businessSignature: "" }));
+    } else {
+      sigCanvasClientRef.current?.clear();
+      setClientSignatureImage(null);
+      setInvoice((prev) => ({ ...prev, clientSignature: "" }));
+    }
+  }, []);
 
-  const handleSaveSignature = useCallback((type: 'business' | 'client') => {
+  const handleSaveSignature = useCallback((type: "business" | "client") => {
     const signatureDataUrl =
-      type === 'business'
+      type === "business"
         ? sigCanvasBusinessRef.current
             ?.getTrimmedCanvas()
-            .toDataURL('image/png')
-        : sigCanvasClientRef.current
-            ?.getTrimmedCanvas()
-            .toDataURL('image/png');
+            .toDataURL("image/png")
+        : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL("image/png");
     if (signatureDataUrl) {
-      if (type === 'business') {
+      if (type === "business") {
         setBusinessSignatureImage(signatureDataUrl);
         setInvoice((prev) => ({
           ...prev,
@@ -595,14 +640,14 @@ const InvoiceComponent: FC = () => {
   const handleSignatureUpload = useCallback(
     (
       event: React.ChangeEvent<HTMLInputElement>,
-      type: 'business' | 'client'
+      type: "business" | "client"
     ) => {
       const file = event.target.files?.[0];
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
           const result = e.target?.result as string;
-          if (type === 'business') {
+          if (type === "business") {
             setBusinessSignatureImage(result);
             setInvoice((prev) => ({
               ...prev,
@@ -626,36 +671,36 @@ const InvoiceComponent: FC = () => {
 
   const handleSaveInvoice = useCallback(async () => {
     if (!selectedClient) {
-      setErrorMessage(t('invoice.errors.selectClient'));
+      setErrorMessage(t("invoice.errors.selectClient"));
       toast({
-        title: t('invoice.error'),
-        description: t('invoice.errors.selectClient'),
-        variant: 'destructive',
-        duration: 3000
-      })
+        title: t("invoice.error"),
+        description: t("invoice.errors.selectClient"),
+        variant: "destructive",
+        duration: 3000,
+      });
       return;
     }
 
     const hasErrors = lineItems.some((item) => item.error);
     if (hasErrors) {
-      setErrorMessage(t('invoice.errors.lineItems'));
+      setErrorMessage(t("invoice.errors.lineItems"));
       toast({
-        title: t('invoice.error'),
-        description: t('invoice.errors.lineItems'),
-        variant: 'destructive',
-        duration: 3000
-      })
+        title: t("invoice.error"),
+        description: t("invoice.errors.lineItems"),
+        variant: "destructive",
+        duration: 3000,
+      });
       return;
     }
 
     if (!invoice.notes || !invoice.paymentTerms) {
-      setErrorMessage(t('invoice.errors.notesTerms'));
+      setErrorMessage(t("invoice.errors.notesTerms"));
       toast({
-        title: t('invoice.error'),
-        description: t('invoice.errors.notesTerms'),
-        variant: 'destructive',
-        duration: 3000
-      })
+        title: t("invoice.error"),
+        description: t("invoice.errors.notesTerms"),
+        variant: "destructive",
+        duration: 3000,
+      });
       return;
     }
 
@@ -709,17 +754,17 @@ const InvoiceComponent: FC = () => {
         tax: invoice.tax,
         total: invoice.total,
         company: companyData,
-        currency: selectedCurrency // Add currency to the invoice data
+        currency: selectedCurrency, // Add currency to the invoice data
       };
 
       const response = await fetch(
         isEditMode
           ? `https://api.invoicehub.space/api/v1/invoice/update/${id}`
-          : 'https://api.invoicehub.space/api/v1/invoice/create',
+          : "https://api.invoicehub.space/api/v1/invoice/create",
         {
-          method: isEditMode ? 'PUT' : 'POST',
+          method: isEditMode ? "PUT" : "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
           body: JSON.stringify(invoiceData),
@@ -727,26 +772,26 @@ const InvoiceComponent: FC = () => {
       );
 
       if (!response.ok) {
-        if(isEditMode){
+        if (isEditMode) {
           toast({
-            title: t('invoice.error'),
-            description: t('invoice.errors.errorUpdating'),
-            variant: 'destructive',
-            duration: 3000
-          })
-        }else{
+            title: t("invoice.error"),
+            description: t("invoice.errors.errorUpdating"),
+            variant: "destructive",
+            duration: 3000,
+          });
+        } else {
           toast({
-            title: t('invoice.error'),
-            description: t('invoice.errors.errorAdding'),
-            variant: 'destructive',
-            duration: 3000
-          })
+            title: t("invoice.error"),
+            description: t("invoice.errors.errorAdding"),
+            variant: "destructive",
+            duration: 3000,
+          });
         }
         const errorResponse = await response.json();
         setErrorMessage(
-          `Server Error: ${errorResponse.message || 'Unknown error'}`
+          `Server Error: ${errorResponse.message || "Unknown error"}`
         );
-        throw new Error('Failed to create/update invoice');
+        throw new Error("Failed to create/update invoice");
       }
 
       const responseData = await response.json();
@@ -769,7 +814,7 @@ const InvoiceComponent: FC = () => {
           await fetch(
             `https://api.invoicehub.space/api/v1/invoice/remove/product/${item.id}`,
             {
-              method: 'DELETE',
+              method: "DELETE",
               headers: {
                 Authorization: `Bearer ${keycloak.token}`,
               },
@@ -782,7 +827,7 @@ const InvoiceComponent: FC = () => {
         const product = products.find((p) => p.id === item.itemId);
         if (!product) {
           setErrorMessage(`Product with ID ${item.itemId} not found.`);
-          throw new Error('Product not found');
+          throw new Error("Product not found");
         }
 
         const taxAmount = (item.price * item.quantity * item.tax) / 100;
@@ -799,9 +844,9 @@ const InvoiceComponent: FC = () => {
         const productResponse = await fetch(
           `https://api.invoicehub.space/api/v1/invoice/add/product/${invoiceId}`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               Authorization: `Bearer ${keycloak.token}`,
             },
             body: JSON.stringify(lineItemData),
@@ -810,18 +855,18 @@ const InvoiceComponent: FC = () => {
 
         if (!productResponse.ok) {
           toast({
-            title: t('invoice.error'),
-            description: t('invoice.errors.errorAddingProduct'),
-            variant: 'destructive',
-            duration: 3000
-          })
+            title: t("invoice.error"),
+            description: t("invoice.errors.errorAddingProduct"),
+            variant: "destructive",
+            duration: 3000,
+          });
           const errorResponse = await productResponse.json();
           setErrorMessage(
-            `${t('invoice.errors.errorAddingProduct')} ${
-              errorResponse.message || 'Unknown error'
+            `${t("invoice.errors.errorAddingProduct")} ${
+              errorResponse.message || "Unknown error"
             }`
           );
-          throw new Error('Failed to add product to invoice');
+          throw new Error("Failed to add product to invoice");
         }
       }
 
@@ -830,22 +875,22 @@ const InvoiceComponent: FC = () => {
       setShowSuccessDialog(true);
 
       toast({
-        title: t('invoice.success'),
+        title: t("invoice.success"),
         description: isEditMode
-          ? t('invoice.updateSuccess')
-          : t('invoice.saveSuccess'),
-        variant: 'success',
+          ? t("invoice.updateSuccess")
+          : t("invoice.saveSuccess"),
+        variant: "success",
         duration: 3000,
       });
     } catch (error) {
       toast({
-        title: t('invoice.error'),
-        description: t('invoice.errors.errorSavingInvoice'),
-        variant: 'destructive',
-        duration: 3000
-      })
+        title: t("invoice.error"),
+        description: t("invoice.errors.errorSavingInvoice"),
+        variant: "destructive",
+        duration: 3000,
+      });
       console.error(error);
-      setErrorMessage(t('invoice.errors.errorSavingInvoice'));
+      setErrorMessage(t("invoice.errors.errorSavingInvoice"));
     }
   }, [
     invoice,
@@ -859,163 +904,167 @@ const InvoiceComponent: FC = () => {
     t,
     businessInformation,
     selectedCurrency,
-    toast
+    toast,
   ]);
 
   return (
-    <div className="p-2 sm:p-4">
-      <Card className="w-full max-w-5xl mx-auto">
-        <CardHeader>
-          <CardTitle className="text-xl sm:text-2xl font-bold">
-            {isEditMode ? t('invoiceList.editInvoice') : t('invoice.newInvoice')}
+    <div className="p-2 sm:p-4 min-h-screen bg-stone-50 dark:bg-stone-900">
+      <Card className="w-full max-w-5xl mx-auto border-stone-200 dark:border-stone-700 shadow-lg">
+        <CardHeader className="border-b border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800">
+          <CardTitle className="text-xl sm:text-2xl font-bold text-stone-800 dark:text-stone-100">
+            {isEditMode
+              ? t("invoiceList.editInvoice")
+              : t("invoice.newInvoice")}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4 sm:space-y-6 lg:space-y-8">
-          <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
-            <div className="w-full lg:w-1/2">
-              <InvoiceDetails invoice={invoice} setInvoice={setInvoice} isEditMode={isEditMode} />
+        <CardContent className="space-y-8 p-6 bg-white dark:bg-stone-800">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col lg:flex-row justify-between items-start gap-6"
+          >
+            <div className="w-full lg:w-1/2 bg-stone-50 dark:bg-stone-900 rounded-lg p-4">
+              <InvoiceDetails
+                invoice={invoice}
+                setInvoice={setInvoice}
+                isEditMode={isEditMode}
+              />
             </div>
             <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
               <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
             </div>
-          </div>    
-          <Separator />
-          <LineItems
-            lineItems={lineItems}
-            handleAddLineItem={handleAddLineItem}
-            handleLineItemChange={handleLineItemChange}
-            handleRemoveLineItem={handleRemoveLineItem}
-            handleAddTaxes={handleAddTaxes}
-            handleItemSelect={handleItemSelect}
-            categories={categories}
-            products={products}
-            isEditMode={isEditMode}
-            currencySymbol={symbol}
-          />
-          <Separator />
-          <Totals 
-            invoice={{
-              ...invoice,
-              price: invoice.price * rate,
-              tax: invoice.tax * rate,
-              total: invoice.total * rate
-            }} 
-            setInvoice={setInvoice} 
-            currencySymbol={symbol} 
-          />
-          <div className="flex flex-col lg:flex-row justify-between items-start gap-6">
-            <div className="w-full lg:w-1/2">
-              <ClientSelector
-                selectedClient={selectedClient}
-                handleClientSelect={handleClientSelect}
-                clients={clients}
-              />
-            </div>
-            <div className="w-full lg:w-1/2 text-left lg:text-right">
-              {businessInformation ? (
-                <div className="space-y-2">
-                  <h2 className="text-lg sm:text-xl font-bold">
-                    {t('invoice.companyName')} {businessInformation.title}
-                  </h2>
-                  <p className="font-[600]">{t('invoice.phone')} {businessInformation.phone}</p>
-                  <p>
-                    <span className="text-stone-950 dark:text-stone-50 font-[600]">
-                      {t('invoice.website')}
-                    </span>
-                    <span className="font-[600] text-blue-700">
-                      {' '}
-                      {businessInformation.website}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="text-stone-950 dark:text-stone-50 font-[600]">
-                      {t('invoice.email')}
-                    </span>
-                    <span className="font-[600] text-blue-700">
-                      {' '}
-                      {businessInformation.email}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-[600]">{t('invoice.country')}</span>
-                    <span className="text-stone-950 dark:text-stone-50 font-[600]">
-                      {' '}
-                      {businessInformation.address.country}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-[600]">{t('invoice.city')}</span>
-                    <span className="text-stone-950 dark:text-stone-50 font-[600]">
-                      {' '}
-                      {businessInformation.address.city}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-[600]">{t('invoice.address')}</span>
-                    <span className="text-stone-950 dark:text-stone-50 font-[600]">
-                      {' '}
-                      {businessInformation.address.addressLine1}
-                    </span>
-                  </p>
-                </div>
-              ) : (
-                <div>{t('invoice.loadingData')}</div>
-              )}
-            </div>
-          </div>
-          <Separator />
-          <Signatures
-            invoice={invoice}
-            penColor={penColor}
-            sigCanvasBusinessRef={sigCanvasBusinessRef}
-            sigCanvasClientRef={sigCanvasClientRef}
-            businessSignatureImage={businessSignatureImage}
-            clientSignatureImage={clientSignatureImage}
-            handleClearSignature={handleClearSignature}
-            handleSaveSignature={handleSaveSignature}
-            handleSignatureUpload={handleSignatureUpload}
-            businessSignatureInputRef={businessSignatureInputRef}
-            clientSignatureInputRef={clientSignatureInputRef}
-          />
-          <Separator />
-          <Attachments
-            attachments={attachments}
-            handleAttachment={handleAttachment}
-            fileInputRef={fileInputRef}
-            handleFileUpload={handleFileUpload}
-            handleRemoveAttachment={handleRemoveAttachment}
-          />
+          </motion.div>
+
+          <Separator className="bg-stone-200 dark:bg-stone-700" />
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
+          >
+            <LineItems
+              lineItems={lineItems}
+              handleAddLineItem={handleAddLineItem}
+              handleLineItemChange={handleLineItemChange}
+              handleRemoveLineItem={handleRemoveLineItem}
+              handleAddTaxes={handleAddTaxes}
+              handleItemSelect={handleItemSelect}
+              categories={categories}
+              products={products}
+              isEditMode={isEditMode}
+              currencySymbol={symbol}
+            />
+          </motion.div>
+
+          <Separator className="bg-stone-200 dark:bg-stone-700" />
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
+          >
+            <Totals
+              invoice={invoice}
+              setInvoice={setInvoice}
+              currencySymbol={symbol}
+              rate={rate}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-stone-50 dark:bg-stone-900 rounded-lg"
+          >
+            <Card className="border-stone-200 dark:border-stone-700">
+              <CardHeader className="border-b border-stone-200 dark:border-stone-700">
+                <CardTitle className="text-stone-800 dark:text-stone-100">
+                  {t("invoice.clientSelector.title")}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <ClientSelector
+                  selectedClient={selectedClient}
+                  handleClientSelect={handleClientSelect}
+                  clients={clients}
+                  businessInformation={businessInformation}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <Separator className="bg-stone-200 dark:bg-stone-700" />
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
+          >
+            <Signatures
+              invoice={invoice}
+              penColor={penColor}
+              sigCanvasBusinessRef={sigCanvasBusinessRef}
+              sigCanvasClientRef={sigCanvasClientRef}
+              businessSignatureImage={businessSignatureImage}
+              clientSignatureImage={clientSignatureImage}
+              handleClearSignature={handleClearSignature}
+              handleSaveSignature={handleSaveSignature}
+              handleSignatureUpload={handleSignatureUpload}
+              businessSignatureInputRef={businessSignatureInputRef}
+              clientSignatureInputRef={clientSignatureInputRef}
+            />
+          </motion.div>
+
+          <Separator className="bg-stone-200 dark:bg-stone-700" />
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
+          >
+            <Attachments
+              attachments={attachments}
+              handleAttachment={handleAttachment}
+              fileInputRef={fileInputRef}
+              handleFileUpload={handleFileUpload}
+              handleRemoveAttachment={handleRemoveAttachment}
+            />
+          </motion.div>
+
           {errorMessage && (
             <Alert variant="destructive" className="mt-4">
-              <AlertTitle>{t('invoice.attachmentsError')}</AlertTitle>
+              <AlertTitle>{t("invoice.attachmentsError")}</AlertTitle>
               <AlertDescription>{errorMessage}</AlertDescription>
             </Alert>
           )}
+
           {isLoadingClients && (
-            <div className="mt-4">
-              <p>{t('invoice.loadingClients')}</p>
+            <div className="mt-4 text-stone-600 dark:text-stone-400">
+              <p>{t("invoice.loadingClients")}</p>
             </div>
           )}
         </CardContent>
-        <Separator />
-        
-        <CardFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-4">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/dashboard/invoices')}
-            className="w-full sm:w-auto"
+
+        <Separator className="bg-stone-200 dark:bg-stone-700" />
+
+        <CardFooter className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 p-6 bg-stone-50 dark:bg-stone-900">
+          <Button
+            variant="outline"
+            onClick={() => navigate("/dashboard/invoices")}
+            className="w-full sm:w-auto border-stone-300 dark:border-stone-600 hover:bg-stone-100 dark:hover:bg-stone-800"
           >
-            {t('invoice.cancel')}
+            {t("invoice.cancel")}
           </Button>
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Button 
+            <Button
               onClick={handleSaveInvoice}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto bg-stone-900 hover:bg-stone-800 dark:bg-stone-50 dark:hover:bg-stone-200 dark:text-stone-900"
             >
-              {isEditMode ? t('invoiceList.edit') : t('invoice.saveInvoice')}
+              {isEditMode ? t("invoiceList.edit") : t("invoice.saveInvoice")}
             </Button>
           </div>
         </CardFooter>
+
         <TaxDialog
           showTaxDialog={showTaxDialog}
           setShowTaxDialog={setShowTaxDialog}
@@ -1023,25 +1072,31 @@ const InvoiceComponent: FC = () => {
           setTaxDetails={setTaxDetails}
           applyTaxes={applyTaxes}
         />
-        <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+
+        <AlertDialog
+          open={showSuccessDialog}
+          onOpenChange={setShowSuccessDialog}
+        >
           <AlertDialogContent className="sm:max-w-[425px]">
             <AlertDialogHeader>
-              <AlertDialogTitle>{t('invoice.success')}</AlertDialogTitle>
+              <AlertDialogTitle className="text-stone-800 dark:text-stone-100">
+                {t("invoice.success")}
+              </AlertDialogTitle>
               <AlertDialogDescription>
                 {isEditMode
-                  ? t('invoice.updateSuccess')
-                  : t('invoice.saveSuccess')}
+                  ? t("invoice.updateSuccess")
+                  : t("invoice.saveSuccess")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <Button
                 onClick={() => {
                   setShowSuccessDialog(false);
-                  navigate('/dashboard/invoices');
+                  navigate("/dashboard/invoices");
                 }}
-                className="w-full sm:w-auto"
+                className="w-full sm:w-auto bg-stone-900 hover:bg-stone-800 dark:bg-stone-50 dark:hover:bg-stone-200 dark:text-stone-900"
               >
-                {t('invoiceList.dialog.continue')}
+                {t("invoiceList.dialog.continue")}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

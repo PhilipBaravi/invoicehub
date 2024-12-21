@@ -23,7 +23,7 @@ export const useCurrencyRates = (baseCurrency: string) => {
       try {
         setLoading(true);
         const response = await fetch(
-          `https://api/invoicehub.space/api/v1/dashboard/exchangeRates/${baseCurrency}`,
+          `https://api.invoicehub.space/api/v1/dashboard/exchangeRates/${baseCurrency}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -45,8 +45,10 @@ export const useCurrencyRates = (baseCurrency: string) => {
       }
     };
 
-    fetchRates();
-  }, [baseCurrency]);
+    if (baseCurrency && keycloak.token) {
+      fetchRates();
+    }
+  }, [baseCurrency, keycloak.token]);
 
   return { rates, loading, error };
 };

@@ -36,8 +36,11 @@
   },
   "invoice": {
     "success": "Success!",
+    "error": "Failed.",
     "updateSuccess": "Invoice updated succesfully.",
     "saveSuccess": "Invoice saved succesfully.",
+    "sendEmailSuccess": "Invoice sent to email succesfully.",
+    "sendEmailError": "There was an errors sending invoice to email.",
     "errors": {
       "failedFetchProdcuts": "Failed to fetch products and categories:",
       "failedFetchingProdcuts": "Error fetching products and categories",
@@ -91,7 +94,9 @@
       "country": "Country: ",
       "city": "City",
       "address": "Address: ",
-      "phone": "Phone: "
+      "phone": "Phone: ",
+      "title": "Client/Business Information",
+      "noClientSelected": "You need to select a client."
     },
     "logo": {
       "errorMsg": "Invalid file type. Only images (PNG, JPEG, JPG, GIF) are allowed.",

@@ -1,6 +1,4 @@
-// InvoicePdf.tsx
-
-import React from 'react';
+import React from "react";
 import {
   Document,
   Page,
@@ -9,20 +7,17 @@ import {
   StyleSheet,
   Font,
   Image,
-} from '@react-pdf/renderer';
-import { Category } from '../products/products-types';
-import { BusinessInfo } from './invoice-types';
+} from "@react-pdf/renderer";
+import { Category } from "../products/products-types";
+import { BusinessInfo } from "./invoice-types";
 
-import OpenSansRegular from '../../../fonts/OpenSans-Regular.ttf';
-import OpenSansBold from '../../../fonts/OpenSans-Bold.ttf';
-import { useTranslation } from 'react-i18next';
+import OpenSansRegular from "../../../fonts/OpenSans-Regular.ttf";
+import OpenSansBold from "../../../fonts/OpenSans-Bold.ttf";
+import { useTranslation } from "react-i18next";
 
 Font.register({
-  family: 'Open Sans',
-  fonts: [
-    { src: OpenSansRegular },
-    { src: OpenSansBold, fontWeight: 'bold' },
-  ],
+  family: "Open Sans",
+  fonts: [{ src: OpenSansRegular }, { src: OpenSansBold, fontWeight: "bold" }],
 });
 
 interface LineItem {
@@ -60,16 +55,16 @@ interface InvoicePDFProps {
 
 const styles = StyleSheet.create({
   page: {
-    fontFamily: 'Open Sans',
+    fontFamily: "Open Sans",
     fontSize: 12,
     padding: 40,
-    backgroundColor: '#fafaf9',
-    color: '#1a1a1a',
+    backgroundColor: "#fafaf9",
+    color: "#1a1a1a",
   },
   headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     marginBottom: 20,
   },
   logoContainer: {
@@ -78,60 +73,60 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   invoiceDetailsContainer: {
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
+    flexDirection: "column",
+    justifyContent: "flex-start",
     fontSize: 10,
-    color: '#57534e',
+    color: "#57534e",
   },
   invoiceTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   invoiceDetail: {
     marginBottom: 4,
   },
   infoSectionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 4,
-    color: '#4a4a4a',
+    color: "#4a4a4a",
   },
   sectionContent: {
     fontSize: 10,
-    color: '#57534e',
+    color: "#57534e",
     lineHeight: 1.3,
   },
   companyName: {
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
+    fontWeight: "bold",
+    color: "#1a1a1a",
     marginBottom: 4,
   },
   table: {
-    width: '100%',
+    width: "100%",
     borderWidth: 1,
-    borderColor: '#e5e5e5',
-    borderStyle: 'solid',
+    borderColor: "#e5e5e5",
+    borderStyle: "solid",
     marginBottom: 20,
   },
   tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#f5f5f4',
+    flexDirection: "row",
+    backgroundColor: "#f5f5f4",
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e5',
-    borderStyle: 'solid',
+    borderBottomColor: "#e5e5e5",
+    borderStyle: "solid",
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e5',
-    borderStyle: 'solid',
+    borderBottomColor: "#e5e5e5",
+    borderStyle: "solid",
   },
   tableCell: {
     flex: 1,
@@ -139,17 +134,17 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   tableCellRight: {
-    textAlign: 'right',
+    textAlign: "right",
   },
   totalsSection: {
     marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   notesTermsContainer: {
-    width: '60%',
+    width: "60%",
     borderTopWidth: 1,
-    borderTopColor: '#e5e5e5',
+    borderTopColor: "#e5e5e5",
     paddingTop: 15,
   },
   notesItem: {
@@ -157,53 +152,53 @@ const styles = StyleSheet.create({
   },
   separator: {
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e5e5',
+    borderBottomColor: "#e5e5e5",
     marginVertical: 10,
   },
   totalsContainer: {
-    width: '35%',
-    backgroundColor: '#f3f3f3',
+    width: "35%",
+    backgroundColor: "#f3f3f3",
     padding: 20,
     borderRadius: 5,
     borderTopWidth: 1,
-    borderTopColor: '#e5e5e5',
-    alignItems: 'center',
+    borderTopColor: "#e5e5e5",
+    alignItems: "center",
   },
   totalItem: {
     marginBottom: 15,
     fontSize: 12,
-    color: '#1a1a1a',
-    textAlign: 'center',
+    color: "#1a1a1a",
+    textAlign: "center",
   },
   signaturesSection: {
     marginTop: 50,
   },
   signatureBlock: {
-    width: '30%',
-    alignItems: 'center',
+    width: "30%",
+    alignItems: "center",
   },
   signatureContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 16,
   },
   signatureLabel: {
     fontSize: 10,
     marginBottom: 8,
-    fontWeight: 'bold',
-    color: '#4a4a4a',
+    fontWeight: "bold",
+    color: "#4a4a4a",
   },
   signatureImage: {
-    width: '65%',
+    width: "65%",
     height: 39,
     marginTop: 4,
   },
   signatureLine: {
-    width: '65%',
+    width: "65%",
     height: 39,
     borderBottomWidth: 1,
-    borderBottomColor: '#d4d4d4',
-    borderStyle: 'solid',
+    borderBottomColor: "#d4d4d4",
+    borderStyle: "solid",
     marginTop: 4,
   },
 });
@@ -220,10 +215,10 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
   businessInformation,
   categories,
 }) => {
-  const { t } = useTranslation('invoices');
+  const { t } = useTranslation("invoices");
   const getCategoryName = (categoryId: number) => {
     const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.description : 'Unknown';
+    return category ? category.description : "Unknown";
   };
 
   return (
@@ -232,21 +227,21 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         {/* Header */}
         <View style={styles.headerContainer}>
           <View style={styles.invoiceDetailsContainer}>
-            <Text style={styles.invoiceTitle}>{t('invoice.pdf.invoice')}</Text>
+            <Text style={styles.invoiceTitle}>{t("invoice.pdf.invoice")}</Text>
             <Text style={styles.invoiceDetail}>
-            {t('invoice.pdf.invoiceNo')} {invoice.invoiceNo}
+              {t("invoice.pdf.invoiceNo")} {invoice.invoiceNo}
             </Text>
             <Text style={styles.invoiceDetail}>
-            {t('invoice.pdf.dateIssue')}{' '}
+              {t("invoice.pdf.dateIssue")}{" "}
               {invoice.dateOfIssue
                 ? new Date(invoice.dateOfIssue).toLocaleDateString()
-                : 'N/A'}
+                : "N/A"}
             </Text>
             <Text style={styles.invoiceDetail}>
-            {t('invoice.pdf.dueDate')}{' '}
+              {t("invoice.pdf.dueDate")}{" "}
               {invoice.dueDate
                 ? new Date(invoice.dueDate).toLocaleDateString()
-                : 'N/A'}
+                : "N/A"}
             </Text>
           </View>
           {logo && <Image src={logo} style={styles.logoContainer} />}
@@ -255,33 +250,66 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         {/* Info Section */}
         <View style={styles.infoSectionContainer}>
           <View>
-            <Text style={styles.sectionTitle}>{t('invoice.pdf.bill')}</Text>
+            <Text style={styles.sectionTitle}>{t("invoice.pdf.bill")}</Text>
             {selectedClient && (
               <View style={styles.sectionContent}>
-                <Text>{t('invoice.pdf.name')} {selectedClient.name}</Text>
-                <Text>{t('invoice.pdf.phone')} {selectedClient.phone}</Text>
-                <Text>{t('invoice.pdf.website')} {selectedClient.website}</Text>
-                <Text>{t('invoice.pdf.email')} {selectedClient.email}</Text>
-                <Text>{t('invoice.pdf.country')} {selectedClient.address.country}</Text>
-                <Text>{t('invoice.pdf.city')} {selectedClient.address.city}</Text>
-                <Text>{t('invoice.pdf.address')} {selectedClient.address.addressLine1}</Text>
+                <Text>
+                  {t("invoice.pdf.name")} {selectedClient.name}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.phone")} {selectedClient.phone}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.website")} {selectedClient.website}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.email")} {selectedClient.email}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.country")} {selectedClient.address.country}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.city")} {selectedClient.address.city}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.address")}{" "}
+                  {selectedClient.address.addressLine1}
+                </Text>
               </View>
             )}
           </View>
-          <View style={{ textAlign: 'right' }}>
-            <Text style={styles.sectionTitle}>{t('invoice.pdf.businessInfo')}</Text>
+          <View style={{ textAlign: "right" }}>
+            <Text style={styles.sectionTitle}>
+              {t("invoice.pdf.businessInfo")}
+            </Text>
             {businessInformation ? (
               <View style={styles.sectionContent}>
-                <Text>{t('invoice.pdf.name')} {businessInformation.title}</Text>
-                <Text>{t('invoice.pdf.phone')} {businessInformation.phone}</Text>
-                <Text>{t('invoice.pdf.website')} {businessInformation.website}</Text>
-                <Text>{t('invoice.pdf.email')} {businessInformation.email}</Text>
-                <Text>{t('invoice.pdf.country')} {businessInformation.address.country}</Text>
-                <Text>{t('invoice.pdf.city')} {businessInformation.address.city}</Text>
-                <Text>{t('invoice.pdf.address')} {businessInformation.address.addressLine1}</Text>
+                <Text>
+                  {t("invoice.pdf.name")} {businessInformation.title}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.phone")} {businessInformation.phone}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.website")} {businessInformation.website}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.email")} {businessInformation.email}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.country")}{" "}
+                  {businessInformation.address.country}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.city")} {businessInformation.address.city}
+                </Text>
+                <Text>
+                  {t("invoice.pdf.address")}{" "}
+                  {businessInformation.address.addressLine1}
+                </Text>
               </View>
             ) : (
-              <Text>{t('invoice.pdf.noBusinessInfo')}</Text>
+              <Text>{t("invoice.pdf.noBusinessInfo")}</Text>
             )}
           </View>
         </View>
@@ -289,13 +317,13 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
         {/* Table */}
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={styles.tableCell}>{t('invoice.pdf.category')}</Text>
-            <Text style={styles.tableCell}>{t('invoice.pdf.product')}</Text>
-            <Text style={styles.tableCell}>{t('invoice.pdf.price')}</Text>
-            <Text style={styles.tableCell}>{t('invoice.pdf.quantity')}</Text>
-            <Text style={styles.tableCell}>{t('invoice.pdf.tax')}</Text>
+            <Text style={styles.tableCell}>{t("invoice.pdf.category")}</Text>
+            <Text style={styles.tableCell}>{t("invoice.pdf.product")}</Text>
+            <Text style={styles.tableCell}>{t("invoice.pdf.price")}</Text>
+            <Text style={styles.tableCell}>{t("invoice.pdf.quantity")}</Text>
+            <Text style={styles.tableCell}>{t("invoice.pdf.tax")}</Text>
             <Text style={[styles.tableCell, styles.tableCellRight]}>
-            {t('invoice.pdf.lineTotal')}
+              {t("invoice.pdf.lineTotal")}
             </Text>
           </View>
           {lineItems.map((item, index) => {
@@ -325,34 +353,46 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
           <View style={styles.notesTermsContainer}>
             {invoice.notes && (
               <View style={styles.notesItem}>
-                <Text style={styles.sectionTitle}>{t('invoice.pdf.notes')}</Text>
+                <Text style={styles.sectionTitle}>
+                  {t("invoice.pdf.notes")}
+                </Text>
                 <Text style={styles.sectionContent}>{invoice.notes}</Text>
               </View>
             )}
             {invoice.terms && (
               <View style={styles.notesItem}>
-                <Text style={styles.sectionTitle}>{t('invoice.pdf.terms')}</Text>
+                <Text style={styles.sectionTitle}>
+                  {t("invoice.pdf.terms")}
+                </Text>
                 <Text style={styles.sectionContent}>{invoice.terms}</Text>
               </View>
             )}
             {/* Optionally include Payment Terms */}
             {invoice.paymentTerms && (
               <View style={styles.notesItem}>
-                <Text style={styles.sectionTitle}>{t('invoice.pdf.paymentTerms')}</Text>
-                <Text style={styles.sectionContent}>{invoice.paymentTerms}</Text>
+                <Text style={styles.sectionTitle}>
+                  {t("invoice.pdf.paymentTerms")}
+                </Text>
+                <Text style={styles.sectionContent}>
+                  {invoice.paymentTerms}
+                </Text>
               </View>
             )}
           </View>
           <View style={styles.totalsContainer}>
             <View style={styles.totalItem}>
-              <Text>{t('invoice.pdf.subtotal')} {formatCurrency(invoice.price)}</Text>
+              <Text>
+                {t("invoice.pdf.subtotal")} {formatCurrency(invoice.price)}
+              </Text>
             </View>
             <View style={styles.totalItem}>
-              <Text>{t('invoice.pdf.taxTotal')} {formatCurrency(invoice.tax)}</Text>
+              <Text>
+                {t("invoice.pdf.taxTotal")} {formatCurrency(invoice.tax)}
+              </Text>
             </View>
             <View style={styles.totalItem}>
-              <Text style={{ fontWeight: 'bold' }}>
-              {t('invoice.pdf.total')} {formatCurrency(invoice.total)}
+              <Text style={{ fontWeight: "bold" }}>
+                {t("invoice.pdf.total")} {formatCurrency(invoice.total)}
               </Text>
             </View>
           </View>
@@ -360,10 +400,12 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
 
         {/* Signatures */}
         <View style={styles.signaturesSection}>
-          <Text style={styles.sectionTitle}>{t('invoice.pdf.signatures')}</Text>
+          <Text style={styles.sectionTitle}>{t("invoice.pdf.signatures")}</Text>
           <View style={styles.signatureContainer}>
             <View style={styles.signatureBlock}>
-              <Text style={styles.signatureLabel}>{t('invoice.pdf.clientSignature')}</Text>
+              <Text style={styles.signatureLabel}>
+                {t("invoice.pdf.clientSignature")}
+              </Text>
               {clientSignatureImage ? (
                 <Image
                   src={clientSignatureImage}
@@ -374,7 +416,9 @@ const InvoicePDF: React.FC<InvoicePDFProps> = ({
               )}
             </View>
             <View style={styles.signatureBlock}>
-              <Text style={styles.signatureLabel}>{t('invoice.pdf.businessSignature')}</Text>
+              <Text style={styles.signatureLabel}>
+                {t("invoice.pdf.businessSignature")}
+              </Text>
               {businessSignatureImage ? (
                 <Image
                   src={businessSignatureImage}

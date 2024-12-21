@@ -37,11 +37,14 @@ export default function EmployeeList() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch("http://localhost:9090/api/v1/user/list", {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        });
+        const response = await fetch(
+          "https://api.invoicehub.space/api/v1/user/list",
+          {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch employees");
         }
@@ -76,7 +79,7 @@ export default function EmployeeList() {
   const deleteEmployee = async (id: string) => {
     try {
       const response = await fetch(
-        `http://localhost:9090/api/v1/user/delete/${id}`,
+        `https://api.invoicehub.space/api/v1/user/delete/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -129,11 +132,14 @@ export default function EmployeeList() {
 
   const refreshEmployees = async () => {
     try {
-      const response = await fetch("http://localhost:9090/api/v1/user/list", {
-        headers: {
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.invoicehub.space/api/v1/user/list",
+        {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        }
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch employees");
       }
