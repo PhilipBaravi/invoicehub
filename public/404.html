@@ -5,11 +5,10 @@
     <title>Page Not Found</title>
     <script type="text/javascript">
       // Preserve the path
-      var redirectTo = window.location.pathname
-        .replace("/invoicehub.space", "") // Adjust for the new base path
-        .replace(/\/+/, "/");
+      var redirectTo = window.location.pathname.replace(/\/+/, "/");
+
       // Redirect to index.html with the original path
-      window.location.href = "/invoicehub.space/" + "?redirect=" + redirectTo;
+      window.location.href = "/?redirect=" + redirectTo;
     </script>
   </head>
   <body>
