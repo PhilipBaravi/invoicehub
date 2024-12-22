@@ -1,5 +1,4 @@
-import Keycloak from 'keycloak-js';
-import { setCookie, getCookie, eraseCookie } from './cookiesUtils';
+import Keycloak from "keycloak-js";
 
 interface AuthTokens {
   access_token: string;
@@ -10,9 +9,9 @@ interface AuthTokens {
 }
 
 const keycloakConfig = {
-  url: 'https://api.invoicehub.space/auth',
-  realm: 'e-invoices',
-  clientId: 'invoicing-app-react-login',
+  url: "https://api.invoicehub.space/auth",
+  realm: "e-invoices",
+  clientId: "invoicing-app-react-login",
   enableCors: true,
 };
 
@@ -20,44 +19,51 @@ let keycloakInstance: Keycloak | null = null;
 
 const getKeycloak = () => {
   if (!keycloakInstance) {
-    console.log('Initializing new Keycloak instance');
+    console.log("Initializing new Keycloak instance");
     keycloakInstance = new Keycloak(keycloakConfig);
 
     keycloakInstance.onTokenExpired = () => {
-      console.log('Token expired, attempting refresh');
-      keycloakInstance?.updateToken(70)
+      console.log("Token expired, attempting refresh");
+      keycloakInstance
+        ?.updateToken(70)
         .then((refreshed) => {
           if (refreshed) {
-            console.log('Token refreshed successfully');
+            console.log("Token refreshed successfully");
             if (keycloakInstance?.token) {
-              setCookie('keycloak_token', keycloakInstance.token, 7);
+              localStorage.setItem("keycloak_token", keycloakInstance.token);
             }
             if (keycloakInstance?.refreshToken) {
-              setCookie('keycloak_refresh_token', keycloakInstance.refreshToken, 7);
+              localStorage.setItem(
+                "keycloak_refresh_token",
+                keycloakInstance.refreshToken
+              );
             }
             if (keycloakInstance?.idToken) {
-              setCookie('keycloak_id_token', keycloakInstance.idToken, 7);
+              localStorage.setItem(
+                "keycloak_id_token",
+                keycloakInstance.idToken
+              );
             }
           } else {
-            console.log('Token still valid, no refresh needed');
+            console.log("Token still valid, no refresh needed");
           }
         })
         .catch(() => {
-          console.error('Failed to refresh token, logging out');
-          eraseCookie('keycloak_token');
-          eraseCookie('keycloak_refresh_token');
-          eraseCookie('keycloak_id_token');
+          console.error("Failed to refresh token, logging out");
+          localStorage.removeItem("keycloak_token");
+          localStorage.removeItem("keycloak_refresh_token");
+          localStorage.removeItem("keycloak_id_token");
           keycloakInstance?.logout();
         });
     };
 
     // Check for stored tokens on initialization
-    const storedToken = getCookie('keycloak_token');
-    const storedRefreshToken = getCookie('keycloak_refresh_token');
-    const storedIdToken = getCookie('keycloak_id_token');
+    const storedToken = localStorage.getItem("keycloak_token");
+    const storedRefreshToken = localStorage.getItem("keycloak_refresh_token");
+    const storedIdToken = localStorage.getItem("keycloak_id_token");
 
     if (storedToken && storedRefreshToken && storedIdToken) {
-      console.log('Found stored tokens, setting up Keycloak instance');
+      console.log("Found stored tokens, setting up Keycloak instance");
       keycloakInstance.token = storedToken;
       keycloakInstance.refreshToken = storedRefreshToken;
       keycloakInstance.idToken = storedIdToken;
@@ -68,35 +74,41 @@ const getKeycloak = () => {
   return keycloakInstance;
 };
 
-export const directLogin = async (username: string, password: string): Promise<AuthTokens> => {
-  console.log('Attempting direct login for user:', username);
+export const directLogin = async (
+  username: string,
+  password: string
+): Promise<AuthTokens> => {
+  console.log("Attempting direct login for user:", username);
   try {
-    const response = await fetch(`${keycloakConfig.url}/realms/${keycloakConfig.realm}/protocol/openid-connect/token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        client_id: keycloakConfig.clientId,
-        grant_type: 'password',
-        username,
-        password,
-        scope: 'openid', // Ensure openid scope to receive id_token
-      }),
-    });
+    const response = await fetch(
+      `${keycloakConfig.url}/realms/${keycloakConfig.realm}/protocol/openid-connect/token`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          client_id: keycloakConfig.clientId,
+          grant_type: "password",
+          username,
+          password,
+          scope: "openid", // Ensure openid scope to receive id_token
+        }),
+      }
+    );
 
     if (!response.ok) {
-      console.error('Authentication failed:', response.status);
-      throw new Error('Authentication failed');
+      console.error("Authentication failed:", response.status);
+      throw new Error("Authentication failed");
     }
 
     const tokens: AuthTokens = await response.json();
-    console.log('Login successful, storing tokens');
+    console.log("Login successful, storing tokens");
 
-    // Store tokens in cookies
-    setCookie('keycloak_token', tokens.access_token, 7);
-    setCookie('keycloak_refresh_token', tokens.refresh_token, 7);
-    setCookie('keycloak_id_token', tokens.id_token, 7);
+    // Store tokens in localStorage
+    localStorage.setItem("keycloak_token", tokens.access_token);
+    localStorage.setItem("keycloak_refresh_token", tokens.refresh_token);
+    localStorage.setItem("keycloak_id_token", tokens.id_token);
 
     // Update Keycloak instance with new tokens
     const keycloak = getKeycloak();
@@ -109,7 +121,7 @@ export const directLogin = async (username: string, password: string): Promise<A
 
     return tokens;
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     throw error;
   }
 };
@@ -117,11 +129,16 @@ export const directLogin = async (username: string, password: string): Promise<A
 // Add a check for existing authentication
 export const checkExistingAuth = async () => {
   const keycloak = getKeycloak();
-  const storedToken = getCookie('keycloak_token');
-  const storedRefreshToken = getCookie('keycloak_refresh_token');
-  const storedIdToken = getCookie('keycloak_id_token');
+  const storedToken = localStorage.getItem("keycloak_token");
+  const storedRefreshToken = localStorage.getItem("keycloak_refresh_token");
+  const storedIdToken = localStorage.getItem("keycloak_id_token");
 
-  if (storedToken && storedRefreshToken && storedIdToken && !keycloak.authenticated) {
+  if (
+    storedToken &&
+    storedRefreshToken &&
+    storedIdToken &&
+    !keycloak.authenticated
+  ) {
     try {
       keycloak.token = storedToken;
       keycloak.refreshToken = storedRefreshToken;
@@ -133,10 +150,10 @@ export const checkExistingAuth = async () => {
         return true;
       }
     } catch (error) {
-      console.error('Failed to restore authentication:', error);
-      eraseCookie('keycloak_token');
-      eraseCookie('keycloak_refresh_token');
-      eraseCookie('keycloak_id_token');
+      console.error("Failed to restore authentication:", error);
+      localStorage.removeItem("keycloak_token");
+      localStorage.removeItem("keycloak_refresh_token");
+      localStorage.removeItem("keycloak_id_token");
     }
   }
 

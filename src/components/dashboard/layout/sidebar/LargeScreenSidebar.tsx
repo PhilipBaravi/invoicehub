@@ -1,6 +1,13 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutDashboard, UserSearch, FolderKanban, LogIn, Building2, FileText } from "lucide-react";
+import {
+  LayoutDashboard,
+  UserSearch,
+  FolderKanban,
+  LogIn,
+  Building2,
+  FileText,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,7 +18,10 @@ interface LargeScreenSidebarProps {
   onClose: () => void;
 }
 
-const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) => {
+const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const { keycloak } = useKeycloak();
   const { isAdmin } = useAuth();
   const sidebarRef = useRef<HTMLDivElement>(null);
@@ -23,14 +33,18 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     if (!keycloak) return;
 
     const idToken = keycloak.idToken;
-    const postLogoutRedirectUri = "http://localhost:5173/";
+    const postLogoutRedirectUri = "https://invoicehub.space/";
 
     if (!idToken) {
-      console.error("No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred.");
+      console.error(
+        "No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred."
+      );
       return;
     }
 
-    const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
+    const logoutUrl = `${keycloak.authServerUrl}/realms/${
+      keycloak.realm
+    }/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
       idToken
     )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
 
@@ -42,47 +56,50 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
   };
 
   const menuItems = [
-    { 
-      name: t("sidebar.dashboard"), 
-      icon: LayoutDashboard, 
+    {
+      name: t("sidebar.dashboard"),
+      icon: LayoutDashboard,
       path: "/dashboard",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.invoice"), 
-      icon: FileText, 
+    {
+      name: t("sidebar.invoice"),
+      icon: FileText,
       path: "/dashboard/invoices",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.employee"), 
-      icon: UserSearch, 
+    {
+      name: t("sidebar.employee"),
+      icon: UserSearch,
       path: "/dashboard/employee",
-      adminOnly: true
+      adminOnly: true,
     },
-    { 
-      name: t("sidebar.clients"), 
-      icon: Building2, 
+    {
+      name: t("sidebar.clients"),
+      icon: Building2,
       path: "/dashboard/clients",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.categories"), 
-      icon: FolderKanban, 
+    {
+      name: t("sidebar.categories"),
+      icon: FolderKanban,
       path: "/dashboard/categories",
-      showAlways: true
+      showAlways: true,
     },
-    { 
-      name: t("sidebar.login"), 
-      icon: LogIn, 
+    {
+      name: t("sidebar.login"),
+      icon: LogIn,
       path: "/login",
-      showAlways: true
+      showAlways: true,
     },
   ];
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
@@ -102,8 +119,8 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
     setSidebarWidth(isOpen ? "250px" : "80px");
   }, [isOpen]);
 
-  const filteredMenuItems = menuItems.filter(item => 
-    item.showAlways || (item.adminOnly && isAdmin)
+  const filteredMenuItems = menuItems.filter(
+    (item) => item.showAlways || (item.adminOnly && isAdmin)
   );
 
   const handleItemClick = (path: string, event: React.MouseEvent) => {
@@ -129,9 +146,13 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({ isOpen, onClose }) =>
         onClick={onClose}
       >
         {isOpen ? (
-          <span className="text-stone-50 dark:text-stone-950 text-lg">{"←"}</span>
+          <span className="text-stone-50 dark:text-stone-950 text-lg">
+            {"←"}
+          </span>
         ) : (
-          <span className="text-stone-50 dark:text-stone-950 text-lg">{"→"}</span>
+          <span className="text-stone-50 dark:text-stone-950 text-lg">
+            {"→"}
+          </span>
         )}
       </div>
 

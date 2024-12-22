@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
 import keycloak from "./utils/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
@@ -26,20 +31,19 @@ import { Progress } from "@/components/ui/progress";
 import Invoice from "./components/dashboard/invoice/Invoice";
 import PrivacyPolicy from "./components/main-authentication/privacyPolicy";
 import AuthRedirectRoute from "./components/main-authentication/AuthRedirectRoute";
-import './i18n';
+import "./i18n";
 import { useTranslation } from "react-i18next";
 import LandingPage from "./landing-page/LandingPage";
 import { Toaster } from "@/components/ui/toaster";
 import { useAuth } from "./hooks/useAuth";
 import type { UserFormValues } from "./components/main-authentication/new-register-page/RegisterForm";
-import { getCookie, eraseCookie, setCookie } from "./utils/cookiesUtils";
 import { CookieConsent } from "./CookiesConsent";
 import UpdateUserSettings from "./components/dashboard/company-settings/UpdateUserSettings";
 
-const ProtectedRoute = ({ 
-  element: Element, 
-  allowedRoles = ['Admin', 'Employee', 'Manager'] 
-}: { 
+const ProtectedRoute = ({
+  element: Element,
+  allowedRoles = ["Admin", "Employee", "Manager"],
+}: {
   element: JSX.Element;
   allowedRoles?: string[];
 }) => {
@@ -52,12 +56,14 @@ const ProtectedRoute = ({
       if (!initialized) return;
 
       if (!keycloak.authenticated) {
-        const storedToken = getCookie('keycloak_token');
-        const storedRefreshToken = getCookie('keycloak_refresh_token');
-        const storedIdToken = getCookie('keycloak_id_token');
+        const storedToken = localStorage.getItem("keycloak_token");
+        const storedRefreshToken = localStorage.getItem(
+          "keycloak_refresh_token"
+        );
+        const storedIdToken = localStorage.getItem("keycloak_id_token");
 
         if (storedToken && storedRefreshToken && storedIdToken) {
-          console.log('Found stored tokens, attempting to restore session');
+          console.log("Found stored tokens, attempting to restore session");
           keycloak.token = storedToken;
           keycloak.refreshToken = storedRefreshToken;
           keycloak.idToken = storedIdToken;
@@ -65,23 +71,26 @@ const ProtectedRoute = ({
 
           try {
             const refreshed = await keycloak.updateToken(-1);
-            console.log('Token refresh attempt result:', refreshed);
+            console.log("Token refresh attempt result:", refreshed);
             if (!refreshed) {
-              console.log('Token refresh failed, clearing stored tokens');
-              eraseCookie('keycloak_token');
-              eraseCookie('keycloak_refresh_token');
-              eraseCookie('keycloak_id_token');
+              console.log("Token refresh failed, clearing stored tokens");
+              localStorage.removeItem("keycloak_token");
+              localStorage.removeItem("keycloak_refresh_token");
+              localStorage.removeItem("keycloak_id_token");
               keycloak.authenticated = false;
             } else {
-              setCookie('keycloak_token', keycloak.token!, 7);
-              setCookie('keycloak_refresh_token', keycloak.refreshToken!, 7);
-              setCookie('keycloak_id_token', keycloak.idToken!, 7);
+              localStorage.setItem("keycloak_token", keycloak.token!);
+              localStorage.setItem(
+                "keycloak_refresh_token",
+                keycloak.refreshToken!
+              );
+              localStorage.setItem("keycloak_id_token", keycloak.idToken!);
             }
           } catch (error) {
-            console.error('Token refresh failed:', error);
-            eraseCookie('keycloak_token');
-            eraseCookie('keycloak_refresh_token');
-            eraseCookie('keycloak_id_token');
+            console.error("Token refresh failed:", error);
+            localStorage.removeItem("keycloak_token");
+            localStorage.removeItem("keycloak_refresh_token");
+            localStorage.removeItem("keycloak_id_token");
             keycloak.authenticated = false;
           }
         }
@@ -117,22 +126,22 @@ const App: React.FC = () => {
   const { t } = useTranslation();
 
   const eventLogger = (event: any, error: any) => {
-    console.log('Keycloak event:', event);
+    console.log("Keycloak event:", event);
     if (error) {
-      console.error('Keycloak error:', error);
+      console.error("Keycloak error:", error);
     }
   };
 
   const tokenLogger = (tokens: any) => {
-    console.log('Received new tokens');
+    console.log("Received new tokens");
     if (tokens.token) {
-      setCookie('keycloak_token', tokens.token, 7);
+      localStorage.setItem("keycloak_token", tokens.token);
     }
     if (tokens.refreshToken) {
-      setCookie('keycloak_refresh_token', tokens.refreshToken, 7);
+      localStorage.setItem("keycloak_refresh_token", tokens.refreshToken);
     }
     if (tokens.idToken) {
-      setCookie('keycloak_id_token', tokens.idToken, 7);
+      localStorage.setItem("keycloak_id_token", tokens.idToken);
     }
   };
 
@@ -142,9 +151,10 @@ const App: React.FC = () => {
       onEvent={eventLogger}
       onTokens={tokenLogger}
       initOptions={{
-        onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-        pkceMethod: 'S256',
+        onLoad: "check-sso",
+        silentCheckSsoRedirectUri:
+          window.location.origin + "/silent-check-sso.html",
+        pkceMethod: "S256",
         checkLoginIframe: false,
       }}
     >
@@ -152,9 +162,9 @@ const App: React.FC = () => {
         <Router basename="/">
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route 
-              path="/login" 
-              element={<AuthRedirectRoute element={<NewLoginPage />} />} 
+            <Route
+              path="/login"
+              element={<AuthRedirectRoute element={<NewLoginPage />} />}
             />
             <Route
               path="/register"
@@ -169,40 +179,52 @@ const App: React.FC = () => {
               path="/company-registration"
               element={
                 <LoginRegisterLayout
-                  title={t('companySignUpForm.company.title')}
-                  subtitle={t('companySignUpForm.company.subtitle')}
+                  title={t("companySignUpForm.company.title")}
+                  subtitle={t("companySignUpForm.company.subtitle")}
                 >
                   <CompanyRegistrationForm userDetails={userDetails} />
                 </LoginRegisterLayout>
               }
             />
 
-            <Route path="/dashboard/*" element={<ProtectedRoute element={<Dashboard />} />}>
+            <Route
+              path="/dashboard/*"
+              element={<ProtectedRoute element={<Dashboard />} />}
+            >
               <Route index element={<DashboardDefault />} />
-              <Route 
-                path="employee" 
+              <Route
+                path="employee"
                 element={
-                  <ProtectedRoute 
-                    element={<Employee />} 
-                    allowedRoles={['Admin']} 
+                  <ProtectedRoute
+                    element={<Employee />}
+                    allowedRoles={["Admin"]}
                   />
-                } 
+                }
               />
-              <Route 
-                path="settings" 
+              <Route
+                path="settings"
                 element={
-                  <ProtectedRoute 
-                    element={<Settings />} 
-                    allowedRoles={['Admin']} 
+                  <ProtectedRoute
+                    element={<Settings />}
+                    allowedRoles={["Admin"]}
                   />
                 }
               >
-                <Route index element={<UpdateUserSettings />}/>
-                <Route path= "company-settings" element={<UpdateCompanyDetails />} />
-                <Route path="profile-subscription" element={<ProfileSubscription />} />
-                <Route path="payment-methods" element={<ManagePaymentMethods />} />
+                <Route index element={<UpdateUserSettings />} />
+                <Route
+                  path="company-settings"
+                  element={<UpdateCompanyDetails />}
+                />
+                <Route
+                  path="profile-subscription"
+                  element={<ProfileSubscription />}
+                />
+                <Route
+                  path="payment-methods"
+                  element={<ManagePaymentMethods />}
+                />
               </Route>
-              
+
               <Route path="clients" element={<ClientVendorList />} />
               <Route path="invoices" element={<InvoiceListPage />} />
               <Route path="invoices/new-invoice" element={<Invoice />} />
