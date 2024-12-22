@@ -20,11 +20,18 @@ import { useTranslation } from "react-i18next";
 
 const categoryIcons = Object.keys(iconMap);
 
-const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, isOpen, setIsOpen }) => {
-  const [categoryName, setCategoryName] = useState<string>(category.description);
+const EditCategoryBtn: FC<EditCategoryBtnProps> = ({
+  category,
+  onEditCategory,
+  isOpen,
+  setIsOpen,
+}) => {
+  const [categoryName, setCategoryName] = useState<string>(
+    category.description
+  );
   const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
   const { keycloak } = useKeycloak();
-  const { t } = useTranslation('categoriesAndProducts')
+  const { t } = useTranslation("categoriesAndProducts");
 
   useEffect(() => {
     const icon = categoryIcons.find((iconName) => iconName === category.icon);
@@ -49,14 +56,17 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
     };
 
     try {
-      const response = await fetch(`https://api.invoicehub.space/api/v1/category/update/${category.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-        body: JSON.stringify(updatedCategory),
-      });
+      const response = await fetch(
+        `https://api.invoicehub.space/api/v1/category/update/${category.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+          body: JSON.stringify(updatedCategory),
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to update category");
 
@@ -72,9 +82,9 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{t('categories.editCategory.edit')}</DialogTitle>
+          <DialogTitle>{t("categories.editCategory.edit")}</DialogTitle>
           <DialogDescription>
-            {t('categories.editCategory.details')}
+            {t("categories.editCategory.details")}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -90,12 +100,14 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
               onClick={handleEditCategory}
               disabled={!categoryName || !selectedIcon}
             >
-              {t('categories.editCategory.save')}
+              {t("categories.editCategory.save")}
             </Button>
           </div>
         </div>
         <div>
-          <h3 className="mb-2 text-sm font-medium">{t('categories.editCategory.icon')}</h3>
+          <h3 className="mb-2 text-sm font-medium">
+            {t("categories.editCategory.icon")}
+          </h3>
           <Card>
             <CardContent className="grid grid-cols-4 gap-2 p-2">
               {categoryIcons.map((icon, index) => {
@@ -105,7 +117,9 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({ category, onEditCategory, i
                     key={index}
                     variant="ghost"
                     className={`p-2 hover:bg-secondary ${
-                      selectedIcon === icon ? "bg-primary text-primary-foreground" : ""
+                      selectedIcon === icon
+                        ? "bg-primary text-primary-foreground"
+                        : ""
                     }`}
                     onClick={() => handleIconSelect(icon)}
                   >

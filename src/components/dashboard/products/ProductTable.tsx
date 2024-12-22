@@ -20,15 +20,24 @@ import { useTranslation } from "react-i18next";
 import CurrencySelect from "./CurrencySelect";
 import { useCurrencyRates } from "@/hooks/useCurrencyRates";
 
-const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleDeleteProduct, lowStockProducts }) => {
-  const { t } = useTranslation('categoriesAndProducts');
-  const [displayCurrency, setDisplayCurrency] = useState('USD');
+const ProductTable: FC<ProductTableProps> = ({
+  products,
+  openEditDialog,
+  handleDeleteProduct,
+  lowStockProducts,
+}) => {
+  const { t } = useTranslation("categoriesAndProducts");
+  const [displayCurrency, setDisplayCurrency] = useState("USD");
   const { rates, loading } = useCurrencyRates(displayCurrency);
 
-  const convertPrice = (price: number, fromCurrency: string, toCurrency: string) => {
+  const convertPrice = (
+    price: number,
+    fromCurrency: string,
+    toCurrency: string
+  ) => {
     if (fromCurrency === toCurrency) return price;
     if (!rates) return price;
-    
+
     const displayPrice = price * (1 / (rates[fromCurrency] || 1));
     return displayPrice;
   };
@@ -48,12 +57,24 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[300px] text-center">{t('products.table.name')}</TableHead>
-            <TableHead className="text-center">{t('products.table.status')}</TableHead>
-            <TableHead className="text-center">{t('products.table.price')}</TableHead>
-            <TableHead className="text-center">{t('products.table.quantity')}</TableHead>
-            <TableHead className="text-center">{t('products.table.description')}</TableHead>
-            <TableHead className="text-center">{t('products.table.createdAt')}</TableHead>
+            <TableHead className="w-[300px] text-center">
+              {t("products.table.name")}
+            </TableHead>
+            <TableHead className="text-center">
+              {t("products.table.status")}
+            </TableHead>
+            <TableHead className="text-center">
+              {t("products.table.price")}
+            </TableHead>
+            <TableHead className="text-center">
+              {t("products.table.quantity")}
+            </TableHead>
+            <TableHead className="text-center">
+              {t("products.table.description")}
+            </TableHead>
+            <TableHead className="text-center">
+              {t("products.table.createdAt")}
+            </TableHead>
             <TableHead className="w-[50px] text-center"></TableHead>
           </TableRow>
         </TableHeader>
@@ -61,7 +82,13 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
           {products.map((product) => (
             <TableRow
               key={product.id}
-              className={lowStockProducts.some((lowStockProduct) => lowStockProduct.id === product.id) ? 'bg-red-100 dark:bg-red-900' : ''}
+              className={
+                lowStockProducts.some(
+                  (lowStockProduct) => lowStockProduct.id === product.id
+                )
+                  ? "bg-red-100 dark:bg-red-900"
+                  : ""
+              }
             >
               <TableCell className="text-center">{product.name}</TableCell>
               <TableCell className="text-center">
@@ -76,18 +103,20 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
                 </span>
               </TableCell>
               <TableCell className="text-center">
-                {loading ? (
-                  "Loading..."
-                ) : (
-                  `${displayCurrency} ${convertPrice(
-                    product.price,
-                    product.currency,
-                    displayCurrency
-                  ).toFixed(2)}`
-                )}
+                {loading
+                  ? "Loading..."
+                  : `${displayCurrency} ${convertPrice(
+                      product.price,
+                      product.currency,
+                      displayCurrency
+                    ).toFixed(2)}`}
               </TableCell>
-              <TableCell className="text-center">{product.quantityInStock}</TableCell>
-              <TableCell className="text-center max-w-[200px]">{product.description}</TableCell>
+              <TableCell className="text-center">
+                {product.quantityInStock}
+              </TableCell>
+              <TableCell className="text-center max-w-[200px]">
+                {product.description}
+              </TableCell>
               <TableCell className="text-center">{product.createdAt}</TableCell>
               <TableCell className="text-center">
                 <DropdownMenu>
@@ -98,10 +127,14 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => openEditDialog(product)}>
-                      <Pencil className="mr-2 h-4 w-4" /> {t('products.table.edit')}
+                      <Pencil className="mr-2 h-4 w-4" />{" "}
+                      {t("products.table.edit")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDeleteProduct(product.id)}>
-                      <Trash className="mr-2 h-4 w-4" /> {t('products.table.delete')}
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteProduct(product.id)}
+                    >
+                      <Trash className="mr-2 h-4 w-4" />{" "}
+                      {t("products.table.delete")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -111,7 +144,7 @@ const ProductTable: FC<ProductTableProps> = ({ products, openEditDialog, handleD
         </TableBody>
       </Table>
       <div className="text-sm text-stone-500 dark:text-stone-400">
-        {t('products.table.showing', { count: products.length })}
+        {t("products.table.showing", { count: products.length })}
       </div>
     </>
   );

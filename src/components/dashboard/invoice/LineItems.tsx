@@ -52,6 +52,11 @@ const LineItems: FC<LineItemsProps> = ({
 }) => {
   const { t } = useTranslation("invoices");
 
+  // Utility function to round to two decimal places
+  const roundToTwo = (num: number) => {
+    return Math.round(num * 100) / 100;
+  };
+
   return (
     <div className="w-full space-y-6">
       <div className="flex items-center justify-between mb-6">
@@ -171,16 +176,23 @@ const LineItems: FC<LineItemsProps> = ({
                       type="number"
                       step="0.01"
                       min="0"
-                      value={item.price.toFixed(2)}
+                      value={item.price}
                       onChange={(e) => {
-                        const parsedValue = parseFloat(e.target.value);
-                        handleLineItemChange(
-                          index,
-                          "price",
-                          isNaN(parsedValue)
-                            ? 0
-                            : parseFloat(parsedValue.toFixed(2))
-                        );
+                        const value = e.target.value;
+                        const parsedValue = parseFloat(value);
+                        if (!isNaN(parsedValue)) {
+                          const roundedValue = roundToTwo(parsedValue);
+                          handleLineItemChange(index, "price", roundedValue);
+                        } else {
+                          handleLineItemChange(index, "price", 0);
+                        }
+                      }}
+                      onBlur={() => {
+                        // Ensure the price is rounded to two decimal places on blur
+                        if (!isNaN(item.price)) {
+                          const roundedValue = roundToTwo(item.price);
+                          handleLineItemChange(index, "price", roundedValue);
+                        }
                       }}
                       id={`line-items-price-${index}`}
                       className="shadow-sm border-stone-200 dark:border-stone-700 focus:ring-2 focus:ring-stone-200 dark:focus:ring-stone-700"

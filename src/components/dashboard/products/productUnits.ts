@@ -1,144 +1,100 @@
-// productUnits.ts
-
 export interface Unit {
-    labelKey: string;
-    value: string;
-  }
-  
-  export interface Category {
-    labelKey: string;
-    value: string;
-    units: Unit[];
-  }
-  
-  export const productCategories: Category[] = [
-    {
-      labelKey: "categories.individual_count",
-      value: "individual_count",
-      units: [
-        { labelKey: "units.PCS", value: "PCS" },
-        { labelKey: "units.EA", value: "EA" },
-        { labelKey: "units.UN", value: "UN" }
-      ]
-    },
-    {
-      labelKey: "categories.grouping",
-      value: "grouping",
-      units: [
-        { labelKey: "units.DZ", value: "DZ" },
-        { labelKey: "units.GROSS", value: "GROSS" },
-        { labelKey: "units.PR", value: "PR" },
-        { labelKey: "units.SET", value: "SET" }
-      ]
-    },
-    {
-      labelKey: "categories.packaging",
-      value: "packaging",
-      units: [
-        { labelKey: "units.PK", value: "PK" },
-        { labelKey: "units.CS", value: "CS" },
-        { labelKey: "units.CTN", value: "CTN" },
-        { labelKey: "units.BDL", value: "BDL" },
-        { labelKey: "units.PLT", value: "PLT" }
-      ]
-    },
-    {
-      labelKey: "categories.weight_based",
-      value: "weight_based",
-      units: [
-        { labelKey: "units.KG", value: "KG" },
-        { labelKey: "units.G", value: "G" },
-        { labelKey: "units.LB", value: "LB" },
-        { labelKey: "units.OZ", value: "OZ" },
-        { labelKey: "units.TN", value: "TN" }
-      ]
-    },
-    {
-      labelKey: "categories.volume_based",
-      value: "volume_based",
-      units: [
-        { labelKey: "units.L", value: "L" },
-        { labelKey: "units.mL", value: "mL" },
-        { labelKey: "units.GAL", value: "GAL" },
-        { labelKey: "units.QT", value: "QT" }
-      ]
-    },
-    {
-      labelKey: "categories.length_based",
-      value: "length_based",
-      units: [
-        { labelKey: "units.M", value: "M" },
-        { labelKey: "units.CM", value: "CM" },
-        { labelKey: "units.MM", value: "MM" },
-        { labelKey: "units.FT", value: "FT" },
-        { labelKey: "units.IN", value: "IN" }
-      ]
-    },
-    {
-      labelKey: "categories.area_volume",
-      value: "area_volume",
-      units: [
-        { labelKey: "units.m²", value: "m²" },
-        { labelKey: "units.ft²", value: "ft²" },
-        { labelKey: "units.m³", value: "m³" },
-        { labelKey: "units.ft³", value: "ft³" }
-      ]
-    },
-    {
-      labelKey: "categories.specialized",
-      value: "specialized",
-      units: [
-        { labelKey: "units.BTL", value: "BTL" },
-        { labelKey: "units.TUBE", value: "TUBE" },
-        { labelKey: "units.ROLL", value: "ROLL" },
-        { labelKey: "units.SHEET", value: "SHEET" },
-        { labelKey: "units.BX", value: "BX" }
-      ]
-    },
-    {
-      labelKey: "categories.industry_specific",
-      value: "industry_specific",
-      units: [
-        { labelKey: "units.bbl", value: "bbl" },
-        { labelKey: "units.MT", value: "MT" },
-        { labelKey: "units.REEL", value: "REEL" },
-        { labelKey: "units.PKT", value: "PKT" },
-        { labelKey: "units.SHT", value: "SHT" }
-      ]
-    },
-    {
-      labelKey: "categories.hybrid",
-      value: "hybrid",
-      units: [
-        { labelKey: "units.kg/pack", value: "kg/pack" },
-        { labelKey: "units.m/pack", value: "m/pack" }
-      ]
-    },
-    {
-      labelKey: "categories.electronic",
-      value: "electronic",
-      units: [
-        { labelKey: "units.PK", value: "PK" },
-        { labelKey: "units.BOX", value: "BOX" },
-        { labelKey: "units.SET", value: "SET" }
-      ]
-    },
-    {
-      labelKey: "categories.packaging_dimensions",
-      value: "packaging_dimensions",
-      units: [
-        { labelKey: "units.BTL", value: "BTL" },
-        { labelKey: "units.CN", value: "CN" }
-      ]
-    },
-    {
-      labelKey: "categories.miscellaneous",
-      value: "miscellaneous",
-      units: [
-        { labelKey: "units.BDL", value: "BDL" },
-        { labelKey: "units.CRT", value: "CRT" },
-        { labelKey: "units.BX", value: "BX" }
-      ]
-    }
-  ];
-  
+  labelKey: string;
+  value: string;
+}
+
+export interface Category {
+  labelKey: string;
+  value: string;
+  units: Unit[];
+}
+
+export const productCategories: Category[] = [
+  {
+    labelKey: "categories.individual_count",
+    value: "individual_count",
+    units: [
+      { labelKey: "units.PCS", value: "PCS" }, // Pieces
+      { labelKey: "units.UNIT", value: "UNIT" }, // Unit
+      { labelKey: "units.SET", value: "SET" }, // Set
+      { labelKey: "units.PAIR", value: "PAIR" }, // Pair
+    ],
+  },
+  {
+    labelKey: "categories.grouping",
+    value: "grouping",
+    units: [
+      { labelKey: "units.BDL", value: "BDL" }, // Bundle
+      { labelKey: "units.BOX", value: "BOX" }, // Box
+      { labelKey: "units.CRT", value: "CRT" }, // Crate
+      { labelKey: "units.REEL", value: "REEL" }, // Reel
+    ],
+  },
+  {
+    labelKey: "categories.packaging",
+    value: "packaging",
+    units: [
+      { labelKey: "units.ROLL", value: "ROLL" }, // Roll
+      { labelKey: "units.SHEET", value: "SHEET" }, // Sheet
+      { labelKey: "units.CAN", value: "CAN" }, // Can
+      { labelKey: "units.BTL", value: "BTL" }, // Bottle
+    ],
+  },
+  {
+    labelKey: "categories.weight_based",
+    value: "weight_based",
+    units: [
+      { labelKey: "units.KG", value: "KG" }, // Kilogram
+      { labelKey: "units.G", value: "G" }, // Gram
+      { labelKey: "units.LBS", value: "LBS" }, // Pounds
+      { labelKey: "units.OZ", value: "OZ" }, // Ounce
+      { labelKey: "units.TN", value: "TN" }, // Ton
+    ],
+  },
+  {
+    labelKey: "categories.volume_based",
+    value: "volume_based",
+    units: [
+      { labelKey: "units.L", value: "L" }, // Litre
+      { labelKey: "units.ML", value: "ML" }, // Millilitre
+      { labelKey: "units.GALLON", value: "GALLON" }, // Gallon
+    ],
+  },
+  {
+    labelKey: "categories.length_based",
+    value: "length_based",
+    units: [
+      { labelKey: "units.M", value: "M" }, // Meter
+      { labelKey: "units.CM", value: "CM" }, // Centimeter
+      { labelKey: "units.MM", value: "MM" }, // Millimeter
+      { labelKey: "units.FT", value: "FT" }, // Foot
+      { labelKey: "units.INCH", value: "INCH" }, // Inch
+    ],
+  },
+  {
+    labelKey: "categories.area_volume",
+    value: "area_volume",
+    units: [
+      { labelKey: "units.SQM", value: "SQM" }, // Square meter
+      { labelKey: "units.SQFT", value: "SQFT" }, // Square foot
+      { labelKey: "units.CUBICMETER", value: "CUBICMETER" }, // Cubic Meter
+      { labelKey: "units.CUBICFOOT", value: "CUBICFOOT" }, // Cubic Foot
+    ],
+  },
+  {
+    labelKey: "categories.hybrid",
+    value: "hybrid",
+    units: [
+      { labelKey: "units.KGPK", value: "KGPK" }, // Kilo/Pack
+      { labelKey: "units.MPK", value: "MPK" }, // Meter/Pack
+    ],
+  },
+  {
+    labelKey: "categories.electronic",
+    value: "electronic",
+    units: [
+      { labelKey: "units.PACK", value: "PACK" }, // Pack
+      { labelKey: "units.LITER", value: "LITER" }, // Liter
+    ],
+  },
+];

@@ -30,12 +30,16 @@ import { useToast } from "@/hooks/use-toast";
 
 const Categories: FC = () => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
+    null
+  );
   const [categoryToEdit, setCategoryToEdit] = useState<Category | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+    null
+  );
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const { t } = useTranslation('categoriesAndProducts')
+  const { t } = useTranslation("categoriesAndProducts");
   const { toast } = useToast();
 
   const navigate = useNavigate();
@@ -44,12 +48,15 @@ const Categories: FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://api.invoicehub.space/api/v1/category/list", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        });
+        const response = await fetch(
+          "https://api.invoicehub.space/api/v1/category/list",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          }
+        );
         const data = await response.json();
         setProductCategories(data.data);
       } catch (error) {
@@ -77,30 +84,38 @@ const Categories: FC = () => {
   const confirmDeleteCategory = async () => {
     if (categoryToDelete) {
       try {
-        const response = await fetch(`https://api.invoicehub.space/api/v1/category/delete/${categoryToDelete.id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        });
+        const response = await fetch(
+          `https://api.invoicehub.space/api/v1/category/delete/${categoryToDelete.id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          }
+        );
         if (!response.ok) {
           const data = await response.json();
-          if (response.status === 409 && data.message === "There is at least one product that is used in invoice!") {
+          if (
+            response.status === 409 &&
+            data.message ===
+              "There is at least one product that is used in invoice!"
+          ) {
             toast({
-              title: t('error.title'),
-              description: t('error.categoryMessage'),
+              title: t("error.title"),
+              description: t("error.categoryMessage"),
               variant: "destructive",
               duration: 3000,
-            })
+            });
           } else {
             console.error("Failed to delete product:", data.message);
           }
           return;
         }
-    
 
         setProductCategories((prevCategories) =>
-          prevCategories.filter((category) => category.id !== categoryToDelete.id)
+          prevCategories.filter(
+            (category) => category.id !== categoryToDelete.id
+          )
         );
       } catch (error) {
         console.error("Failed to delete category:", error);
@@ -129,7 +144,7 @@ const Categories: FC = () => {
     <div className="flex flex-1 flex-col gap-2 p-2 sm:gap-4 sm:p-4 md:gap-6 md:p-6 lg:gap-8 lg:p-8 w-full">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-4 sm:mb-6">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold">
-          {t('categories.pageTitle')} ({productCategories.length})
+          {t("categories.pageTitle")} ({productCategories.length})
         </h1>
         <div className="w-full sm:w-auto">
           <AddCategoryBtn onAddCategory={handleAddCategory} />
@@ -161,11 +176,11 @@ const Categories: FC = () => {
               <ContextMenuContent className="min-w-[160px]">
                 <ContextMenuItem onClick={() => openDeleteDialog(category)}>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  {t('categories.delete')}
+                  {t("categories.delete")}
                 </ContextMenuItem>
                 <ContextMenuItem onClick={() => openEditDialog(category)}>
                   <Pencil className="mr-2 h-4 w-4" />
-                  {t('categories.edit')}
+                  {t("categories.edit")}
                 </ContextMenuItem>
               </ContextMenuContent>
             </ContextMenu>
@@ -182,20 +197,23 @@ const Categories: FC = () => {
         />
       )}
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+      >
         <AlertDialogContent className="sm:max-w-[425px]">
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('categories.alert.title')}</AlertDialogTitle>
+            <AlertDialogTitle>{t("categories.alert.title")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('categories.alert.message')}
+              {t("categories.alert.message")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="sm:space-x-2">
             <AlertDialogCancel onClick={() => setIsDeleteDialogOpen(false)}>
-              {t('categories.alert.cancel')}
+              {t("categories.alert.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmDeleteCategory}>
-              {t('categories.alert.continue')}
+              {t("categories.alert.continue")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -205,8 +223,9 @@ const Categories: FC = () => {
         context={{
           selectedCategoryId,
           selectedCategoryDescription:
-            productCategories.find((category) => category.id === selectedCategoryId)?.description ||
-            "",
+            productCategories.find(
+              (category) => category.id === selectedCategoryId
+            )?.description || "",
         }}
       />
     </div>

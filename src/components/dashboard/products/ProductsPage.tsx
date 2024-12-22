@@ -8,7 +8,7 @@ import ProductFilter from "./ProductFilter";
 import ProductFormDialog from "./ProductFormDialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useKeycloak } from "@react-keycloak/web";
-import { Product } from "./products-types";
+import { Product, Category } from "./products-types";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 
@@ -55,6 +55,36 @@ const ProductsPage: FC = () => {
     selectedCategoryDescription: string;
   }>();
   const { keycloak } = useKeycloak();
+
+  // New state to store categories
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  // Fetch categories to get icon information
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          "https://api.invoicehub.space/api/v1/category/list",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setCategories(data.data);
+        } else {
+          console.error("Error fetching categories:", data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, [keycloak.token]);
 
   const fetchProducts = async () => {
     try {
@@ -121,13 +151,19 @@ const ProductsPage: FC = () => {
       return;
     }
 
+    // Find the selected category to get the icon
+    const selectedCategory = categories.find(
+      (cat) => cat.id === selectedCategoryId
+    );
+    const categoryIcon = selectedCategory?.icon || "";
+
     const productToAdd = {
       ...newProduct,
       createdAt: new Date().toISOString(),
       category: {
         id: selectedCategoryId,
         description: selectedCategoryDescription,
-        icon: "", // Add icon if necessary
+        icon: categoryIcon, // Include the icon here
       },
     };
 
@@ -170,9 +206,19 @@ const ProductsPage: FC = () => {
   const handleEditProduct = async () => {
     if (editingProduct && editingProduct.id) {
       try {
+        // Find the selected category to get the icon
+        const selectedCategory = categories.find(
+          (cat) => cat.id === selectedCategoryId
+        );
+        const categoryIcon = selectedCategory?.icon || "";
+
         const productToUpdate = {
           ...newProduct,
-          category: editingProduct.category,
+          category: {
+            id: selectedCategoryId,
+            description: selectedCategoryDescription,
+            icon: categoryIcon, // Include the icon here
+          },
         };
         // Exclude productCategory
         const { productCategory, ...productToSend } = productToUpdate;
@@ -198,8 +244,15 @@ const ProductsPage: FC = () => {
           setIsDialogOpen(false);
           resetProductForm();
           setEditingProduct(null);
+          toast({
+            title: t("products.success"),
+            description: t("products.productUpdated"),
+            variant: "success",
+            duration: 3000,
+          });
         } else {
           console.error("Error updating product:", updatedProduct);
+          console.log(productToSend);
         }
       } catch (error) {
         console.error("Failed to edit product:", error);
@@ -377,7 +430,9 @@ const ProductsPage: FC = () => {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-500 dark:text-stone-400" />
             <Input
               type="search"
-              placeholder="Search products..."
+              placeholder={
+                t("products.searchPlaceholder") || "Search products..."
+              }
               className="pl-10 w-full sm:w-64"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

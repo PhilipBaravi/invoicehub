@@ -34,7 +34,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     const fetchLineItems = async () => {
       try {
         const response = await fetch(
-          `https://api/invoicehub.space/api/v1/invoice/product/list/${invoice.id}`,
+          `https://api.invoicehub.space/api/v1/invoice/product/list/${invoice.id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -53,7 +53,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     const fetchBusinessInfo = async () => {
       try {
         const response = await fetch(
-          "https://api/invoicehub.space/api/v1/user/loggedInUser",
+          "https://api.invoicehub.space/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -139,24 +139,24 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                   {lineItems.map((item) => (
                     <Fragment key={item.id}>
                       <tr>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
                           {item.product.category.description}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
                           {item.product.name}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
                           {currencyIcon}
                           {item.price.toFixed(2)}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
                           {item.quantity}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
                           {currencyIcon}
                           {item.tax.toFixed(2)}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb]">
+                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
                           {currencyIcon}
                           {item.total.toFixed(2)}
                         </td>

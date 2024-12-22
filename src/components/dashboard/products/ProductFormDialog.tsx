@@ -1,12 +1,12 @@
 import { FC, useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import {
@@ -31,16 +31,12 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
   editingProduct,
 }) => {
   const { t } = useTranslation("categoriesAndProducts");
-
-  // State to hold the selected category
   const [selectedCategory, setSelectedCategory] = useState<string>(
     newProduct.productCategory || ""
   );
 
-  // State to hold the available units based on selected category
   const [availableUnits, setAvailableUnits] = useState<Unit[]>([]);
 
-  // Effect to update available units when selected category changes
   useEffect(() => {
     if (selectedCategory) {
       const category = productCategories.find(
@@ -62,6 +58,29 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
       setNewProduct({ ...newProduct, productUnit: "" });
     }
   }, [selectedCategory, setNewProduct, newProduct.productUnit]);
+
+  useEffect(() => {
+    setSelectedCategory(newProduct.productCategory || "");
+  }, [newProduct.productCategory]);
+
+  useEffect(() => {
+    if (!isDialogOpen) {
+      setNewProduct({
+        name: "",
+        description: "",
+        status: "DRAFT",
+        price: 0,
+        currency: "USD",
+        quantityInStock: 0,
+        lowLimitAlert: 0,
+        productUnit: "PCS",
+        productCategory: "",
+        category: { id: 0, description: "", icon: "" },
+        quantity: 0,
+      });
+      setSelectedCategory("");
+    }
+  }, [isDialogOpen, setNewProduct]);
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -188,7 +207,7 @@ const ProductFormDialog: FC<ProductFormDialogProps> = ({
               value={selectedCategory}
               onValueChange={(value) => {
                 setSelectedCategory(value);
-                setNewProduct({ ...newProduct, productCategory: "" });
+                setNewProduct({ ...newProduct, productCategory: value });
               }}
             >
               <SelectTrigger id="productCategory">

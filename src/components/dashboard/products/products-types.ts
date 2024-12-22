@@ -41,7 +41,10 @@ export interface ProductFilterProps {
   isFilterOpen: boolean;
   setIsFilterOpen: (open: boolean) => void;
   dateRange: { from: Date | undefined; to: Date | undefined };
-  setDateRange: (range: { from: Date | undefined; to: Date | undefined }) => void;
+  setDateRange: (range: {
+    from: Date | undefined;
+    to: Date | undefined;
+  }) => void;
   priceRange: { min: number; max: number };
   setPriceRange: (range: { min: number; max: number }) => void;
 }

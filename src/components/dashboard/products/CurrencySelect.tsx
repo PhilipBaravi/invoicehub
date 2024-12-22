@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC } from "react";
 import {
   Select,
   SelectContent,
@@ -13,9 +13,13 @@ interface CurrencySelectProps {
   disabled?: boolean;
 }
 
-const currencies = ['USD', 'EUR', 'GEL'];
+const currencies = ["USD", "EUR", "GEL"];
 
-const CurrencySelect: FC<CurrencySelectProps> = ({ value, onChange, disabled }) => {
+const CurrencySelect: FC<CurrencySelectProps> = ({
+  value,
+  onChange,
+  disabled,
+}) => {
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger className="w-[100px]">
@@ -32,4 +36,4 @@ const CurrencySelect: FC<CurrencySelectProps> = ({ value, onChange, disabled }) 
   );
 };
 
-export default CurrencySelect
+export default CurrencySelect;
