@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -51,7 +51,7 @@ const ProtectedRoute = ({
   const { user, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkAuth = async () => {
       if (!initialized) return;
 
@@ -145,6 +145,46 @@ const App: React.FC = () => {
     }
   };
 
+  // Global session restoration before rendering the app
+  useEffect(() => {
+    const restoreSession = async () => {
+      const storedToken = localStorage.getItem("keycloak_token");
+      const storedRefreshToken = localStorage.getItem("keycloak_refresh_token");
+      const storedIdToken = localStorage.getItem("keycloak_id_token");
+
+      if (storedToken && storedRefreshToken && storedIdToken) {
+        console.log("Restoring session from stored tokens...");
+        keycloak.token = storedToken;
+        keycloak.refreshToken = storedRefreshToken;
+        keycloak.idToken = storedIdToken;
+        keycloak.authenticated = true;
+
+        try {
+          const refreshed = await keycloak.updateToken(-1);
+          console.log("Session restored:", refreshed);
+          if (!refreshed) {
+            console.log("Session restoration failed. Clearing tokens.");
+            localStorage.clear();
+            keycloak.authenticated = false;
+          } else {
+            localStorage.setItem("keycloak_token", keycloak.token!);
+            localStorage.setItem(
+              "keycloak_refresh_token",
+              keycloak.refreshToken!
+            );
+            localStorage.setItem("keycloak_id_token", keycloak.idToken!);
+          }
+        } catch (error) {
+          console.error("Error restoring session:", error);
+          localStorage.clear();
+          keycloak.authenticated = false;
+        }
+      }
+    };
+
+    restoreSession();
+  }, []);
+
   return (
     <ReactKeycloakProvider
       authClient={keycloak}
@@ -157,6 +197,11 @@ const App: React.FC = () => {
         pkceMethod: "S256",
         checkLoginIframe: false,
       }}
+      LoadingComponent={
+        <div className="flex items-center justify-center h-screen">
+          <Progress value={100} className="w-[60%]" />
+        </div>
+      }
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Router basename="/">
