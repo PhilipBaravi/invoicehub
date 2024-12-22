@@ -117,7 +117,7 @@ export default function EditClientVendorSheet({
 
     try {
       await apiFetch(
-        `https://api/invoicehub.space/api/v1/clientVendor/update/${editedClientVendor.id}`,
+        `https://api.invoicehub.space/api/v1/clientVendor/update/${editedClientVendor.id}`,
         {
           method: "PUT",
           body: JSON.stringify(editedClientVendor),

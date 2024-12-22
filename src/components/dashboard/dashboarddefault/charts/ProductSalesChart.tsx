@@ -92,7 +92,7 @@ const ProductSalesChart: React.FC = () => {
       return null;
     }
     const response = await fetch(
-      `https://api/invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${startMonth}/${endMonth}/${currency}`,
+      `https://api.invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${startMonth}/${endMonth}/${currency}`,
       {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,

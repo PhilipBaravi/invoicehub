@@ -125,7 +125,7 @@ export default function AddClientVendorSheet({
 
     try {
       await apiFetch(
-        "https://api/invoicehub.space/api/v1/clientVendor/create",
+        "https://api.invoicehub.space/api/v1/clientVendor/create",
         {
           method: "POST",
           body: JSON.stringify(newClientVendor),

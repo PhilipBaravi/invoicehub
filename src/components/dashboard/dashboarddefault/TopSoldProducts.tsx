@@ -43,7 +43,7 @@ const TopSoldProducts: FC = () => {
 
     try {
       const response = await fetch(
-        `https://api/invoicehub.space/api/v1/dashboard/topSellingProducts/${year}/${startMonth}/${endMonth}/${currency}`,
+        `https://api.invoicehub.space/api/v1/dashboard/topSellingProducts/${year}/${startMonth}/${endMonth}/${currency}`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,

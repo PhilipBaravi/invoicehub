@@ -85,8 +85,8 @@ const TotalProfitLoss = () => {
       return null;
     }
     const endpoint = isTotal
-      ? `https://api/invoicehub.space/api/v1/dashboard/financialSummaryForAllCurrency/${year}/${startMonth}/${endMonth}/${currency}`
-      : `https://api/invoicehub.space/api/v1/dashboard/financialSummaryForOneCurrency/${year}/${startMonth}/${endMonth}/${currency}`;
+      ? `https://api.invoicehub.space/api/v1/dashboard/financialSummaryForAllCurrency/${year}/${startMonth}/${endMonth}/${currency}`
+      : `https://api.invoicehub.space/api/v1/dashboard/financialSummaryForOneCurrency/${year}/${startMonth}/${endMonth}/${currency}`;
 
     const response = await fetch(endpoint, {
       headers: {
