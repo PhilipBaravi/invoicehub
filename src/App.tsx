@@ -233,7 +233,7 @@ const App: React.FC = () => {
             />
 
             <Route
-              path="/dashboard/*"
+              path="/dashboard"
               element={<ProtectedRoute element={<Dashboard />} />}
             >
               <Route index element={<DashboardDefault />} />
