@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0; URL=/" />
+    <meta charset="UTF-8" />
+    <title>Page Not Found</title>
     <script type="text/javascript">
-      window.location.href = "/";
+      // Preserve the path
+      var redirectTo = window.location.pathname
+        .replace("/invoicehub.space", "") // Adjust for the new base path
+        .replace(/\/+/, "/");
+      // Redirect to index.html with the original path
+      window.location.href = "/invoicehub.space/" + "?redirect=" + redirectTo;
     </script>
   </head>
   <body>
-    <p>Redirecting to the app...</p>
+    <p>Redirecting...</p>
   </body>
 </html>
