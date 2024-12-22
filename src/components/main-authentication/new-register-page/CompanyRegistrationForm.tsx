@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  CountryCode,
+  getCountryCallingCode,
+  isValidPhoneNumber,
+} from "libphonenumber-js";
 import countryList from "../../account-details/profile-form/CountryCodes";
-import { useTranslation } from 'react-i18next';
-import type { UserFormValues } from './RegisterForm';
-import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from "react-i18next";
+import type { UserFormValues } from "./RegisterForm";
+import { useToast } from "@/hooks/use-toast";
 
 interface CompanyRegistrationFormProps {
   userDetails: UserFormValues | null;
@@ -28,24 +38,26 @@ interface CompanyFormValues {
   };
 }
 
-const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userDetails }) => {
+const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
+  userDetails,
+}) => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [companyCountry, setCompanyCountry] = useState<CountryCode>('US');
+  const [companyCountry, setCompanyCountry] = useState<CountryCode>("US");
 
   const [formValues, setFormValues] = useState<CompanyFormValues>({
-    title: '',
-    phone: '',
-    website: '',
-    email: '',
+    title: "",
+    phone: "",
+    website: "",
+    email: "",
     address: {
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      state: '',
-      country: '',
-      zipCode: '',
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      state: "",
+      country: "",
+      zipCode: "",
     },
   });
 
@@ -59,11 +71,11 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
 
     // Client-side validation
     if (!formValues.title) {
-      newErrors.title = t('companySignUpForm.errors.companyName');
+      newErrors.title = t("companySignUpForm.errors.companyName");
       valid = false;
       toast({
-        title: t('form.error'),
-        description: t('companySignUpForm.errors.companyName'),
+        title: t("form.error"),
+        description: t("companySignUpForm.errors.companyName"),
         variant: "destructive",
         duration: 3000,
       });
@@ -71,55 +83,55 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
 
     const fullCompanyPhoneNumber = companyPhoneCode + formValues.phone;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
-      newErrors.phone = t('companySignUpForm.errors.companyPhone');
+      newErrors.phone = t("companySignUpForm.errors.companyPhone");
       valid = false;
       toast({
-        title: t('form.error'),
-        description: t('companySignUpForm.errors.companyPhone'),
+        title: t("form.error"),
+        description: t("companySignUpForm.errors.companyPhone"),
         variant: "destructive",
         duration: 3000,
       });
     }
 
     if (!formValues.address.addressLine1) {
-      newErrors.addressLine1 = t('companySignUpForm.errors.companyAddress');
+      newErrors.addressLine1 = t("companySignUpForm.errors.companyAddress");
       valid = false;
       toast({
-        title: t('form.error'),
-        description: t('companySignUpForm.errors.companyAddress'),
+        title: t("form.error"),
+        description: t("companySignUpForm.errors.companyAddress"),
         variant: "destructive",
         duration: 3000,
       });
     }
 
     if (!formValues.address.city) {
-      newErrors.city = t('companySignUpForm.errors.companyCity');
+      newErrors.city = t("companySignUpForm.errors.companyCity");
       valid = false;
       toast({
-        title: t('form.error'),
-        description: t('companySignUpForm.errors.companyCity'),
+        title: t("form.error"),
+        description: t("companySignUpForm.errors.companyCity"),
         variant: "destructive",
         duration: 3000,
       });
     }
 
     if (!formValues.address.state) {
-      newErrors.state = t('companySignUpForm.errors.companyState');
+      newErrors.state = t("companySignUpForm.errors.companyState");
       valid = false;
       toast({
-        title: t('form.error'),
-        description: t('companySignUpForm.errors.companyState'),
+        title: t("form.error"),
+        description: t("companySignUpForm.errors.companyState"),
         variant: "destructive",
         duration: 3000,
       });
     }
 
     if (!formValues.address.zipCode) {
-      newErrors.zipCode = t('companySignUpForm.errors.zipCode');
+      newErrors.zipCode = t("companySignUpForm.errors.zipCode");
       valid = false;
       toast({
-        title: t('form.error'),
-        description: t('companySignUpForm.errors.zipCode'),
+        title: t("form.error"),
+        description: t("companySignUpForm.errors.zipCode"),
         variant: "destructive",
         duration: 3000,
       });
@@ -148,77 +160,95 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           city: formValues.address.city,
           state: formValues.address.state,
           country: companyCountry,
-          zipCode: formValues.address.zipCode
-        }
-      }
+          zipCode: formValues.address.zipCode,
+        },
+      },
     };
 
-    console.log('Sending registration data to deployment endpoint:', registrationData);
+    console.log("Sending registration data:", registrationData);
 
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/user/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(registrationData),
-      });
+      const response = await fetch(
+        "https://api.invoicehub.space/api/v1/user/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(registrationData),
+        }
+      );
 
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
+      console.log("Response status:", response.status);
+      console.log("Response headers:", response.headers);
 
+      // Attempt to parse JSON response
       let data: any = null;
-      const contentType = response.headers.get('Content-Type');
-      if (contentType && contentType.includes('application/json')) {
+      const contentType = response.headers.get("Content-Type");
+      if (contentType && contentType.includes("application/json")) {
         try {
           data = await response.json();
-          console.log('Response data:', data);
+          console.log("Response data:", data);
         } catch (jsonError) {
-          console.error('Failed to parse JSON response:', jsonError);
+          console.error("Failed to parse JSON response:", jsonError);
         }
       } else {
-        console.warn('Response not in JSON format');
+        console.warn("Response not in JSON format");
       }
 
       if (!response.ok) {
-        console.error('Server returned an error response:', response.status, data);
-        
-        if (response.status === 409 && data?.message === `"${userDetails?.username}" is already exists in a system.`) {
+        console.error(
+          "Server returned an error response:",
+          response.status,
+          data
+        );
+        if (
+          response.status === 409 &&
+          data?.message ===
+            `"${userDetails?.username}" is already exists in a system.`
+        ) {
           toast({
-            title: t('form.error'),
-            description: `${userDetails?.username} ${t('signUpForm.errors.exists')}`,
+            title: t("form.error"),
+            description: `${userDetails?.username} ${t(
+              "signUpForm.errors.exists"
+            )}`,
             variant: "destructive",
             duration: 3000,
           });
         } else {
           toast({
-            title: t('form.error'),
-            description: data?.message || t('companySignUpForm.errors.registrationFailed'),
+            title: t("form.error"),
+            description:
+              data?.message || t("companySignUpForm.errors.registrationFailed"),
             variant: "destructive",
             duration: 3000,
           });
         }
 
-        throw new Error(data?.message || 'Registration failed with server error.');
+        // Throw an error with more detail
+        throw new Error(
+          data?.message || "Registration failed with server error."
+        );
       }
 
-      console.log('Registration successful:', data);
+      console.log("Registration successful:", data);
       toast({
-        title: t('form.success'),
-        description: t('companySignUpForm.successMessage'),
+        title: t("form.success"),
+        description: t("companySignUpForm.successMessage"),
         variant: "success",
         duration: 3000,
       });
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error: any) {
-      console.error('Error during registration:', error);
-      console.log('Request payload that caused the error:', registrationData);
+      console.error("Error during registration:", error);
+      console.log("Request payload that caused the error:", registrationData);
       setErrors({
-        title: t('companySignUpForm.errors.registrationFailed'),
+        title: t("companySignUpForm.errors.registrationFailed"),
       });
       toast({
-        title: t('form.error'),
-        description: error.message || t('companySignUpForm.errors.registrationFailed'),
+        title: t("form.error"),
+        description:
+          error.message || t("companySignUpForm.errors.registrationFailed"),
         variant: "destructive",
         duration: 3000,
       });
@@ -227,8 +257,8 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
       setFormValues((prev) => ({
         ...prev,
         [parent]: {
@@ -239,7 +269,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
     } else {
       setFormValues((prev) => ({ ...prev, [name]: value }));
     }
-    setErrors((prev) => ({ ...prev, [name.split('.').pop()!]: '' }));
+    setErrors((prev) => ({ ...prev, [name.split(".").pop()!]: "" }));
   };
 
   const handleCompanyCountryChange = (code: CountryCode) => {
@@ -261,11 +291,10 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           name="title"
           value={formValues.title}
           onChange={handleChange}
-          placeholder={t('companySignUpForm.companyName')}
+          placeholder={t("companySignUpForm.companyName")}
           className="w-full"
           required
         />
-        {errors.title && <p className="text-red-500 text-sm">{errors.title}</p>}
       </div>
 
       <div>
@@ -274,7 +303,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           name="email"
           value={formValues.email}
           onChange={handleChange}
-          placeholder={t('loginForm.email')}
+          placeholder={t("loginForm.email")}
           className="w-full"
           required
         />
@@ -287,11 +316,13 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="address.addressLine1"
             value={formValues.address.addressLine1}
             onChange={handleChange}
-            placeholder={t('companySignUpForm.addressLine1')}
+            placeholder={t("companySignUpForm.addressLine1")}
             className="w-full"
             required
           />
-          {errors.addressLine1 && <p className="text-red-500 text-sm">{errors.addressLine1}</p>}
+          {errors.addressLine1 && (
+            <p className="text-red-500 text-sm">{errors.addressLine1}</p>
+          )}
         </div>
         <div>
           <Input
@@ -299,7 +330,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="address.addressLine2"
             value={formValues.address.addressLine2}
             onChange={handleChange}
-            placeholder={t('companySignUpForm.addressLine2')}
+            placeholder={t("companySignUpForm.addressLine2")}
             className="w-full"
           />
         </div>
@@ -312,7 +343,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="address.city"
             value={formValues.address.city}
             onChange={handleChange}
-            placeholder={t('companySignUpForm.city')}
+            placeholder={t("companySignUpForm.city")}
             className="w-full"
             required
           />
@@ -324,11 +355,13 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="address.state"
             value={formValues.address.state}
             onChange={handleChange}
-            placeholder={t('companySignUpForm.state')}
+            placeholder={t("companySignUpForm.state")}
             className="w-full"
             required
           />
-          {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
+          {errors.state && (
+            <p className="text-red-500 text-sm">{errors.state}</p>
+          )}
         </div>
         <div>
           <Input
@@ -336,18 +369,25 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
             name="address.zipCode"
             value={formValues.address.zipCode}
             onChange={handleChange}
-            placeholder={t('companySignUpForm.zipCode')}
+            placeholder={t("companySignUpForm.zipCode")}
             className="w-full"
             required
           />
-          {errors.zipCode && <p className="text-red-500 text-sm">{errors.zipCode}</p>}
+          {errors.zipCode && (
+            <p className="text-red-500 text-sm">{errors.zipCode}</p>
+          )}
         </div>
       </div>
 
       <div className="flex space-x-2">
         <Select onValueChange={handleCompanyCountryChange}>
           <SelectTrigger className="w-[120px]">
-            <SelectValue placeholder={countryList.find((c) => c.code === companyCountry)?.name || t('companySignUpForm.selectCountry')} />
+            <SelectValue
+              placeholder={
+                countryList.find((c) => c.code === companyCountry)?.name ||
+                t("companySignUpForm.selectCountry")
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             {countryList.map((c) => (
@@ -375,11 +415,11 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({ userD
           name="website"
           value={formValues.website}
           onChange={handleChange}
-          placeholder={t('companySignUpForm.website')}
+          placeholder={t("companySignUpForm.website")}
           className="w-full"
         />
       </div>
-      <Button className="w-full">{t('companySignUpForm.submitBtn')}</Button>
+      <Button className="w-full">{t("companySignUpForm.submitBtn")}</Button>
     </form>
   );
 };

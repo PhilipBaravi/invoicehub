@@ -21,7 +21,7 @@ export interface ClientVendor {
   phone: string;
   website: string;
   email: string;
-  clientVendorType: 'CLIENT' | 'VENDOR';
+  clientVendorType: "CLIENT" | "VENDOR";
   address: Address;
   company?: Company;
 }

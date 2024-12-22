@@ -1,6 +1,6 @@
-import RegisterForm from './RegisterForm';
-import LoginRegisterLayout from '../LoginRegisterLayout';
-import { useTranslation } from 'react-i18next';
+import RegisterForm from "./RegisterForm";
+import LoginRegisterLayout from "../LoginRegisterLayout";
+import { useTranslation } from "react-i18next";
 
 interface UserFormValues {
   username: string;
@@ -15,11 +15,13 @@ interface NewRegisterPageProps {
   setUserDetails: (details: UserFormValues) => void;
 }
 
-const NewRegisterPage: React.FC<NewRegisterPageProps> = ({ setUserDetails }) => {
+const NewRegisterPage: React.FC<NewRegisterPageProps> = ({
+  setUserDetails,
+}) => {
   const { t } = useTranslation();
-  
+
   return (
-    <LoginRegisterLayout title={t('signUpForm.title')} subtitle="">
+    <LoginRegisterLayout title={t("signUpForm.title")} subtitle="">
       <RegisterForm setUserDetails={setUserDetails} />
     </LoginRegisterLayout>
   );

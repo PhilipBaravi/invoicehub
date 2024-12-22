@@ -193,8 +193,7 @@ const App: React.FC = () => {
       initOptions={{
         onLoad: "check-sso",
         silentCheckSsoRedirectUri:
-          window.location.origin +
-          "https://invoicehub.space/silent-check-sso.html",
+          window.location.origin + "/silent-check-sso.html",
         pkceMethod: "S256",
         checkLoginIframe: false,
       }}

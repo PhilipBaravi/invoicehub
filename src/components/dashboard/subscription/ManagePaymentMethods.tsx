@@ -5,9 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CreditCard, Trash2, Edit2, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import {
+  CreditCard,
+  Trash2,
+  Edit2,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 type PaymentMethod = {
@@ -21,12 +34,32 @@ type PaymentMethod = {
 
 const ManagePaymentMethods: FC = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    { id: "1", type: "credit", last4: "4242", expiry: "12/24", name: "John Doe", isDefault: true },
-    { id: "2", type: "bank", last4: "1234", name: "Jane Doe", isDefault: false },
+    {
+      id: "1",
+      type: "credit",
+      last4: "4242",
+      expiry: "12/24",
+      name: "John Doe",
+      isDefault: true,
+    },
+    {
+      id: "2",
+      type: "bank",
+      last4: "1234",
+      name: "Jane Doe",
+      isDefault: false,
+    },
   ]);
-  const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(null);
-  const [showFullDetails, setShowFullDetails] = useState<Record<string, boolean>>({});
-  const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [editingMethod, setEditingMethod] = useState<PaymentMethod | null>(
+    null
+  );
+  const [showFullDetails, setShowFullDetails] = useState<
+    Record<string, boolean>
+  >({});
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
   const { t } = useTranslation("settings");
 
   const [newMethod, setNewMethod] = useState({
@@ -46,7 +79,10 @@ const ManagePaymentMethods: FC = () => {
     const newPaymentMethod: PaymentMethod = {
       id: `new-${Date.now()}`,
       type: newMethod.type,
-      last4: newMethod.type === "credit" ? newMethod.number.slice(-4) : newMethod.accountNumber.slice(-4),
+      last4:
+        newMethod.type === "credit"
+          ? newMethod.number.slice(-4)
+          : newMethod.accountNumber.slice(-4),
       expiry: newMethod.type === "credit" ? newMethod.expiry : undefined,
       name: newMethod.name,
       isDefault: paymentMethods.length === 0,
@@ -93,10 +129,14 @@ const ManagePaymentMethods: FC = () => {
       number: method.type === "credit" ? `**** **** **** ${method.last4}` : "",
       expiry: method.expiry || "",
       cvv: "",
-      accountNumber: method.type === "bank" ? `**** **** **** ${method.last4}` : "",
+      accountNumber:
+        method.type === "bank" ? `**** **** **** ${method.last4}` : "",
       routingNumber: "",
       bankName: "",
-      accountType: method.type === "bank" ? (newMethod.accountType as "checking" | "savings") : "checking",
+      accountType:
+        method.type === "bank"
+          ? (newMethod.accountType as "checking" | "savings")
+          : "checking",
     });
   };
 
@@ -113,7 +153,10 @@ const ManagePaymentMethods: FC = () => {
                   newMethod.type === "credit"
                     ? newMethod.number.slice(-4)
                     : newMethod.accountNumber.slice(-4),
-                expiry: newMethod.type === "credit" ? newMethod.expiry || method.expiry : undefined,
+                expiry:
+                  newMethod.type === "credit"
+                    ? newMethod.expiry || method.expiry
+                    : undefined,
               }
             : method
         )
@@ -126,7 +169,10 @@ const ManagePaymentMethods: FC = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       {alert && (
-        <Alert className="mb-6" variant={alert.type === "success" ? "default" : "destructive"}>
+        <Alert
+          className="mb-6"
+          variant={alert.type === "success" ? "default" : "destructive"}
+        >
           <CheckCircle2 className="h-4 w-4" />
           <AlertTitle>{t("payment.success")}</AlertTitle>
           <AlertDescription>{alert.message}</AlertDescription>
@@ -140,21 +186,38 @@ const ManagePaymentMethods: FC = () => {
           </CardHeader>
           <CardContent>
             {paymentMethods.map((method) => (
-              <div key={method.id} className="mb-6 p-4 border rounded-lg shadow-sm">
+              <div
+                key={method.id}
+                className="mb-6 p-4 border rounded-lg shadow-sm"
+              >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
                   <div className="flex items-center space-x-2 mb-2 sm:mb-0">
                     <CreditCard className="h-5 w-5" />
                     <span className="font-semibold">
-                      {method.type === "credit" ? t("payment.creditCard") : t("payment.bankAccount")}
+                      {method.type === "credit"
+                        ? t("payment.creditCard")
+                        : t("payment.bankAccount")}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <Button variant="ghost" size="sm" onClick={() => handleToggleDetails(method.id)}>
-                      {showFullDetails[method.id] ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleToggleDetails(method.id)}
+                    >
+                      {showFullDetails[method.id] ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </Button>
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button variant="ghost" size="sm" onClick={() => handleEditMethod(method)}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditMethod(method)}
+                        >
                           <Edit2 className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
@@ -165,32 +228,54 @@ const ManagePaymentMethods: FC = () => {
                         <form onSubmit={handleSaveEdit} className="space-y-4">
                           <div className="grid w-full items-center gap-1.5">
                             <Label htmlFor="editName">
-                              {t("payment.nameOn")} {method.type === "credit" ? t("payment.card") : t("payment.account")}
+                              {t("payment.nameOn")}{" "}
+                              {method.type === "credit"
+                                ? t("payment.card")
+                                : t("payment.account")}
                             </Label>
                             <Input
                               id="editName"
                               defaultValue={method.name}
-                              onChange={(e) => setNewMethod({ ...newMethod, name: e.target.value })}
+                              onChange={(e) =>
+                                setNewMethod({
+                                  ...newMethod,
+                                  name: e.target.value,
+                                })
+                              }
                               required
                             />
                           </div>
                           {method.type === "credit" && (
                             <>
                               <div className="grid w-full items-center gap-1.5">
-                                <Label htmlFor="editNumber">{t("payment.cardNumber")}</Label>
+                                <Label htmlFor="editNumber">
+                                  {t("payment.cardNumber")}
+                                </Label>
                                 <Input
                                   id="editNumber"
                                   defaultValue={`**** **** **** ${method.last4}`}
-                                  onChange={(e) => setNewMethod({ ...newMethod, number: e.target.value })}
+                                  onChange={(e) =>
+                                    setNewMethod({
+                                      ...newMethod,
+                                      number: e.target.value,
+                                    })
+                                  }
                                   required
                                 />
                               </div>
                               <div className="grid w-full items-center gap-1.5">
-                                <Label htmlFor="editExpiry">{t("payment.expiryDate")}</Label>
+                                <Label htmlFor="editExpiry">
+                                  {t("payment.expiryDate")}
+                                </Label>
                                 <Input
                                   id="editExpiry"
                                   defaultValue={method.expiry}
-                                  onChange={(e) => setNewMethod({ ...newMethod, expiry: e.target.value })}
+                                  onChange={(e) =>
+                                    setNewMethod({
+                                      ...newMethod,
+                                      expiry: e.target.value,
+                                    })
+                                  }
                                   required
                                 />
                               </div>
@@ -198,11 +283,18 @@ const ManagePaymentMethods: FC = () => {
                           )}
                           {method.type === "bank" && (
                             <div className="grid w-full items-center gap-1.5">
-                              <Label htmlFor="editAccountNumber">{t("payment.accountNo")}</Label>
+                              <Label htmlFor="editAccountNumber">
+                                {t("payment.accountNo")}
+                              </Label>
                               <Input
                                 id="editAccountNumber"
                                 defaultValue={`**** **** **** ${method.last4}`}
-                                onChange={(e) => setNewMethod({ ...newMethod, accountNumber: e.target.value })}
+                                onChange={(e) =>
+                                  setNewMethod({
+                                    ...newMethod,
+                                    accountNumber: e.target.value,
+                                  })
+                                }
                                 required
                               />
                             </div>
@@ -211,7 +303,11 @@ const ManagePaymentMethods: FC = () => {
                         </form>
                       </DialogContent>
                     </Dialog>
-                    <Button variant="ghost" size="sm" onClick={() => handleDeleteMethod(method.id)}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteMethod(method.id)}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -224,13 +320,25 @@ const ManagePaymentMethods: FC = () => {
                       </p>
                       <p>
                         {method.type === "credit"
-                          ? `${t("payment.cardNumber")}: **** **** **** ${method.last4}`
-                          : `${t("payment.accountNo")}: **** **** **** ${method.last4}`}
+                          ? `${t("payment.cardNumber")}: **** **** **** ${
+                              method.last4
+                            }`
+                          : `${t("payment.accountNo")}: **** **** **** ${
+                              method.last4
+                            }`}
                       </p>
-                      {method.type === "credit" && <p>{t("payment.expiry")}: {method.expiry}</p>}
+                      {method.type === "credit" && (
+                        <p>
+                          {t("payment.expiry")}: {method.expiry}
+                        </p>
+                      )}
                     </>
                   ) : (
-                    <p>{method.type === "credit" ? `**** ${method.last4}` : `**** ${method.last4}`}</p>
+                    <p>
+                      {method.type === "credit"
+                        ? `**** ${method.last4}`
+                        : `**** ${method.last4}`}
+                    </p>
                   )}
                 </div>
                 <div className="mt-4 flex items-center">
@@ -239,7 +347,10 @@ const ManagePaymentMethods: FC = () => {
                     checked={method.isDefault}
                     onCheckedChange={() => handleSetDefault(method.id)}
                   />
-                  <label htmlFor={`default-${method.id}`} className="ml-2 text-sm">
+                  <label
+                    htmlFor={`default-${method.id}`}
+                    className="ml-2 text-sm"
+                  >
                     {t("payment.setDefault")}
                   </label>
                 </div>
@@ -256,7 +367,9 @@ const ManagePaymentMethods: FC = () => {
             <form onSubmit={handleAddNewMethod} className="space-y-6">
               <RadioGroup
                 value={newMethod.type}
-                onValueChange={(value: "credit" | "bank") => setNewMethod({ ...newMethod, type: value })}
+                onValueChange={(value: "credit" | "bank") =>
+                  setNewMethod({ ...newMethod, type: value })
+                }
                 className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-4"
               >
                 <div className="flex items-center space-x-2">
@@ -271,12 +384,17 @@ const ManagePaymentMethods: FC = () => {
 
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="name">
-                  {t("payment.nameOn")} {newMethod.type === "credit" ? t("payment.card") : t("payment.account")}
+                  {t("payment.nameOn")}{" "}
+                  {newMethod.type === "credit"
+                    ? t("payment.card")
+                    : t("payment.account")}
                 </Label>
                 <Input
                   id="name"
                   value={newMethod.name}
-                  onChange={(e) => setNewMethod({ ...newMethod, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewMethod({ ...newMethod, name: e.target.value })
+                  }
                   required
                 />
               </div>
@@ -288,7 +406,9 @@ const ManagePaymentMethods: FC = () => {
                     <Input
                       id="number"
                       value={newMethod.number}
-                      onChange={(e) => setNewMethod({ ...newMethod, number: e.target.value })}
+                      onChange={(e) =>
+                        setNewMethod({ ...newMethod, number: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -299,7 +419,9 @@ const ManagePaymentMethods: FC = () => {
                         id="expiry"
                         placeholder="MM/YY"
                         value={newMethod.expiry}
-                        onChange={(e) => setNewMethod({ ...newMethod, expiry: e.target.value })}
+                        onChange={(e) =>
+                          setNewMethod({ ...newMethod, expiry: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -308,7 +430,9 @@ const ManagePaymentMethods: FC = () => {
                       <Input
                         id="cvv"
                         value={newMethod.cvv}
-                        onChange={(e) => setNewMethod({ ...newMethod, cvv: e.target.value })}
+                        onChange={(e) =>
+                          setNewMethod({ ...newMethod, cvv: e.target.value })
+                        }
                         required
                       />
                     </div>
@@ -317,20 +441,34 @@ const ManagePaymentMethods: FC = () => {
               ) : (
                 <>
                   <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="accountNumber">{t("payment.accountNo")}</Label>
+                    <Label htmlFor="accountNumber">
+                      {t("payment.accountNo")}
+                    </Label>
                     <Input
                       id="accountNumber"
                       value={newMethod.accountNumber}
-                      onChange={(e) => setNewMethod({ ...newMethod, accountNumber: e.target.value })}
+                      onChange={(e) =>
+                        setNewMethod({
+                          ...newMethod,
+                          accountNumber: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
                   <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="routingNumber">{t("payment.routingNo")}</Label>
+                    <Label htmlFor="routingNumber">
+                      {t("payment.routingNo")}
+                    </Label>
                     <Input
                       id="routingNumber"
                       value={newMethod.routingNumber}
-                      onChange={(e) => setNewMethod({ ...newMethod, routingNumber: e.target.value })}
+                      onChange={(e) =>
+                        setNewMethod({
+                          ...newMethod,
+                          routingNumber: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -339,13 +477,17 @@ const ManagePaymentMethods: FC = () => {
                     <Input
                       id="bankName"
                       value={newMethod.bankName}
-                      onChange={(e) => setNewMethod({ ...newMethod, bankName: e.target.value })}
+                      onChange={(e) =>
+                        setNewMethod({ ...newMethod, bankName: e.target.value })
+                      }
                       required
                     />
                   </div>
                   <RadioGroup
                     value={newMethod.accountType}
-                    onValueChange={(value: "checking" | "savings") => setNewMethod({ ...newMethod, accountType: value })}
+                    onValueChange={(value: "checking" | "savings") =>
+                      setNewMethod({ ...newMethod, accountType: value })
+                    }
                     className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
                   >
                     <div className="flex items-center space-x-2">
@@ -372,4 +514,3 @@ const ManagePaymentMethods: FC = () => {
 };
 
 export default ManagePaymentMethods;
-

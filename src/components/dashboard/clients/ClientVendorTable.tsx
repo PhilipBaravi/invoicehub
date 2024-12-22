@@ -1,10 +1,23 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Trash2, User } from 'lucide-react';
-import { ClientVendor } from './CliendVendorTypes';
-import { useTranslation } from 'react-i18next';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Trash2, User } from "lucide-react";
+import { ClientVendor } from "./CliendVendorTypes";
+import { useTranslation } from "react-i18next";
 
 interface ClientVendorTableProps {
   paginatedClientVendors: ClientVendor[];
@@ -27,7 +40,7 @@ export default function ClientVendorTable({
   setIsEditClientVendorOpen,
   filteredClientVendors,
 }: ClientVendorTableProps) {
-  const { t } = useTranslation('clients');
+  const { t } = useTranslation("clients");
   return (
     <div className="border rounded-md">
       <Table>
@@ -35,17 +48,19 @@ export default function ClientVendorTable({
           <TableRow>
             <TableHead className="w-[50px]">
               <Checkbox
-                checked={selectedClientVendors.length === filteredClientVendors.length}
+                checked={
+                  selectedClientVendors.length === filteredClientVendors.length
+                }
                 onCheckedChange={handleSelectAll}
               />
             </TableHead>
-            <TableHead>{t('clientsTable.name')}</TableHead>
-            <TableHead>{t('clientsTable.email')}</TableHead>
-            <TableHead>{t('clientsTable.phone')}</TableHead>
-            <TableHead>{t('clientsTable.website')}</TableHead>
-            <TableHead>{t('clientsTable.type')}</TableHead>
-            <TableHead>{t('clientsTable.address')}</TableHead>
-            <TableHead>{t('clientsTable.actions')}</TableHead>
+            <TableHead>{t("clientsTable.name")}</TableHead>
+            <TableHead>{t("clientsTable.email")}</TableHead>
+            <TableHead>{t("clientsTable.phone")}</TableHead>
+            <TableHead>{t("clientsTable.website")}</TableHead>
+            <TableHead>{t("clientsTable.type")}</TableHead>
+            <TableHead>{t("clientsTable.address")}</TableHead>
+            <TableHead>{t("clientsTable.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -53,8 +68,12 @@ export default function ClientVendorTable({
             <TableRow key={clientVendor.id}>
               <TableCell>
                 <Checkbox
-                  checked={selectedClientVendors.includes(clientVendor.id.toString())}
-                  onCheckedChange={() => handleSelectClientVendor(clientVendor.id.toString())}
+                  checked={selectedClientVendors.includes(
+                    clientVendor.id.toString()
+                  )}
+                  onCheckedChange={() =>
+                    handleSelectClientVendor(clientVendor.id.toString())
+                  }
                 />
               </TableCell>
               <TableCell>{clientVendor.name}</TableCell>
@@ -63,7 +82,8 @@ export default function ClientVendorTable({
               <TableCell>{clientVendor.website}</TableCell>
               <TableCell>{clientVendor.clientVendorType}</TableCell>
               <TableCell>
-                {clientVendor.address.addressLine1}, {clientVendor.address.city}, {clientVendor.address.state}, {clientVendor.address.country}
+                {clientVendor.address.addressLine1}, {clientVendor.address.city}
+                , {clientVendor.address.state}, {clientVendor.address.country}
               </TableCell>
               <TableCell>
                 <DropdownMenu>
@@ -73,17 +93,23 @@ export default function ClientVendorTable({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>{t('clientsTable.actions')}</DropdownMenuLabel>
-                    <DropdownMenuItem onClick={() => deleteClientVendor(clientVendor.id)}>
+                    <DropdownMenuLabel>
+                      {t("clientsTable.actions")}
+                    </DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={() => deleteClientVendor(clientVendor.id)}
+                    >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      {t('clientsTable.delete')}
+                      {t("clientsTable.delete")}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => {
-                      setEditingClientVendor(clientVendor);
-                      setIsEditClientVendorOpen(true);
-                    }}>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setEditingClientVendor(clientVendor);
+                        setIsEditClientVendorOpen(true);
+                      }}
+                    >
                       <User className="mr-2 h-4 w-4" />
-                      {t('clientsTable.edit')}
+                      {t("clientsTable.edit")}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

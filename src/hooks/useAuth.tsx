@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useKeycloak } from '@react-keycloak/web';
+import { useState, useEffect } from "react";
+import { useKeycloak } from "@react-keycloak/web";
 
 export interface LoggedInUser {
   id: number;
@@ -21,18 +21,21 @@ export const useAuth = () => {
       if (!keycloak.token) return;
 
       try {
-        const response = await fetch('https://api.invoicehub.space/api/v1/user/loggedInUser', {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        });
+        const response = await fetch(
+          "https://api.invoicehub.space/api/v1/user/loggedInUser",
+          {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          }
+        );
 
-        if (!response.ok) throw new Error('Failed to fetch user data');
+        if (!response.ok) throw new Error("Failed to fetch user data");
 
         const result = await response.json();
         setUser(result.data);
       } catch (error) {
-        console.error('Error fetching logged-in user:', error);
+        console.error("Error fetching logged-in user:", error);
       } finally {
         setLoading(false);
       }
@@ -45,9 +48,9 @@ export const useAuth = () => {
     }
   }, [keycloak.token, keycloak.authenticated]);
 
-  const isAdmin = user?.role?.description === 'Admin';
-  const isEmployee = user?.role?.description === 'Employee';
-  const isManager = user?.role?.description === 'Manager';
+  const isAdmin = user?.role?.description === "Admin";
+  const isEmployee = user?.role?.description === "Employee";
+  const isManager = user?.role?.description === "Manager";
 
   return {
     user,

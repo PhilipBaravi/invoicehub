@@ -17,7 +17,7 @@ interface SummaryResponse {
 }
 
 const StatisticsGrid: FC = () => {
-  const { t } = useTranslation('dashboardDefault');
+  const { t } = useTranslation("dashboardDefault");
   const { keycloak } = useKeycloak();
 
   const [summary, setSummary] = useState<{
@@ -35,11 +35,14 @@ const StatisticsGrid: FC = () => {
 
       setLoading(true);
       try {
-        const response = await fetch("https://api.invoicehub.space/api/v1/dashboard/summaryQuantities", {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`
+        const response = await fetch(
+          "https://api.invoicehub.space/api/v1/dashboard/summaryQuantities",
+          {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
           }
-        });
+        );
 
         const result: SummaryResponse = await response.json();
         if (result.success) {
@@ -64,29 +67,33 @@ const StatisticsGrid: FC = () => {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 auto-rows-min w-full">
       <StatCard
-        title={t('statisticsGrid.title')}
+        title={t("statisticsGrid.title")}
         value={summary.total_products_sold.toString()}
-        description={t('statisticsGrid.titleDescription')}
-        icon={<ShoppingBag className="h-4 w-4 text-muted-foreground" />} 
-        // trend={""}      
-         />
+        description={t("statisticsGrid.titleDescription")}
+        icon={<ShoppingBag className="h-4 w-4 text-muted-foreground" />}
+        // trend={""}
+      />
       <StatCard
-        title={t('statisticsGrid.employees')}
+        title={t("statisticsGrid.employees")}
         value={summary.total_employees.toString()}
-        description={t('statisticsGrid.employeesDescription')}
-        icon={<Users className="h-4 w-4 text-muted-foreground" />} trend={""}      />
+        description={t("statisticsGrid.employeesDescription")}
+        icon={<Users className="h-4 w-4 text-muted-foreground" />}
+        trend={""}
+      />
       <StatCard
-        title={t('statisticsGrid.clients')}
+        title={t("statisticsGrid.clients")}
         value={summary.total_clients.toString()}
-        description={t('statisticsGrid.clientsDescription')}
-        icon={<Users className="h-4 w-4 text-muted-foreground" />} 
-        // trend={""}      
-        />
+        description={t("statisticsGrid.clientsDescription")}
+        icon={<Users className="h-4 w-4 text-muted-foreground" />}
+        // trend={""}
+      />
       <StatCard
-        title={t('statisticsGrid.salesTitle')}
+        title={t("statisticsGrid.salesTitle")}
         value={summary.total_products.toString()}
-        description={t('statisticsGrid.salesDescription')}
-        icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />} trend={""}      />
+        description={t("statisticsGrid.salesDescription")}
+        icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+        trend={""}
+      />
     </div>
   );
 };

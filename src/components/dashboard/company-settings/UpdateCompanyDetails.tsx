@@ -1,36 +1,36 @@
-import { useState, useEffect, FC } from 'react';
-import { Input } from '@/components/ui/input';
+import { useState, useEffect, FC } from "react";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   CountryCode,
   getCountryCallingCode,
   isValidPhoneNumber,
-} from 'libphonenumber-js';
-import countryList from '../../account-details/profile-form/CountryCodes';
-import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
-import { useKeycloak } from '@react-keycloak/web';
-import { useToast } from '@/hooks/use-toast';
+} from "libphonenumber-js";
+import countryList from "../../account-details/profile-form/CountryCodes";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
+import { useKeycloak } from "@react-keycloak/web";
+import { useToast } from "@/hooks/use-toast";
 
 const UpdateCompanyDetails: FC = () => {
   const [formValues, setFormValues] = useState({
-    title: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    phone: '',
-    website: '',
-    email: '',
+    title: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    phone: "",
+    website: "",
+    email: "",
   });
-  const [companyCountry, setCompanyCountry] = useState<CountryCode>('US');
+  const [companyCountry, setCompanyCountry] = useState<CountryCode>("US");
   const [errors, setErrors] = useState<{
     title?: string;
     addressLine1?: string;
@@ -50,7 +50,7 @@ const UpdateCompanyDetails: FC = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          'https://api.invoicehub.space/api/v1/user/loggedInUser',
+          "https://api.invoicehub.space/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -65,26 +65,27 @@ const UpdateCompanyDetails: FC = () => {
           setCompanyId(company.id);
 
           setFormValues({
-            title: company.title || '',
-            addressLine1: company.address?.addressLine1 || '',
-            addressLine2: company.address?.addressLine2 || '',
-            city: company.address?.city || '',
-            state: company.address?.state || '',
-            zipCode: company.address?.zipCode || '',
-            phone: company.phone.replace(/^\+\(\d+\)-/, '') || '',
-            website: company.website || '',
-            email: company.email || '',
+            title: company.title || "",
+            addressLine1: company.address?.addressLine1 || "",
+            addressLine2: company.address?.addressLine2 || "",
+            city: company.address?.city || "",
+            state: company.address?.state || "",
+            zipCode: company.address?.zipCode || "",
+            phone: company.phone.replace(/^\+\(\d+\)-/, "") || "",
+            website: company.website || "",
+            email: company.email || "",
           });
 
           const countryCode = countryList.find(
-            (c) => c.name.toLowerCase() === company.address?.country.toLowerCase()
+            (c) =>
+              c.name.toLowerCase() === company.address?.country.toLowerCase()
           )?.code;
           if (countryCode) setCompanyCountry(countryCode as CountryCode);
         } else {
-          console.error('Failed to fetch logged-in user data');
+          console.error("Failed to fetch logged-in user data");
         }
       } catch (error) {
-        console.error('Error fetching logged-in user data:', error);
+        console.error("Error fetching logged-in user data:", error);
       }
     };
 
@@ -96,55 +97,56 @@ const UpdateCompanyDetails: FC = () => {
   ) => {
     if (e) e.preventDefault();
 
-    const { title, addressLine1, city, state, zipCode, phone, email } = formValues;
+    const { title, addressLine1, city, state, zipCode, phone, email } =
+      formValues;
 
     let valid = true;
     const newErrors: typeof errors = {};
 
     // Company Title
     if (!title.trim()) {
-      newErrors.title = t('companySignUpForm.errors.companyName');
+      newErrors.title = t("companySignUpForm.errors.companyName");
       valid = false;
     }
 
     // Email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.trim()) {
-      newErrors.email = t('companySignUpForm.errors.emailRequired');
+      newErrors.email = t("companySignUpForm.errors.emailRequired");
       valid = false;
     } else if (!emailRegex.test(email.trim())) {
-      newErrors.email = t('companySignUpForm.errors.invalidEmail');
+      newErrors.email = t("companySignUpForm.errors.invalidEmail");
       valid = false;
     }
 
     // Phone Number
     const fullCompanyPhoneNumber = `${companyPhoneCode}${phone.trim()}`;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
-      newErrors.phone = t('companySignUpForm.errors.companyPhone');
+      newErrors.phone = t("companySignUpForm.errors.companyPhone");
       valid = false;
     }
 
     // Address Line 1
     if (!addressLine1.trim()) {
-      newErrors.addressLine1 = t('companySignUpForm.errors.companyAddress');
+      newErrors.addressLine1 = t("companySignUpForm.errors.companyAddress");
       valid = false;
     }
 
     // City
     if (!city.trim()) {
-      newErrors.city = t('companySignUpForm.errors.companyCity');
+      newErrors.city = t("companySignUpForm.errors.companyCity");
       valid = false;
     }
 
     // State
     if (!state.trim()) {
-      newErrors.state = t('companySignUpForm.errors.companyState');
+      newErrors.state = t("companySignUpForm.errors.companyState");
       valid = false;
     }
 
     // Zip Code
     if (!zipCode.trim()) {
-      newErrors.zipCode = t('companySignUpForm.errors.zipCode');
+      newErrors.zipCode = t("companySignUpForm.errors.zipCode");
       valid = false;
     }
 
@@ -157,9 +159,9 @@ const UpdateCompanyDetails: FC = () => {
       const response = await fetch(
         `https://api.invoicehub.space/api/v1/company/update/${companyId}`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
           body: JSON.stringify({
@@ -174,37 +176,36 @@ const UpdateCompanyDetails: FC = () => {
               state: state.trim(),
               zipCode: zipCode.trim(),
               country:
-                countryList.find((c) => c.code === companyCountry)?.name ||
-                '',
+                countryList.find((c) => c.code === companyCountry)?.name || "",
             },
           }),
         }
       );
 
       if (response.ok) {
-        console.log('Company details updated successfully');
+        console.log("Company details updated successfully");
         toast({
-          title: t('form.success'),
-          description: t('form.companyUpdateSuccess'),
-          variant: 'success',
+          title: t("form.success"),
+          description: t("form.companyUpdateSuccess"),
+          variant: "success",
           duration: 3000,
         });
         setErrors({});
       } else {
-        console.error('Failed to update company details');
+        console.error("Failed to update company details");
         toast({
-          title: t('form.error'),
-          description: t('form.companyUpdateError'),
-          variant: 'destructive',
+          title: t("form.error"),
+          description: t("form.companyUpdateError"),
+          variant: "destructive",
           duration: 3000,
         });
       }
     } catch (error) {
-      console.error('Error updating company details:', error);
+      console.error("Error updating company details:", error);
       toast({
-        title: t('form.error'),
-        description: t('form.companyUpdateError'),
-        variant: 'destructive',
+        title: t("form.error"),
+        description: t("form.companyUpdateError"),
+        variant: "destructive",
         duration: 3000,
       });
     }
@@ -226,13 +227,15 @@ const UpdateCompanyDetails: FC = () => {
     setCompanyCountry(code);
     // Re-validate phone number when country changes
     if (formValues.phone) {
-      const fullCompanyPhoneNumber = `+${getCountryCallingCode(code)}${formValues.phone.trim()}`;
+      const fullCompanyPhoneNumber = `+${getCountryCallingCode(
+        code
+      )}${formValues.phone.trim()}`;
       if (isValidPhoneNumber(fullCompanyPhoneNumber, code)) {
         setErrors((prevErrors) => ({ ...prevErrors, phone: undefined }));
       } else {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          phone: t('companySignUpForm.errors.companyPhone'),
+          phone: t("companySignUpForm.errors.companyPhone"),
         }));
       }
     }
@@ -244,14 +247,14 @@ const UpdateCompanyDetails: FC = () => {
         {/* Company Name */}
         <div>
           <label htmlFor="title" className="block text-sm font-medium mb-1">
-            {t('companySignUpForm.companyName')}
+            {t("companySignUpForm.companyName")}
           </label>
           <Input
             id="title"
             name="title"
             value={formValues.title}
             onChange={handleChange}
-            placeholder={t('companySignUpForm.companyName')}
+            placeholder={t("companySignUpForm.companyName")}
             className="w-full"
             required
           />
@@ -263,7 +266,7 @@ const UpdateCompanyDetails: FC = () => {
         {/* Company Email */}
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-1">
-            {t('signUpForm.email')}
+            {t("signUpForm.email")}
           </label>
           <Input
             id="email"
@@ -271,7 +274,7 @@ const UpdateCompanyDetails: FC = () => {
             type="email"
             value={formValues.email}
             onChange={handleChange}
-            placeholder={t('signUpForm.email')}
+            placeholder={t("signUpForm.email")}
             className="w-full"
             required
           />
@@ -287,21 +290,19 @@ const UpdateCompanyDetails: FC = () => {
               htmlFor="addressLine1"
               className="block text-sm font-medium mb-1"
             >
-              {t('companySignUpForm.addressLine1')}
+              {t("companySignUpForm.addressLine1")}
             </label>
             <Input
               id="addressLine1"
               name="addressLine1"
               value={formValues.addressLine1}
               onChange={handleChange}
-              placeholder={t('companySignUpForm.addressLine1')}
+              placeholder={t("companySignUpForm.addressLine1")}
               className="w-full"
               required
             />
             {errors.addressLine1 && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.addressLine1}
-              </p>
+              <p className="text-red-500 text-sm mt-1">{errors.addressLine1}</p>
             )}
           </div>
           <div>
@@ -309,14 +310,14 @@ const UpdateCompanyDetails: FC = () => {
               htmlFor="addressLine2"
               className="block text-sm font-medium mb-1"
             >
-              {t('companySignUpForm.addressLine2')}
+              {t("companySignUpForm.addressLine2")}
             </label>
             <Input
               id="addressLine2"
               name="addressLine2"
               value={formValues.addressLine2}
               onChange={handleChange}
-              placeholder={t('companySignUpForm.addressLine2')}
+              placeholder={t("companySignUpForm.addressLine2")}
               className="w-full"
             />
           </div>
@@ -326,14 +327,14 @@ const UpdateCompanyDetails: FC = () => {
         <div className="grid grid-cols-3 gap-4">
           <div>
             <label htmlFor="city" className="block text-sm font-medium mb-1">
-              {t('companySignUpForm.city')}
+              {t("companySignUpForm.city")}
             </label>
             <Input
               id="city"
               name="city"
               value={formValues.city}
               onChange={handleChange}
-              placeholder={t('companySignUpForm.city')}
+              placeholder={t("companySignUpForm.city")}
               className="w-full"
               required
             />
@@ -343,14 +344,14 @@ const UpdateCompanyDetails: FC = () => {
           </div>
           <div>
             <label htmlFor="state" className="block text-sm font-medium mb-1">
-              {t('companySignUpForm.state')}
+              {t("companySignUpForm.state")}
             </label>
             <Input
               id="state"
               name="state"
               value={formValues.state}
               onChange={handleChange}
-              placeholder={t('companySignUpForm.state')}
+              placeholder={t("companySignUpForm.state")}
               className="w-full"
               required
             />
@@ -360,14 +361,14 @@ const UpdateCompanyDetails: FC = () => {
           </div>
           <div>
             <label htmlFor="zipCode" className="block text-sm font-medium mb-1">
-              {t('companySignUpForm.zipCode')}
+              {t("companySignUpForm.zipCode")}
             </label>
             <Input
               id="zipCode"
               name="zipCode"
               value={formValues.zipCode}
               onChange={handleChange}
-              placeholder={t('companySignUpForm.zipCode')}
+              placeholder={t("companySignUpForm.zipCode")}
               className="w-full"
               required
             />
@@ -380,19 +381,19 @@ const UpdateCompanyDetails: FC = () => {
         {/* Company Phone */}
         <div className="flex flex-col space-y-2">
           <label htmlFor="phone" className="block text-sm font-medium mb-1">
-            {t('companySignUpForm.phone')}
+            {t("companySignUpForm.phone")}
           </label>
           <div className="flex space-x-2">
             <Select
               onValueChange={handleCompanyCountryChange}
               value={companyCountry}
-              aria-label={t('companySignUpForm.selectCountry')}
+              aria-label={t("companySignUpForm.selectCountry")}
             >
               <SelectTrigger className="w-[120px]">
                 <SelectValue
                   placeholder={
                     countryList.find((c) => c.code === companyCountry)?.name ||
-                    t('companySignUpForm.selectCountry')
+                    t("companySignUpForm.selectCountry")
                   }
                 />
               </SelectTrigger>
@@ -422,14 +423,14 @@ const UpdateCompanyDetails: FC = () => {
         {/* Website */}
         <div>
           <label htmlFor="website" className="block text-sm font-medium mb-1">
-            {t('companySignUpForm.website')}
+            {t("companySignUpForm.website")}
           </label>
           <Input
             id="website"
             name="website"
             value={formValues.website}
             onChange={handleChange}
-            placeholder={t('companySignUpForm.website')}
+            placeholder={t("companySignUpForm.website")}
             className="w-full"
           />
         </div>
@@ -437,7 +438,7 @@ const UpdateCompanyDetails: FC = () => {
         {/* Submit Button */}
         <div className="flex justify-start">
           <Button size="sm" type="submit">
-            {t('companySignUpForm.updateBtn')}
+            {t("companySignUpForm.updateBtn")}
           </Button>
         </div>
       </form>

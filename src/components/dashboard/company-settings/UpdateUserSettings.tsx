@@ -1,22 +1,22 @@
-import React, { useState, useEffect, FC } from 'react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect, FC } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   CountryCode,
   getCountryCallingCode,
   isValidPhoneNumber,
-} from 'libphonenumber-js';
-import countryList from '../../account-details/profile-form/CountryCodes';
-import { useTranslation } from 'react-i18next';
-import { useKeycloak } from '@react-keycloak/web';
-import { useToast } from '@/hooks/use-toast';
+} from "libphonenumber-js";
+import countryList from "../../account-details/profile-form/CountryCodes";
+import { useTranslation } from "react-i18next";
+import { useKeycloak } from "@react-keycloak/web";
+import { useToast } from "@/hooks/use-toast";
 
 interface Address {
   id: number;
@@ -61,14 +61,14 @@ const UpdateUserSettings: FC = () => {
   const { toast } = useToast();
 
   const [formValues, setFormValues] = useState({
-    username: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
+    username: "",
+    password: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
   });
 
-  const [phoneCountry, setPhoneCountry] = useState<CountryCode>('US');
+  const [phoneCountry, setPhoneCountry] = useState<CountryCode>("US");
   const [errors, setErrors] = useState<{
     password?: string;
     firstName?: string;
@@ -77,7 +77,7 @@ const UpdateUserSettings: FC = () => {
   }>({});
 
   const [companyData, setCompanyData] = useState<Company | null>(null);
-  const [roleDescription, setRoleDescription] = useState<string>('');
+  const [roleDescription, setRoleDescription] = useState<string>("");
 
   const phoneCode = `+${getCountryCallingCode(phoneCountry)}`;
 
@@ -85,7 +85,7 @@ const UpdateUserSettings: FC = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          'https://api.invoicehub.space/api/v1/user/loggedInUser',
+          "https://api.invoicehub.space/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -99,11 +99,11 @@ const UpdateUserSettings: FC = () => {
           setUserId(user.id);
 
           setFormValues({
-            username: user.username || '',
-            password: '',
-            firstName: user.firstName || '',
-            lastName: user.lastName || '',
-            phone: user.phone.replace(/^\+\d{1,3}/, '') || '',
+            username: user.username || "",
+            password: "",
+            firstName: user.firstName || "",
+            lastName: user.lastName || "",
+            phone: user.phone.replace(/^\+\d{1,3}/, "") || "",
           });
 
           const countryCode = countryList.find((c) =>
@@ -114,20 +114,20 @@ const UpdateUserSettings: FC = () => {
           setCompanyData(user.company);
           setRoleDescription(user.role.description);
         } else {
-          console.error('Failed to fetch user data');
+          console.error("Failed to fetch user data");
           toast({
-            title: t('form.error'),
-            description: t('form.fetchUserError'),
-            variant: 'destructive',
+            title: t("form.error"),
+            description: t("form.fetchUserError"),
+            variant: "destructive",
             duration: 3000,
           });
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error("Error fetching user data:", error);
         toast({
-          title: t('form.error'),
-          description: t('form.fetchUserError'),
-          variant: 'destructive',
+          title: t("form.error"),
+          description: t("form.fetchUserError"),
+          variant: "destructive",
           duration: 3000,
         });
       }
@@ -152,28 +152,29 @@ const UpdateUserSettings: FC = () => {
 
     // First Name
     if (!firstName.trim()) {
-      newErrors.firstName = t('signUpForm.errors.firstName');
+      newErrors.firstName = t("signUpForm.errors.firstName");
       valid = false;
     }
 
     // Last Name
     if (!lastName.trim()) {
-      newErrors.lastName = t('signUpForm.errors.lastName');
+      newErrors.lastName = t("signUpForm.errors.lastName");
       valid = false;
     }
 
     // Phone Number
     const fullPhoneNumber = `${phoneCode}${phone.trim()}`;
     if (!isValidPhoneNumber(fullPhoneNumber, phoneCountry)) {
-      newErrors.phone = t('signUpForm.errors.phone');
+      newErrors.phone = t("signUpForm.errors.phone");
       valid = false;
     }
 
     // Password if it's provided
     if (password) {
-      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&^_-])[A-Za-z\d@$!%*#?&^_-]{8,}$/;
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&^_-])[A-Za-z\d@$!%*#?&^_-]{8,}$/;
       if (!passwordRegex.test(password.trim())) {
-        newErrors.password = t('signUpForm.errors.validatePassword');
+        newErrors.password = t("signUpForm.errors.validatePassword");
         valid = false;
       }
     }
@@ -185,9 +186,9 @@ const UpdateUserSettings: FC = () => {
 
     if (!companyData) {
       toast({
-        title: t('form.error'),
-        description: t('form.companyDataMissing'),
-        variant: 'destructive',
+        title: t("form.error"),
+        description: t("form.companyDataMissing"),
+        variant: "destructive",
         duration: 3000,
       });
       return;
@@ -197,9 +198,9 @@ const UpdateUserSettings: FC = () => {
       const response = await fetch(
         `https://api.invoicehub.space/api/v1/user/update/${userId}`,
         {
-          method: 'PUT',
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${keycloak.token}`,
           },
           body: JSON.stringify({
@@ -225,44 +226,42 @@ const UpdateUserSettings: FC = () => {
               },
             },
             role: {
-              description: roleDescription, 
+              description: roleDescription,
             },
           }),
         }
       );
 
       if (response.ok) {
-        console.log('User details updated successfully');
+        console.log("User details updated successfully");
         toast({
-          title: t('form.success'),
-          description: t('form.userUpdateSuccess'),
-          variant: 'success',
+          title: t("form.success"),
+          description: t("form.userUpdateSuccess"),
+          variant: "success",
           duration: 3000,
         });
         setErrors({});
       } else {
-        console.error('Failed to update user details');
+        console.error("Failed to update user details");
         toast({
-          title: t('form.error'),
-          description: t('form.userUpdateError'),
-          variant: 'destructive',
+          title: t("form.error"),
+          description: t("form.userUpdateError"),
+          variant: "destructive",
           duration: 3000,
         });
       }
     } catch (error) {
-      console.error('Error updating user details:', error);
+      console.error("Error updating user details:", error);
       toast({
-        title: t('form.error'),
-        description: t('form.userUpdateError'),
-        variant: 'destructive',
+        title: t("form.error"),
+        description: t("form.userUpdateError"),
+        variant: "destructive",
         duration: 3000,
       });
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues((prevValues) => ({ ...prevValues, [name]: value }));
 
@@ -273,13 +272,15 @@ const UpdateUserSettings: FC = () => {
     setPhoneCountry(code);
     // Re-validate phone number when country changes
     if (formValues.phone) {
-      const fullPhoneNumber = `+${getCountryCallingCode(code)}${formValues.phone.trim()}`;
+      const fullPhoneNumber = `+${getCountryCallingCode(
+        code
+      )}${formValues.phone.trim()}`;
       if (isValidPhoneNumber(fullPhoneNumber, code)) {
         setErrors((prevErrors) => ({ ...prevErrors, phone: undefined }));
       } else {
         setErrors((prevErrors) => ({
           ...prevErrors,
-          phone: t('signUpForm.errors.phone'),
+          phone: t("signUpForm.errors.phone"),
         }));
       }
     }
@@ -290,27 +291,21 @@ const UpdateUserSettings: FC = () => {
       {/* Email and Password */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label
-            htmlFor="username"
-            className="block text-sm font-medium mb-1"
-          >
-            {t('signUpForm.email')}
+          <label htmlFor="username" className="block text-sm font-medium mb-1">
+            {t("signUpForm.email")}
           </label>
           <Input
             id="username"
             name="username"
             value={formValues.username}
-            placeholder={t('signUpForm.email')}
+            placeholder={t("signUpForm.email")}
             readOnly
             className="w-full bg-gray-100 dark:bg-gray-800 dark:text-gray-400 cursor-not-allowed"
           />
         </div>
         <div>
-          <label
-            htmlFor="password"
-            className="block text-sm font-medium mb-1"
-          >
-            {t('signUpForm.password')}
+          <label htmlFor="password" className="block text-sm font-medium mb-1">
+            {t("signUpForm.password")}
           </label>
           <Input
             id="password"
@@ -318,7 +313,7 @@ const UpdateUserSettings: FC = () => {
             type="password"
             value={formValues.password}
             onChange={handleChange}
-            placeholder={t('signUpForm.password')}
+            placeholder={t("signUpForm.password")}
             className="w-full"
           />
           {errors.password && (
@@ -330,18 +325,15 @@ const UpdateUserSettings: FC = () => {
       {/* First Name, Last Name, and Phone */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label
-            htmlFor="firstName"
-            className="block text-sm font-medium mb-1"
-          >
-            {t('signUpForm.firstName')}
+          <label htmlFor="firstName" className="block text-sm font-medium mb-1">
+            {t("signUpForm.firstName")}
           </label>
           <Input
             id="firstName"
             name="firstName"
             value={formValues.firstName}
             onChange={handleChange}
-            placeholder={t('signUpForm.firstName')}
+            placeholder={t("signUpForm.firstName")}
             className="w-full"
             required
           />
@@ -350,18 +342,15 @@ const UpdateUserSettings: FC = () => {
           )}
         </div>
         <div>
-          <label
-            htmlFor="lastName"
-            className="block text-sm font-medium mb-1"
-          >
-            {t('signUpForm.lastName')}
+          <label htmlFor="lastName" className="block text-sm font-medium mb-1">
+            {t("signUpForm.lastName")}
           </label>
           <Input
             id="lastName"
             name="lastName"
             value={formValues.lastName}
             onChange={handleChange}
-            placeholder={t('signUpForm.lastName')}
+            placeholder={t("signUpForm.lastName")}
             className="w-full"
             required
           />
@@ -370,23 +359,20 @@ const UpdateUserSettings: FC = () => {
           )}
         </div>
         <div>
-          <label
-            htmlFor="phone"
-            className="block text-sm font-medium mb-1"
-          >
-            {t('signUpForm.phone')}
+          <label htmlFor="phone" className="block text-sm font-medium mb-1">
+            {t("signUpForm.phone")}
           </label>
           <div className="flex space-x-2">
             <Select
               onValueChange={handlePhoneCountryChange}
               value={phoneCountry}
-              aria-label={t('signUpForm.selectCountry')}
+              aria-label={t("signUpForm.selectCountry")}
             >
               <SelectTrigger className="w-[120px]">
                 <SelectValue
                   placeholder={
                     countryList.find((c) => c.code === phoneCountry)?.name ||
-                    t('signUpForm.selectCountry')
+                    t("signUpForm.selectCountry")
                   }
                 />
               </SelectTrigger>
@@ -417,7 +403,7 @@ const UpdateUserSettings: FC = () => {
       {/* Submit Button */}
       <div className="flex justify-start">
         <Button size="sm" className="mt-2" type="submit">
-          {t('companySignUpForm.updateBtn')}
+          {t("companySignUpForm.updateBtn")}
         </Button>
       </div>
     </form>

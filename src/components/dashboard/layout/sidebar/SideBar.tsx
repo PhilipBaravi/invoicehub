@@ -27,11 +27,36 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
   const { keycloak } = useKeycloak();
 
   const menuItems = [
-    { name: t("sidebar.dashboard"), icon: LayoutDashboard, path: "/dashboard", showAlways: true },
-    { name: t("sidebar.invoice"), icon: FileText, path: "/dashboard/invoices", showAlways: true },
-    { name: t("sidebar.employee"), icon: UserSearch, path: "/dashboard/employee", adminOnly: true },
-    { name: t("sidebar.clients"), icon: Building2, path: "/dashboard/clients", showAlways: true },
-    { name: t("sidebar.categories"), icon: FolderKanban, path: "/dashboard/categories", showAlways: true },
+    {
+      name: t("sidebar.dashboard"),
+      icon: LayoutDashboard,
+      path: "/dashboard",
+      showAlways: true,
+    },
+    {
+      name: t("sidebar.invoice"),
+      icon: FileText,
+      path: "/dashboard/invoices",
+      showAlways: true,
+    },
+    {
+      name: t("sidebar.employee"),
+      icon: UserSearch,
+      path: "/dashboard/employee",
+      adminOnly: true,
+    },
+    {
+      name: t("sidebar.clients"),
+      icon: Building2,
+      path: "/dashboard/clients",
+      showAlways: true,
+    },
+    {
+      name: t("sidebar.categories"),
+      icon: FolderKanban,
+      path: "/dashboard/categories",
+      showAlways: true,
+    },
     { name: t("sidebar.login"), icon: LogIn, path: "/login", showAlways: true },
   ];
 
@@ -49,14 +74,18 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
     if (!keycloak) return;
 
     const idToken = keycloak.idToken;
-    const postLogoutRedirectUri = "https://invoicehub.space";
+    const postLogoutRedirectUri = "https://invoicehub.space/";
 
     if (!idToken) {
-      console.error("No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred.");
+      console.error(
+        "No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred."
+      );
       return;
     }
 
-    const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
+    const logoutUrl = `${keycloak.authServerUrl}/realms/${
+      keycloak.realm
+    }/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
       idToken
     )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
 
@@ -67,14 +96,16 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
     window.location.href = logoutUrl;
   };
 
-  const filteredMenuItems = menuItems.filter((item) => item.showAlways || (item.adminOnly && isAdmin));
+  const filteredMenuItems = menuItems.filter(
+    (item) => item.showAlways || (item.adminOnly && isAdmin)
+  );
 
   return (
     <>
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={onClose} 
+          onClick={onClose}
         />
       )}
       <motion.div
@@ -99,7 +130,7 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
               return (
                 <li
                   key={item.name}
-                  className="leading-7 [&:not(:first-child)]:mt-2 text-md flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-950 dark:text-stone-50 hover:bg-stone-200 dark:hover:bg-stone-800 hover:text-accent"
+                  className="leading-7 [&:not(:first-child)]:mt-2 text-md flex items-center gap-[10px] px-3 py-2 rounded-md transition-all cursor-pointer text-stone-950 dark:text-stone-50"
                   onClick={(event) => handleItemClick(item.path, event)}
                 >
                   <Icon className="text-xl" />

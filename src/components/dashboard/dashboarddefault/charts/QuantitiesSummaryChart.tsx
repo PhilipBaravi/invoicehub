@@ -1,6 +1,21 @@
 import { FC, useEffect, useState } from "react";
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Bar,
+  BarChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useKeycloak } from "@react-keycloak/web";
 
 type QuantitiesSummary = {
@@ -16,11 +31,14 @@ const QuantitiesSummaryChart: FC = () => {
 
   const fetchQuantitiesSummary = async () => {
     try {
-      const response = await fetch('https://api.invoicehub.space/api/v1/dashboard/summaryQuantities', {
-        headers: {
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-      });
+      const response = await fetch(
+        "https://api.invoicehub.space/api/v1/dashboard/summaryQuantities",
+        {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -31,17 +49,27 @@ const QuantitiesSummaryChart: FC = () => {
       if (result.success && result.data) {
         const transformedData: QuantitiesSummary[] = [
           { name: "Total Employees", value: result.data.total_employees },
-          { name: "Total Products Sold", value: result.data.total_products_sold },
+          {
+            name: "Total Products Sold",
+            value: result.data.total_products_sold,
+          },
           { name: "Total Clients", value: result.data.total_clients },
           { name: "Total Products", value: result.data.total_products },
         ];
         setData(transformedData);
       } else {
-        throw new Error(result.message || "Failed to fetch quantities summary data");
+        throw new Error(
+          result.message || "Failed to fetch quantities summary data"
+        );
       }
     } catch (error) {
-      console.error("An error occurred while fetching quantities summary data:", error);
-      setError(error instanceof Error ? error.message : "An unknown error occurred");
+      console.error(
+        "An error occurred while fetching quantities summary data:",
+        error
+      );
+      setError(
+        error instanceof Error ? error.message : "An unknown error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -72,24 +100,36 @@ const QuantitiesSummaryChart: FC = () => {
     <Card className="w-full">
       <CardHeader>
         <CardTitle>Quantities Overview</CardTitle>
-        <CardDescription>Summary of employees, products, clients, and sales</CardDescription>
+        <CardDescription>
+          Summary of employees, products, clients, and sales
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="flex justify-center items-center h-[300px]">
-            <div className="text-lg font-semibold">Loading quantities data...</div>
+            <div className="text-lg font-semibold">
+              Loading quantities data...
+            </div>
           </div>
         ) : error ? (
           <div className="flex justify-center items-center h-[300px]">
-            <div className="text-lg font-semibold text-red-500">Error: {error}</div>
+            <div className="text-lg font-semibold text-red-500">
+              Error: {error}
+            </div>
           </div>
         ) : (
           <div className="w-full h-full">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={data} margin={{ top: 20, right: 20, left: 10, bottom: 5 }}>
+              <BarChart
+                data={data}
+                margin={{ top: 20, right: 20, left: 10, bottom: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => `${value}`} />
+                <YAxis
+                  tick={{ fontSize: 12 }}
+                  tickFormatter={(value) => `${value}`}
+                />
                 <Tooltip
                   cursor={{ fill: "transparent" }} // Disable hover background
                   content={({ active, payload }) => {
@@ -108,7 +148,12 @@ const QuantitiesSummaryChart: FC = () => {
                     return null;
                   }}
                 />
-                <Bar dataKey="value" name="Amount" barSize={90} isAnimationActive={false}>
+                <Bar
+                  dataKey="value"
+                  name="Amount"
+                  barSize={90}
+                  isAnimationActive={false}
+                >
                   {data.map((entry) => (
                     <Cell
                       key={`cell-${entry.name}`}

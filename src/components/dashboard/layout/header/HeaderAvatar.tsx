@@ -18,54 +18,59 @@ import { eraseCookie } from "@/utils/cookiesUtils";
 const HeaderAvatar: FC = () => {
   const { keycloak } = useKeycloak();
   const { isAdmin, user } = useAuth();
-  const { t } = useTranslation('settings');
+  const { t } = useTranslation("settings");
 
   const menuItems = [
     {
-      label: t('menu.team'),
-      path: 'employee',
-      adminOnly: true
+      label: t("menu.team"),
+      path: "employee",
+      adminOnly: true,
     },
     {
-      label: t('menu.payment'),
-      path: 'settings/payment-methods',
-      adminOnly: true
+      label: t("menu.payment"),
+      path: "settings/payment-methods",
+      adminOnly: true,
     },
     {
-      label: t('menu.subscription'),
-      path: 'settings/profile-subscription',
-      adminOnly: true
+      label: t("menu.subscription"),
+      path: "settings/profile-subscription",
+      adminOnly: true,
     },
     {
-      label: t('menu.settings'),
-      path: 'settings',
-      adminOnly: true
-    }
+      label: t("menu.settings"),
+      path: "settings",
+      adminOnly: true,
+    },
   ];
 
   const logOut = async () => {
     if (!keycloak) return;
 
     const idToken = keycloak.idToken;
-    const postLogoutRedirectUri = 'https://invoicehub.space';
+    const postLogoutRedirectUri = "https://invoicehub.space/";
 
     if (!idToken) {
-      console.error('No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred.');
+      console.error(
+        "No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred."
+      );
       return;
     }
 
-    const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(idToken)}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
+    const logoutUrl = `${keycloak.authServerUrl}/realms/${
+      keycloak.realm
+    }/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
+      idToken
+    )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
 
-    // Clear tokens 
-    eraseCookie('keycloak_token');
-    eraseCookie('keycloak_refresh_token');
-    eraseCookie('keycloak_id_token');
+    eraseCookie("keycloak_token");
+    eraseCookie("keycloak_refresh_token");
+    eraseCookie("keycloak_id_token");
 
     window.location.href = logoutUrl;
   };
 
-  const filteredMenuItems = menuItems.filter(item => 
-    !item.adminOnly || (item.adminOnly && isAdmin)
+  const filteredMenuItems = menuItems.filter(
+    (item) => !item.adminOnly || (item.adminOnly && isAdmin)
   );
 
   return (
@@ -75,7 +80,8 @@ const HeaderAvatar: FC = () => {
           <Avatar className="h-8 w-8">
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
             <AvatarFallback>
-              {user?.firstName?.[0]}{user?.lastName?.[0]}
+              {user?.firstName?.[0]}
+              {user?.lastName?.[0]}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -84,24 +90,22 @@ const HeaderAvatar: FC = () => {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user ? `${user.firstName} ${user.lastName}` : 'User'}
+              {user ? `${user.firstName} ${user.lastName}` : "User"}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user?.username || 'user@example.com'}
+              {user?.username || "user@example.com"}
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {filteredMenuItems.map((item) => (
           <Link to={item.path} key={item.path}>
-            <DropdownMenuItem>
-              {item.label}
-            </DropdownMenuItem>
+            <DropdownMenuItem>{item.label}</DropdownMenuItem>
           </Link>
         ))}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logOut} className="cursor-pointer">
-          {t('menu.logout')}
+          {t("menu.logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

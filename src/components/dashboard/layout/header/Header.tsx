@@ -3,10 +3,9 @@ import { Menu } from "lucide-react";
 import SideBar from "../sidebar/SideBar";
 import { ModeToggle } from "../ModeToggle";
 import HeaderAvatar from "./HeaderAvatar";
-import { useMediaQuery } from 'react-responsive';
+import { useMediaQuery } from "react-responsive";
 import LanguageSelector from "@/components/main-authentication/new-login-page/LanguageSelector";
 import HeaderBreadcrumbs from "./HeaderBreadcrumbs";
-
 
 type HeaderProps = {
   toggleLargeSidebar: () => void;
@@ -14,7 +13,7 @@ type HeaderProps = {
 
 const Header: FC<HeaderProps> = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const isLargeScreen = useMediaQuery({ query: '(min-width: 1024px)' });
+  const isLargeScreen = useMediaQuery({ query: "(min-width: 1024px)" });
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
