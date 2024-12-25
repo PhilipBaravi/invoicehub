@@ -14,9 +14,9 @@ import ClientSelector from "./ClientSelector";
 import InvoiceDetails from "./InvoiceDetails";
 import Totals from "./Totals";
 import Signatures from "./Signatures";
-import Attachments from "./Attachments";
+// import Attachments from "./Attachments";
 import TaxDialog from "./TaxDialog";
-import LogoUploader from "./LogoUploader";
+// import LogoUploader from "./LogoUploader";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
@@ -80,7 +80,7 @@ const InvoiceComponent: FC = () => {
   const [clientSignatureImage, setClientSignatureImage] = useState<
     string | null
   >(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const fileInputRef = useRef<HTMLInputElement>(null);
   const sigCanvasBusinessRef = useRef<any>(null);
   const sigCanvasClientRef = useRef<any>(null);
   const businessSignatureInputRef = useRef<HTMLInputElement>(null);
@@ -89,8 +89,8 @@ const InvoiceComponent: FC = () => {
     null
   );
 
-  const [logo, setLogo] = useState<string | null>(null);
-  const [attachments, setAttachments] = useState<File[]>([]);
+  // const [logo, setLogo] = useState<string | null>(null);
+  // const [attachments, setAttachments] = useState<File[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { keycloak } = useKeycloak();
@@ -105,6 +105,7 @@ const InvoiceComponent: FC = () => {
     useState<BusinessInfo | null>(null);
   const { t } = useTranslation("invoices");
   const { toast } = useToast();
+  const [shouldFetch, setShouldFetch] = useState<boolean>(true);
 
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id);
@@ -146,7 +147,7 @@ const InvoiceComponent: FC = () => {
     if (!rates) return;
     try {
       const response = await fetch(
-        "https://api.invoicehub.space/api/v1/product/list",
+        "http://localhost:9090/api/v1/product/list",
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -199,7 +200,7 @@ const InvoiceComponent: FC = () => {
       setIsLoadingClients(true);
       try {
         const response = await fetch(
-          "https://api.invoicehub.space/api/v1/clientVendor/list",
+          "http://localhost:9090/api/v1/clientVendor/list",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -225,7 +226,7 @@ const InvoiceComponent: FC = () => {
     const fetchLoggedInCompanyDetails = async () => {
       try {
         const response = await fetch(
-          "https://api.invoicehub.space/api/v1/user/loggedInUser",
+          "http://localhost:9090/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -249,7 +250,8 @@ const InvoiceComponent: FC = () => {
       fetchProductsAndCategories();
       fetchClients();
     }
-  }, [keycloak, fetchProductsAndCategories, t]);
+    setShouldFetch(false);
+  }, [keycloak, fetchProductsAndCategories]);
 
   const handleClientSelect = useCallback(
     (clientName: string) => {
@@ -272,7 +274,7 @@ const InvoiceComponent: FC = () => {
       try {
         if (isEditMode) {
           const response = await fetch(
-            "https://api.invoicehub.space/api/v1/invoice/list",
+            "http://localhost:9090/api/v1/invoice/list",
             {
               headers: {
                 Authorization: `Bearer ${keycloak.token}`,
@@ -311,7 +313,7 @@ const InvoiceComponent: FC = () => {
               setSelectedClient(fetchedInvoice.clientVendor);
 
               const lineItemsResponse = await fetch(
-                `https://api.invoicehub.space/api/v1/invoice/product/list/${id}`,
+                `http://localhost:9090/api/v1/invoice/product/list/${id}`,
                 {
                   headers: {
                     Authorization: `Bearer ${keycloak.token}`,
@@ -357,7 +359,7 @@ const InvoiceComponent: FC = () => {
           }
         } else {
           const response = await fetch(
-            "https://api.invoicehub.space/api/v1/invoice/generate",
+            "http://localhost:9090/api/v1/invoice/generate",
             {
               headers: {
                 Authorization: `Bearer ${keycloak.token}`,
@@ -382,24 +384,26 @@ const InvoiceComponent: FC = () => {
     if (keycloak.token) {
       fetchInvoiceDetails();
     }
-  }, [isEditMode, id, keycloak.token, updateTotals, rate, rates, t]);
+
+    setShouldFetch(false);
+  }, [keycloak.token, shouldFetch]);
 
   const { theme } = useTheme();
   const penColor = theme === "dark" ? "white" : "black";
 
-  const handleLogoUpload = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setLogo(e.target?.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
-    },
-    []
-  );
+  // const handleLogoUpload = useCallback(
+  //   (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     const file = event.target.files?.[0];
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = (e) => {
+  //         setLogo(e.target?.result as string);
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   },
+  //   []
+  // );
 
   const handleAddLineItem = useCallback(() => {
     setLineItems((prev) => [
@@ -414,6 +418,7 @@ const InvoiceComponent: FC = () => {
         tax: 0,
         maxQuantity: 0,
         error: "",
+        productUnit: "",
       },
     ]);
   }, []);
@@ -505,62 +510,62 @@ const InvoiceComponent: FC = () => {
     }
   }, [currentItemIndex, taxDetails.percentage, updateTotals]);
 
-  const handleAttachment = useCallback(() => {
-    fileInputRef.current?.click();
-  }, []);
+  // const handleAttachment = useCallback(() => {
+  //   fileInputRef.current?.click();
+  // }, []);
 
-  const handleFileUpload = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = event.target.files;
-      if (files) {
-        const validFiles: File[] = [];
-        const invalidFiles: string[] = [];
-        const allowedTypes = [
-          "application/pdf",
-          "application/msword",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "image/jpeg",
-          "image/png",
-          "image/gif",
-        ];
+  // const handleFileUpload = useCallback(
+  //   (event: React.ChangeEvent<HTMLInputElement>) => {
+  //     const files = event.target.files;
+  //     if (files) {
+  //       const validFiles: File[] = [];
+  //       const invalidFiles: string[] = [];
+  //       const allowedTypes = [
+  //         "application/pdf",
+  //         "application/msword",
+  //         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  //         "image/jpeg",
+  //         "image/png",
+  //         "image/gif",
+  //       ];
 
-        Array.from(files).forEach((file) => {
-          if (allowedTypes.includes(file.type)) {
-            validFiles.push(file);
-          } else {
-            invalidFiles.push(file.name);
-          }
-        });
+  //       Array.from(files).forEach((file) => {
+  //         if (allowedTypes.includes(file.type)) {
+  //           validFiles.push(file);
+  //         } else {
+  //           invalidFiles.push(file.name);
+  //         }
+  //       });
 
-        if (invalidFiles.length > 0) {
-          toast({
-            title: t("invoice.error"),
-            description: `${t(
-              "invoice.errors.invalidFileTypes"
-            )} ${invalidFiles.join(", ")}. ${t("invoice.errors.fileTypes")}`,
-            variant: "destructive",
-            duration: 3000,
-          });
-          setErrorMessage(
-            `${t("invoice.errors.invalidFileTypes")} ${invalidFiles.join(
-              ", "
-            )}. ${t("invoice.errors.fileTypes")}`
-          );
-        } else {
-          setErrorMessage("");
-        }
+  //       if (invalidFiles.length > 0) {
+  //         toast({
+  //           title: t("invoice.error"),
+  //           description: `${t(
+  //             "invoice.errors.invalidFileTypes"
+  //           )} ${invalidFiles.join(", ")}. ${t("invoice.errors.fileTypes")}`,
+  //           variant: "destructive",
+  //           duration: 3000,
+  //         });
+  //         setErrorMessage(
+  //           `${t("invoice.errors.invalidFileTypes")} ${invalidFiles.join(
+  //             ", "
+  //           )}. ${t("invoice.errors.fileTypes")}`
+  //         );
+  //       } else {
+  //         setErrorMessage("");
+  //       }
 
-        setAttachments((prev) => [...prev, ...validFiles]);
+  //       setAttachments((prev) => [...prev, ...validFiles]);
 
-        event.target.value = "";
-      }
-    },
-    [t, toast]
-  );
+  //       event.target.value = "";
+  //     }
+  //   },
+  //   [t, toast]
+  // );
 
-  const handleRemoveAttachment = useCallback((index: number) => {
-    setAttachments((prev) => prev.filter((_, i) => i !== index));
-  }, []);
+  // const handleRemoveAttachment = useCallback((index: number) => {
+  //   setAttachments((prev) => prev.filter((_, i) => i !== index));
+  // }, []);
 
   const handleItemSelect = useCallback(
     (index: number, categoryId: number, productId: number) => {
@@ -582,6 +587,7 @@ const InvoiceComponent: FC = () => {
                   tax: 0,
                   maxQuantity: selectedProduct.quantityInStock,
                   error: "",
+                  productUnit: selectedProduct.productUnit,
                 }
               : item
           );
@@ -759,8 +765,8 @@ const InvoiceComponent: FC = () => {
 
       const response = await fetch(
         isEditMode
-          ? `https://api.invoicehub.space/api/v1/invoice/update/${id}`
-          : "https://api.invoicehub.space/api/v1/invoice/create",
+          ? `http://localhost:9090/api/v1/invoice/update/${id}`
+          : "http://localhost:9090/api/v1/invoice/create",
         {
           method: isEditMode ? "PUT" : "POST",
           headers: {
@@ -799,7 +805,7 @@ const InvoiceComponent: FC = () => {
 
       if (isEditMode) {
         const existingLineItemsResponse = await fetch(
-          `https://api.invoicehub.space/api/v1/invoice/product/list/${id}`,
+          `http://localhost:9090/api/v1/invoice/product/list/${id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -812,7 +818,7 @@ const InvoiceComponent: FC = () => {
 
         for (const item of existingLineItems) {
           await fetch(
-            `https://api.invoicehub.space/api/v1/invoice/remove/product/${item.id}`,
+            `http://localhost:9090/api/v1/invoice/remove/product/${item.id}`,
             {
               method: "DELETE",
               headers: {
@@ -842,7 +848,7 @@ const InvoiceComponent: FC = () => {
         };
 
         const productResponse = await fetch(
-          `https://api.invoicehub.space/api/v1/invoice/add/product/${invoiceId}`,
+          `http://localhost:9090/api/v1/invoice/add/product/${invoiceId}`,
           {
             method: "POST",
             headers: {
@@ -930,9 +936,9 @@ const InvoiceComponent: FC = () => {
                 isEditMode={isEditMode}
               />
             </div>
-            <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
+            {/* <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
               <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
-            </div>
+            </div> */}
           </motion.div>
 
           <Separator className="bg-stone-200 dark:bg-stone-700" />
@@ -1017,7 +1023,7 @@ const InvoiceComponent: FC = () => {
 
           <Separator className="bg-stone-200 dark:bg-stone-700" />
 
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
@@ -1029,7 +1035,7 @@ const InvoiceComponent: FC = () => {
               handleFileUpload={handleFileUpload}
               handleRemoveAttachment={handleRemoveAttachment}
             />
-          </motion.div>
+          </motion.div> */}
 
           {errorMessage && (
             <Alert variant="destructive" className="mt-4">

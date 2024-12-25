@@ -84,7 +84,8 @@
       "selectCategory": "კატეგორიის არჩევა",
       "addTax": "დამატებითი გადასახადები",
       "enterDescription": "შეიყვანეთ ელემენტის აღწერა",
-      "description": "აღწერა: "
+      "description": "აღწერა: ",
+      "unit": "ერთეული"
     },
     "clientSelector": {
       "billed": "ინვოისირებულია",

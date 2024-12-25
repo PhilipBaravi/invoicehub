@@ -105,4 +105,5 @@ export interface LineItem {
   tax: number;
   maxQuantity?: number; // Optional, used for validation in components
   error?: string; // Optional, used for validation in components
+  productUnit: string;
 }

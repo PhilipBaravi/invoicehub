@@ -84,7 +84,8 @@
       "selectCategory": "Seleccionar Categoría",
       "addTax": "Agregar Impuestos",
       "enterDescription": "Ingrese una Descripción del Elemento",
-      "description": "Descripción: "
+      "description": "Descripción: ",
+      "unit": "Unidad"
     },
     "clientSelector": {
       "billed": "Facturado A",

@@ -34,7 +34,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     const fetchLineItems = async () => {
       try {
         const response = await fetch(
-          `https://api.invoicehub.space/api/v1/invoice/product/list/${invoice.id}`,
+          `http://localhost:9090/api/v1/invoice/product/list/${invoice.id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -53,7 +53,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     const fetchBusinessInfo = async () => {
       try {
         const response = await fetch(
-          "https://api.invoicehub.space/api/v1/user/loggedInUser",
+          "http://localhost:9090/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -101,13 +101,13 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                   {new Date(invoice.dueDate!).toLocaleDateString()}
                 </p>
               </div>
-              <div className="w-2/5 text-right">
+              {/* <div className="w-2/5 text-right">
                 <img
                   src="https://raw.githubusercontent.com/templid/email-templates/main/templid-dynamic-templates/invoice-02/brand-sample.png"
                   alt="Company Logo"
                   className="w-24 sm:w-32 md:w-40 h-auto ml-auto"
                 />
-              </div>
+              </div> */}
             </div>
 
             {/* Products Table */}
@@ -150,7 +150,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                           {item.price.toFixed(2)}
                         </td>
                         <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
-                          {item.quantity}
+                          {item.quantity} {item.product.productUnit}
                         </td>
                         <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
                           {currencyIcon}
@@ -323,13 +323,13 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                   {t("invoice.pdf.clientSignature")}
                 </h3>
                 <div className="mt-2 sm:mt-4 p-2 sm:p-4 border-b border-[#e5e7eb]">
-                  {invoice.clientSignature && (
+                  {/* {invoice.clientSignature && (
                     <img
                       src={invoice.clientSignature}
                       alt="Client Signature"
                       className="max-w-[120px] sm:max-w-[160px] md:max-w-xs h-auto"
                     />
-                  )}
+                  )} */}
                 </div>
               </div>
               <div className="w-1/2 pl-2 sm:pl-4 md:pl-6 text-right">
@@ -337,13 +337,13 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
                   {t("invoice.pdf.businessSignature")}
                 </h3>
                 <div className="mt-2 sm:mt-4 p-2 sm:p-4 border-b border-[#e5e7eb]">
-                  {invoice.businessSignature && (
+                  {/* {invoice.businessSignature && (
                     <img
                       src={invoice.businessSignature}
                       alt="Business Signature"
                       className="max-w-[120px] sm:max-w-[160px] md:max-w-xs h-auto ml-auto"
                     />
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>

@@ -88,6 +88,11 @@ const LineItems: FC<LineItemsProps> = ({
               </th>
               <th className="p-4 text-left">
                 <span className="text-sm font-semibold text-stone-700 dark:text-stone-300">
+                  {t("invoice.lineItems.unit")}
+                </span>
+              </th>
+              <th className="p-4 text-left">
+                <span className="text-sm font-semibold text-stone-700 dark:text-stone-300">
                   {t("invoice.lineItems.quantity")}
                 </span>
               </th>
@@ -195,8 +200,11 @@ const LineItems: FC<LineItemsProps> = ({
                         }
                       }}
                       id={`line-items-price-${index}`}
-                      className="shadow-sm border-stone-200 dark:border-stone-700 focus:ring-2 focus:ring-stone-200 dark:focus:ring-stone-700"
+                      className="shadow-sm border-stone-200 dark:border-stone-700 focus:ring-2 focus:ring-stone-200 dark:focus:ring-stone-700 min-w-[90px]"
                     />
+                  </td>
+                  <td className="p-4">
+                    {item.productUnit ? <span>{item.productUnit}</span> : null}{" "}
                   </td>
                   <td className="p-4">
                     <Input
@@ -208,7 +216,7 @@ const LineItems: FC<LineItemsProps> = ({
                         handleLineItemChange(index, "quantity", e.target.value)
                       }
                       id={`line-items-quantity-${index}`}
-                      className="shadow-sm border-stone-200 dark:border-stone-700 focus:ring-2 focus:ring-stone-200 dark:focus:ring-stone-700"
+                      className="shadow-sm border-stone-200 dark:border-stone-700 focus:ring-2 focus:ring-stone-200 dark:focus:ring-stone-700 min-w-[90px]"
                     />
                   </td>
                   <td className="p-4 text-center">

@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
 import { useAuth } from "@/hooks/useAuth";
-import { eraseCookie } from "@/utils/cookiesUtils";
+import { eraseCookie } from "@/utils/cookieUtils";
 
 interface LargeScreenSidebarProps {
   isOpen: boolean;
@@ -33,7 +33,7 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({
     if (!keycloak) return;
 
     const idToken = keycloak.idToken;
-    const postLogoutRedirectUri = "https://invoicehub.space/";
+    const postLogoutRedirectUri = "http://localhost:5173/";
 
     if (!idToken) {
       console.error(
@@ -48,9 +48,9 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({
       idToken
     )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
 
-    eraseCookie("keycloak_token");
-    eraseCookie("keycloak_refresh_token");
-    eraseCookie("keycloak_id_token");
+    localStorage.removeItem("keycloak_token");
+    localStorage.removeItem("keycloak_refresh_token");
+    localStorage.removeItem("keycloak_id_token");
 
     window.location.href = logoutUrl;
   };

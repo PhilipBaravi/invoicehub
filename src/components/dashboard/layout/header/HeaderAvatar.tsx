@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { eraseCookie } from "@/utils/cookiesUtils";
+import { eraseCookie } from "@/utils/cookieUtils";
 
 const HeaderAvatar: FC = () => {
   const { keycloak } = useKeycloak();
@@ -47,7 +47,7 @@ const HeaderAvatar: FC = () => {
     if (!keycloak) return;
 
     const idToken = keycloak.idToken;
-    const postLogoutRedirectUri = "https://invoicehub.space/";
+    const postLogoutRedirectUri = "http://localhost:5173/";
 
     if (!idToken) {
       console.error(
@@ -62,9 +62,10 @@ const HeaderAvatar: FC = () => {
       idToken
     )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
 
-    eraseCookie("keycloak_token");
-    eraseCookie("keycloak_refresh_token");
-    eraseCookie("keycloak_id_token");
+    // Clear tokens
+    localStorage.removeItem("keycloak_token");
+    localStorage.removeItem("keycloak_refresh_token");
+    localStorage.removeItem("keycloak_id_token");
 
     window.location.href = logoutUrl;
   };
