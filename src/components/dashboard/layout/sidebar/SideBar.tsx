@@ -13,7 +13,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/hooks/useAuth";
 import { useKeycloak } from "@react-keycloak/web";
-import { eraseCookie } from "@/utils/cookieUtils";
 
 interface SideBarProps {
   isOpen: boolean;

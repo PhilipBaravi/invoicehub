@@ -11,7 +11,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
 import { useAuth } from "@/hooks/useAuth";
-import { eraseCookie } from "@/utils/cookieUtils";
 
 interface LargeScreenSidebarProps {
   isOpen: boolean;

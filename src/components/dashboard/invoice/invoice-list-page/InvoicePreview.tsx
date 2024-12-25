@@ -34,7 +34,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     const fetchLineItems = async () => {
       try {
         const response = await fetch(
-          `http://localhost:9090/api/v1/invoice/product/list/${invoice.id}`,
+          `https://api.invoicehub.space/api/v1/invoice/product/list/${invoice.id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -53,7 +53,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     const fetchBusinessInfo = async () => {
       try {
         const response = await fetch(
-          "http://localhost:9090/api/v1/user/loggedInUser",
+          "https://api.invoicehub.space/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,

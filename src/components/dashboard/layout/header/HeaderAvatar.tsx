@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { eraseCookie } from "@/utils/cookieUtils";
 
 const HeaderAvatar: FC = () => {
   const { keycloak } = useKeycloak();

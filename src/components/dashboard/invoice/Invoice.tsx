@@ -147,7 +147,7 @@ const InvoiceComponent: FC = () => {
     if (!rates) return;
     try {
       const response = await fetch(
-        "http://localhost:9090/api/v1/product/list",
+        "https://api.invoicehub.space/api/v1/product/list",
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,
@@ -200,7 +200,7 @@ const InvoiceComponent: FC = () => {
       setIsLoadingClients(true);
       try {
         const response = await fetch(
-          "http://localhost:9090/api/v1/clientVendor/list",
+          "https://api.invoicehub.space/api/v1/clientVendor/list",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -226,7 +226,7 @@ const InvoiceComponent: FC = () => {
     const fetchLoggedInCompanyDetails = async () => {
       try {
         const response = await fetch(
-          "http://localhost:9090/api/v1/user/loggedInUser",
+          "https://api.invoicehub.space/api/v1/user/loggedInUser",
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -274,7 +274,7 @@ const InvoiceComponent: FC = () => {
       try {
         if (isEditMode) {
           const response = await fetch(
-            "http://localhost:9090/api/v1/invoice/list",
+            "https://api.invoicehub.space/api/v1/invoice/list",
             {
               headers: {
                 Authorization: `Bearer ${keycloak.token}`,
@@ -313,7 +313,7 @@ const InvoiceComponent: FC = () => {
               setSelectedClient(fetchedInvoice.clientVendor);
 
               const lineItemsResponse = await fetch(
-                `http://localhost:9090/api/v1/invoice/product/list/${id}`,
+                `https://api.invoicehub.space/api/v1/invoice/product/list/${id}`,
                 {
                   headers: {
                     Authorization: `Bearer ${keycloak.token}`,
@@ -359,7 +359,7 @@ const InvoiceComponent: FC = () => {
           }
         } else {
           const response = await fetch(
-            "http://localhost:9090/api/v1/invoice/generate",
+            "https://api.invoicehub.space/api/v1/invoice/generate",
             {
               headers: {
                 Authorization: `Bearer ${keycloak.token}`,
@@ -765,8 +765,8 @@ const InvoiceComponent: FC = () => {
 
       const response = await fetch(
         isEditMode
-          ? `http://localhost:9090/api/v1/invoice/update/${id}`
-          : "http://localhost:9090/api/v1/invoice/create",
+          ? `https://api.invoicehub.space/api/v1/invoice/update/${id}`
+          : "https://api.invoicehub.space/api/v1/invoice/create",
         {
           method: isEditMode ? "PUT" : "POST",
           headers: {
@@ -805,7 +805,7 @@ const InvoiceComponent: FC = () => {
 
       if (isEditMode) {
         const existingLineItemsResponse = await fetch(
-          `http://localhost:9090/api/v1/invoice/product/list/${id}`,
+          `https://api.invoicehub.space/api/v1/invoice/product/list/${id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -818,7 +818,7 @@ const InvoiceComponent: FC = () => {
 
         for (const item of existingLineItems) {
           await fetch(
-            `http://localhost:9090/api/v1/invoice/remove/product/${item.id}`,
+            `https://api.invoicehub.space/api/v1/invoice/remove/product/${item.id}`,
             {
               method: "DELETE",
               headers: {
@@ -848,7 +848,7 @@ const InvoiceComponent: FC = () => {
         };
 
         const productResponse = await fetch(
-          `http://localhost:9090/api/v1/invoice/add/product/${invoiceId}`,
+          `https://api.invoicehub.space/api/v1/invoice/add/product/${invoiceId}`,
           {
             method: "POST",
             headers: {
