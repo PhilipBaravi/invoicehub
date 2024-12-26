@@ -9,15 +9,30 @@ import AppleIcon from "../AppleIcon";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import { directLogin } from "../../../utils/keycloak";
+import EmailVerificationWindow from "../new-register-page/EmailRegistrationWindow";
 
 const LoginForm = () => {
   const { t } = useTranslation();
   const [loginEmail, setLoginEmail] = useState<string>("");
   const [loginPassword, setLoginPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showVerificationWindow, setShowVerificationWindow] = useState(false);
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const checkEmailVerification = async (email: string): Promise<boolean> => {
+    try {
+      const response = await fetch(
+        `https://api.invoicehub.space/api/v1/isEmailVerified/${email}`
+      );
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error("Error checking email verification:", error);
+      return false;
+    }
+  };
 
   const handleDirectLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,12 +52,17 @@ const LoginForm = () => {
     try {
       const tokens = await directLogin(loginEmail, loginPassword);
       if (tokens.access_token) {
-        toast({
-          title: "Success",
-          description: "Successfully logged in!",
-          duration: 3000,
-        });
-        navigate("/dashboard");
+        const isVerified = await checkEmailVerification(loginEmail);
+        if (isVerified) {
+          toast({
+            title: "Success",
+            description: "Successfully logged in!",
+            duration: 3000,
+          });
+          navigate("/dashboard");
+        } else {
+          setShowVerificationWindow(true);
+        }
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -72,6 +92,10 @@ const LoginForm = () => {
           duration: 3000,
         });
       });
+  };
+
+  const handleCloseVerificationWindow = () => {
+    setShowVerificationWindow(false);
   };
 
   return (
@@ -151,6 +175,13 @@ const LoginForm = () => {
           {t("loginForm.signUp")}
         </Link>
       </p>
+
+      {showVerificationWindow && (
+        <EmailVerificationWindow
+          email={loginEmail}
+          onClose={handleCloseVerificationWindow}
+        />
+      )}
     </>
   );
 };

@@ -1,96 +1,97 @@
 {
-    "languageSelector" : {
-        "ENGLISH" : "English",
-        "GEORGIAN" : "Georgian",
-        "SPANISH" : "Spanish"
-    },
-    "loginRegisterLayout" : {
-        "title": "Login to your account",
-        "subtitle": "Enter your email and password to access your account"
-    },
-    "form" : {
-        "error" : "Failed.",
-        "success": "Success!",
-        "companyUpdateError" : "Failed to update company details.",
-        "companyUpdateSuccess" : "Company details updated succesfully.",
-        "userUpdateSuccess" : "Details updated successfully.",
-        "userUpdateError" : "Failed to update details."
-    },
-    "loginForm" : {
-        "email": "Email",
-        "password": "Password",
-        "privacyPolicy": "I agree to the terms of services and privacy policy",
-        "loginBtn" : "Login",
-        "continueWith": "OR CONTINUE WITH",
-        "loginGoogle": "Login with Google",
-        "loginApple": "Login with Apple",
-        "haveAnAccount": "Don't have an account?",
-        "signUp": "Sign Up",
-        "login": "Signing In"
-    },
-    "signUpForm" : {
-        "title": "Create a New Account",
-        "firstName": "First Name",
-        "lastName" : "Last Name",
-        "email" : "Email",
-        "phone" : "Phone",
-        "selectCountry": "Select country",
-        "password": "Password",
-        "confirmPassword": "Confirm Password",
-        "companyInfo" : "Next: Company Info",
-        "haveAnAccount" : "Already have an account?",
-        "login" : "Login",
-            "errors" : {
-            "validateEmail" : "Please enter a valid email address.",
-            "validatePassword" : "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.",
-            "confirmPassword": "Passwords do not match",
-            "firstName" : "First name is required.",
-            "lastName" : "Last name is required",
-            "phone": "Invalid phone number for the selected country.",
-            "exists" : "already exists in a system."
+  "languageSelector": {
+    "ENGLISH": "English",
+    "GEORGIAN": "Georgian",
+    "SPANISH": "Spanish"
+  },
+  "loginRegisterLayout": {
+    "title": "Login to your account",
+    "subtitle": "Enter your email and password to access your account"
+  },
+  "form": {
+    "error": "Failed.",
+    "success": "Success!",
+    "companyUpdateError": "Failed to update company details.",
+    "companyUpdateSuccess": "Company details updated succesfully.",
+    "userUpdateSuccess": "Details updated successfully.",
+    "userUpdateError": "Failed to update details."
+  },
+  "loginForm": {
+    "email": "Email",
+    "password": "Password",
+    "privacyPolicy": "I agree to the terms of services and privacy policy",
+    "loginBtn": "Login",
+    "continueWith": "OR CONTINUE WITH",
+    "loginGoogle": "Login with Google",
+    "loginApple": "Login with Apple",
+    "haveAnAccount": "Don't have an account?",
+    "signUp": "Sign Up",
+    "login": "Signing In"
+  },
+  "signUpForm": {
+    "title": "Create a New Account",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "selectCountry": "Select country",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "companyInfo": "Next: Company Info",
+    "haveAnAccount": "Already have an account?",
+    "login": "Login",
+    "errors": {
+      "validateEmail": "Please enter a valid email address.",
+      "validatePassword": "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character.",
+      "confirmPassword": "Passwords do not match",
+      "firstName": "First name is required.",
+      "lastName": "Last name is required",
+      "phone": "Invalid phone number for the selected country.",
+      "exists": "already exists in a system.",
+      "companyExists": "Company with that name already exists."
     }
+  },
+  "companySignUpForm": {
+    "company": {
+      "title": "Register Your Company",
+      "subtitle": "Enter your company details to register"
     },
-    "companySignUpForm" : {
-        "company": {
-            "title" : "Register Your Company",
-            "subtitle" : "Enter your company details to register"
-        },
-        "companyName" : "Company Name",
-        "addressLine1" : "Address Line 1",
-        "addressLine2" : "Address Line 2 (Optional)",
-        "city" : "City",
-        "state" : "State",
-        "zipCode" : "Zip Code",
-        "phone" : "Phone",
-        "selectCountry" : "Select Country",
-        "website": "Company Website (Optional)",
-        "submitBtn" : "Submit",
-        "updateBtn" : "Update Details",
-        "errors" : {
-            "companyName" : "Company name is required.",
-            "companyPhone": "Invalid company phone number for the selected country.",
-            "companyAddress" : "Company address is required.",
-            "companyCity" : "City is required.",
-            "companyState" : "State is required.",
-            "zipCode" : "Zip code is required.",
-            "registrationFailed" : "Failed to register an account."
-        }
-    },
-    "cookies" : {
-        "title" : "Enhance Your Experience",
-        "titleMsg" : "We use cookies to keep you logged in and improve your experience on our site.",
-        "accept" : "Accept All",
-        "decline" : "Decline",
-        "more" : "Learn More",
-        "about" : {
-            "title" : "How We Use Cookies",
-            "learnMore" : "Learn more about how we use cookies to enhance your experiencce on our site.",
-            "authentication" : "Authentication",
-            "authenticationMsg" : "We use cookies to keep you logged in, ensuring a seamless experience as you navigate throught our site.",
-            "personalization" : "Personalization",
-            "personalizationMsg":"Cookies help us remember your preferences and tailor the site to your needs, improving your overall experience",
-            "improvements" : "Site Improvements",
-            "improvementsMsg" : "We analyze how you use our site to make it better. This information helps us optimize features and functionality."
-        }
+    "companyName": "Company Name",
+    "addressLine1": "Address Line 1",
+    "addressLine2": "Address Line 2 (Optional)",
+    "city": "City",
+    "state": "State",
+    "zipCode": "Zip Code",
+    "phone": "Phone",
+    "selectCountry": "Select Country",
+    "website": "Company Website (Optional)",
+    "submitBtn": "Submit",
+    "updateBtn": "Update Details",
+    "errors": {
+      "companyName": "Company name is required.",
+      "companyPhone": "Invalid company phone number for the selected country.",
+      "companyAddress": "Company address is required.",
+      "companyCity": "City is required.",
+      "companyState": "State is required.",
+      "zipCode": "Zip code is required.",
+      "registrationFailed": "Failed to register an account."
     }
+  },
+  "cookies": {
+    "title": "Enhance Your Experience",
+    "titleMsg": "We use cookies to keep you logged in and improve your experience on our site.",
+    "accept": "Accept All",
+    "decline": "Decline",
+    "more": "Learn More",
+    "about": {
+      "title": "How We Use Cookies",
+      "learnMore": "Learn more about how we use cookies to enhance your experiencce on our site.",
+      "authentication": "Authentication",
+      "authenticationMsg": "We use cookies to keep you logged in, ensuring a seamless experience as you navigate throught our site.",
+      "personalization": "Personalization",
+      "personalizationMsg": "Cookies help us remember your preferences and tailor the site to your needs, improving your overall experience",
+      "improvements": "Site Improvements",
+      "improvementsMsg": "We analyze how you use our site to make it better. This information helps us optimize features and functionality."
+    }
+  }
 }

@@ -18,6 +18,7 @@ import countryList from "../../account-details/profile-form/CountryCodes";
 import { useTranslation } from "react-i18next";
 import type { UserFormValues } from "./RegisterForm";
 import { useToast } from "@/hooks/use-toast";
+import EmailVerificationWindow from "./EmailRegistrationWindow";
 
 interface CompanyRegistrationFormProps {
   userDetails: UserFormValues | null;
@@ -45,6 +46,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [companyCountry, setCompanyCountry] = useState<CountryCode>("US");
+  const [showVerificationWindow, setShowVerificationWindow] = useState(false);
 
   const [formValues, setFormValues] = useState<CompanyFormValues>({
     title: "",
@@ -73,68 +75,32 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
     if (!formValues.title) {
       newErrors.title = t("companySignUpForm.errors.companyName");
       valid = false;
-      toast({
-        title: t("form.error"),
-        description: t("companySignUpForm.errors.companyName"),
-        variant: "destructive",
-        duration: 3000,
-      });
     }
 
     const fullCompanyPhoneNumber = companyPhoneCode + formValues.phone;
     if (!isValidPhoneNumber(fullCompanyPhoneNumber, companyCountry)) {
       newErrors.phone = t("companySignUpForm.errors.companyPhone");
       valid = false;
-      toast({
-        title: t("form.error"),
-        description: t("companySignUpForm.errors.companyPhone"),
-        variant: "destructive",
-        duration: 3000,
-      });
     }
 
     if (!formValues.address.addressLine1) {
       newErrors.addressLine1 = t("companySignUpForm.errors.companyAddress");
       valid = false;
-      toast({
-        title: t("form.error"),
-        description: t("companySignUpForm.errors.companyAddress"),
-        variant: "destructive",
-        duration: 3000,
-      });
     }
 
     if (!formValues.address.city) {
       newErrors.city = t("companySignUpForm.errors.companyCity");
       valid = false;
-      toast({
-        title: t("form.error"),
-        description: t("companySignUpForm.errors.companyCity"),
-        variant: "destructive",
-        duration: 3000,
-      });
     }
 
     if (!formValues.address.state) {
       newErrors.state = t("companySignUpForm.errors.companyState");
       valid = false;
-      toast({
-        title: t("form.error"),
-        description: t("companySignUpForm.errors.companyState"),
-        variant: "destructive",
-        duration: 3000,
-      });
     }
 
     if (!formValues.address.zipCode) {
       newErrors.zipCode = t("companySignUpForm.errors.zipCode");
       valid = false;
-      toast({
-        title: t("form.error"),
-        description: t("companySignUpForm.errors.zipCode"),
-        variant: "destructive",
-        duration: 3000,
-      });
     }
 
     if (!valid) {
@@ -169,7 +135,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
 
     try {
       const response = await fetch(
-        "https://api.invoicehub.space/api/v1/user/create",
+        "https://api.invoicehub.space/api/v1/register",
         {
           method: "POST",
           headers: {
@@ -182,7 +148,6 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
       console.log("Response status:", response.status);
       console.log("Response headers:", response.headers);
 
-      // Attempt to parse JSON response
       let data: any = null;
       const contentType = response.headers.get("Content-Type");
       if (contentType && contentType.includes("application/json")) {
@@ -202,55 +167,52 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
           response.status,
           data
         );
-        if (
-          response.status === 409 &&
-          data?.message ===
+
+        // Handle specific error cases
+        if (response.status === 409) {
+          if (
+            data?.message ===
             `"${userDetails?.username}" is already exists in a system.`
-        ) {
-          toast({
-            title: t("form.error"),
-            description: `${userDetails?.username} ${t(
-              "signUpForm.errors.exists"
-            )}`,
-            variant: "destructive",
-            duration: 3000,
-          });
+          ) {
+            toast({
+              title: t("form.error"),
+              description: `${userDetails?.username} ${t(
+                "signUpForm.errors.exists"
+              )}`,
+              variant: "destructive",
+              duration: 3000,
+            });
+          } else if (
+            data?.message === "Company with that name already exists."
+          ) {
+            toast({
+              title: t("form.error"),
+              description: t("signUpForm.errors.companyExists"),
+              variant: "destructive",
+              duration: 3000,
+            });
+          }
         } else {
           toast({
             title: t("form.error"),
-            description:
-              data?.message || t("companySignUpForm.errors.registrationFailed"),
+            description: t("companySignUpForm.errors.registrationFailed"),
             variant: "destructive",
             duration: 3000,
           });
         }
 
-        // Throw an error with more detail
         throw new Error(
           data?.message || "Registration failed with server error."
         );
       }
 
       console.log("Registration successful:", data);
-      toast({
-        title: t("form.success"),
-        description: t("companySignUpForm.successMessage"),
-        variant: "success",
-        duration: 3000,
-      });
-      navigate("/dashboard");
+      setShowVerificationWindow(true);
     } catch (error: any) {
       console.error("Error during registration:", error);
       console.log("Request payload that caused the error:", registrationData);
       setErrors({
         title: t("companySignUpForm.errors.registrationFailed"),
-      });
-      toast({
-        title: t("form.error"),
-        description:
-          error.message || t("companySignUpForm.errors.registrationFailed"),
-        variant: "destructive",
-        duration: 3000,
       });
     }
   };
@@ -283,144 +245,166 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
     }));
   };
 
+  const handleCloseVerificationWindow = () => {
+    setShowVerificationWindow(false);
+    navigate("/login");
+  };
+
   return (
-    <form className="space-y-4" onSubmit={handleSubmit}>
-      <div>
-        <Input
-          id="title"
-          name="title"
-          value={formValues.title}
-          onChange={handleChange}
-          placeholder={t("companySignUpForm.companyName")}
-          className="w-full"
-          required
-        />
-      </div>
-
-      <div>
-        <Input
-          id="email"
-          name="email"
-          value={formValues.email}
-          onChange={handleChange}
-          placeholder={t("loginForm.email")}
-          className="w-full"
-          required
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
+    <>
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
           <Input
-            id="address.addressLine1"
-            name="address.addressLine1"
-            value={formValues.address.addressLine1}
+            id="title"
+            name="title"
+            value={formValues.title}
             onChange={handleChange}
-            placeholder={t("companySignUpForm.addressLine1")}
+            placeholder={t("companySignUpForm.companyName")}
             className="w-full"
             required
           />
-          {errors.addressLine1 && (
-            <p className="text-red-500 text-sm">{errors.addressLine1}</p>
+          {errors.title && (
+            <p className="text-red-500 text-sm mt-1">{errors.title}</p>
           )}
         </div>
-        <div>
-          <Input
-            id="address.addressLine2"
-            name="address.addressLine2"
-            value={formValues.address.addressLine2}
-            onChange={handleChange}
-            placeholder={t("companySignUpForm.addressLine2")}
-            className="w-full"
-          />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-3 gap-4">
         <div>
           <Input
-            id="address.city"
-            name="address.city"
-            value={formValues.address.city}
+            id="email"
+            name="email"
+            value={formValues.email}
             onChange={handleChange}
-            placeholder={t("companySignUpForm.city")}
+            placeholder={t("loginForm.email")}
             className="w-full"
             required
           />
-          {errors.city && <p className="text-red-500 text-sm">{errors.city}</p>}
         </div>
-        <div>
-          <Input
-            id="address.state"
-            name="address.state"
-            value={formValues.address.state}
-            onChange={handleChange}
-            placeholder={t("companySignUpForm.state")}
-            className="w-full"
-            required
-          />
-          {errors.state && (
-            <p className="text-red-500 text-sm">{errors.state}</p>
-          )}
-        </div>
-        <div>
-          <Input
-            id="address.zipCode"
-            name="address.zipCode"
-            value={formValues.address.zipCode}
-            onChange={handleChange}
-            placeholder={t("companySignUpForm.zipCode")}
-            className="w-full"
-            required
-          />
-          {errors.zipCode && (
-            <p className="text-red-500 text-sm">{errors.zipCode}</p>
-          )}
-        </div>
-      </div>
 
-      <div className="flex space-x-2">
-        <Select onValueChange={handleCompanyCountryChange}>
-          <SelectTrigger className="w-[120px]">
-            <SelectValue
-              placeholder={
-                countryList.find((c) => c.code === companyCountry)?.name ||
-                t("companySignUpForm.selectCountry")
-              }
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Input
+              id="address.addressLine1"
+              name="address.addressLine1"
+              value={formValues.address.addressLine1}
+              onChange={handleChange}
+              placeholder={t("companySignUpForm.addressLine1")}
+              className="w-full"
+              required
             />
-          </SelectTrigger>
-          <SelectContent>
-            {countryList.map((c) => (
-              <SelectItem key={c.code} value={c.code}>
-                {c.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Input
-          id="phone"
-          name="phone"
-          value={formValues.phone}
-          onChange={handleChange}
-          placeholder={companyPhoneCode}
-          className="w-full"
-          required
-        />
-        {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
-      </div>
+            {errors.addressLine1 && (
+              <p className="text-red-500 text-sm mt-1">{errors.addressLine1}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              id="address.addressLine2"
+              name="address.addressLine2"
+              value={formValues.address.addressLine2}
+              onChange={handleChange}
+              placeholder={t("companySignUpForm.addressLine2")}
+              className="w-full"
+            />
+          </div>
+        </div>
 
-      <div>
-        <Input
-          id="website"
-          name="website"
-          value={formValues.website}
-          onChange={handleChange}
-          placeholder={t("companySignUpForm.website")}
-          className="w-full"
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <Input
+              id="address.city"
+              name="address.city"
+              value={formValues.address.city}
+              onChange={handleChange}
+              placeholder={t("companySignUpForm.city")}
+              className="w-full"
+              required
+            />
+            {errors.city && (
+              <p className="text-red-500 text-sm mt-1">{errors.city}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              id="address.state"
+              name="address.state"
+              value={formValues.address.state}
+              onChange={handleChange}
+              placeholder={t("companySignUpForm.state")}
+              className="w-full"
+              required
+            />
+            {errors.state && (
+              <p className="text-red-500 text-sm mt-1">{errors.state}</p>
+            )}
+          </div>
+          <div>
+            <Input
+              id="address.zipCode"
+              name="address.zipCode"
+              value={formValues.address.zipCode}
+              onChange={handleChange}
+              placeholder={t("companySignUpForm.zipCode")}
+              className="w-full"
+              required
+            />
+            {errors.zipCode && (
+              <p className="text-red-500 text-sm mt-1">{errors.zipCode}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex space-x-2">
+          <Select onValueChange={handleCompanyCountryChange}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue
+                placeholder={
+                  countryList.find((c) => c.code === companyCountry)?.name ||
+                  t("companySignUpForm.selectCountry")
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {countryList.map((c) => (
+                <SelectItem key={c.code} value={c.code}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            id="phone"
+            name="phone"
+            value={formValues.phone}
+            onChange={handleChange}
+            placeholder={companyPhoneCode}
+            className="w-full"
+            required
+          />
+        </div>
+        {errors.phone && (
+          <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+        )}
+
+        <div>
+          <Input
+            id="website"
+            name="website"
+            value={formValues.website}
+            onChange={handleChange}
+            placeholder={t("companySignUpForm.website")}
+            className="w-full"
+          />
+        </div>
+        <Button type="submit" className="w-full">
+          {t("companySignUpForm.submitBtn")}
+        </Button>
+      </form>
+      {showVerificationWindow && (
+        <EmailVerificationWindow
+          email={userDetails?.username || ""}
+          onClose={handleCloseVerificationWindow}
         />
-      </div>
-      <Button className="w-full">{t("companySignUpForm.submitBtn")}</Button>
-    </form>
+      )}
+    </>
   );
 };
 
