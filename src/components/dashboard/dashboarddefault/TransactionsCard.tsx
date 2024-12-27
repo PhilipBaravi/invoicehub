@@ -23,6 +23,7 @@ import {
 
 import { useKeycloak } from "@react-keycloak/web";
 import { Invoice, InvoiceStatus } from "../invoice/invoice-types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const TransactionsCard: FC = () => {
   const { t } = useTranslation("dashboardDefault");
@@ -33,7 +34,7 @@ const TransactionsCard: FC = () => {
     const fetchInvoices = async () => {
       try {
         const response = await fetch(
-          "https://api.invoicehub.space/api/v1/dashboard/lastThreeApproved",
+          `${API_BASE_URL}dashboard/lastThreeApproved`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,

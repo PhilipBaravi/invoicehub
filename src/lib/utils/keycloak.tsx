@@ -1,4 +1,5 @@
 import Keycloak from "keycloak-js";
+import { KEYCLOAK_CONFIG_URL } from "./constants";
 
 interface AuthTokens {
   access_token: string;
@@ -9,7 +10,7 @@ interface AuthTokens {
 }
 
 const keycloakConfig = {
-  url: "https://api.invoicehub.space/auth",
+  url: KEYCLOAK_CONFIG_URL,
   realm: "e-invoices",
   clientId: "invoicing-app-react-login",
   enableCors: true,

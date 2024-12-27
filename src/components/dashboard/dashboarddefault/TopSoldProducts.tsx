@@ -6,13 +6,8 @@ import { Package2, TrendingUp } from "lucide-react";
 import { useKeycloak } from "@react-keycloak/web";
 import { NoDataDisplay } from "./charts/NoDataDisplay";
 import { YearMonthCurrencySelect } from "./charts/YearMonthCurrencySelect";
-
-type Product = {
-  name: string;
-  quantity: number;
-  amount: number;
-  currency: string;
-};
+import { API_BASE_URL } from "@/lib/utils/constants";
+import { Product } from "./charts/types";
 
 type ApiData = {
   [productName: string]: {
@@ -43,7 +38,7 @@ const TopSoldProducts: FC = () => {
 
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/dashboard/topSellingProducts/${year}/${startMonth}/${endMonth}/${currency}`,
+        `${API_BASE_URL}dashboard/topSellingProducts/${year}/${startMonth}/${endMonth}/${currency}`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,

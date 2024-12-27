@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
+import { API_BASE_URL } from "../utils/constants";
 
 export interface LoggedInUser {
   id: number;
@@ -21,14 +22,11 @@ export const useAuth = () => {
       if (!keycloak.token) return;
 
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/user/loggedInUser",
-          {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}user/loggedInUser`, {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
 
         if (!response.ok) throw new Error("Failed to fetch user data");
 

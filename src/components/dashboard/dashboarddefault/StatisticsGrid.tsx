@@ -3,18 +3,8 @@ import { ShoppingBag, Users, TrendingUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
 import StatCard from "./StatCard";
-
-interface SummaryResponse {
-  success: boolean;
-  message: string;
-  code: number;
-  data: {
-    total_products_sold: number;
-    total_employees: number;
-    total_products: number;
-    total_clients: number;
-  };
-}
+import { SummaryResponse } from "./charts/types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const StatisticsGrid: FC = () => {
   const { t } = useTranslation("dashboardDefault");
@@ -36,7 +26,7 @@ const StatisticsGrid: FC = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          "https://api.invoicehub.space/api/v1/dashboard/summaryQuantities",
+          `${API_BASE_URL}dashboard/summaryQuantities`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,

@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
-import { Employee } from "./employeeTypes";
+import { Employee } from "./types";
 import AddEmployeeSheet from "./AddEmployeeSheet";
 import EditEmployeeSheet from "./EditEmployeeSheet";
 import EmployeeTable from "./EmployeeTable";
 import Pagination from "./Pagination";
 import SearchAndFilter from "./SearchAndFilter";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 export default function EmployeeList() {
   const { keycloak } = useKeycloak();
@@ -37,14 +38,11 @@ export default function EmployeeList() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/user/list",
-          {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}user/list`, {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch employees");
         }
@@ -78,15 +76,12 @@ export default function EmployeeList() {
 
   const deleteEmployee = async (id: string) => {
     try {
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/user/delete/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}user/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
 
       if (!response.ok) {
         toast({
@@ -132,14 +127,11 @@ export default function EmployeeList() {
 
   const refreshEmployees = async () => {
     try {
-      const response = await fetch(
-        "https://api.invoicehub.space/api/v1/user/list",
-        {
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}user/list`, {
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch employees");
       }

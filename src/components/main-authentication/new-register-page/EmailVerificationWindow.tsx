@@ -9,11 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-interface EmailVerificationWindowProps {
-  email: string;
-  onClose: () => void;
-}
+import { EmailVerificationWindowProps } from "./types";
 
 const EmailVerificationWindow: React.FC<EmailVerificationWindowProps> = ({
   email,
@@ -27,10 +23,11 @@ const EmailVerificationWindow: React.FC<EmailVerificationWindowProps> = ({
     setResendSuccess(false);
 
     try {
-      // Will implement resend api if needed
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Api simulation
+      // Later implement the resend email logic here
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulating API call
 
       setResendSuccess(true);
+      // Reset success message after 3 seconds
       setTimeout(() => setResendSuccess(false), 3000);
     } catch (error) {
       console.error("Error resending verification email:", error);

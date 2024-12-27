@@ -15,7 +15,6 @@ import {
   isValidPhoneNumber,
 } from "libphonenumber-js";
 import countryList from "@/components/account-details/profile-form/CountryCodes";
-import { Employee } from "./employeeTypes";
 import {
   Sheet,
   SheetContent,
@@ -34,16 +33,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
-
-// Types for errors
-type EmployeeErrors = {
-  username?: string;
-  password?: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-};
+import { useToast } from "@/lib/hooks/use-toast";
+import { EmployeeErrors, Employee } from "./types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 export default function AddEmployeeSheet({
   isOpen,
@@ -118,17 +110,14 @@ export default function AddEmployeeSheet({
     };
 
     try {
-      const response = await fetch(
-        "https://api.invoicehub.space/api/v1/user/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-          body: JSON.stringify(completeEmployeeData),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}user/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+        body: JSON.stringify(completeEmployeeData),
+      });
       if (!response.ok) {
         const errorData = await response.json();
         toast({

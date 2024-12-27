@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ClientVendor } from "./CliendVendorTypes";
+import { ClientVendor } from "./types";
 import AddClientVendorSheet from "./AddClientVendorSheet";
 import EditClientVendorSheet from "./EditClientVendorSheet";
 import ClientVendorTable from "./ClientVendorTable";
@@ -7,7 +7,8 @@ import Pagination from "../employee/Pagination";
 import SearchAndFilter from "../employee/SearchAndFilter";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 export default function ClientVendorList() {
   const { keycloak } = useKeycloak();
@@ -41,15 +42,12 @@ export default function ClientVendorList() {
   useEffect(() => {
     const fetchClientVendors = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/clientVendor/list",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}clientVendor/list`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -82,15 +80,12 @@ export default function ClientVendorList() {
   // Delete client/vendor by ID
   const deleteClientVendor = async (id: number) => {
     try {
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/clientVendor/delete/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}clientVendor/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
 
       if (!response.ok) {
         const data = await response.json();
@@ -153,15 +148,12 @@ export default function ClientVendorList() {
   // Refresh the client/vendors list
   const refreshClientVendors = async () => {
     try {
-      const response = await fetch(
-        "https://api.invoicehub.space/api/v1/clientVendor/list",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}clientVendor/list`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();

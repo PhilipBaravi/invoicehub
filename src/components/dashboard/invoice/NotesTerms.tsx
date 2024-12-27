@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { StyledCard, cardVariants, fadeInVariants } from "@/utils/styling";
+import { StyledCard, cardVariants, fadeInVariants } from "@/lib/utils/styling";
 
 interface NotesTermsProps {
   invoice: any;

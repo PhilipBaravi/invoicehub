@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bot, Send, X } from "lucide-react";
 import HeaderAvatar from "../../layout/header/HeaderAvatar";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 interface Message {
   id: number;
@@ -51,7 +52,7 @@ const AIChatbot: FC<AIChatbotProps> = ({ isOpen, onClose }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:1010/assistant?q=${encodeURIComponent(input)}`
+        `${API_BASE_URL}assistant?q=${encodeURIComponent(input)}`
       );
       if (response.ok) {
         const data = await response.json();

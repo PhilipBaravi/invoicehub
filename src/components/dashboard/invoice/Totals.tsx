@@ -4,7 +4,7 @@ import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { StyledCard, cardVariants, fadeInVariants } from "@/utils/styling";
+import { StyledCard, cardVariants, fadeInVariants } from "@/lib/utils/styling";
 
 interface TotalsProps {
   invoice: any;

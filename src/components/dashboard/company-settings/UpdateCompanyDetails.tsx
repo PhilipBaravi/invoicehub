@@ -16,7 +16,8 @@ import countryList from "../../account-details/profile-form/CountryCodes";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const UpdateCompanyDetails: FC = () => {
   const [formValues, setFormValues] = useState({
@@ -49,14 +50,11 @@ const UpdateCompanyDetails: FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/user/loggedInUser",
-          {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}user/loggedInUser`, {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
         if (response.ok) {
           const data = await response.json();
           const user = data.data;
@@ -157,7 +155,7 @@ const UpdateCompanyDetails: FC = () => {
 
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/company/update/${companyId}`,
+        `${API_BASE_URL}company/update/${companyId}`,
         {
           method: "PUT",
           headers: {

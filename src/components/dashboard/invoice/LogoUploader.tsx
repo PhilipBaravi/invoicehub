@@ -5,7 +5,7 @@ import { UploadIcon } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { StyledCard, cardVariants, fadeInVariants } from "@/utils/styling";
+import { StyledCard, cardVariants, fadeInVariants } from "@/lib/utils/styling";
 
 interface LogoUploaderProps {
   logo: string | null;

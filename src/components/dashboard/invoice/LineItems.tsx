@@ -14,7 +14,7 @@ import { PlusIcon, Trash2Icon } from "lucide-react";
 import { LineItem, Category, Product } from "./invoice-types";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { fadeInVariants } from "@/utils/styling";
+import { fadeInVariants } from "@/lib/utils/styling";
 import React from "react";
 
 interface LineItemsProps {

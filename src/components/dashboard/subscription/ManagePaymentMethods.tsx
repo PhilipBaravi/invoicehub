@@ -22,15 +22,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-type PaymentMethod = {
-  id: string;
-  type: "credit" | "bank";
-  last4: string;
-  expiry?: string;
-  name: string;
-  isDefault: boolean;
-};
+import { PaymentMethod } from "./types";
 
 const ManagePaymentMethods: FC = () => {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([

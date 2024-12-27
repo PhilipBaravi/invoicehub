@@ -16,10 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { apiFetch } from "@/utils/api";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 export default function EditClientVendorSheet({
   isOpen,
@@ -32,6 +32,7 @@ export default function EditClientVendorSheet({
 }) {
   useKeycloak();
 
+  const { keycloak } = useKeycloak();
   const { t } = useTranslation("clients");
   const [editedClientVendor, setEditedClientVendor] = useState(clientVendor);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -116,10 +117,14 @@ export default function EditClientVendorSheet({
     if (!validateForm()) return;
 
     try {
-      await apiFetch(
-        `https://api.invoicehub.space/api/v1/clientVendor/update/${editedClientVendor.id}`,
+      await fetch(
+        `${API_BASE_URL}clientVendor/update/${editedClientVendor.id}`,
         {
           method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${keycloak.token}`,
+          },
           body: JSON.stringify(editedClientVendor),
         }
       );

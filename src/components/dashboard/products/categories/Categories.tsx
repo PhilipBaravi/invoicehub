@@ -23,10 +23,10 @@ import {
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
 
-// Import types and icon map
 import { Category } from "./categories-types";
 import iconMap from "./icons-map";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const Categories: FC = () => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);
@@ -48,15 +48,12 @@ const Categories: FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/category/list",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}category/list`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
         const data = await response.json();
         setProductCategories(data.data);
       } catch (error) {
@@ -85,7 +82,7 @@ const Categories: FC = () => {
     if (categoryToDelete) {
       try {
         const response = await fetch(
-          `https://api.invoicehub.space/api/v1/category/delete/${categoryToDelete.id}`,
+          `${API_BASE_URL}category/delete/${categoryToDelete.id}`,
           {
             method: "DELETE",
             headers: {

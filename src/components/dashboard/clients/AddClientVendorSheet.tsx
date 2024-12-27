@@ -17,10 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { apiFetch } from "@/utils/api";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 export default function AddClientVendorSheet({
   isOpen,
@@ -46,7 +46,7 @@ export default function AddClientVendorSheet({
       zipCode: "",
     },
   };
-
+  const { keycloak } = useKeycloak();
   const { t } = useTranslation("clients");
   const [newClientVendor, setNewClientVendor] = useState(
     initialClientVendorState
@@ -124,13 +124,14 @@ export default function AddClientVendorSheet({
     if (!validateForm()) return;
 
     try {
-      await apiFetch(
-        "https://api.invoicehub.space/api/v1/clientVendor/create",
-        {
-          method: "POST",
-          body: JSON.stringify(newClientVendor),
-        }
-      );
+      await fetch(`${API_BASE_URL}clientVendor/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+        body: JSON.stringify(newClientVendor),
+      });
       toast({
         title: t("addClient.success"),
         description: t("addClient.addSuccess"),

@@ -30,7 +30,7 @@ const Header: FC<HeaderProps> = () => {
           />
         )}
       </div>
-      <div className="flex-grow flex items-center pl-[20px] pt-[20px] hidden lg:block">
+      <div className="flex-grow flex items-center pl-[20px] pt-[20px] lg:block">
         <HeaderBreadcrumbs />
       </div>
       <div className="flex items-center gap-[20px] pr-[20px]">

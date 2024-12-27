@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
+import { API_BASE_URL } from "../utils/constants";
 
 interface ExchangeRates {
   [key: string]: number;
@@ -23,7 +24,7 @@ export const useCurrencyRates = (baseCurrency: string) => {
       try {
         setLoading(true);
         const response = await fetch(
-          `https://api.invoicehub.space/api/v1/dashboard/exchangeRates/${baseCurrency}`,
+          `${API_BASE_URL}dashboard/exchangeRates/${baseCurrency}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,

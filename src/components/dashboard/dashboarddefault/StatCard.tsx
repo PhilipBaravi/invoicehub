@@ -1,14 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 // import { TrendingUp } from "lucide-react";
 import { FC } from "react";
-
-interface StatCardProps {
-  title: string;
-  value: string;
-  description?: string;
-  icon?: React.ReactNode;
-  trend?: string;
-}
+import { StatCardProps } from "./charts/types";
 
 const StatCard: FC<StatCardProps> = ({
   title,

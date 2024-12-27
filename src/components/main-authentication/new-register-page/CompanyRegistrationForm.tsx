@@ -16,28 +16,10 @@ import {
 } from "libphonenumber-js";
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { useTranslation } from "react-i18next";
-import type { UserFormValues } from "./RegisterForm";
-import { useToast } from "@/hooks/use-toast";
-import EmailVerificationWindow from "./EmailRegistrationWindow";
-
-interface CompanyRegistrationFormProps {
-  userDetails: UserFormValues | null;
-}
-
-interface CompanyFormValues {
-  title: string;
-  phone: string;
-  website: string;
-  email: string;
-  address: {
-    addressLine1: string;
-    addressLine2: string;
-    city: string;
-    state: string;
-    country: string;
-    zipCode: string;
-  };
-}
+import { useToast } from "@/lib/hooks/use-toast";
+import EmailVerificationWindow from "./EmailVerificationWindow";
+import { CompanyRegistrationFormProps, CompanyFormValues } from "./types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
   userDetails,
@@ -64,14 +46,14 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
   const companyPhoneCode = `+${getCountryCallingCode(companyCountry)}`;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // Validation Function
+  const validateForm = (): boolean => {
     let valid = true;
     const newErrors: Record<string, string> = {};
 
-    // Client-side validation
     if (!formValues.title) {
       newErrors.title = t("companySignUpForm.errors.companyName");
       valid = false;
@@ -103,10 +85,15 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
       valid = false;
     }
 
-    if (!valid) {
-      setErrors(newErrors);
-      return;
-    }
+    setErrors(newErrors);
+    return valid;
+  };
+
+  // Submit Handler
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
 
     const registrationData = {
       username: userDetails?.username,
@@ -117,7 +104,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
       phone: userDetails?.phone,
       company: {
         title: formValues.title,
-        phone: fullCompanyPhoneNumber,
+        phone: companyPhoneCode + formValues.phone,
         website: formValues.website || "",
         email: formValues.email,
         address: {
@@ -134,87 +121,62 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
     console.log("Sending registration data:", registrationData);
 
     try {
-      const response = await fetch(
-        "https://api.invoicehub.space/api/v1/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(registrationData),
-        }
-      );
-
-      console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers);
-
-      let data: any = null;
-      const contentType = response.headers.get("Content-Type");
-      if (contentType && contentType.includes("application/json")) {
-        try {
-          data = await response.json();
-          console.log("Response data:", data);
-        } catch (jsonError) {
-          console.error("Failed to parse JSON response:", jsonError);
-        }
-      } else {
-        console.warn("Response not in JSON format");
-      }
+      const response = await fetch(`${API_BASE_URL}register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registrationData),
+      });
 
       if (!response.ok) {
-        console.error(
-          "Server returned an error response:",
-          response.status,
-          data
-        );
-
-        // Handle specific error cases
-        if (response.status === 409) {
-          if (
-            data?.message ===
-            `"${userDetails?.username}" is already exists in a system.`
-          ) {
-            toast({
-              title: t("form.error"),
-              description: `${userDetails?.username} ${t(
-                "signUpForm.errors.exists"
-              )}`,
-              variant: "destructive",
-              duration: 3000,
-            });
-          } else if (
-            data?.message === "Company with that name already exists."
-          ) {
-            toast({
-              title: t("form.error"),
-              description: t("signUpForm.errors.companyExists"),
-              variant: "destructive",
-              duration: 3000,
-            });
-          }
-        } else {
-          toast({
-            title: t("form.error"),
-            description: t("companySignUpForm.errors.registrationFailed"),
-            variant: "destructive",
-            duration: 3000,
-          });
-        }
-
-        throw new Error(
-          data?.message || "Registration failed with server error."
-        );
+        const data = await response.json();
+        handleServerError(data, response.status);
+        return;
       }
 
+      const data = await response.json();
       console.log("Registration successful:", data);
       setShowVerificationWindow(true);
     } catch (error: any) {
       console.error("Error during registration:", error);
-      console.log("Request payload that caused the error:", registrationData);
       setErrors({
         title: t("companySignUpForm.errors.registrationFailed"),
       });
     }
+  };
+
+  const handleServerError = (data: any, status: number) => {
+    if (status === 409) {
+      if (
+        data?.message ===
+        `"${userDetails?.username}" is already exists in a system.`
+      ) {
+        toast({
+          title: t("form.error"),
+          description: `${userDetails?.username} ${t(
+            "signUpForm.errors.exists"
+          )}`,
+          variant: "destructive",
+          duration: 3000,
+        });
+      } else if (data?.message === "Company with that name already exists.") {
+        toast({
+          title: t("form.error"),
+          description: t("signUpForm.errors.companyExists"),
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
+    } else {
+      toast({
+        title: t("form.error"),
+        description: t("companySignUpForm.errors.registrationFailed"),
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
+    throw new Error(data?.message || "Registration failed with server error.");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

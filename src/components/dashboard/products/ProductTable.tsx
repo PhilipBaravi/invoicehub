@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "react-i18next";
 import CurrencySelect from "./CurrencySelect";
-import { useCurrencyRates } from "@/hooks/useCurrencyRates";
+import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 
 const ProductTable: FC<ProductTableProps> = ({
   products,

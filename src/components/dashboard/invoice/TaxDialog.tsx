@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { fadeInVariants } from "@/utils/styling";
+import { fadeInVariants } from "@/lib/utils/styling";
 
 interface TaxDialogProps {
   showTaxDialog: boolean;

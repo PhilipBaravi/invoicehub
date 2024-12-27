@@ -17,11 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useKeycloak } from "@react-keycloak/web";
-
-type FinancialSummary = {
-  name: string;
-  value: number;
-};
+import { API_BASE_URL } from "@/lib/utils/constants";
+import { FinancialSummary } from "./types";
 
 const FinancialSummaryChart: FC = () => {
   const { keycloak } = useKeycloak();
@@ -32,7 +29,7 @@ const FinancialSummaryChart: FC = () => {
   const fetchFinancialSummary = async () => {
     try {
       const response = await fetch(
-        "https://api.invoicehub.space/api/v1/dashboard/financialSummary",
+        `${API_BASE_URL}dashboard/financialSummary`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,

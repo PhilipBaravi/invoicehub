@@ -7,9 +7,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import GoogleIcon from "../GoogleIcon";
 import AppleIcon from "../AppleIcon";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
-import { directLogin } from "../../../utils/keycloak";
-import EmailVerificationWindow from "../new-register-page/EmailRegistrationWindow";
+import { useToast } from "@/lib/hooks/use-toast";
+import { directLogin } from "@/lib/utils/keycloak";
+import EmailVerificationWindow from "../new-register-page/EmailVerificationWindow";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -23,9 +24,7 @@ const LoginForm = () => {
 
   const checkEmailVerification = async (email: string): Promise<boolean> => {
     try {
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/isEmailVerified/${email}`
-      );
+      const response = await fetch(`${API_BASE_URL}isEmailVerified/${email}`);
       const data = await response.json();
       return data.data;
     } catch (error) {

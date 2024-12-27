@@ -21,22 +21,8 @@ import {
 } from "@/components/ui/chart";
 import { YearMonthCurrencySelect } from "./YearMonthCurrencySelect";
 import { NoDataDisplay } from "./NoDataDisplay";
-
-type ChartDataItem = {
-  year: number;
-  month: number;
-  dayOfMonth: number;
-  quantity: number;
-  amount: number;
-  currency: string;
-};
-
-type ApiResponse = {
-  success: boolean;
-  message: string;
-  code: number;
-  data: ChartDataItem[];
-};
+import { ChartDataItem, ApiResponse } from "./types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const getChartConfig = (t: TFunction): ChartConfig => ({
   quantity: {
@@ -92,7 +78,7 @@ const ProductSalesChart: React.FC = () => {
       return null;
     }
     const response = await fetch(
-      `https://api.invoicehub.space/api/v1/dashboard/soldProductsBy/${year}/${startMonth}/${endMonth}/${currency}`,
+      `${API_BASE_URL}dashboard/soldProductsBy/${year}/${startMonth}/${endMonth}/${currency}`,
       {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,

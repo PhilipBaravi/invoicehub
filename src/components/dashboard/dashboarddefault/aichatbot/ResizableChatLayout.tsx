@@ -1,5 +1,3 @@
-"use client";
-
 import { FC, ReactNode, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "react-responsive";

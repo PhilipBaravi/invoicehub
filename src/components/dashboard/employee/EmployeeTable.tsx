@@ -17,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Trash2, User } from "lucide-react";
-import { Employee } from "./employeeTypes";
+import { Employee } from "./types";
 import { useTranslation } from "react-i18next";
 
 interface EmployeeTableProps {

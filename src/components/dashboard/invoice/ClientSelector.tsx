@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ClientVendor, BusinessInfo } from "./invoice-types";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { StyledCard, cardVariants, fadeInVariants } from "@/utils/styling";
+import { StyledCard, cardVariants, fadeInVariants } from "@/lib/utils/styling";
 
 interface ClientSelectorProps {
   selectedClient: ClientVendor | null;

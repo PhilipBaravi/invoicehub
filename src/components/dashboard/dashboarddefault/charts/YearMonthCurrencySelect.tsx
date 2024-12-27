@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
-import { getCookie, setCookie } from "@/utils/cookiesUtils";
+import { getCookie, setCookie } from "@/lib/utils/cookiesUtils";
 import {
   Popover,
   PopoverContent,
@@ -17,28 +17,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useTranslation } from "react-i18next";
-
-type YearMonthCurrencySelectProps = {
-  id: string;
-  year: number;
-  startMonth: number;
-  endMonth: number;
-  currency: string;
-  onYearChange: (year: number) => void;
-  onStartMonthChange: (month: number) => void;
-  onEndMonthChange: (month: number) => void;
-  onCurrencyChange: (currency: string) => void;
-  showTotal?: boolean;
-  onShowTotalChange?: (showTotal: boolean) => void;
-};
-
-type SavedPreferences = {
-  year: number;
-  startMonth: number;
-  endMonth: number;
-  currency: string;
-  showTotal?: boolean;
-};
+import { YearMonthCurrencySelectProps, SavedPreferences } from "./types";
 
 const COOKIE_NAME_PREFIX = "date-range-preferences";
 

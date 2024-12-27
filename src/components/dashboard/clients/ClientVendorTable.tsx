@@ -16,19 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Trash2, User } from "lucide-react";
-import { ClientVendor } from "./CliendVendorTypes";
 import { useTranslation } from "react-i18next";
-
-interface ClientVendorTableProps {
-  paginatedClientVendors: ClientVendor[];
-  selectedClientVendors: string[];
-  handleSelectClientVendor: (id: string) => void;
-  handleSelectAll: () => void;
-  deleteClientVendor: (id: number) => void;
-  setEditingClientVendor: (clientVendor: ClientVendor) => void;
-  setIsEditClientVendorOpen: (open: boolean) => void;
-  filteredClientVendors: ClientVendor[];
-}
+import { ClientVendorTableProps } from "./types";
 
 export default function ClientVendorTable({
   paginatedClientVendors,

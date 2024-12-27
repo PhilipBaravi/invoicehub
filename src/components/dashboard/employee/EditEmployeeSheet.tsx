@@ -22,7 +22,6 @@ import {
   isValidPhoneNumber,
 } from "libphonenumber-js";
 import countryList from "@/components/account-details/profile-form/CountryCodes";
-import { Employee } from "./employeeTypes";
 import {
   Popover,
   PopoverContent,
@@ -33,15 +32,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
-
-type EmployeeErrors = {
-  username?: string;
-  firstName?: string;
-  lastName?: string;
-  phone?: string;
-  password?: string;
-};
+import { useToast } from "@/lib/hooks/use-toast";
+import { EmployeeErrors, Employee } from "./types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 export default function EditEmployeeSheet({
   isOpen,
@@ -111,7 +104,7 @@ export default function EditEmployeeSheet({
 
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/user/update/${employee.id}`,
+        `${API_BASE_URL}user/update/${employee.id}`,
         {
           method: "PUT",
           headers: {

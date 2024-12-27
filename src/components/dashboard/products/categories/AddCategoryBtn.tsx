@@ -14,10 +14,10 @@ import { Plus } from "lucide-react";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
 
-// Import types and icon map
 import { AddCategoryBtnProps } from "./categories-types";
 import iconMap from "./icons-map";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const categoryIcons = Object.keys(iconMap);
 
@@ -51,17 +51,14 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
     };
 
     try {
-      const response = await fetch(
-        "https://api.invoicehub.space/api/v1/category/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-          body: JSON.stringify(newCategory),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}category/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+        body: JSON.stringify(newCategory),
+      });
 
       if (!response.ok) throw new Error("Failed to add category");
 

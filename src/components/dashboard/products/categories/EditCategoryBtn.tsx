@@ -1,5 +1,3 @@
-// EditCategoryBtn.tsx
-
 import { FC, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,10 +11,10 @@ import {
 } from "@/components/ui/dialog";
 import { useKeycloak } from "@react-keycloak/web";
 
-// Import types and icon map
 import { EditCategoryBtnProps } from "./categories-types";
 import iconMap from "./icons-map";
 import { useTranslation } from "react-i18next";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const categoryIcons = Object.keys(iconMap);
 
@@ -57,7 +55,7 @@ const EditCategoryBtn: FC<EditCategoryBtnProps> = ({
 
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/category/update/${category.id}`,
+        `${API_BASE_URL}category/update/${category.id}`,
         {
           method: "PUT",
           headers: {

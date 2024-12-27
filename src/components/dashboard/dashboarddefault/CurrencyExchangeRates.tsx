@@ -3,12 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign, Euro, PoundSterling } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
-
-interface ExchangeRate {
-  code: string;
-  rate: number;
-  icon: React.ReactNode;
-}
+import { ExchangeRate } from "./charts/types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 interface ApiResponse {
   success: boolean;
@@ -59,7 +55,7 @@ const CurrencyExchangeRates: FC = () => {
 
       try {
         const response = await fetch(
-          `https://api.invoicehub.space/api/v1/dashboard/exchangeRates/${baseCurrency}`,
+          `${API_BASE_URL}dashboard/exchangeRates/${baseCurrency}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,

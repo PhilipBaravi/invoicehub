@@ -3,7 +3,7 @@ import { TrendingUp, TrendingDown } from "lucide-react";
 import { Label, Pie, PieChart } from "recharts";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
-
+import { API_BASE_URL } from "@/lib/utils/constants";
 import {
   Card,
   CardContent,
@@ -85,8 +85,8 @@ const TotalProfitLoss = () => {
       return null;
     }
     const endpoint = isTotal
-      ? `https://api.invoicehub.space/api/v1/dashboard/financialSummaryForAllCurrency/${year}/${startMonth}/${endMonth}/${currency}`
-      : `https://api.invoicehub.space/api/v1/dashboard/financialSummaryForOneCurrency/${year}/${startMonth}/${endMonth}/${currency}`;
+      ? `${API_BASE_URL}dashboard/financialSummaryForAllCurrency/${year}/${startMonth}/${endMonth}/${currency}`
+      : `${API_BASE_URL}dashboard/financialSummaryForOneCurrency/${year}/${startMonth}/${endMonth}/${currency}`;
 
     const response = await fetch(endpoint, {
       headers: {

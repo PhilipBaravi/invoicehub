@@ -5,53 +5,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { NoDataDisplay } from "./charts/NoDataDisplay";
 import { useKeycloak } from "@react-keycloak/web";
-
-interface Address {
-  id: number;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
-}
-
-interface Company {
-  id: number;
-  title: string;
-  phone: string;
-  website: string;
-  email: string;
-  address: Address;
-}
-
-interface ClientVendor {
-  id: number;
-  name: string;
-  phone: string;
-  website: string;
-  email: string;
-  clientVendorType: string;
-  address: Address;
-}
-
-interface Invoice {
-  id: number;
-  invoiceNo: string;
-  invoiceStatus: string;
-  invoiceType: string;
-  dateOfIssue: string;
-  dueDate: string;
-  acceptDate: string;
-  paymentTerms: string;
-  notes: string;
-  company: Company;
-  clientVendor: ClientVendor;
-  price: number;
-  currency: string;
-  tax: number;
-  total: number;
-}
+import { Invoice } from "./charts/types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const RecentSales: FC = () => {
   const { t } = useTranslation("charts");
@@ -65,7 +20,7 @@ const RecentSales: FC = () => {
     setError(null);
     try {
       const response = await fetch(
-        "https://api.invoicehub.space/api/v1/dashboard/recentlyApproved",
+        `${API_BASE_URL}dashboard/recentlyApproved`,
         {
           headers: {
             Authorization: `Bearer ${keycloak.token}`,

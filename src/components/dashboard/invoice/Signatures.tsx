@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import SignatureCanvas from "react-signature-canvas";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { StyledCard, cardVariants, fadeInVariants } from "@/utils/styling";
+import { StyledCard, cardVariants, fadeInVariants } from "@/lib/utils/styling";
 
 interface SignaturesProps {
   invoice: any;

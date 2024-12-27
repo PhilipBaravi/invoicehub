@@ -1,16 +1,12 @@
 import { FC, useEffect, useState, Fragment } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Invoice, InvoiceProduct } from "../invoice-types";
+import { InvoiceProduct } from "../invoice-types";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
 import { Description, DialogTitle } from "@radix-ui/react-dialog";
-
-interface InvoicePreviewProps {
-  invoice: Invoice;
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { InvoicePreviewProps } from "./types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const currencyIcons: Record<string, string> = {
   USD: "$",
@@ -34,7 +30,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
     const fetchLineItems = async () => {
       try {
         const response = await fetch(
-          `https://api.invoicehub.space/api/v1/invoice/product/list/${invoice.id}`,
+          `${API_BASE_URL}invoice/product/list/${invoice.id}`,
           {
             headers: {
               Authorization: `Bearer ${keycloak.token}`,
@@ -52,14 +48,11 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
 
     const fetchBusinessInfo = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/user/loggedInUser",
-          {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}user/loggedInUser`, {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
         const result = await response.json();
         if (result.success) {
           setBusinessInfo(result.data.company);

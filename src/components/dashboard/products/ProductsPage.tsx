@@ -10,7 +10,8 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useKeycloak } from "@react-keycloak/web";
 import { Product, Category } from "./products-types";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");
@@ -63,15 +64,12 @@ const ProductsPage: FC = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/category/list",
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}category/list`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
         const data = await response.json();
         if (response.ok) {
           setCategories(data.data);
@@ -88,15 +86,12 @@ const ProductsPage: FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(
-        "https://api.invoicehub.space/api/v1/product/list",
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}product/list`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+      });
       const data = await response.json();
       if (response.ok) {
         setProducts(
@@ -155,7 +150,7 @@ const ProductsPage: FC = () => {
     const selectedCategory = categories.find(
       (cat) => cat.id === selectedCategoryId
     );
-    const categoryIcon = selectedCategory?.icon || "";
+    const categoryIcon = selectedCategory?.icon;
 
     const productToAdd = {
       ...newProduct,
@@ -171,17 +166,14 @@ const ProductsPage: FC = () => {
     const { productCategory, ...productToSend } = productToAdd;
 
     try {
-      const response = await fetch(
-        "https://api.invoicehub.space/api/v1/product/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-          body: JSON.stringify(productToSend),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}product/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+        body: JSON.stringify(productToSend),
+      });
       console.log(productToSend);
       const createdProduct = await response.json();
 
@@ -210,7 +202,7 @@ const ProductsPage: FC = () => {
         const selectedCategory = categories.find(
           (cat) => cat.id === selectedCategoryId
         );
-        const categoryIcon = selectedCategory?.icon || "";
+        const categoryIcon = selectedCategory?.icon;
 
         const productToUpdate = {
           ...newProduct,
@@ -224,7 +216,7 @@ const ProductsPage: FC = () => {
         const { productCategory, ...productToSend } = productToUpdate;
 
         const response = await fetch(
-          `https://api.invoicehub.space/api/v1/product/update/${editingProduct.id}`,
+          `${API_BASE_URL}product/update/${editingProduct.id}`,
           {
             method: "PUT",
             headers: {
@@ -265,7 +257,7 @@ const ProductsPage: FC = () => {
   const handleDeleteProduct = async (productId: number) => {
     try {
       const response = await fetch(
-        `https://api.invoicehub.space/api/v1/product/delete/${productId}`,
+        `${API_BASE_URL}product/delete/${productId}`,
         {
           method: "DELETE",
           headers: {

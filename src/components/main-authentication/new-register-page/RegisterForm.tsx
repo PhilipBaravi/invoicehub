@@ -16,20 +16,8 @@ import {
 } from "libphonenumber-js";
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { useTranslation } from "react-i18next";
-import { useToast } from "@/hooks/use-toast";
-
-export interface UserFormValues {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-}
-
-interface RegisterFormProps {
-  setUserDetails: (details: UserFormValues) => void;
-}
+import { useToast } from "@/lib/hooks/use-toast";
+import { RegisterFormProps, UserFormValues } from "./types";
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
   const { t } = useTranslation();

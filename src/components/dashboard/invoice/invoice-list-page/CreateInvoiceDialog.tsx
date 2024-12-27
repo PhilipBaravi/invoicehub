@@ -17,14 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useTranslation } from "react-i18next";
-
-interface CreateInvoiceDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  newInvoiceCurrency: "USD" | "EUR" | "GEL";
-  setNewInvoiceCurrency: (currency: "USD" | "EUR" | "GEL") => void;
-  onConfirm: () => void;
-}
+import { CreateInvoiceDialogProps } from "./types";
 
 const CreateInvoiceDialog: FC<CreateInvoiceDialogProps> = ({
   open,

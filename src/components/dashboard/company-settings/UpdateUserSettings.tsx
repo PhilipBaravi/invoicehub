@@ -16,43 +16,9 @@ import {
 import countryList from "../../account-details/profile-form/CountryCodes";
 import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
-import { useToast } from "@/hooks/use-toast";
-
-interface Address {
-  id: number;
-  addressLine1: string;
-  addressLine2: string;
-  city: string;
-  state: string;
-  country: string;
-  zipCode: string;
-}
-
-interface Company {
-  id: number;
-  title: string;
-  phone: string;
-  website: string;
-  email: string;
-  address: Address;
-}
-
-interface Role {
-  description: string;
-}
-
-interface User {
-  id: number;
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  dateOfEmployment: string;
-  enabled: boolean;
-  company: Company;
-  role: Role;
-}
+import { useToast } from "@/lib/hooks/use-toast";
+import { Company, User } from "./types";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const UpdateUserSettings: FC = () => {
   const { keycloak } = useKeycloak();
@@ -84,14 +50,11 @@ const UpdateUserSettings: FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/user/loggedInUser",
-          {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}user/loggedInUser`, {
+          headers: {
+            Authorization: `Bearer ${keycloak.token}`,
+          },
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -195,42 +158,39 @@ const UpdateUserSettings: FC = () => {
     }
 
     try {
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/user/update/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${keycloak.token}`,
+      const response = await fetch(`${API_BASE_URL}user/update/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${keycloak.token}`,
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password.trim(),
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: fullPhoneNumber,
+          company: {
+            id: companyData.id,
+            title: companyData.title,
+            phone: companyData.phone,
+            website: companyData.website,
+            email: companyData.email,
+            address: {
+              id: companyData.address.id,
+              addressLine1: companyData.address.addressLine1,
+              addressLine2: companyData.address.addressLine2,
+              city: companyData.address.city,
+              state: companyData.address.state,
+              country: companyData.address.country,
+              zipCode: companyData.address.zipCode,
+            },
           },
-          body: JSON.stringify({
-            username: username,
-            password: password.trim(),
-            firstName: firstName.trim(),
-            lastName: lastName.trim(),
-            phone: fullPhoneNumber,
-            company: {
-              id: companyData.id,
-              title: companyData.title,
-              phone: companyData.phone,
-              website: companyData.website,
-              email: companyData.email,
-              address: {
-                id: companyData.address.id,
-                addressLine1: companyData.address.addressLine1,
-                addressLine2: companyData.address.addressLine2,
-                city: companyData.address.city,
-                state: companyData.address.state,
-                country: companyData.address.country,
-                zipCode: companyData.address.zipCode,
-              },
-            },
-            role: {
-              description: roleDescription,
-            },
-          }),
-        }
-      );
+          role: {
+            description: roleDescription,
+          },
+        }),
+      });
 
       if (response.ok) {
         console.log("User details updated successfully");

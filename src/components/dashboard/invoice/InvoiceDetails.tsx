@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { StyledCard, cardVariants, fadeInVariants } from "@/utils/styling";
+import { StyledCard, cardVariants, fadeInVariants } from "@/lib/utils/styling";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 interface InvoiceDetailsProps {
   invoice: any;
@@ -35,14 +36,11 @@ const InvoiceDetails: FC<InvoiceDetailsProps> = ({
         if (isEditMode) {
           // Do nothing, data is already fetched
         } else {
-          const response = await fetch(
-            "https://api.invoicehub.space/api/v1/invoice/generate",
-            {
-              headers: {
-                Authorization: `Bearer ${keycloak.token}`,
-              },
-            }
-          );
+          const response = await fetch(`${API_BASE_URL}invoice/generate`, {
+            headers: {
+              Authorization: `Bearer ${keycloak.token}`,
+            },
+          });
           if (!response.ok) {
             throw new Error("Failed to fetch invoice details");
           }

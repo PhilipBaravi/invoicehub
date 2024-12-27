@@ -1,7 +1,6 @@
 import { FC } from "react";
 import { Link } from "react-router-dom";
-import { useKeycloak } from "@react-keycloak/web";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -13,9 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { logOut } from "@/lib/utils/logout";
 
 const HeaderAvatar: FC = () => {
-  const { keycloak } = useKeycloak();
   const { isAdmin, user } = useAuth();
   const { t } = useTranslation("settings");
 
@@ -41,33 +40,6 @@ const HeaderAvatar: FC = () => {
       adminOnly: true,
     },
   ];
-
-  const logOut = async () => {
-    if (!keycloak) return;
-
-    const idToken = keycloak.idToken;
-    const postLogoutRedirectUri = "http://localhost:5173/";
-
-    if (!idToken) {
-      console.error(
-        "No id_token available to send as id_token_hint. Check Keycloak configuration or ensure a full login occurred."
-      );
-      return;
-    }
-
-    const logoutUrl = `${keycloak.authServerUrl}/realms/${
-      keycloak.realm
-    }/protocol/openid-connect/logout?id_token_hint=${encodeURIComponent(
-      idToken
-    )}&post_logout_redirect_uri=${encodeURIComponent(postLogoutRedirectUri)}`;
-
-    // Clear tokens
-    localStorage.removeItem("keycloak_token");
-    localStorage.removeItem("keycloak_refresh_token");
-    localStorage.removeItem("keycloak_id_token");
-
-    window.location.href = logoutUrl;
-  };
 
   const filteredMenuItems = menuItems.filter(
     (item) => !item.adminOnly || (item.adminOnly && isAdmin)

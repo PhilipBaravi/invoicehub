@@ -1,43 +1,10 @@
 import { FC, useState, useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  PlusCircle,
-  Search,
-  MoreHorizontal,
-  Trash2,
-  Pencil,
-  ClipboardCheck,
-  Eye,
-  Mail,
-} from "lucide-react";
 import { useKeycloak } from "@react-keycloak/web";
-import { useToast } from "@/hooks/use-toast";
-import InvoicePreview from "./InvoicePreview";
+import { useToast } from "@/lib/hooks/use-toast";
+import { InvoiceStatus, Invoice } from "../invoice-types";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,15 +15,22 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Invoice, InvoiceStatus } from "../invoice-types";
-import { useTranslation } from "react-i18next";
-import CreateInvoiceDialog from "./CreateInvoiceDialog";
 
-const currencyIcons: Record<string, string> = {
-  USD: "$",
-  EUR: "€",
-  GEL: "₾",
-};
+// Child Components
+import InvoiceFilters from "./InvoiceFilters";
+import InvoiceListTable from "./InvoiceListTable";
+import CreateInvoiceDialog from "./CreateInvoiceDialog";
+import InvoicePreview from "./InvoicePreview";
+
+// Services
+import {
+  getInvoicesData,
+  deleteInvoice,
+  approveInvoice,
+  sendInvoiceEmail,
+} from "./invoice-list-page-services";
+
+// Types for the Create Invoice Dialog
 
 const InvoiceListPage: FC = () => {
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -69,7 +43,6 @@ const InvoiceListPage: FC = () => {
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(
     null
   );
-  const [, setIsApproving] = useState(false);
   const { t } = useTranslation("invoices");
   const { keycloak } = useKeycloak();
   const navigate = useNavigate();
@@ -80,46 +53,36 @@ const InvoiceListPage: FC = () => {
     "USD" | "EUR" | "GEL"
   >("USD");
 
+  // Fetch invoices on mount or whenever the token changes
   useEffect(() => {
     const fetchInvoices = async () => {
       try {
-        const response = await fetch(
-          "https://api.invoicehub.space/api/v1/invoice/list",
-          {
-            headers: {
-              Authorization: `Bearer ${keycloak.token}`,
-            },
-          }
-        );
-        const result = await response.json();
-
-        if (result.success) {
-          const formattedData: Invoice[] = result.data.map((invoice: any) => ({
-            ...invoice,
-            dateOfIssue: new Date(invoice.dateOfIssue),
-            dueDate: new Date(invoice.dueDate),
-          }));
-          setInvoices(formattedData);
-          setFilteredInvoices(formattedData);
+        if (keycloak?.token) {
+          const data = await getInvoicesData(keycloak.token);
+          setInvoices(data);
+          setFilteredInvoices(data);
         } else {
-          console.error("Failed to fetch invoices:", result.message);
+          throw new Error("User is not authenticated");
         }
-      } catch (error) {
-        console.error("An error occurred while fetching invoices:", error);
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          console.error(e.message);
+        } else {
+          console.error("An unknown error occurred");
+        }
       }
     };
 
-    if (keycloak && keycloak.token) {
-      fetchInvoices();
-    }
-  }, [keycloak.token]);
+    fetchInvoices();
+  }, [keycloak?.token]);
 
+  // Filter invoices whenever searchTerm, statusFilter, or invoices change
   useEffect(() => {
     const filtered = invoices.filter((invoice) => {
       const matchesSearchTerm =
         invoice.invoiceNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
         invoice.clientVendor?.name
-          .toLowerCase()
+          ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
         invoice.dateOfIssue?.toLocaleDateString().includes(searchTerm);
 
@@ -133,30 +96,21 @@ const InvoiceListPage: FC = () => {
     setFilteredInvoices(filtered);
   }, [searchTerm, statusFilter, invoices]);
 
+  // ------------ Handlers ------------ //
+
+  // For opening delete dialog
   const openDeleteDialog = (invoiceId: number) => {
     setSelectedInvoiceId(invoiceId);
     setIsDeleteDialogOpen(true);
   };
 
+  // Confirm delete invoice
   const confirmDeleteInvoice = async () => {
-    if (selectedInvoiceId === null) return;
+    if (selectedInvoiceId === null || !keycloak?.token) return;
+
     try {
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/invoice/delete/${selectedInvoiceId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
-      );
-
-      let result;
-      if (response.ok && response.status !== 204) {
-        result = await response.json();
-      }
-
-      if (result?.success || response.status === 204) {
+      const isDeleted = await deleteInvoice(keycloak.token, selectedInvoiceId);
+      if (isDeleted) {
         setInvoices((prev) =>
           prev.filter((invoice) => invoice.id !== selectedInvoiceId)
         );
@@ -165,75 +119,50 @@ const InvoiceListPage: FC = () => {
         );
         setIsDeleteDialogOpen(false);
         setSelectedInvoiceId(null);
+
         toast({
           title: t("invoice.success"),
           description: t("invoice.successDeleteMessage"),
           variant: "success",
           duration: 3000,
         });
-      } else {
-        console.error(
-          "Failed to delete invoice:",
-          result?.message || "Unknown error"
-        );
-        toast({
-          title: t("invoice.error"),
-          description: t("invoice.errorMessage"),
-          variant: "destructive",
-          duration: 3000,
-        });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("An error occurred while deleting invoice:", error);
+      toast({
+        title: t("invoice.error"),
+        description: t("invoice.errorMessage"),
+        variant: "destructive",
+        duration: 3000,
+      });
     }
   };
 
+  // Approve invoice
   const handleApproveInvoice = async (invoiceId: number) => {
-    setIsApproving(true);
     try {
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/invoice/approve/${invoiceId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
+      if (!keycloak?.token) throw new Error("User is not authenticated");
+      await approveInvoice(keycloak.token, invoiceId);
+
+      // Update local state
+      setInvoices((prev) =>
+        prev.map((inv) =>
+          inv.id === invoiceId ? { ...inv, invoiceStatus: "APPROVED" } : inv
+        )
+      );
+      setFilteredInvoices((prev) =>
+        prev.map((inv) =>
+          inv.id === invoiceId ? { ...inv, invoiceStatus: "APPROVED" } : inv
+        )
       );
 
-      const result = await response.json();
-
-      if (result.success) {
-        setInvoices((prevInvoices) =>
-          prevInvoices.map((invoice) =>
-            invoice.id === invoiceId
-              ? { ...invoice, invoiceStatus: "APPROVED" }
-              : invoice
-          )
-        );
-        setFilteredInvoices((prevInvoices) =>
-          prevInvoices.map((invoice) =>
-            invoice.id === invoiceId
-              ? { ...invoice, invoiceStatus: "APPROVED" }
-              : invoice
-          )
-        );
-        toast({
-          title: t("invoice.success"),
-          description: t("invoiceList.approveSuccess"),
-          variant: "success",
-          duration: 3000,
-        });
-      } else {
-        console.error("Failed to approve invoice:", result.message);
-        toast({
-          title: t("invoice.error"),
-          description: t("invoiceList.approveError"),
-          variant: "destructive",
-          duration: 3000,
-        });
-      }
-    } catch (error) {
+      toast({
+        title: t("invoice.success"),
+        description: t("invoiceList.approveSuccess"),
+        variant: "success",
+        duration: 3000,
+      });
+    } catch (error: any) {
       console.error("An error occurred while approving invoice:", error);
       toast({
         title: t("invoice.error"),
@@ -241,41 +170,23 @@ const InvoiceListPage: FC = () => {
         variant: "destructive",
         duration: 3000,
       });
-    } finally {
-      setIsApproving(false);
     }
   };
 
+  // Send email
   const handleSendEmail = async (invoiceId: number) => {
     try {
-      const response = await fetch(
-        `https://api.invoicehub.space/api/v1/mailing/send-email/${invoiceId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${keycloak.token}`,
-          },
-        }
-      );
+      if (!keycloak?.token) throw new Error("User is not authenticated");
+      await sendInvoiceEmail(keycloak.token, invoiceId);
 
-      const result = await response.json();
-
-      if (result.success) {
-        toast({
-          title: t("invoice.success"),
-          description: t("invoice.sendEmailSuccess"),
-          variant: "success",
-          duration: 3000,
-        });
-      } else {
-        toast({
-          title: t("invoice.error"),
-          description: t("invoice.sendEmailError"),
-          variant: "destructive",
-          duration: 3000,
-        });
-      }
-    } catch (error) {
+      toast({
+        title: t("invoice.success"),
+        description: t("invoice.sendEmailSuccess"),
+        variant: "success",
+        duration: 3000,
+      });
+    } catch (error: any) {
+      console.error("Error sending invoice email:", error);
       toast({
         title: t("invoice.error"),
         description: t("invoice.sendEmailError"),
@@ -285,20 +196,7 @@ const InvoiceListPage: FC = () => {
     }
   };
 
-  const getStatusBadge = (status: InvoiceStatus) => {
-    const statusColors: Record<InvoiceStatus, string> = {
-      AWAITING_APPROVAL: "bg-yellow-500",
-      APPROVED: "bg-green-500",
-      REJECTED: "bg-red-500",
-      PAID: "bg-blue-500",
-    };
-    return (
-      <Badge className={`${statusColors[status]} text-white`}>
-        {status.replace("_", " ")}
-      </Badge>
-    );
-  };
-
+  // Create new invoice (choose currency)
   const handleCreateNewInvoice = () => {
     setShowCurrencyDialog(true);
   };
@@ -308,6 +206,18 @@ const InvoiceListPage: FC = () => {
     navigate(`/dashboard/invoices/new-invoice?currency=${newInvoiceCurrency}`);
   };
 
+  // Edit invoice
+  const handleEditInvoice = (invoiceId: number) => {
+    navigate(`/dashboard/invoices/edit/${invoiceId}`);
+  };
+
+  // Preview invoice
+  const handlePreviewInvoice = (invoice: Invoice) => {
+    setPreviewInvoice(invoice);
+  };
+
+  // ------------ Render ------------ //
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Card>
@@ -315,161 +225,30 @@ const InvoiceListPage: FC = () => {
           <CardTitle className="text-2xl font-bold mb-4 sm:mb-0">
             {t("invoiceList.pageTitle")}
           </CardTitle>
-          <Button className="w-full sm:w-auto" onClick={handleCreateNewInvoice}>
-            <PlusCircle className="mr-2 h-4 w-4" /> {t("invoiceList.createNew")}
-          </Button>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <div className="relative flex-grow">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <Input
-                className="pl-10"
-                placeholder={t("invoiceList.search")!}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                id="search-invoices-input"
-              />
-            </div>
-            <Select
-              value={statusFilter}
-              onValueChange={(value) =>
-                setStatusFilter(value as InvoiceStatus | "ALL_STATUSES")
-              }
-            >
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder={t("invoiceList.filter")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL_STATUSES">
-                  {t("invoiceList.all")}
-                </SelectItem>
-                <SelectItem value="AWAITING_APPROVAL">
-                  {t("invoiceList.awaiting")}
-                </SelectItem>
-                <SelectItem value="APPROVED">
-                  {t("invoiceList.approved")}
-                </SelectItem>
-                <SelectItem value="REJECTED">
-                  {t("invoiceList.rejected")}
-                </SelectItem>
-                <SelectItem value="PAID">{t("invoiceList.paid")}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="overflow-x-auto">
-            <Table className="min-w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[18%]">
-                    {t("invoiceList.invoiceNo")}
-                  </TableHead>
-                  <TableHead className="w-[18%]">
-                    {t("invoiceList.client")}
-                  </TableHead>
-                  <TableHead className="w-[18%]">
-                    {t("invoiceList.date")}
-                  </TableHead>
-                  <TableHead className="w-[18%]">
-                    {t("invoiceList.total")}
-                  </TableHead>
-                  <TableHead className="w-[18%]">
-                    {t("invoiceList.status")}
-                  </TableHead>
-                  <TableHead className="w-[10%]">
-                    {t("invoiceList.actions")}
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredInvoices.map((invoice, index) => {
-                  const currencyIcon = currencyIcons[invoice.currency] || "";
-                  const displayTotal = `${currencyIcon}${invoice.total.toFixed(
-                    2
-                  )}`;
-                  return (
-                    <TableRow key={invoice.id || index}>
-                      <TableCell key={`${invoice.id}${invoice.invoiceNo}`}>
-                        {invoice.invoiceNo}
-                      </TableCell>
-                      <TableCell
-                        key={`${invoice.id}${invoice.clientVendor?.name}`}
-                      >
-                        {invoice.clientVendor?.name}
-                      </TableCell>
-                      <TableCell key={`${invoice.id}${invoice.dateOfIssue}`}>
-                        {invoice.dateOfIssue?.toLocaleDateString()}
-                      </TableCell>
-                      <TableCell key={`${invoice.id}total`}>
-                        {displayTotal}
-                      </TableCell>
-                      <TableCell key={`${invoice.id}${invoice.invoiceStatus}`}>
-                        {getStatusBadge(invoice.invoiceStatus)}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              className="h-8 w-8 p-0"
-                              key={`button${index}${invoice.id}`}
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                              onClick={() => handleSendEmail(invoice.id)}
-                            >
-                              <Mail className="mr-2 h-4 w-4" />
-                              <span>{t("invoiceList.sendEmail")}</span>
-                            </DropdownMenuItem>
-                            {invoice.invoiceStatus !== "APPROVED" && (
-                              <DropdownMenuItem
-                                onClick={() => handleApproveInvoice(invoice.id)}
-                              >
-                                <ClipboardCheck className="mr-2 h-4 w-4" />
-                                <span>{t("invoiceList.approve")}</span>
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem
-                              onClick={() => setPreviewInvoice(invoice)}
-                            >
-                              <Eye className="mr-2 h-4 w-4" />
-                              <span>{t("invoiceList.preview")}</span>
-                            </DropdownMenuItem>
-                            {invoice.invoiceStatus !== "APPROVED" && (
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  navigate(
-                                    `/dashboard/invoices/edit/${invoice.id}`
-                                  )
-                                }
-                              >
-                                <Pencil className="mr-2 h-4 w-4" />
-                                <span>{t("invoiceList.edit")}</span>
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem
-                              onClick={() => openDeleteDialog(invoice.id)}
-                              className="text-red-600 focus:text-red-600"
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              {t("invoiceList.delete")}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
+          <InvoiceFilters
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            onCreateInvoice={handleCreateNewInvoice}
+          />
+
+          <InvoiceListTable
+            invoices={filteredInvoices}
+            onPreview={handlePreviewInvoice}
+            onEdit={handleEditInvoice}
+            onApprove={handleApproveInvoice}
+            onSendEmail={handleSendEmail}
+            onDelete={openDeleteDialog}
+          />
         </CardContent>
       </Card>
+
       <Outlet />
 
+      {/* Delete Confirmation Dialog */}
       <AlertDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
@@ -492,6 +271,7 @@ const InvoiceListPage: FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Invoice Preview Dialog */}
       {previewInvoice && (
         <InvoicePreview
           invoice={previewInvoice}
@@ -500,6 +280,7 @@ const InvoiceListPage: FC = () => {
         />
       )}
 
+      {/* Create Invoice Dialog */}
       <CreateInvoiceDialog
         open={showCurrencyDialog}
         onOpenChange={setShowCurrencyDialog}

@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
-import { ReactKeycloakProvider, useKeycloak } from "@react-keycloak/web";
-import keycloak from "./utils/keycloak";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ReactKeycloakProvider } from "@react-keycloak/web";
+import keycloak from "./lib/utils/keycloak";
 import AccountDetails from "./components/account-details/AccountDetails";
 import BusinessForm from "./components/account-details/business-form/BusinessFormDetails";
 import IntentFormDetails from "./components/account-details/IntentForm.tsx/IntentFormDetails";
@@ -30,96 +25,15 @@ import InvoiceListPage from "./components/dashboard/invoice/invoice-list-page/In
 import { Progress } from "@/components/ui/progress";
 import Invoice from "./components/dashboard/invoice/Invoice";
 import PrivacyPolicy from "./components/main-authentication/privacyPolicy";
-import AuthRedirectRoute from "./components/main-authentication/AuthRedirectRoute";
+import AuthRedirectRoute from "./lib/AuthRedirectRoute";
 import "./i18n";
 import { useTranslation } from "react-i18next";
 import LandingPage from "./landing-page/LandingPage";
 import { Toaster } from "@/components/ui/toaster";
-import { useAuth } from "./hooks/useAuth";
-import type { UserFormValues } from "./components/main-authentication/new-register-page/RegisterForm";
+import { UserFormValues } from "./components/main-authentication/new-register-page/types";
 import { CookieConsent } from "./CookiesConsent";
 import UpdateUserSettings from "./components/dashboard/company-settings/UpdateUserSettings";
-
-const ProtectedRoute = ({
-  element: Element,
-  allowedRoles = ["Admin", "Employee", "Manager"],
-}: {
-  element: JSX.Element;
-  allowedRoles?: string[];
-}) => {
-  const { keycloak, initialized } = useKeycloak();
-  const { user, loading } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      if (!initialized) return;
-
-      if (!keycloak.authenticated) {
-        const storedToken = localStorage.getItem("keycloak_token");
-        const storedRefreshToken = localStorage.getItem(
-          "keycloak_refresh_token"
-        );
-        const storedIdToken = localStorage.getItem("keycloak_id_token");
-
-        if (storedToken && storedRefreshToken && storedIdToken) {
-          console.log("Found stored tokens, attempting to restore session");
-          keycloak.token = storedToken;
-          keycloak.refreshToken = storedRefreshToken;
-          keycloak.idToken = storedIdToken;
-          keycloak.authenticated = true;
-
-          try {
-            const refreshed = await keycloak.updateToken(-1);
-            console.log("Token refresh attempt result:", refreshed);
-            if (!refreshed) {
-              console.log("Token refresh failed, clearing stored tokens");
-              localStorage.removeItem("keycloak_token");
-              localStorage.removeItem("keycloak_refresh_token");
-              localStorage.removeItem("keycloak_id_token");
-              keycloak.authenticated = false;
-            } else {
-              localStorage.setItem("keycloak_token", keycloak.token!);
-              localStorage.setItem(
-                "keycloak_refresh_token",
-                keycloak.refreshToken!
-              );
-              localStorage.setItem("keycloak_id_token", keycloak.idToken!);
-            }
-          } catch (error) {
-            console.error("Token refresh failed:", error);
-            localStorage.removeItem("keycloak_token");
-            localStorage.removeItem("keycloak_refresh_token");
-            localStorage.removeItem("keycloak_id_token");
-            keycloak.authenticated = false;
-          }
-        }
-      }
-
-      setIsLoading(false);
-    };
-
-    checkAuth();
-  }, [initialized, keycloak]);
-
-  if (isLoading || loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <Progress value={100} className="w-[60%]" />
-      </div>
-    );
-  }
-
-  if (!keycloak.authenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!user || !allowedRoles.includes(user.role.description)) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return Element;
-};
+import { ProtectedRoute } from "./lib/ProtectedRoute";
 
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserFormValues | null>(null);

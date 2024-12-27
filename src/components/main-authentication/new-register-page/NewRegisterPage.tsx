@@ -1,23 +1,9 @@
 import RegisterForm from "./RegisterForm";
 import LoginRegisterLayout from "../LoginRegisterLayout";
 import { useTranslation } from "react-i18next";
+import { RegisterFormProps } from "./types";
 
-interface UserFormValues {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-}
-
-interface NewRegisterPageProps {
-  setUserDetails: (details: UserFormValues) => void;
-}
-
-const NewRegisterPage: React.FC<NewRegisterPageProps> = ({
-  setUserDetails,
-}) => {
+const NewRegisterPage: React.FC<RegisterFormProps> = ({ setUserDetails }) => {
   const { t } = useTranslation();
 
   return (
