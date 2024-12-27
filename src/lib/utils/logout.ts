@@ -1,8 +1,7 @@
-import { useKeycloak } from "@react-keycloak/web";
+import keycloak from "./keycloak";
 import { POST_LOGOUT_REDIRECT_URI } from "./constants";
 
 export const logOut = async () => {
-  const { keycloak } = useKeycloak();
   if (!keycloak) return;
 
   const idToken = keycloak.idToken;
