@@ -218,7 +218,7 @@ export default function EditClientVendorSheet({
               onValueChange={(value) =>
                 setEditedClientVendor((prev: any) => ({
                   ...prev,
-                  clientVendorType: value as "CLIENT" | "VENDOR",
+                  clientVendorType: value as "Client" | "Vendor",
                 }))
               }
             >
@@ -226,8 +226,8 @@ export default function EditClientVendorSheet({
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="CLIENT">Client</SelectItem>
-                <SelectItem value="VENDOR">Vendor</SelectItem>
+                <SelectItem value="Client">Client</SelectItem>
+                <SelectItem value="Vendor">Vendor</SelectItem>
               </SelectContent>
             </Select>
           </div>

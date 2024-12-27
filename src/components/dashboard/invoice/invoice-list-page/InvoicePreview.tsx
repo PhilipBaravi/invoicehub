@@ -75,7 +75,7 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
       <DialogContent className="max-w-4xl w-full sm:w-[95vw] md:w-[90vw] lg:w-full">
         <DialogTitle className="hidden">Preview Invoice</DialogTitle>
         <ScrollArea className="h-[90vh] w-full rounded-md p-2 sm:p-4">
-          <div className="max-w-[800px] mx-auto bg-white rounded-lg shadow-sm p-3 sm:p-4 md:p-6 lg:p-8">
+          <div className="max-w-[800px] mx-auto bg-white rounded-lg p-3 sm:p-4 md:p-6 lg:p-8">
             {/* Header Section */}
             <div className="flex flex-row mb-6 sm:mb-8 md:mb-10 lg:mb-12">
               <div className="w-3/5">
@@ -104,63 +104,74 @@ const InvoicePreview: FC<InvoicePreviewProps> = ({
             </div>
 
             {/* Products Table */}
-            <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12 overflow-x-auto">
-              <table className="w-full border-collapse text-xs sm:text-sm md:text-base">
+            <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+              <table className="w-full table-fixed border-collapse text-[10px] sm:text-xs md:text-sm lg:text-base bg-white rounded-lg overflow-hidden border border-gray-200">
                 <thead>
-                  <tr>
-                    <th className="py-3 px-3 text-left bg-white font-bold text-[#5c6ac4] border-b-2 border-[#5c6ac4]">
+                  <tr className="bg-[#5c6ac4] text-white">
+                    <th className="w-1/6 py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left font-semibold border-r border-[#7c8ad4] first:rounded-tl-lg">
                       {t("invoice.lineItems.category")}
                     </th>
-                    <th className="py-3 px-3 text-left bg-white font-bold text-[#5c6ac4] border-b-2 border-[#5c6ac4]">
+                    <th className="w-1/6 py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left font-semibold border-r border-[#7c8ad4]">
                       {t("invoice.lineItems.product")}
                     </th>
-                    <th className="py-3 px-3 text-left bg-white font-bold text-[#5c6ac4] border-b-2 border-[#5c6ac4]">
+                    <th className="w-1/6 py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left font-semibold border-r border-[#7c8ad4]">
                       {t("invoice.lineItems.price")}
                     </th>
-                    <th className="py-3 px-3 text-left bg-white font-bold text-[#5c6ac4] border-b-2 border-[#5c6ac4]">
+                    <th className="w-1/6 py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left font-semibold border-r border-[#7c8ad4]">
                       {t("invoice.lineItems.quantity")}
                     </th>
-                    <th className="py-3 px-3 text-left bg-white font-bold text-[#5c6ac4] border-b-2 border-[#5c6ac4]">
+                    <th className="w-1/6 py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left font-semibold border-r border-[#7c8ad4]">
                       {t("invoice.totals.tax")}
                     </th>
-                    <th className="py-3 px-3 text-left bg-white font-bold text-[#5c6ac4] border-b-2 border-[#5c6ac4]">
+                    <th className="w-1/6 py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left font-semibold last:rounded-tr-lg">
                       {t("invoice.lineItems.lineTotal")}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {lineItems.map((item) => (
+                  {lineItems.map((item, index) => (
                     <Fragment key={item.id}>
-                      <tr>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
+                      <tr
+                        className={`${
+                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        } hover:bg-gray-100 transition-colors duration-150`}
+                      >
+                        <td className="py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left border-r border-gray-200 text-stone-950">
                           {item.product.category.description}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
+                        <td className="py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left border-r border-gray-200 text-stone-950">
                           {item.product.name}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
+                        <td className="py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left border-r border-gray-200 text-stone-950">
                           {currencyIcon}
                           {item.price.toFixed(2)}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
+                        <td className="py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left border-r border-gray-200 text-stone-950">
                           {item.quantity} {item.product.productUnit}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
+                        <td className="py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left border-r border-gray-200 text-stone-950">
                           {currencyIcon}
                           {item.tax.toFixed(2)}
                         </td>
-                        <td className="py-3 px-3 text-left border-b border-[#e5e7eb] text-stone-950">
+                        <td className="py-2 sm:py-3 md:py-4 px-2 sm:px-3 md:px-4 text-left text-stone-950 font-medium">
                           {currencyIcon}
                           {item.total.toFixed(2)}
                         </td>
                       </tr>
-                      <tr key={`desc-${item.id}`}>
+                      <tr
+                        key={`desc-${item.id}`}
+                        className={`${
+                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                        } hover:bg-gray-100 transition-colors duration-150`}
+                      >
                         <td
                           colSpan={6}
-                          className="py-3 px-3 text-left border-b border-[#e5e7eb] bg-[#f9f9f9] text-stone-950"
+                          className="py-2 sm:py-3 px-2 sm:px-3 md:px-4 text-left border-t border-gray-200 text-stone-950 italic text-[10px] sm:text-xs"
                         >
-                          {t("invoice.lineItems.description")}{" "}
-                          <span>{item.product.description}</span>
+                          <span className="font-semibold">
+                            {t("invoice.lineItems.description")}:
+                          </span>{" "}
+                          {item.product.description}
                         </td>
                       </tr>
                     </Fragment>

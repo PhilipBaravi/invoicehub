@@ -28,6 +28,7 @@ export const productCategories: Category[] = [
       { labelKey: "units.BOX", value: "BOX" }, // Box
       { labelKey: "units.CRT", value: "CRT" }, // Crate
       { labelKey: "units.REEL", value: "REEL" }, // Reel
+      { labelKey: "units.PACK", value: "PACK" }, // Pack
     ],
   },
   {
@@ -58,6 +59,7 @@ export const productCategories: Category[] = [
       { labelKey: "units.L", value: "L" }, // Litre
       { labelKey: "units.ML", value: "ML" }, // Millilitre
       { labelKey: "units.GALLON", value: "GALLON" }, // Gallon
+      { labelKey: "units.LITER", value: "LITER" }, // Liter
     ],
   },
   {
@@ -75,8 +77,8 @@ export const productCategories: Category[] = [
     labelKey: "categories.area_volume",
     value: "area_volume",
     units: [
-      { labelKey: "units.SQM", value: "SQM" }, // Square meter
-      { labelKey: "units.SQFT", value: "SQFT" }, // Square foot
+      { labelKey: "units.SQM", value: "SQM" }, // Square Meter
+      { labelKey: "units.SQFT", value: "SQFT" }, // Square Foot
       { labelKey: "units.CUBICMETER", value: "CUBICMETER" }, // Cubic Meter
       { labelKey: "units.CUBICFOOT", value: "CUBICFOOT" }, // Cubic Foot
     ],
@@ -89,12 +91,5 @@ export const productCategories: Category[] = [
       { labelKey: "units.MPK", value: "MPK" }, // Meter/Pack
     ],
   },
-  {
-    labelKey: "categories.electronic",
-    value: "electronic",
-    units: [
-      { labelKey: "units.PACK", value: "PACK" }, // Pack
-      { labelKey: "units.LITER", value: "LITER" }, // Liter
-    ],
-  },
+  // Removed 'electronic' category as its units have been reassigned
 ];

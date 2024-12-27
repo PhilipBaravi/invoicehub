@@ -22,6 +22,7 @@ import {
   isValidPhoneNumber,
 } from "libphonenumber-js";
 import countryList from "@/components/account-details/profile-form/CountryCodes";
+import { Employee } from "./types";
 import {
   Popover,
   PopoverContent,
@@ -33,7 +34,7 @@ import { format } from "date-fns";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/lib/hooks/use-toast";
-import { EmployeeErrors, Employee } from "./types";
+import { EmployeeErrors } from "./types";
 import { API_BASE_URL } from "@/lib/utils/constants";
 
 export default function EditEmployeeSheet({

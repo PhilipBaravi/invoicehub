@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
-import { getCookie, setCookie } from "@/lib/utils/cookiesUtils";
+import { getCookie, setCookie } from "@/lib/utils/cookieUtils";
 import {
   Popover,
   PopoverContent,

@@ -35,8 +35,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     root.classList.remove(...themeClasses);
 
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
       root.classList.add(systemTheme);

@@ -43,13 +43,13 @@ export async function deleteInvoice(
     });
 
     let result;
-
+    // If response is 204 (No Content), no JSON body is returned
     if (response.ok && response.status !== 204) {
       result = await response.json();
     }
 
     if (result?.success || response.status === 204) {
-      return true;
+      return true; // Indicate success
     } else {
       throw new Error(result?.message || "Failed to delete invoice");
     }

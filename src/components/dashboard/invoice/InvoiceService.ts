@@ -117,10 +117,24 @@ export async function removeLineItem(token: string, lineItemId: number) {
       },
     }
   );
-  const data = await response.json();
+
+  // If status is 204 No Content, assume success
+  if (response.status === 204) {
+    return true;
+  }
+
+  // Attempt to parse JSON for other status codes
+  let data;
+  try {
+    data = await response.json();
+  } catch (error) {
+    throw new Error("Failed to parse response JSON.");
+  }
+
   if (!response.ok || !data.success) {
     throw new Error(data.message || "Failed to remove line item.");
   }
+
   return true;
 }
 

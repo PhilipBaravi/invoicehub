@@ -1,3 +1,5 @@
+// src/lib/utils/constants.ts
+
 export const API_BASE_URL: string =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:9090/api/v1/";
 export const POST_LOGOUT_REDIRECT_URI: string =

@@ -96,6 +96,7 @@ export interface Invoice {
 
 // LineItem interface
 export interface LineItem {
+  id: number;
   itemId: number;
   categoryId: number;
   name: string;

@@ -40,7 +40,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/lib/hooks/use-toast";
 import { motion } from "framer-motion";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
-import { currencySymbols } from "@/lib/utils/constants";
+import { currencySymbols } from "@/lib/utils/constants"; // If you keep currency symbols in a constants file
 
 // -------- Services --------
 import {
@@ -328,6 +328,7 @@ const InvoiceComponent: FC = () => {
     setLineItems((prev) => [
       ...prev,
       {
+        id: 0,
         itemId: 0,
         categoryId: 0,
         name: "",
@@ -381,16 +382,26 @@ const InvoiceComponent: FC = () => {
   /**
    * Remove a line item
    */
-  const handleRemoveLineItem = useCallback(
-    (index: number) => {
-      setLineItems((prev) => {
-        const updated = prev.filter((_, i) => i !== index);
-        updateTotals(updated);
-        return updated;
+  const handleRemoveLineItem = async (lineItemId: number) => {
+    if (!keycloak?.token) return;
+    try {
+      await removeLineItem(keycloak.token, lineItemId);
+      // Update state to reflect removal
+      setLineItems((prev) => prev.filter((item) => item.id !== lineItemId));
+      toast({
+        title: "Success",
+        description: "Line item removed successfully.",
+        variant: "success",
       });
-    },
-    [updateTotals]
-  );
+    } catch (error: any) {
+      console.error("Error removing line item:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to remove line item.",
+        variant: "destructive",
+      });
+    }
+  };
 
   /**
    * Show the tax dialog for a given line item

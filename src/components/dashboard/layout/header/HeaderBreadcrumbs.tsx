@@ -29,8 +29,8 @@ const HeaderBreadcrumbs: FC = () => {
             InvoiceHub
           </Link>
         </BreadcrumbItem>
-        {pathnames.length > 0 && <BreadcrumbSeparator />}{" "}
-        {/* Separator after InvoiceHub */}
+        {pathnames.length > 0 && <BreadcrumbSeparator />} {/* Separator after InvoiceHub */}
+
         {/* If the path has more than 2 segments, display a dropdown */}
         {pathnames.length > 2 && (
           <>
@@ -54,6 +54,7 @@ const HeaderBreadcrumbs: FC = () => {
             <BreadcrumbSeparator />
           </>
         )}
+
         {/* Middle Segment */}
         {pathnames.slice(-2, -1).map((name, index) => (
           <Fragment key={name || index}>
@@ -68,6 +69,7 @@ const HeaderBreadcrumbs: FC = () => {
             <BreadcrumbSeparator />
           </Fragment>
         ))}
+
         {/* Last Segment (Current Page) */}
         <BreadcrumbItem>
           <BreadcrumbPage>{pathnames[pathnames.length - 1]}</BreadcrumbPage>

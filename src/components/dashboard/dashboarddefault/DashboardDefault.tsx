@@ -24,28 +24,30 @@ const DashboardDefault: FC = () => {
       <main className="w-[95%] flex flex-col gap-4 pt-4 mx-auto">
         <CurrencyExchangeRates />
 
-        <div className="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
-          <div className="w-full xl:w-[72%] min-h-[300px]">
-            <ProductSalesChart />
-          </div>
-          <div className="w-full xl:w-[27%] min-h-[300px]">
-            <TotalProfitLoss />
-          </div>
-        </div>
-        <div className="w-full">
-          <StatisticsGrid />
-        </div>
-        <div className="w-full flex flex-col xl:flex-row justify-between items-start gap-2">
-          <div className="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
-            <div className="w-full xl:w-[49%]">
-              <TopSoldProducts />
+       
+            <div className="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
+                <div className="w-full xl:w-[72%] min-h-[300px]">
+                <ProductSalesChart />
+                </div>
+                <div className="w-full xl:w-[27%] min-h-[300px]">
+                <TotalProfitLoss />
+                </div>
             </div>
-
+              <div className="w-full">
+                <StatisticsGrid />
+              </div>
+           <div className="w-full flex flex-col xl:flex-row justify-between items-start gap-2">
+            <div className="w-full flex flex-col xl:flex-row justify-between items-center gap-2">
+                <div className="w-full xl:w-[49%]">
+                <TopSoldProducts />
+                </div>
+            
             <div className="w-full xl:w-[49%]">
-              <RecentSales />
+            <RecentSales />
             </div>
-          </div>
-        </div>
+            
+            </div>      
+           </div>
       </main>
     </>
   );

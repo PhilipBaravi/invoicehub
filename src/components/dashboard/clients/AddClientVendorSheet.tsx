@@ -36,7 +36,7 @@ export default function AddClientVendorSheet({
     phone: "",
     website: "",
     email: "",
-    clientVendorType: "CLIENT",
+    clientVendorType: "Client",
     address: {
       addressLine1: "",
       addressLine2: "",
@@ -226,7 +226,7 @@ export default function AddClientVendorSheet({
               onValueChange={(value) =>
                 setNewClientVendor((prev) => ({
                   ...prev,
-                  clientVendorType: value as "CLIENT" | "VENDOR",
+                  clientVendorType: value as "Client" | "Vendor",
                 }))
               }
             >
@@ -234,8 +234,8 @@ export default function AddClientVendorSheet({
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="CLIENT">Client</SelectItem>
-                <SelectItem value="VENDOR">Vendor</SelectItem>
+                <SelectItem value="Client">Client</SelectItem>
+                <SelectItem value="Vendor">Vendor</SelectItem>
               </SelectContent>
             </Select>
           </div>

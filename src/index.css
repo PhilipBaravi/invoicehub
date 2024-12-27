@@ -101,11 +101,10 @@
 
 ::-webkit-scrollbar {
   @apply w-2.5 h-2.5;
- 
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-transparent
+  @apply bg-transparent;
 }
 
 ::-webkit-scrollbar-thumb {
