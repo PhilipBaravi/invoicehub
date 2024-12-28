@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useKeycloak } from "@react-keycloak/web";
+// import { useKeycloak } from "@react-keycloak/web";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import GoogleIcon from "../GoogleIcon";
-import AppleIcon from "../AppleIcon";
+// import GoogleIcon from "../GoogleIcon";
+// import AppleIcon from "../AppleIcon";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/lib/hooks/use-toast";
 import { directLogin } from "@/lib/utils/keycloak";
@@ -18,7 +18,7 @@ const LoginForm = () => {
   const [loginPassword, setLoginPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [showVerificationWindow, setShowVerificationWindow] = useState(false);
-  const { keycloak } = useKeycloak();
+  // const { keycloak } = useKeycloak();
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -106,22 +106,22 @@ const LoginForm = () => {
     }
   };
 
-  const handleSocialLogin = (provider: "google" | "apple") => {
-    keycloak
-      .login({
-        idpHint: provider,
-        redirectUri: `${window.location.origin}/dashboard`,
-      })
-      .catch((error) => {
-        console.error(`${provider} login error:`, error);
-        toast({
-          title: "Error",
-          description: `Failed to login with ${provider}. Please try again.`,
-          variant: "destructive",
-          duration: 3000,
-        });
-      });
-  };
+  // const handleSocialLogin = (provider: "google" | "apple") => {
+  //   keycloak
+  //     .login({
+  //       idpHint: provider,
+  //       redirectUri: `${window.location.origin}/dashboard`,
+  //     })
+  //     .catch((error) => {
+  //       console.error(`${provider} login error:`, error);
+  //       toast({
+  //         title: "Error",
+  //         description: `Failed to login with ${provider}. Please try again.`,
+  //         variant: "destructive",
+  //         duration: 3000,
+  //       });
+  //     });
+  // };
 
   const handleCloseVerificationWindow = () => {
     setShowVerificationWindow(false);
@@ -174,11 +174,11 @@ const LoginForm = () => {
         </Button>
       </form>
 
-      <div className="mt-6 pb-6 text-center text-sm">
+      {/* <div className="mt-6 pb-6 text-center text-sm">
         {t("loginForm.continueWith")}
-      </div>
+      </div> */}
 
-      <Button
+      {/* <Button
         type="button"
         className="w-full mb-4"
         onClick={() => handleSocialLogin("google")}
@@ -196,14 +196,21 @@ const LoginForm = () => {
       >
         <AppleIcon />
         {t("loginForm.loginApple")}
-      </Button>
+      </Button> */}
+      <div className="flex justify-between items-center">
+        <p className="mt-6 text-center text-xs">
+          {t("loginForm.haveAnAccount")}{" "}
+          <Link to="/register" className="underline">
+            {t("loginForm.signUp")}
+          </Link>
+        </p>
 
-      <p className="mt-6 text-center text-xs">
-        {t("loginForm.haveAnAccount")}{" "}
-        <Link to="/register" className="underline">
-          {t("loginForm.signUp")}
-        </Link>
-      </p>
+        <p className="mt-6 text-center text-xs">
+          <Link to="/reset-password" className="underline">
+            Forgot password?
+          </Link>
+        </p>
+      </div>
 
       {showVerificationWindow && (
         <EmailVerificationWindow
