@@ -1,65 +1,65 @@
 {
-    "dashboard": {
-        "greetings": "გამარჯობა, დაბრუნდით"
-    },
-    "currencyExchanges": {
-        "lastMonth": "წინა თვე"
-    },
-    "productSalesChart": {
-        "productsSold": "გაყიდული პროდუქტები",
-        "totalSales": "სულ გაყიდვები",
-        "title": "პროდუქტების გაყიდვების დიაგრამა",
-        "dataDescription": "წინამდგომარ თვეში პროდუქტის გაყიდვების მონაცემების ჩვენება"
-    },
-    "statisticsGrid": {
-        "title": "გაყიდული პროდუქტები",
-        "titleDescription": "სულ გაყიდული პროდუქტების შეჯამება",
-        "employees": "დამსაქმებლები",
-        "employeesDescription": "აქტიური დამსაქმებლების შეჯამება",
-        "clients": "კლიენტები",
-        "clientsDescription": "სულ კლიენტების შეჯამება",
-        "salesTitle": "სულ პროდუქტები",
-        "salesDescription": "ხელმისაწვდომი პროდუქციის საერთო შეჯამება"
-    },
-    "transactionsCard": {
-        "title": "გარიგებები",
-        "titleDescription": "ბოლო გარიგებები.",
-        "viewAll": "იხილეთ ყველა",
-        "customer": "მომხმარებელი",
-        "customerType": "ტიპი",
-        "customerStatus": "სტატუსი",
-        "customerDate": "თარიღი",
-        "customerAmount": "რაოდენობა",
-        "invoiceNo": "ინვოისის ნომერი",
-        "dateOfIssue": "გამოქნების თარიღი",
-        "dueDate": "დასრულების თარიღი",
-        "invoiceType": "ინვოისის ტიპი",
-        "invoiceStatus": "ინვოისის სტატუსი",
-        "totalAmount": "სულ თანხა"
-    },
-    "financialSummary": {
-        "title": "ფინანსური შეჯამება",
-        "description": "ხარჯების, მოგების/გატეხის და გაყიდვების მიმოხილვა",
-        "loading": "იტვირთება...",
-        "chart": {
-            "totalCost": "სულ ხარჯი",
-            "profitLoss": "სულ მოგება/გატეხი",
-            "totalSales": "სულ გაყიდვები",
-            "tooltip": {
-                "name": "სახელი",
-                "value": "ღირებულება",
-                "percentage": "პროცენტი"
-            }
-        }
-    },
-    "sidebar": {
-        "dashboard": "მთავარი",
-        "employee": "დამსაქმებლები",
-        "clients": "კლიენტები",
-        "invoice": "ინვოისი",
-        "categories": "კატეგორიები",
-        "login": "გამოსვლა"
-    },
-    "noData": "მონაცემები არ არის ხელმისაწვდომი",
-    "selectOtherOption": "გთხოვთ, სცადოთ სხვადასხვა დროის პერიოდით მონიშვნა ან შეამოწმოთ თქვენი კავშირი."
+  "dashboard": {
+    "greetings": "გამარჯობა"
+  },
+  "currencyExchanges": {
+    "lastMonth": "წინა თვე"
+  },
+  "productSalesChart": {
+    "productsSold": "გაყიდული პროდუქტები",
+    "totalSales": "სულ გაყიდვები",
+    "title": "პროდუქტების გაყიდვების დიაგრამა",
+    "dataDescription": "წინამდგომარ თვეში პროდუქტის გაყიდვების მონაცემების ჩვენება"
+  },
+  "statisticsGrid": {
+    "title": "გაყიდული პროდუქტები",
+    "titleDescription": "სულ გაყიდული პროდუქტების შეჯამება",
+    "employees": "დამსაქმებლები",
+    "employeesDescription": "აქტიური დამსაქმებლების შეჯამება",
+    "clients": "კლიენტები",
+    "clientsDescription": "სულ კლიენტების შეჯამება",
+    "salesTitle": "სულ პროდუქტები",
+    "salesDescription": "ხელმისაწვდომი პროდუქციის საერთო შეჯამება"
+  },
+  "transactionsCard": {
+    "title": "გარიგებები",
+    "titleDescription": "ბოლო გარიგებები.",
+    "viewAll": "იხილეთ ყველა",
+    "customer": "მომხმარებელი",
+    "customerType": "ტიპი",
+    "customerStatus": "სტატუსი",
+    "customerDate": "თარიღი",
+    "customerAmount": "რაოდენობა",
+    "invoiceNo": "ინვოისის ნომერი",
+    "dateOfIssue": "გამოქნების თარიღი",
+    "dueDate": "დასრულების თარიღი",
+    "invoiceType": "ინვოისის ტიპი",
+    "invoiceStatus": "ინვოისის სტატუსი",
+    "totalAmount": "სულ თანხა"
+  },
+  "financialSummary": {
+    "title": "ფინანსური შეჯამება",
+    "description": "ხარჯების, მოგების/გატეხის და გაყიდვების მიმოხილვა",
+    "loading": "იტვირთება...",
+    "chart": {
+      "totalCost": "სულ ხარჯი",
+      "profitLoss": "სულ მოგება/გატეხი",
+      "totalSales": "სულ გაყიდვები",
+      "tooltip": {
+        "name": "სახელი",
+        "value": "ღირებულება",
+        "percentage": "პროცენტი"
+      }
+    }
+  },
+  "sidebar": {
+    "dashboard": "მთავარი",
+    "employee": "დამსაქმებლები",
+    "clients": "კლიენტები",
+    "invoice": "ინვოისი",
+    "categories": "კატეგორიები",
+    "login": "გამოსვლა"
+  },
+  "noData": "მონაცემები არ არის ხელმისაწვდომი",
+  "selectOtherOption": "გთხოვთ, სცადოთ სხვადასხვა დროის პერიოდით მონიშვნა ან შეამოწმოთ თქვენი კავშირი."
 }
