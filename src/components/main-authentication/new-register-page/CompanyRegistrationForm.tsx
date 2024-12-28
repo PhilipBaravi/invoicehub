@@ -29,6 +29,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
   const navigate = useNavigate();
   const [companyCountry, setCompanyCountry] = useState<CountryCode>("US");
   const [showVerificationWindow, setShowVerificationWindow] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formValues, setFormValues] = useState<CompanyFormValues>({
     title: "",
@@ -92,6 +93,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
   // Submit Handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
 
     if (!validateForm()) return;
 
@@ -143,6 +145,8 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
       setErrors({
         title: t("companySignUpForm.errors.registrationFailed"),
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -356,8 +360,8 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
             className="w-full"
           />
         </div>
-        <Button type="submit" className="w-full">
-          {t("companySignUpForm.submitBtn")}
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Loading..." : t("companySignUpForm.submitBtn")}
         </Button>
       </form>
       {showVerificationWindow && (

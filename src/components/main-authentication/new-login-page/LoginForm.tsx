@@ -22,9 +22,30 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  /**
+   * Verifies if the email associated with the provided address is verified.
+   * This function retrieves the token from local storage and sends it as a
+   * Bearer token in the request header to the API endpoint.
+   *
+   * @param {string} email - The email address to verify.
+   * @returns {Promise<boolean>} - True if the email is verified, false otherwise.
+   */
   const checkEmailVerification = async (email: string): Promise<boolean> => {
     try {
-      const response = await fetch(`${API_BASE_URL}isEmailVerified/${email}`);
+      const token = localStorage.getItem("keycloak_token");
+      if (!token) throw new Error("No token available");
+
+      const response = await fetch(
+        `${API_BASE_URL}user/checkUserStatus/${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       const data = await response.json();
       return data.data;
     } catch (error) {
@@ -50,18 +71,27 @@ const LoginForm = () => {
 
     try {
       const tokens = await directLogin(loginEmail, loginPassword);
-      if (tokens.access_token) {
-        const isVerified = await checkEmailVerification(loginEmail);
-        if (isVerified) {
-          toast({
-            title: "Success",
-            description: "Successfully logged in!",
-            duration: 3000,
-          });
-          navigate("/dashboard");
-        } else {
-          setShowVerificationWindow(true);
-        }
+      localStorage.setItem("keycloak_token", tokens.access_token);
+
+      const isVerified = await checkEmailVerification(loginEmail);
+      if (isVerified) {
+        toast({
+          title: "Success",
+          description: "Successfully logged in!",
+          duration: 3000,
+        });
+        navigate("/dashboard");
+      } else {
+        toast({
+          title: "Error",
+          description: "Email is not verified.",
+          variant: "destructive",
+          duration: 3000,
+        });
+        localStorage.removeItem("keycloak_token");
+        localStorage.removeItem("keycloak_refresh_token");
+        localStorage.removeItem("keycloak_id_token");
+        setShowVerificationWindow(true);
       }
     } catch (error) {
       console.error("Login error:", error);
