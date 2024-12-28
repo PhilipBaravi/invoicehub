@@ -1,7 +1,8 @@
 import { FC } from "react";
 import LanguageSelector from "@/components/main-authentication/new-login-page/LanguageSelector";
 import { ModeToggle } from "@/components/dashboard/layout/ModeToggle";
-import GetStartedBtn from "./GetStartedBtn";
+// import GetStartedBtn from "./GetStartedBtn";
+import GithubLinks from "@/components/dashboard/layout/header/GithubLinks";
 
 const LandingNavigation: FC = () => {
   return (
@@ -15,7 +16,8 @@ const LandingNavigation: FC = () => {
         <div className="flex gap-[15px] items-center">
           <LanguageSelector />
           <ModeToggle />
-          <GetStartedBtn isVisible={false} />
+          <GithubLinks />
+          {/* <GetStartedBtn isVisible={false} /> */}
         </div>
       </div>
     </div>
