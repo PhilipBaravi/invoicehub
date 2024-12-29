@@ -35,6 +35,7 @@ import { CookieConsent } from "./CookiesConsent";
 import UpdateUserSettings from "./components/dashboard/company-settings/UpdateUserSettings";
 import { ProtectedRoute } from "./lib/ProtectedRoute";
 import ResetPasswordPage from "./components/main-authentication/reset-password/ResetPasswordPage";
+import ResetPasswordConfirmationPage from "./components/main-authentication/reset-password/RestPasswordConfirmationPage";
 
 const App: React.FC = () => {
   const [userDetails, setUserDetails] = useState<UserFormValues | null>(null);
@@ -131,6 +132,10 @@ const App: React.FC = () => {
               element={<NewRegisterPage setUserDetails={setUserDetails} />}
             />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route
+              path="/reset-password-confirmation"
+              element={<ResetPasswordConfirmationPage />}
+            />
             <Route path="/account-details" element={<AccountDetails />} />
             <Route path="/business-details" element={<BusinessForm />} />
             <Route path="/intent-details" element={<IntentFormDetails />} />

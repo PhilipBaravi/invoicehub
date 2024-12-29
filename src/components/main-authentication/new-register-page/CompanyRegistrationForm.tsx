@@ -136,8 +136,20 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
         handleServerError(data, response.status);
         return;
       }
-
       const data = await response.json();
+      if (
+        data.message ===
+        `${userDetails?.username} is already exists in a system`
+      ) {
+        toast({
+          title: t("form.error"),
+          description: `${userDetails?.username} ${t(
+            "signUpForm.errors.exists"
+          )}`,
+          variant: "destructive",
+          duration: 3000,
+        });
+      }
       console.log("Registration successful:", data);
       setShowVerificationWindow(true);
     } catch (error: any) {

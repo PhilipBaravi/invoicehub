@@ -6,7 +6,7 @@ const ResetPasswordPage: FC = () => {
   return (
     <LoginRegisterLayout
       title="Reset password"
-      subtitle="Fill in details to reset password"
+      subtitle="Fill in email to receive password recovery link."
     >
       <ResetPasswordForm />
     </LoginRegisterLayout>

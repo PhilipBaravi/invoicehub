@@ -11,6 +11,8 @@ import { useToast } from "@/lib/hooks/use-toast";
 import { directLogin } from "@/lib/utils/keycloak";
 import EmailVerificationWindow from "../new-register-page/EmailVerificationWindow";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import { useKeycloak } from "@react-keycloak/web";
+import { POST_LOGOUT_REDIRECT_URI } from "@/lib/utils/constants";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -21,6 +23,7 @@ const LoginForm = () => {
   // const { keycloak } = useKeycloak();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { keycloak } = useKeycloak();
 
   /**
    * Verifies if the email associated with the provided address is verified.
@@ -88,9 +91,40 @@ const LoginForm = () => {
           variant: "destructive",
           duration: 3000,
         });
+        const idToken = localStorage.getItem("keycloak_id_token");
+        if (idToken) {
+          e.preventDefault();
+
+          const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout`;
+
+          const payload = {
+            id_token_hint: idToken,
+            post_logout_redirect_uri: POST_LOGOUT_REDIRECT_URI,
+          };
+
+          // Send POST request to logout endpoint
+          fetch(logoutUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams(payload).toString(),
+          })
+            .then((response) => {
+              if (response.ok) {
+                console.log("Logout request successful");
+                // Optionally navigate or refresh without redirecting
+              } else {
+                console.error("Logout request failed", response.status);
+              }
+            })
+            .catch((error) => console.error("Logout error", error));
+        }
+
         localStorage.removeItem("keycloak_token");
         localStorage.removeItem("keycloak_refresh_token");
         localStorage.removeItem("keycloak_id_token");
+
         setShowVerificationWindow(true);
       }
     } catch (error) {
