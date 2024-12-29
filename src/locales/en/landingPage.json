@@ -1,49 +1,50 @@
 {
-    "main" : {
-        "title" : "Effortless Invocing and Management for Growing Businesses",
-        "subtitle" : "Boost your business efficiency with a centralized platform designed for small and medium enterprises. Automate invoicing, client management, employee tracking and product inventory.",
-        "btn" : "Get Started"
-    },
-    "aboutData" : {
-        "title" : "Your workflow, Simplified in Charts",
-        "numberOfProducts" : "Number of Products",
-        "numberSold" : "Number of Products Sold",
-        "90d" : "90d",
-        "30d" : "30d",
-        "7d" : "7d",
-        "chartTitle" : "Area Chart - Interactive",
-        "chartDescription" : "Showing data for products and sales in the last 3 months",
-        "select" : "Select a value",
-        "last3Months" : "Last 3 months",
-        "last30Days" : "Last 30 days",
-        "last7Days" : "Last 7 days"
-    },
-    "aboutAI" : {
-        "title" : "AI-Powered Experience",
-        "aiAssistant" : "AI Assistant",
-        "aiMsg" : "Hello! I'm your AI assistant. How can I help you with your invoices today?",
-        "userMsg" : "I need to find all unpaid invoices from last month.",
-        "aiResponse" : "I'll help you with that. I found 5 unpaid invoices from last month. Would you like me to display them or send a summary report?",
-        "name" : "Smart AI Assistant",
-        "about" : "Your personal AI-powered assistant is here to simplify your invoicing process. From retrieving and updating invoices to approving and sending them via email, our AI Assistant is designed to handle key tasks seamlessly, saving you time and ensuring accuracy.",
-        "try" : "Try AI Assistant"
-    },
-    "section" : {
-        "generate" : "Generate Invoices in Seconds",
-        "generateText" : "Create professional invoices with a few clicks. Our intuitive interface makes invoice generation a breeze.",
-        "generateBtn" : "New Invoice",
-        "product" : "Easy Product Management",
-        "productText" : "Organize, edit and add products with ease. Keep track of your financial documents in one place.",
-        "total" : "Total",
-        "active" : "Active",
-        "draft" : "Draft",
-        "tracking" : "Real-Time Invoice Tracking",
-        "trackingText" : "Monitor payment status and send reminder automatically. Stay on top of your cash flow with powerful tracking tools.",
-        "trackingBtn" : "Track Invoices"
-    },
-    "footer" : {
-        "more" : "And Much More!",
-        "btn" : "Get Started"
-    }
-
+  "main": {
+    "title": "Effortless Invocing and Management for Growing Businesses",
+    "subtitle": "Boost your business efficiency with a centralized platform designed for small and medium enterprises. Automate invoicing, client management, employee tracking and product inventory.",
+    "btn": "Get Started",
+    "githubLinks": "Open GitHub links",
+    "linkToRepos": "Links ro Repositories"
+  },
+  "aboutData": {
+    "title": "Your workflow, Simplified in Charts",
+    "numberOfProducts": "Number of Products",
+    "numberSold": "Number of Products Sold",
+    "90d": "90d",
+    "30d": "30d",
+    "7d": "7d",
+    "chartTitle": "Area Chart - Interactive",
+    "chartDescription": "Showing data for products and sales in the last 3 months",
+    "select": "Select a value",
+    "last3Months": "Last 3 months",
+    "last30Days": "Last 30 days",
+    "last7Days": "Last 7 days"
+  },
+  "aboutAI": {
+    "title": "AI-Powered Experience",
+    "aiAssistant": "AI Assistant",
+    "aiMsg": "Hello! I'm your AI assistant. How can I help you with your invoices today?",
+    "userMsg": "I need to find all unpaid invoices from last month.",
+    "aiResponse": "I'll help you with that. I found 5 unpaid invoices from last month. Would you like me to display them or send a summary report?",
+    "name": "Smart AI Assistant",
+    "about": "Your personal AI-powered assistant is here to simplify your invoicing process. From retrieving and updating invoices to approving and sending them via email, our AI Assistant is designed to handle key tasks seamlessly, saving you time and ensuring accuracy.",
+    "try": "Try AI Assistant"
+  },
+  "section": {
+    "generate": "Generate Invoices in Seconds",
+    "generateText": "Create professional invoices with a few clicks. Our intuitive interface makes invoice generation a breeze.",
+    "generateBtn": "New Invoice",
+    "product": "Easy Product Management",
+    "productText": "Organize, edit and add products with ease. Keep track of your financial documents in one place.",
+    "total": "Total",
+    "active": "Active",
+    "draft": "Draft",
+    "tracking": "Real-Time Invoice Tracking",
+    "trackingText": "Monitor payment status and send reminder automatically. Stay on top of your cash flow with powerful tracking tools.",
+    "trackingBtn": "Track Invoices"
+  },
+  "footer": {
+    "more": "And Much More!",
+    "btn": "Get Started"
+  }
 }

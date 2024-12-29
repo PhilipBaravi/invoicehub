@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import GithubIcon from "./GithubIcon";
+import { useTranslation } from "react-i18next";
 
 interface RepoLink {
   name: string;
@@ -28,6 +29,7 @@ const repos: RepoLink[] = [
 ];
 
 const GithubLinks: React.FC = () => {
+  const { t } = useTranslation("landingPage");
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -37,13 +39,13 @@ const GithubLinks: React.FC = () => {
           className="hover:scale-110 transition w-12 h-12"
         >
           <GithubIcon styles="min-h-8 min-w-8 hover:scale-[1.05] transition" />
-          <span className="sr-only">Open GitHub links</span>
+          <span className="sr-only">{t("main.githubLinks")}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-56 p-3">
         {" "}
         <h3 className="text-sm font-semibold mb-2 text-stone-800 dark:text-stone-200">
-          Links to Repositories
+          {t("main.linkToRepos")}
         </h3>
         <div className="flex flex-col space-y-2">
           {repos.map((repo) => (
