@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/lib/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
+import { API_BASE_URL } from "@/lib/utils/constants";
 
 const ResetPasswordConfirmationForm: FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [formValues, setFormValues] = useState({
     newPassword: "",
     confirmNewPassword: "",
@@ -19,6 +22,9 @@ const ResetPasswordConfirmationForm: FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { t } = useTranslation();
+
+  const email = searchParams.get("email");
+  const token = searchParams.get("token");
 
   const validatePassword = (password: string) => {
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
@@ -63,24 +69,39 @@ const ResetPasswordConfirmationForm: FC = () => {
 
     setIsLoading(true);
 
-    // TODO: Implement endpoint call here to reset password
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}password/new-password?email=${email}&token=${token}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ newPassword, confirmNewPassword }),
+        }
+      );
 
-    // Simulating successful response
-    toast({
-      title: t("form.success"),
-      description: t("reset.errors.resetSuccess"),
-      variant: "success",
-      duration: 3000,
-    });
-    navigate("/login");
+      if (!response.ok) {
+        throw new Error("Failed to reset password");
+      }
 
-    // Simulating failure response for testing
-    // toast({
-    //   title: "Failed!",
-    //   description: "Failed to update password",
-    //   variant: "destructive",
-    //   duration: 3000,
-    // });
+      // Simulate successful response
+      toast({
+        title: t("form.success"),
+        description: t("reset.errors.resetSuccess"),
+        variant: "success",
+        duration: 3000,
+      });
+      navigate("/login");
+    } catch (e: unknown) {
+      console.error(e);
+      toast({
+        title: t("form.error"),
+        description: t("reset.errors.resetFailed"),
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
 
     setIsLoading(false);
   };

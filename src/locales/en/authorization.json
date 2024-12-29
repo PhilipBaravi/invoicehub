@@ -101,7 +101,7 @@
   },
   "reset": {
     "password": {
-      "title": "Rest password",
+      "title": "Reset password",
       "subtitle": "Fill in email to receive password recovery link.",
       "passwordSubtitle": "Fill in details to reset password",
       "newPassword": "New Password",

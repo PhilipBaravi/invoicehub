@@ -21,9 +21,6 @@ const ResetPasswordForm = () => {
 
   const validateEmail = (email: string) => /^\S+@\S+\.\S+$/.test(email);
 
-  const mockToken =
-    "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJHXzhNcmZtZE5IaUdXQ2NVUVpTendWeW5qbGkwNDYwWjhqaS1wZlBKSVRVIn0.eyJleHAiOjE3MzU0MjU2MTAsImlhdCI6MTczNTQyNTMxMCwianRpIjoiMjZmZjAxOTUtNzI0NC00NDYxLWIzMjUtNTc4MTM0ZDkxMmZmIiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL2F1dGgvcmVhbG1zL2UtaW52b2ljZXMiLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiYmM0MzVlZTMtNWNiMi00MmI0LTg2YTQtNGU5MmFkNjgxMmNkIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiaW52b2ljaW5nLWFwcCIsInNlc3Npb25fc3RhdGUiOiJhYzQ1YTFlMS0xNmVjLTRiYjctYmZiYS0zMmQ5OTkwM2I2YjciLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3Q6OTA5MCIsImh0dHA6Ly9sb2NhbGhvc3Q6NTE3MyJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtZS1pbnZvaWNlcyJdfSwicmVzb3VyY2VfYWNjZXNzIjp7Imludm9pY2luZy1hcHAiOnsicm9sZXMiOlsiQWRtaW4iXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJzaWQiOiJhYzQ1YTFlMS0xNmVjLTRiYjctYmZiYS0zMmQ5OTkwM2I2YjciLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkpvaG4gUmVlc2UiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJqb2hucmVlc2VAZW1haWwuY29tIiwiZ2l2ZW5fbmFtZSI6IkpvaG4iLCJmYW1pbHlfbmFtZSI6IlJlZXNlIiwiZW1haWwiOiJqb2hucmVlc2VAZW1haWwuY29tIn0.NnAiJUWDUzwx2gsnuEVovhcVkuABtPaK9fb0fFmi5zqbomy8tKXtfQ6Jba2WWFMCL2fhxtu82zxnIGzyJoHNDE7SwW-5KTLGSLYfytr8ZPhpp4G5pvwJGgdtXgpvyqsLCywwX5G7xsCJuM_6eqWhOdJEzx7jQBWPV3uY51jfCBC6owk7s8KiPOdeDM8DAraYMWf3_TspkTO3So4ebWhc-TMB8e23j8xZN9mlzGWFRpejHpQBNc7fY9DQqV80IKOoIhMJBIqlxmV5guxXBp2Vk86ovu8B57AphCUwSnSDw5JvZK1ut54HRAIWOr9cp58O8yIyvGDTMh89-RlUWryu-g";
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email } = formValues;
@@ -51,7 +48,6 @@ const ResetPasswordForm = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${mockToken}`,
           },
         }
       );

@@ -1,18 +1,14 @@
 import { useState } from "react";
-// import { useKeycloak } from "@react-keycloak/web";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-// import GoogleIcon from "../GoogleIcon";
-// import AppleIcon from "../AppleIcon";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/lib/hooks/use-toast";
 import { directLogin } from "@/lib/utils/keycloak";
 import EmailVerificationWindow from "../new-register-page/EmailVerificationWindow";
 import { API_BASE_URL } from "@/lib/utils/constants";
-import { useKeycloak } from "@react-keycloak/web";
-import { POST_LOGOUT_REDIRECT_URI } from "@/lib/utils/constants";
+import { useSearchParams } from "react-router-dom";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -20,36 +16,31 @@ const LoginForm = () => {
   const [loginPassword, setLoginPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [showVerificationWindow, setShowVerificationWindow] = useState(false);
-  // const { keycloak } = useKeycloak();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { keycloak } = useKeycloak();
+  const searchParams = useSearchParams();
 
   /**
    * Verifies if the email associated with the provided address is verified.
-   * This function retrieves the token from local storage and sends it as a
-   * Bearer token in the request header to the API endpoint.
    *
    * @param {string} email - The email address to verify.
    * @returns {Promise<boolean>} - True if the email is verified, false otherwise.
    */
   const checkEmailVerification = async (email: string): Promise<boolean> => {
     try {
-      const token = localStorage.getItem("keycloak_token");
-      if (!token) throw new Error("No token available");
-
       const response = await fetch(
-        `${API_BASE_URL}user/checkUserStatus/${email}`,
+        `${API_BASE_URL}register/checkUserStatus/${email}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
         }
       );
 
       const data = await response.json();
+      console.log(data);
+      console.log(email);
       return data.data;
     } catch (error) {
       console.error("Error checking email verification:", error);
@@ -62,8 +53,8 @@ const LoginForm = () => {
 
     if (!loginEmail || !loginPassword) {
       toast({
-        title: t("form.error"),
-        description: t("loginForm.fillAll"),
+        title: "Error",
+        description: "Please fill in all fields",
         variant: "destructive",
         duration: 3000,
       });
@@ -72,66 +63,36 @@ const LoginForm = () => {
 
     setIsLoading(true);
 
+    // Check if the email is verified before attempting login
+    const isEmailVerified = await checkEmailVerification(loginEmail);
+
+    if (!isEmailVerified) {
+      toast({
+        title: "Error",
+        description: "Your email is not verified. Please check your inbox.",
+        variant: "destructive",
+        duration: 3000,
+      });
+      setIsLoading(false);
+      setShowVerificationWindow(true); // Optionally show verification window
+      return;
+    }
+
     try {
       const tokens = await directLogin(loginEmail, loginPassword);
-      localStorage.setItem("keycloak_token", tokens.access_token);
-
-      const isVerified = await checkEmailVerification(loginEmail);
-      if (isVerified) {
+      if (tokens.access_token) {
         toast({
-          title: t("form.success"),
-          description: t("loginForm.loginSuccess"),
+          title: "Success",
+          description: "Successfully logged in!",
           duration: 3000,
         });
         navigate("/dashboard");
-      } else {
-        toast({
-          title: t("form.error"),
-          description: t("loginForm.emailNotVerified"),
-          variant: "destructive",
-          duration: 3000,
-        });
-        const idToken = localStorage.getItem("keycloak_id_token");
-        if (idToken) {
-          e.preventDefault();
-
-          const logoutUrl = `${keycloak.authServerUrl}/realms/${keycloak.realm}/protocol/openid-connect/logout`;
-
-          const payload = {
-            id_token_hint: idToken,
-            post_logout_redirect_uri: POST_LOGOUT_REDIRECT_URI,
-          };
-
-          // Send POST request to logout endpoint
-          fetch(logoutUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams(payload).toString(),
-          })
-            .then((response) => {
-              if (response.ok) {
-                console.log("Logout request successful");
-                // Optionally navigate or refresh without redirecting
-              } else {
-                console.error("Logout request failed", response.status);
-              }
-            })
-            .catch((error) => console.error("Logout error", error));
-        }
-
-        localStorage.removeItem("keycloak_token");
-        localStorage.removeItem("keycloak_refresh_token");
-        localStorage.removeItem("keycloak_id_token");
-
-        setShowVerificationWindow(true);
       }
     } catch (error) {
       console.error("Login error:", error);
       toast({
-        title: t("form.error"),
-        description: t("loginForm.invalidDetails"),
+        title: "Error",
+        description: "Invalid username or password",
         variant: "destructive",
         duration: 3000,
       });
@@ -139,23 +100,6 @@ const LoginForm = () => {
       setIsLoading(false);
     }
   };
-
-  // const handleSocialLogin = (provider: "google" | "apple") => {
-  //   keycloak
-  //     .login({
-  //       idpHint: provider,
-  //       redirectUri: `${window.location.origin}/dashboard`,
-  //     })
-  //     .catch((error) => {
-  //       console.error(`${provider} login error:`, error);
-  //       toast({
-  //         title: "Error",
-  //         description: `Failed to login with ${provider}. Please try again.`,
-  //         variant: "destructive",
-  //         duration: 3000,
-  //       });
-  //     });
-  // };
 
   const handleCloseVerificationWindow = () => {
     setShowVerificationWindow(false);
@@ -208,29 +152,6 @@ const LoginForm = () => {
         </Button>
       </form>
 
-      {/* <div className="mt-6 pb-6 text-center text-sm">
-        {t("loginForm.continueWith")}
-      </div> */}
-
-      {/* <Button
-        type="button"
-        className="w-full mb-4"
-        onClick={() => handleSocialLogin("google")}
-        disabled={isLoading}
-      >
-        <GoogleIcon />
-        {t("loginForm.loginGoogle")}
-      </Button>
-
-      <Button
-        type="button"
-        className="w-full"
-        onClick={() => handleSocialLogin("apple")}
-        disabled={isLoading}
-      >
-        <AppleIcon />
-        {t("loginForm.loginApple")}
-      </Button> */}
       <div className="flex justify-between items-center">
         <p className="mt-6 text-center text-xs">
           {t("loginForm.haveAnAccount")}{" "}
@@ -240,7 +161,7 @@ const LoginForm = () => {
         </p>
 
         <p className="mt-6 text-center text-xs">
-          <Link to="/reset-password" className="underline">
+          <Link to="/reset-password-page" className="underline">
             {t("loginForm.forgotPassword")}
           </Link>
         </p>
