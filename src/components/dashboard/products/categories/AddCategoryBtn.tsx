@@ -74,6 +74,7 @@ const AddCategoryBtn: FC<AddCategoryBtnProps> = ({ onAddCategory }) => {
         duration: 3000,
       });
     } catch (error) {
+      console.log(newCategory);
       setError("An error occurred while adding the category.");
       console.error(error);
     }

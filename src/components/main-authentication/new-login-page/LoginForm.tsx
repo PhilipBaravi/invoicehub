@@ -8,7 +8,6 @@ import { useToast } from "@/lib/hooks/use-toast";
 import { directLogin } from "@/lib/utils/keycloak";
 import EmailVerificationWindow from "../new-register-page/EmailVerificationWindow";
 import { API_BASE_URL } from "@/lib/utils/constants";
-import { useSearchParams } from "react-router-dom";
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -18,7 +17,6 @@ const LoginForm = () => {
   const [showVerificationWindow, setShowVerificationWindow] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
-  const searchParams = useSearchParams();
 
   /**
    * Verifies if the email associated with the provided address is verified.

@@ -12,6 +12,7 @@ import landingPageEN from "./locales/en/landingPage.json";
 import termsEN from "./locales/en/terms.json";
 import settingsEN from "./locales/en/settings.json";
 import chartsEN from "./locales/en/charts.json";
+import countriesEN from "./locales/en/countries.json";
 
 import authorizationES from "./locales/es/authorization.json";
 import categoriesAndProductsES from "./locales/es/categoriesAndProducts.json";
@@ -24,6 +25,7 @@ import landingPageES from "./locales/es/landingPage.json";
 import termsES from "./locales/es/terms.json";
 import settingsES from "./locales/es/settings.json";
 import chartsES from "./locales/es/charts.json";
+import countriesES from "./locales/es/countries.json";
 
 import authorizationGE from "./locales/ge/authorization.json";
 import categoriesAndProductsGE from "./locales/ge/categoriesAndProducts.json";
@@ -36,6 +38,7 @@ import landingPageGE from "./locales/ge/landingPage.json";
 import termsGE from "./locales/ge/terms.json";
 import settingsGE from "./locales/ge/settings.json";
 import chartsGE from "./locales/ge/charts.json";
+import countriesGE from "./locales/ge/countries.json";
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -51,6 +54,7 @@ i18n.use(initReactI18next).init({
       terms: termsEN,
       settings: settingsEN,
       charts: chartsEN,
+      countries: countriesEN,
     },
     es: {
       authorization: authorizationES,
@@ -64,6 +68,7 @@ i18n.use(initReactI18next).init({
       terms: termsES,
       settings: settingsES,
       charts: chartsES,
+      countries: countriesES,
     },
     ge: {
       authorization: authorizationGE,
@@ -77,6 +82,7 @@ i18n.use(initReactI18next).init({
       terms: termsGE,
       settings: settingsGE,
       charts: chartsGE,
+      countries: countriesGE,
     },
   },
   lng: localStorage.getItem("language") || "en",
@@ -94,6 +100,7 @@ i18n.use(initReactI18next).init({
     "terms",
     "settings",
     "charts",
+    "countries",
   ],
   defaultNS: "authorization",
   interpolation: {

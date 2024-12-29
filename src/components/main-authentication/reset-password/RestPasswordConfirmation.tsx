@@ -77,7 +77,10 @@ const ResetPasswordConfirmationForm: FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ newPassword, confirmNewPassword }),
+          body: JSON.stringify({
+            password: formValues.newPassword,
+            confirmPassword: formValues.confirmNewPassword,
+          }),
         }
       );
 
@@ -92,6 +95,7 @@ const ResetPasswordConfirmationForm: FC = () => {
         variant: "success",
         duration: 3000,
       });
+      console.log(newPassword, confirmNewPassword);
       navigate("/login");
     } catch (e: unknown) {
       console.error(e);
@@ -128,7 +132,7 @@ const ResetPasswordConfirmationForm: FC = () => {
             type="password"
             value={formValues.newPassword}
             onChange={handleChange}
-            placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+            placeholder="********"
             required
             disabled={isLoading}
           />
@@ -150,7 +154,7 @@ const ResetPasswordConfirmationForm: FC = () => {
             type="password"
             value={formValues.confirmNewPassword}
             onChange={handleChange}
-            placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+            placeholder="********"
             required
             disabled={isLoading}
           />

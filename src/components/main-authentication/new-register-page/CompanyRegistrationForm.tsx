@@ -114,7 +114,7 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
           addressLine2: formValues.address.addressLine2 || "",
           city: formValues.address.city,
           state: formValues.address.state,
-          country: companyCountry,
+          country: formValues.address.country,
           zipCode: formValues.address.zipCode,
         },
       },
@@ -213,12 +213,14 @@ const CompanyRegistrationForm: React.FC<CompanyRegistrationFormProps> = ({
   };
 
   const handleCompanyCountryChange = (code: CountryCode) => {
+    const selectedCountry = countryList.find((c) => c.code === code);
+
     setCompanyCountry(code);
     setFormValues((prev) => ({
       ...prev,
       address: {
         ...prev.address,
-        country: code,
+        country: selectedCountry?.name || "",
       },
     }));
   };
