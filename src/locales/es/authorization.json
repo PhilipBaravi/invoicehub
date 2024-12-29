@@ -5,56 +5,61 @@
     "SPANISH": "Español"
   },
   "loginRegisterLayout": {
-    "title": "Iniciar sesión en su cuenta",
-    "subtitle": "Ingrese su correo electrónico y contraseña para acceder a su cuenta"
+    "title": "Inicia sesión en tu cuenta",
+    "subtitle": "Introduce tu correo electrónico y contraseña para acceder a tu cuenta"
   },
   "form": {
     "error": "Fallido.",
     "success": "¡Éxito!",
-    "companyUpdateError": "No se pudieron actualizar los detalles de la empresa.",
+    "companyUpdateError": "Error al actualizar los detalles de la empresa.",
     "companyUpdateSuccess": "Detalles de la empresa actualizados con éxito.",
     "userUpdateSuccess": "Detalles actualizados con éxito.",
-    "userUpdateError": "No se pudieron actualizar los detalles."
+    "userUpdateError": "Error al actualizar los detalles."
   },
   "loginForm": {
     "email": "Correo electrónico",
     "password": "Contraseña",
-    "privacyPolicy": "Estoy de acuerdo con los términos de servicio y la política de privacidad",
+    "privacyPolicy": "Acepto los términos del servicio y la política de privacidad",
     "loginBtn": "Iniciar sesión",
     "continueWith": "O CONTINUAR CON",
-    "loginGoogle": "Iniciar sesión con Google",
-    "loginApple": "Iniciar sesión con Apple",
+    "loginGoogle": "Inicia sesión con Google",
+    "loginApple": "Inicia sesión con Apple",
     "haveAnAccount": "¿No tienes una cuenta?",
     "signUp": "Regístrate",
-    "login": "Iniciando sesión"
+    "login": "Iniciando sesión",
+    "fillAll": "Por favor, completa todos los campos",
+    "loginSuccess": "¡Inicio de sesión exitoso!",
+    "emailNotVerified": "El correo electrónico no está verificado.",
+    "invalidDetails": "Nombre de usuario o contraseña no válidos",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
   },
   "signUpForm": {
-    "title": "Crear una nueva cuenta",
+    "title": "Crea una nueva cuenta",
     "firstName": "Nombre",
     "lastName": "Apellido",
     "email": "Correo electrónico",
     "phone": "Teléfono",
-    "selectCountry": "Seleccionar país",
+    "selectCountry": "Selecciona un país",
     "password": "Contraseña",
     "confirmPassword": "Confirmar contraseña",
     "companyInfo": "Siguiente: Información de la empresa",
     "haveAnAccount": "¿Ya tienes una cuenta?",
-    "login": "Iniciar sesión",
+    "login": "Inicia sesión",
     "errors": {
-      "validateEmail": "Por favor, introduzca una dirección de correo electrónico válida.",
+      "validateEmail": "Por favor, introduce una dirección de correo electrónico válida.",
       "validatePassword": "La contraseña debe contener al menos 8 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.",
       "confirmPassword": "Las contraseñas no coinciden",
       "firstName": "El nombre es obligatorio.",
       "lastName": "El apellido es obligatorio.",
       "phone": "Número de teléfono no válido para el país seleccionado.",
       "exists": "ya existe en el sistema.",
-      "companyExists": "La empresa con ese nombre ya existe."
+      "companyExists": "Ya existe una empresa con ese nombre."
     }
   },
   "companySignUpForm": {
     "company": {
-      "title": "Registrar su empresa",
-      "subtitle": "Ingrese los detalles de su empresa para registrarse"
+      "title": "Registra tu empresa",
+      "subtitle": "Introduce los detalles de tu empresa para registrarte"
     },
     "companyName": "Nombre de la empresa",
     "addressLine1": "Dirección Línea 1",
@@ -63,35 +68,60 @@
     "state": "Estado",
     "zipCode": "Código postal",
     "phone": "Teléfono",
-    "selectCountry": "Seleccionar país",
+    "selectCountry": "Selecciona un país",
     "website": "Sitio web de la empresa (Opcional)",
     "submitBtn": "Enviar",
     "updateBtn": "Actualizar detalles",
     "errors": {
       "companyName": "El nombre de la empresa es obligatorio.",
-      "companyPhone": "Número de teléfono de la empresa no válido para el país seleccionado.",
+      "companyPhone": "Número de teléfono no válido para el país seleccionado.",
       "companyAddress": "La dirección de la empresa es obligatoria.",
       "companyCity": "La ciudad es obligatoria.",
       "companyState": "El estado es obligatorio.",
       "zipCode": "El código postal es obligatorio.",
-      "registrationFailed": "No se pudo registrar la cuenta."
+      "registrationFailed": "Error al registrar la cuenta."
     }
   },
   "cookies": {
-    "title": "Mejora Tu Experiencia",
+    "title": "Mejora tu experiencia",
     "titleMsg": "Usamos cookies para mantenerte conectado y mejorar tu experiencia en nuestro sitio.",
-    "accept": "Aceptar Todo",
-    "descline": "Rechazar",
-    "more": "Aprende Más",
+    "accept": "Aceptar todo",
+    "decline": "Rechazar",
+    "more": "Saber más",
     "about": {
-      "title": "Cómo Usamos las Cookies",
-      "learnMore": "Aprende más sobre cómo usamos las cookies para mejorar tu experiencia en nuestro sitio.",
+      "title": "Cómo usamos las cookies",
+      "learnMore": "Obtén más información sobre cómo usamos las cookies para mejorar tu experiencia en nuestro sitio.",
       "authentication": "Autenticación",
       "authenticationMsg": "Usamos cookies para mantenerte conectado, asegurando una experiencia fluida mientras navegas por nuestro sitio.",
       "personalization": "Personalización",
       "personalizationMsg": "Las cookies nos ayudan a recordar tus preferencias y adaptar el sitio a tus necesidades, mejorando tu experiencia general.",
-      "improvements": "Mejoras del Sitio",
-      "improvementsMsg": "Analizamos cómo usas nuestro sitio para mejorarlo. Esta información nos ayuda a optimizar funciones y funcionalidades."
+      "improvements": "Mejoras del sitio",
+      "improvementsMsg": "Analizamos cómo usas nuestro sitio para hacerlo mejor. Esta información nos ayuda a optimizar las características y funcionalidades."
+    }
+  },
+  "reset": {
+    "password": {
+      "title": "Restablecer contraseña",
+      "subtitle": "Introduce tu correo electrónico para recibir un enlace de recuperación de contraseña.",
+      "passwordSubtitle": "Introduce los detalles para restablecer la contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmNewPassword": "Confirmar nueva contraseña"
+    },
+    "passwordSuccess": "El enlace de recuperación de contraseña ha sido enviado a tu correo electrónico.",
+    "btn": {
+      "loading": "Cargando...",
+      "submit": "Enviar",
+      "sending": "Enviando...",
+      "sendRecoveryLink": "Enviar enlace de recuperación",
+      "backToLogin": "Volver a iniciar sesión"
+    },
+    "errors": {
+      "validEmail": "Por favor, introduce una dirección de correo electrónico válida.",
+      "userNotFound": "Usuario no encontrado.",
+      "error": "Ocurrió un error, por favor inténtalo de nuevo.",
+      "passwordValidation": "La contraseña debe incluir mayúsculas, minúsculas, un número y un carácter especial.",
+      "dontMatch": "Las contraseñas no coinciden.",
+      "resetSuccess": "Restablecimiento de contraseña exitoso"
     }
   }
 }

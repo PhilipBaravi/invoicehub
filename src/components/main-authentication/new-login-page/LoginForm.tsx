@@ -62,8 +62,8 @@ const LoginForm = () => {
 
     if (!loginEmail || !loginPassword) {
       toast({
-        title: "Error",
-        description: "Please fill in all fields",
+        title: t("form.error"),
+        description: t("loginForm.fillAll"),
         variant: "destructive",
         duration: 3000,
       });
@@ -79,15 +79,15 @@ const LoginForm = () => {
       const isVerified = await checkEmailVerification(loginEmail);
       if (isVerified) {
         toast({
-          title: "Success",
-          description: "Successfully logged in!",
+          title: t("form.success"),
+          description: t("loginForm.loginSuccess"),
           duration: 3000,
         });
         navigate("/dashboard");
       } else {
         toast({
-          title: "Error",
-          description: "Email is not verified.",
+          title: t("form.error"),
+          description: t("loginForm.emailNotVerified"),
           variant: "destructive",
           duration: 3000,
         });
@@ -130,8 +130,8 @@ const LoginForm = () => {
     } catch (error) {
       console.error("Login error:", error);
       toast({
-        title: "Error",
-        description: "Invalid username or password",
+        title: t("form.error"),
+        description: t("loginForm.invalidDetails"),
         variant: "destructive",
         duration: 3000,
       });
@@ -241,7 +241,7 @@ const LoginForm = () => {
 
         <p className="mt-6 text-center text-xs">
           <Link to="/reset-password" className="underline">
-            Forgot password?
+            {t("loginForm.forgotPassword")}
           </Link>
         </p>
       </div>

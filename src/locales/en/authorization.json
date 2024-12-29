@@ -26,7 +26,12 @@
     "loginApple": "Login with Apple",
     "haveAnAccount": "Don't have an account?",
     "signUp": "Sign Up",
-    "login": "Signing In"
+    "login": "Signing In",
+    "fillAll": "Please fill in all fields",
+    "loginSuccess": "Successfully logged in!",
+    "emailNotVerified": "Email is not verified.",
+    "invalidDetails": "Invalid username or password",
+    "forgotPassword": "Forgot password?"
   },
   "signUpForm": {
     "title": "Create a New Account",
@@ -92,6 +97,31 @@
       "personalizationMsg": "Cookies help us remember your preferences and tailor the site to your needs, improving your overall experience",
       "improvements": "Site Improvements",
       "improvementsMsg": "We analyze how you use our site to make it better. This information helps us optimize features and functionality."
+    }
+  },
+  "reset": {
+    "password": {
+      "title": "Rest password",
+      "subtitle": "Fill in email to receive password recovery link.",
+      "passwordSubtitle": "Fill in details to reset password",
+      "newPassword": "New Password",
+      "confirmNewPassword": "Confirm New Password"
+    },
+    "passwordSuccess": "Password recovery link has been sent to your email.",
+    "btn": {
+      "loading": "Loading...",
+      "submit": "Submit",
+      "sending": "Sending...",
+      "sendRecoveryLink": "Send Recovery Link",
+      "backToLogin": "Back to Login"
+    },
+    "errors": {
+      "validEmail": "Please enter a valid email address.",
+      "userNotFound": "User not found.",
+      "error": "An error occured, please try again.",
+      "passwordValidation": "Password must include uppercase, lowercase, a number, and a special character.",
+      "dontMatch": "Passwords do not match.",
+      "resetSuccess": "Password reset successful"
     }
   }
 }

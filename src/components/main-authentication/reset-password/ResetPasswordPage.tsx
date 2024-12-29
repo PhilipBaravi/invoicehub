@@ -1,12 +1,14 @@
 import { FC } from "react";
 import LoginRegisterLayout from "../LoginRegisterLayout";
 import ResetPasswordForm from "./ResetPasswordForm";
+import { useTranslation } from "react-i18next";
 
 const ResetPasswordPage: FC = () => {
+  const { t } = useTranslation();
   return (
     <LoginRegisterLayout
-      title="Reset password"
-      subtitle="Fill in email to receive password recovery link."
+      title={t("reset.password.title")}
+      subtitle={t("reset.password.subtitle")}
     >
       <ResetPasswordForm />
     </LoginRegisterLayout>

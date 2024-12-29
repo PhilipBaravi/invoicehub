@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/lib/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 const ResetPasswordConfirmationForm: FC = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const ResetPasswordConfirmationForm: FC = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const validatePassword = (password: string) => {
     return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
@@ -26,58 +28,61 @@ const ResetPasswordConfirmationForm: FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("submitted");
+    const { newPassword, confirmNewPassword } = formValues;
+    const newErrors = { newPassword: "", confirmNewPassword: "" };
+    let valid = true;
 
-    // After add endpoint
-    // Password validation
-    // if (!validatePassword(newPassword)) {
-    //   newErrors.newPassword =
-    //     "Password must include uppercase, lowercase, a number, and a special character.";
-    //   valid = false;
-    //   toast({
-    //     title: "Error",
-    //     description:
-    //       "Password must include uppercase, lowercase, a number, and a special character.",
-    //     variant: "destructive",
-    //     duration: 3000,
-    //   });
-    // }
+    // Validate new password
+    if (!validatePassword(newPassword)) {
+      newErrors.newPassword = t("reset.errors.passwordValidation");
+      valid = false;
+      toast({
+        title: t("form.error"),
+        description: t("reset.errors.passwordValidation"),
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
 
-    // if (newPassword !== confirmNewPassword) {
-    //   newErrors.confirmNewPassword = "Passwords do not match.";
-    //   valid = false;
-    //   toast({
-    //     title: "Error",
-    //     description: "Passwords do not match.",
-    //     variant: "destructive",
-    //     duration: 3000,
-    //   });
-    // }
+    // Check if passwords match
+    if (newPassword !== confirmNewPassword) {
+      newErrors.confirmNewPassword = t("reset.errors.dontMatch");
+      valid = false;
+      toast({
+        title: t("form.error"),
+        description: t("reset.errors.dontMatch"),
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
 
-    // if (!valid) {
-    //   setErrors(newErrors);
-    //   return;
-    // }
+    if (!valid) {
+      setErrors(newErrors);
+      return;
+    }
 
-    // setIsLoading(true);
+    setIsLoading(true);
 
-    // if (true) {
-    //   toast({
-    //     title: "Success",
-    //     description: "Password reset succesfull",
-    //     variant: "success",
-    //     duration: 3000,
-    //   });
-    // }
-    // navigate("/login");
-    // if (false) {
-    //   toast({
-    //     title: "Failed!",
-    //     description: "Failed to updated password",
-    //     variant: "destructive",
-    //     duration: 3000,
-    //   });
-    // }
+    // TODO: Implement endpoint call here to reset password
+
+    // Simulating successful response
+    toast({
+      title: t("form.success"),
+      description: t("reset.errors.resetSuccess"),
+      variant: "success",
+      duration: 3000,
+    });
+    navigate("/login");
+
+    // Simulating failure response for testing
+    // toast({
+    //   title: "Failed!",
+    //   description: "Failed to update password",
+    //   variant: "destructive",
+    //   duration: 3000,
+    // });
+
+    setIsLoading(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +99,7 @@ const ResetPasswordConfirmationForm: FC = () => {
             htmlFor="newPassword"
             className="block text-sm font-medium mb-1"
           >
-            New Password
+            {t("reset.password.newPassword")}
           </label>
           <Input
             id="newPassword"
@@ -102,7 +107,7 @@ const ResetPasswordConfirmationForm: FC = () => {
             type="password"
             value={formValues.newPassword}
             onChange={handleChange}
-            placeholder="••••••••"
+            placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
             required
             disabled={isLoading}
           />
@@ -116,7 +121,7 @@ const ResetPasswordConfirmationForm: FC = () => {
             htmlFor="confirmNewPassword"
             className="block text-sm font-medium mb-1"
           >
-            Confirm New Password
+            {t("reset.password.confirmNewPassword")}
           </label>
           <Input
             id="confirmNewPassword"
@@ -124,7 +129,7 @@ const ResetPasswordConfirmationForm: FC = () => {
             type="password"
             value={formValues.confirmNewPassword}
             onChange={handleChange}
-            placeholder="••••••••"
+            placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
             required
             disabled={isLoading}
           />
@@ -133,13 +138,13 @@ const ResetPasswordConfirmationForm: FC = () => {
           )}
         </div>
 
-        <Button type="submit" className="w-full">
-          {isLoading ? "Loading..." : "Submit"}
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? t("reset.btn.loading") : t("reset.btn.submit")}
         </Button>
 
         <p className="mt-6 text-xs">
           <Link to="/login" className="underline">
-            {isLoading ? "Loading..." : "Back to Login"}
+            {t("reset.btn.backToLogin")}
           </Link>
         </p>
       </form>

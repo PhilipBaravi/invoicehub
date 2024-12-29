@@ -5,6 +5,7 @@ import { useToast } from "@/lib/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import { useTranslation } from "react-i18next";
 
 const ResetPasswordForm = () => {
   const { toast } = useToast();
@@ -16,6 +17,7 @@ const ResetPasswordForm = () => {
     email: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const validateEmail = (email: string) => /^\S+@\S+\.\S+$/.test(email);
 
@@ -30,11 +32,11 @@ const ResetPasswordForm = () => {
 
     // Email validation
     if (!validateEmail(email)) {
-      newErrors.email = "Please enter a valid email address.";
+      newErrors.email = t("reset.errors.validEmail");
       valid = false;
       toast({
-        title: "Error",
-        description: "Please enter a valid email address.",
+        title: t("form.error"),
+        description: t("reset.errors.validEmail"),
         variant: "destructive",
         duration: 3000,
       });
@@ -57,8 +59,8 @@ const ResetPasswordForm = () => {
 
       if (response.ok) {
         toast({
-          title: "Password Recovery",
-          description: "Password recovery link has been sent to your email.",
+          title: t("form.success"),
+          description: t("reset.passwordSuccess"),
           variant: "success",
           duration: 5000,
         });
@@ -66,15 +68,15 @@ const ResetPasswordForm = () => {
       } else {
         if (data.httpStatus === "NOT_FOUND") {
           toast({
-            title: "Error",
-            description: "User not found.",
+            title: t("form.error"),
+            description: t("reset.errors.userNotFound"),
             variant: "destructive",
             duration: 3000,
           });
         } else {
           toast({
-            title: "Error",
-            description: "An error occurred, please try again.",
+            title: t("form.error"),
+            description: t("reset.errors.error"),
             variant: "destructive",
             duration: 3000,
           });
@@ -82,8 +84,8 @@ const ResetPasswordForm = () => {
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "An error occurred, please try again.",
+        title: t("form.error"),
+        description: t("reset.errors.error"),
         variant: "destructive",
         duration: 3000,
       });
@@ -102,7 +104,7 @@ const ResetPasswordForm = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="email" className="block text-sm font-medium mb-1">
-          Email
+          {t("loginForm.email")}
         </label>
         <Input
           id="email"
@@ -117,55 +119,13 @@ const ResetPasswordForm = () => {
         {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
       </div>
 
-      {/* Depricted, moved to ResetPasswordConfirmation.tsx */}
-      {/* <div>
-        <label htmlFor="newPassword" className="block text-sm font-medium mb-1">
-          New Password
-        </label>
-        <Input
-          id="newPassword"
-          name="newPassword"
-          type="password"
-          value={formValues.newPassword}
-          onChange={handleChange}
-          placeholder="••••••••"
-          required
-          disabled={isLoading}
-        />
-        {errors.newPassword && (
-          <p className="text-red-500 text-sm">{errors.newPassword}</p>
-        )}
-      </div>
-
-      <div>
-        <label
-          htmlFor="confirmNewPassword"
-          className="block text-sm font-medium mb-1"
-        >
-          Confirm New Password
-        </label>
-        <Input
-          id="confirmNewPassword"
-          name="confirmNewPassword"
-          type="password"
-          value={formValues.confirmNewPassword}
-          onChange={handleChange}
-          placeholder="••••••••"
-          required
-          disabled={isLoading}
-        />
-        {errors.confirmNewPassword && (
-          <p className="text-red-500 text-sm">{errors.confirmNewPassword}</p>
-        )}
-      </div> */}
-
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Sending..." : "Send Recovery Link"}
+        {isLoading ? t("reset.btn.sending") : t("reset.btn.sendRecoveryLink")}
       </Button>
 
       <p className="mt-6 text-xs">
         <Link to="/login" className="underline">
-          Back to Login
+          {t("reset.btn.backToLogin")}
         </Link>
       </p>
     </form>
