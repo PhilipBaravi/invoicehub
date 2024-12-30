@@ -58,7 +58,7 @@ const ProductSalesChart: React.FC = () => {
   const [startMonth, setStartMonth] = useState(new Date().getMonth() + 1);
   const [endMonth, setEndMonth] = useState(new Date().getMonth() + 1);
   const [currency, setCurrency] = useState("USD");
-  const [chartData, setChartData] = useState<ChartDataItem[]>([]);
+  const [, setChartData] = useState<ChartDataItem[]>([]);
   const [displayedData, setDisplayedData] = useState<ChartDataItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
