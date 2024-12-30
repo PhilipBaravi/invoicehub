@@ -11,7 +11,7 @@ export const NoDataDisplay: React.FC = () => {
 
   const checkNewUser = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}invoices/list`, {
+      const response = await fetch(`${API_BASE_URL}invoice/list`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
