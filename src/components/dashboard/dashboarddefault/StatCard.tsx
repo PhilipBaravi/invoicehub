@@ -9,9 +9,13 @@ const StatCard: FC<StatCardProps> = ({
   description,
   icon,
   trend,
+  onClick,
 }) => {
   return (
-    <Card className="overflow-hidden">
+    <Card
+      className="overflow-hidden transition-all hover:shadow-lg cursor-pointer hover:scale-[1.05]"
+      onClick={onClick}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}

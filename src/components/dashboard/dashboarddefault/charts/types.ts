@@ -117,6 +117,7 @@ export interface StatCardProps {
   description?: string;
   icon?: React.ReactNode;
   trend?: string;
+  onClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export type Product = {
