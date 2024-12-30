@@ -117,7 +117,14 @@ const ProductSalesChart: React.FC = () => {
       }
     };
     loadData();
-  }, [initialized, keycloak.authenticated]);
+  }, [
+    initialized,
+    keycloak.authenticated,
+    year,
+    startMonth,
+    endMonth,
+    currency,
+  ]);
 
   const formattedChartData = displayedData.map((item) => ({
     date: `${item.year}-${item.month
@@ -156,7 +163,7 @@ const ProductSalesChart: React.FC = () => {
   }
 
   return (
-    <Card className="min-h-[450px]">
+    <Card>
       <CardHeader className="flex flex-col gap-2 space-y-0 border-b py-5">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>{t("productSales.title")}</CardTitle>
@@ -174,7 +181,7 @@ const ProductSalesChart: React.FC = () => {
           id="product-sales-chart"
         />
       </CardHeader>
-      <CardContent className={`px-2 pt-4 sm:px-6 sm:pt-6`}>
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {isLoading ? (
           <div className="flex items-center justify-center h-[250px]">
             <p>{t("productSales.loadingData")}</p>
