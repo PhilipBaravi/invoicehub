@@ -121,7 +121,10 @@ const App: React.FC = () => {
       }
     >
       <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-        <Router basename="/">
+        <Router
+          basename="/"
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route

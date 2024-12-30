@@ -35,12 +35,6 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({
       showAlways: true,
     },
     {
-      name: t("sidebar.invoice"),
-      icon: FileText,
-      path: "/dashboard/invoices",
-      showAlways: true,
-    },
-    {
       name: t("sidebar.employee"),
       icon: UserSearch,
       path: "/dashboard/employee",
@@ -56,6 +50,12 @@ const LargeScreenSidebar: FC<LargeScreenSidebarProps> = ({
       name: t("sidebar.categories"),
       icon: FolderKanban,
       path: "/dashboard/categories",
+      showAlways: true,
+    },
+    {
+      name: t("sidebar.invoice"),
+      icon: FileText,
+      path: "/dashboard/invoices",
       showAlways: true,
     },
     {

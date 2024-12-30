@@ -32,12 +32,6 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
       showAlways: true,
     },
     {
-      name: t("sidebar.invoice"),
-      icon: FileText,
-      path: "/dashboard/invoices",
-      showAlways: true,
-    },
-    {
       name: t("sidebar.employee"),
       icon: UserSearch,
       path: "/dashboard/employee",
@@ -53,6 +47,12 @@ const SideBar: FC<SideBarProps> = ({ isOpen, onClose }) => {
       name: t("sidebar.categories"),
       icon: FolderKanban,
       path: "/dashboard/categories",
+      showAlways: true,
+    },
+    {
+      name: t("sidebar.invoice"),
+      icon: FileText,
+      path: "/dashboard/invoices",
       showAlways: true,
     },
     { name: t("sidebar.login"), icon: LogIn, path: "/login", showAlways: true },
