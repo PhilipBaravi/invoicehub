@@ -114,3 +114,55 @@ export async function sendInvoiceEmail(token: string, invoiceId: number) {
     );
   }
 }
+
+export async function checkProductsData(token: string) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/product/list`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.data.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: unknown) {
+    throw new Error(
+      "An unknown error occurred while sending the invoice email"
+    );
+  }
+}
+
+export async function checkClienData(token: string) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/product/list`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (data.data.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error: unknown) {
+    throw new Error(
+      "An unknown error occurred while sending the invoice email"
+    );
+  }
+}
