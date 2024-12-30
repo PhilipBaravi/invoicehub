@@ -24,7 +24,7 @@ const ResetPasswordForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email } = formValues;
-    let valid = true;
+    let valid = true; // Flag to track form validation
     const newErrors: any = {};
 
     // Email validation
@@ -37,6 +37,12 @@ const ResetPasswordForm = () => {
         variant: "destructive",
         duration: 3000,
       });
+    }
+
+    // If there are validation errors, stop the form submission
+    if (!valid) {
+      setErrors(newErrors);
+      return; // Prevent further execution if validation fails
     }
 
     setIsLoading(true);
