@@ -135,7 +135,7 @@ const LoginForm = () => {
           />
         </div>
         <div className="flex items-center space-x-2">
-          <Checkbox id="terms" />
+          <Checkbox id="terms" required />
           <Link to="/privacy-policy">
             <label
               htmlFor="terms"

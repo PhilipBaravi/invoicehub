@@ -11,7 +11,7 @@
   "license": "MIT",
   "name": "invoicing-startup",
   "private": true,
-  "homepage": "https://invoicehub.space/",
+  "homepage": "http://localhost:9090/",
   "version": "0.0.1",
   "type": "module",
   "scripts": {

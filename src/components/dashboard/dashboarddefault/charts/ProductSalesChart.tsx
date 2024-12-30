@@ -58,7 +58,6 @@ const ProductSalesChart: React.FC = () => {
   const [startMonth, setStartMonth] = useState(new Date().getMonth() + 1);
   const [endMonth, setEndMonth] = useState(new Date().getMonth() + 1);
   const [currency, setCurrency] = useState("USD");
-  const [, setChartData] = useState<ChartDataItem[]>([]);
   const [displayedData, setDisplayedData] = useState<ChartDataItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,13 +104,16 @@ const ProductSalesChart: React.FC = () => {
       try {
         const data = await fetchData(year, startMonth, endMonth, currency);
         if (data && data.length > 0) {
-          setChartData(data);
           setDisplayedData(data);
         } else {
-          setError(`No data available`);
+          setDisplayedData([]);
+          setError(t("productSales.noData"));
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
+        setDisplayedData([]);
+        setError(
+          err instanceof Error ? err.message : t("productSales.fetchError")
+        );
       } finally {
         setIsLoading(false);
       }
@@ -124,6 +126,7 @@ const ProductSalesChart: React.FC = () => {
     startMonth,
     endMonth,
     currency,
+    t,
   ]);
 
   const formattedChartData = displayedData.map((item) => ({
@@ -163,7 +166,7 @@ const ProductSalesChart: React.FC = () => {
   }
 
   return (
-    <Card>
+    <Card className="min-h-[450px]">
       <CardHeader className="flex flex-col gap-2 space-y-0 border-b py-5">
         <div className="grid flex-1 gap-1 text-center sm:text-left">
           <CardTitle>{t("productSales.title")}</CardTitle>
@@ -181,7 +184,7 @@ const ProductSalesChart: React.FC = () => {
           id="product-sales-chart"
         />
       </CardHeader>
-      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
+      <CardContent className={`px-2 pt-4 sm:px-6 sm:pt-6`}>
         {isLoading ? (
           <div className="flex items-center justify-center h-[250px]">
             <p>{t("productSales.loadingData")}</p>
