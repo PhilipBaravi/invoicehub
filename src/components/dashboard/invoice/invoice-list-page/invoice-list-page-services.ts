@@ -117,7 +117,7 @@ export async function sendInvoiceEmail(token: string, invoiceId: number) {
 
 export async function checkProductsData(token: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}/product/list`, {
+    const response = await fetch(`${API_BASE_URL}product/list`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -143,7 +143,7 @@ export async function checkProductsData(token: string) {
 
 export async function checkClienData(token: string) {
   try {
-    const response = await fetch(`${API_BASE_URL}/product/list`, {
+    const response = await fetch(`${API_BASE_URL}clientVendor/list`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

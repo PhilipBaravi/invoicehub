@@ -204,7 +204,7 @@ const TotalProfitLoss = () => {
     : 0;
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col min-h-[450px]">
       <CardHeader className="items-center pb-0 space-y-2">
         <CardTitle>{t("profitLoss.financialSummary")}</CardTitle>
         <CardDescription>
@@ -228,7 +228,7 @@ const TotalProfitLoss = () => {
           id="total-profit-loss"
         />
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
+      <CardContent className={`flex-1 pb-0 ${isLoading ? "!pt-0" : "pt-8"}`}>
         {isLoading ? (
           <div className="flex items-center justify-center h-[250px]">
             <p>{t("profitLoss.loadingChartData")}</p>

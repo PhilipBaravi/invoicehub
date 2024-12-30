@@ -65,17 +65,17 @@ const CreateInvoiceDialog: FC<CreateInvoiceDialogProps> = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {!newUserTrigger
+            {newUserTrigger
               ? "First add clients/products."
               : t("invoiceList.dialog.title")}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {!newUserTrigger
+            {newUserTrigger
               ? "Add at least one client and product to start generating invoices"
               : t("invoiceList.dialog.description")}
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {newUserTrigger && (
+        {!newUserTrigger && (
           <Select
             value={newInvoiceCurrency}
             onValueChange={(val) =>
@@ -94,20 +94,22 @@ const CreateInvoiceDialog: FC<CreateInvoiceDialogProps> = ({
         )}
 
         <AlertDialogFooter className="mt-4">
-          <div className="justify-center items-center flex w-full gap-x-4">
+          <div
+            className={`${
+              newUserTrigger
+                ? "justify-center items-center flex w-full gap-x-4"
+                : "flex items-center gap-x-4"
+            }`}
+          >
             <AlertDialogCancel onClick={() => onOpenChange(false)}>
               {t("invoiceList.dialog.cancel")}
             </AlertDialogCancel>
-            {newUserTrigger && (
+            {!newUserTrigger && (
               <AlertDialogAction onClick={onConfirm}>
                 {t("invoiceList.dialog.continue")}
               </AlertDialogAction>
             )}
-            {newUserTrigger ? (
-              <AlertDialogAction onClick={onConfirm}>
-                {t("invoiceList.dialog.continue")}
-              </AlertDialogAction>
-            ) : (
+            {newUserTrigger && (
               <>
                 <AlertDialogAction onClick={handleProductRedirect}>
                   Add Products
