@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useKeycloak } from "@react-keycloak/web";
 import { ExchangeRate } from "./charts/types";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 interface ApiResponse {
   success: boolean;
@@ -106,9 +107,21 @@ const CurrencyExchangeRates: FC = () => {
         setLoading(false);
       }
     };
-
     fetchRates();
   }, [baseCurrency, keycloak.token]);
+
+  if (loading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 auto-rows-min w-full">
+        {[...Array(4)].map((_, index) => (
+          <StatCardSkeleton
+            key={index}
+            styles="h-[122px] w-full max-w-[415px]"
+          />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">

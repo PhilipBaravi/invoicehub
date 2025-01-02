@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/chart";
 import { YearMonthCurrencySelect } from "./YearMonthCurrencySelect";
 import { NoDataDisplay } from "./NoDataDisplay";
+import StatCardSkeleton from "../../skeletons/StatCardSkeleton";
 
 type FinancialSummaryData = {
   total_cost: number;
@@ -48,7 +49,7 @@ const TotalProfitLoss = () => {
   const [currency, setCurrency] = useState("USD");
   const [showTotal, setShowTotal] = useState(false);
   const [chartData, setChartData] = useState<FinancialSummaryData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { keycloak, initialized } = useKeycloak();
   const { t } = useTranslation("charts");
@@ -170,24 +171,8 @@ const TotalProfitLoss = () => {
     ];
   }, [chartData, t]);
 
-  if (!initialized) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[400px]">
-          <p>{t("profitLoss.initializing")}</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!keycloak.authenticated) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[400px]">
-          <p>{t("profitLoss.pleaseLogIn")}</p>
-        </CardContent>
-      </Card>
-    );
+  if (isLoading) {
+    return <StatCardSkeleton styles="h-[460px] w-full" />;
   }
 
   const showFooter = !error && chartData && chartData.total_sales > 0;

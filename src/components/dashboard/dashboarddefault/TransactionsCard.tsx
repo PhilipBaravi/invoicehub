@@ -24,14 +24,17 @@ import {
 import { useKeycloak } from "@react-keycloak/web";
 import { Invoice, InvoiceStatus } from "../invoice/invoice-types";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 const TransactionsCard: FC = () => {
   const { t } = useTranslation("dashboardDefault");
   const { keycloak } = useKeycloak();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchInvoices = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           `${API_BASE_URL}dashboard/lastThreeApproved`,
@@ -60,6 +63,8 @@ const TransactionsCard: FC = () => {
 
     if (keycloak && keycloak.token) {
       fetchInvoices();
+
+      setLoading(false);
     }
   }, [keycloak.token]);
 
@@ -88,7 +93,9 @@ const TransactionsCard: FC = () => {
       </Badge>
     );
   };
-
+  if (loading) {
+    return <StatCardSkeleton styles="w-full h-[500px] max-w-[850px]" />;
+  }
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

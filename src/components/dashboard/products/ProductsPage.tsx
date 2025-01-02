@@ -12,6 +12,7 @@ import { Product, Category } from "./products-types";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/lib/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 const ProductsPage: FC = () => {
   const [activeTab, setActiveTab] = useState<"All" | "ACTIVE" | "DRAFT">("All");
@@ -19,6 +20,7 @@ const ProductsPage: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation("categoriesAndProducts");
   const { toast } = useToast();
 
@@ -63,6 +65,7 @@ const ProductsPage: FC = () => {
   // Fetch categories to get icon information
   useEffect(() => {
     const fetchCategories = async () => {
+      setLoading(true);
       try {
         const response = await fetch(`${API_BASE_URL}category/list`, {
           method: "GET",
@@ -78,6 +81,8 @@ const ProductsPage: FC = () => {
         }
       } catch (error) {
         console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -85,6 +90,7 @@ const ProductsPage: FC = () => {
   }, [keycloak.token]);
 
   const fetchProducts = async () => {
+    setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}product/list`, {
         method: "GET",
@@ -104,6 +110,8 @@ const ProductsPage: FC = () => {
       }
     } catch (error) {
       console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -164,7 +172,7 @@ const ProductsPage: FC = () => {
 
     // Exclude productCategory
     const { productCategory, ...productToSend } = productToAdd;
-
+    setLoading(true);
     try {
       const response = await fetch(`${API_BASE_URL}product/create`, {
         method: "POST",
@@ -192,11 +200,14 @@ const ProductsPage: FC = () => {
       }
     } catch (error) {
       console.error("Failed to add product:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleEditProduct = async () => {
     if (editingProduct && editingProduct.id) {
+      setLoading(true);
       try {
         // Find the selected category to get the icon
         const selectedCategory = categories.find(
@@ -248,6 +259,8 @@ const ProductsPage: FC = () => {
         }
       } catch (error) {
         console.error("Failed to edit product:", error);
+      } finally {
+        setLoading(false);
       }
     } else {
       console.error("Editing product is not set or has no ID.");
@@ -255,6 +268,7 @@ const ProductsPage: FC = () => {
   };
 
   const handleDeleteProduct = async (productId: number) => {
+    setLoading(true);
     try {
       const response = await fetch(
         `${API_BASE_URL}product/delete/${productId}`,
@@ -297,6 +311,8 @@ const ProductsPage: FC = () => {
       console.log("Product deleted successfully.");
     } catch (error) {
       console.error("Unexpected error while deleting product:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -451,16 +467,24 @@ const ProductsPage: FC = () => {
       </div>
 
       <div className="overflow-x-auto">
-        <ProductTable
-          products={filteredProducts}
-          openEditDialog={(product) => {
-            setEditingProduct(product);
-            setNewProduct({ ...product });
-            setIsDialogOpen(true);
-          }}
-          handleDeleteProduct={handleDeleteProduct}
-          lowStockProducts={lowStockProducts}
-        />
+        {loading ? (
+          <div className="w-full flex flex-col gap-y-8">
+            {[...Array(3)].map((_, index) => (
+              <StatCardSkeleton key={index} styles="w-full h-[40px]" />
+            ))}
+          </div>
+        ) : (
+          <ProductTable
+            products={filteredProducts}
+            openEditDialog={(product) => {
+              setEditingProduct(product);
+              setNewProduct({ ...product });
+              setIsDialogOpen(true);
+            }}
+            handleDeleteProduct={handleDeleteProduct}
+            lowStockProducts={lowStockProducts}
+          />
+        )}
       </div>
 
       <ProductFormDialog

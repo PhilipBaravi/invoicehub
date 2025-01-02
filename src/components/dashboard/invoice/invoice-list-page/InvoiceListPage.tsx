@@ -29,6 +29,7 @@ import {
   approveInvoice,
   sendInvoiceEmail,
 } from "./invoice-list-page-services";
+import StatCardSkeleton from "../../skeletons/StatCardSkeleton";
 
 // Types for the Create Invoice Dialog
 
@@ -49,6 +50,7 @@ const InvoiceListPage: FC = () => {
   const [previewInvoice, setPreviewInvoice] = useState<Invoice | null>(null);
   const { toast } = useToast();
   const [showCurrencyDialog, setShowCurrencyDialog] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [newInvoiceCurrency, setNewInvoiceCurrency] = useState<
     "USD" | "EUR" | "GEL"
   >("USD");
@@ -56,6 +58,7 @@ const InvoiceListPage: FC = () => {
   // Fetch invoices on mount or whenever the token changes
   useEffect(() => {
     const fetchInvoices = async () => {
+      setLoading(true);
       try {
         if (keycloak?.token) {
           const data = await getInvoicesData(keycloak.token);
@@ -70,6 +73,8 @@ const InvoiceListPage: FC = () => {
         } else {
           console.error("An unknown error occurred");
         }
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -234,15 +239,18 @@ const InvoiceListPage: FC = () => {
             setStatusFilter={setStatusFilter}
             onCreateInvoice={handleCreateNewInvoice}
           />
-
-          <InvoiceListTable
-            invoices={filteredInvoices}
-            onPreview={handlePreviewInvoice}
-            onEdit={handleEditInvoice}
-            onApprove={handleApproveInvoice}
-            onSendEmail={handleSendEmail}
-            onDelete={openDeleteDialog}
-          />
+          {loading ? (
+            <StatCardSkeleton styles="w-full h-[600px]" />
+          ) : (
+            <InvoiceListTable
+              invoices={filteredInvoices}
+              onPreview={handlePreviewInvoice}
+              onEdit={handleEditInvoice}
+              onApprove={handleApproveInvoice}
+              onSendEmail={handleSendEmail}
+              onDelete={openDeleteDialog}
+            />
+          )}
         </CardContent>
       </Card>
 

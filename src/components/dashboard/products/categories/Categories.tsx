@@ -27,6 +27,7 @@ import { Category } from "./categories-types";
 import iconMap from "./icons-map";
 import { useToast } from "@/lib/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import StatCardSkeleton from "../../skeletons/StatCardSkeleton";
 
 const Categories: FC = () => {
   const [productCategories, setProductCategories] = useState<Category[]>([]);
@@ -39,6 +40,7 @@ const Categories: FC = () => {
     null
   );
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { t } = useTranslation("categoriesAndProducts");
   const { toast } = useToast();
 
@@ -47,6 +49,7 @@ const Categories: FC = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      setLoading(true);
       try {
         const response = await fetch(`${API_BASE_URL}category/list`, {
           method: "GET",
@@ -54,14 +57,21 @@ const Categories: FC = () => {
             Authorization: `Bearer ${keycloak.token}`,
           },
         });
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
         const data = await response.json();
         setProductCategories(data.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchCategories();
+    if (keycloak.token) {
+      fetchCategories();
+    }
   }, [keycloak.token]);
 
   const handleAddCategory = (newCategory: Category) => {
@@ -149,40 +159,44 @@ const Categories: FC = () => {
       </div>
 
       <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">
-        {productCategories.map((category) => {
-          const Icon = iconMap[category.icon];
-          return (
-            <ContextMenu key={category.id}>
-              <ContextMenuTrigger>
-                <Card
-                  className={`cursor-pointer transition-colors h-full ${
-                    selectedCategoryId === category.id
-                      ? "bg-primary text-primary-foreground"
-                      : "hover:bg-secondary"
-                  }`}
-                  onClick={() => handleSelectCategory(category.id)}
-                >
-                  <CardContent className="flex flex-col items-center justify-center p-4 sm:p-6">
-                    {Icon && <Icon className="h-5 w-5 sm:h-6 sm:w-6" />}
-                    <h2 className="mt-2 font-semibold text-sm sm:text-base text-center">
-                      {category.description}
-                    </h2>
-                  </CardContent>
-                </Card>
-              </ContextMenuTrigger>
-              <ContextMenuContent className="min-w-[160px]">
-                <ContextMenuItem onClick={() => openDeleteDialog(category)}>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {t("categories.delete")}
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => openEditDialog(category)}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  {t("categories.edit")}
-                </ContextMenuItem>
-              </ContextMenuContent>
-            </ContextMenu>
-          );
-        })}
+        {loading
+          ? [...Array(6)].map((_, index) => (
+              <StatCardSkeleton key={index} styles="w-full h-[100px]" />
+            ))
+          : productCategories.map((category) => {
+              const Icon = iconMap[category.icon];
+              return (
+                <ContextMenu key={category.id}>
+                  <ContextMenuTrigger>
+                    <Card
+                      className={`cursor-pointer transition-colors h-full ${
+                        selectedCategoryId === category.id
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-secondary"
+                      }`}
+                      onClick={() => handleSelectCategory(category.id)}
+                    >
+                      <CardContent className="flex flex-col items-center justify-center p-4 sm:p-6">
+                        {Icon && <Icon className="h-5 w-5 sm:h-6 sm:w-6" />}
+                        <h2 className="mt-2 font-semibold text-sm sm:text-base text-center">
+                          {category.description}
+                        </h2>
+                      </CardContent>
+                    </Card>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent className="min-w-[160px]">
+                    <ContextMenuItem onClick={() => openDeleteDialog(category)}>
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      {t("categories.delete")}
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={() => openEditDialog(category)}>
+                      <Pencil className="mr-2 h-4 w-4" />
+                      {t("categories.edit")}
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
+              );
+            })}
       </div>
 
       {categoryToEdit && (

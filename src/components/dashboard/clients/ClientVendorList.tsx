@@ -9,6 +9,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/lib/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 export default function ClientVendorList() {
   const { keycloak } = useKeycloak();
@@ -25,6 +26,7 @@ export default function ClientVendorList() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [isAddClientVendorOpen, setIsAddClientVendorOpen] = useState(false);
   const [isEditClientVendorOpen, setIsEditClientVendorOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [editingClientVendor, setEditingClientVendor] =
     useState<ClientVendor | null>(null);
   const [filterCategory, setFilterCategory] =
@@ -42,6 +44,7 @@ export default function ClientVendorList() {
   useEffect(() => {
     const fetchClientVendors = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${API_BASE_URL}clientVendor/list`, {
           headers: {
             "Content-Type": "application/json",
@@ -62,6 +65,7 @@ export default function ClientVendorList() {
 
     if (keycloak && keycloak.token) {
       fetchClientVendors();
+      setLoading(false);
     }
   }, [keycloak]);
 
@@ -80,6 +84,7 @@ export default function ClientVendorList() {
   // Delete client/vendor by ID
   const deleteClientVendor = async (id: number) => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_BASE_URL}clientVendor/delete/${id}`, {
         method: "DELETE",
         headers: {
@@ -115,6 +120,8 @@ export default function ClientVendorList() {
       );
     } catch (error) {
       console.error("Error deleting client/vendor:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,6 +155,7 @@ export default function ClientVendorList() {
   // Refresh the client/vendors list
   const refreshClientVendors = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_BASE_URL}clientVendor/list`, {
         headers: {
           "Content-Type": "application/json",
@@ -163,6 +171,8 @@ export default function ClientVendorList() {
       }
     } catch (error) {
       console.error("Error fetching client/vendors:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -191,16 +201,25 @@ export default function ClientVendorList() {
         setRowsPerPage={setRowsPerPage}
         filterOptions={filterOptions}
       />
-      <ClientVendorTable
-        paginatedClientVendors={paginatedClientVendors}
-        selectedClientVendors={selectedClientVendors}
-        handleSelectClientVendor={handleSelectClientVendor}
-        handleSelectAll={handleSelectAll}
-        deleteClientVendor={deleteClientVendor}
-        setEditingClientVendor={setEditingClientVendor}
-        setIsEditClientVendorOpen={setIsEditClientVendorOpen}
-        filteredClientVendors={filteredClientVendors}
-      />
+      {loading ? (
+        <div className="flex flex-col gap-y-4">
+          {[...Array(6)].map((_, index) => {
+            return <StatCardSkeleton key={index} styles="w-full h-[50px]" />;
+          })}{" "}
+        </div>
+      ) : (
+        <ClientVendorTable
+          paginatedClientVendors={paginatedClientVendors}
+          selectedClientVendors={selectedClientVendors}
+          handleSelectClientVendor={handleSelectClientVendor}
+          handleSelectAll={handleSelectAll}
+          deleteClientVendor={deleteClientVendor}
+          setEditingClientVendor={setEditingClientVendor}
+          setIsEditClientVendorOpen={setIsEditClientVendorOpen}
+          filteredClientVendors={filteredClientVendors}
+        />
+      )}
+
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

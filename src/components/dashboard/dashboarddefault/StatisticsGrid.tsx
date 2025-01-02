@@ -6,6 +6,7 @@ import StatCard from "./StatCard";
 import { SummaryResponse } from "./charts/types";
 import { API_BASE_URL } from "@/lib/utils/constants";
 import { useNavigate } from "react-router-dom";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 const StatisticsGrid: FC = () => {
   const { t } = useTranslation("dashboardDefault");
@@ -48,12 +49,20 @@ const StatisticsGrid: FC = () => {
         setLoading(false);
       }
     };
-
     fetchSummary();
   }, [keycloak.token]);
 
   if (loading || !summary) {
-    return <div className="text-center w-full">Loading...</div>;
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 auto-rows-min w-full">
+        {[...Array(4)].map((_, index) => (
+          <StatCardSkeleton
+            key={index}
+            styles="h-[122px] w-full max-w-[415px]"
+          />
+        ))}
+      </div>
+    );
   }
 
   const StatCardData = [

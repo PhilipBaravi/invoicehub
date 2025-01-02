@@ -1,4 +1,4 @@
-import React, { useState, useRef, FC, useEffect, useCallback } from "react";
+import { useState, FC, useEffect, useCallback } from "react"; //Used useref for signatures, for now removed
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,13 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useTheme } from "../layout/ThemeProvider";
+// import { useTheme } from "../layout/ThemeProvider";
 import { useKeycloak } from "@react-keycloak/web";
 import LineItems from "./LineItems";
 import ClientSelector from "./ClientSelector";
 import InvoiceDetails from "./InvoiceDetails";
 import Totals from "./Totals";
-import Signatures from "./Signatures";
+// import Signatures from "./Signatures";
 // import Attachments from "./Attachments";
 import TaxDialog from "./TaxDialog";
 // import LogoUploader from "./LogoUploader";
@@ -84,12 +84,12 @@ const InvoiceComponent: FC = () => {
     name: "",
     number: "",
   });
-  const [businessSignatureImage, setBusinessSignatureImage] = useState<
-    string | null
-  >(null);
-  const [clientSignatureImage, setClientSignatureImage] = useState<
-    string | null
-  >(null);
+  // const [businessSignatureImage, setBusinessSignatureImage] = useState<
+  //   string | null
+  // >(null);
+  // const [clientSignatureImage, setClientSignatureImage] = useState<
+  //   string | null
+  // >(null);
 
   // const [logo, setLogo] = useState<string | null>(null);
   // const [attachments, setAttachments] = useState<File[]>([]);
@@ -126,15 +126,15 @@ const InvoiceComponent: FC = () => {
   const symbol = currencySymbols[selectedCurrency] || "$";
   const rate = rates ? rates[selectedCurrency] : 1;
 
-  const sigCanvasBusinessRef = useRef<any>(null);
-  const sigCanvasClientRef = useRef<any>(null);
-  const businessSignatureInputRef = useRef<HTMLInputElement>(null);
-  const clientSignatureInputRef = useRef<HTMLInputElement>(null);
+  // const sigCanvasBusinessRef = useRef<any>(null);
+  // const sigCanvasClientRef = useRef<any>(null);
+  // const businessSignatureInputRef = useRef<HTMLInputElement>(null);
+  // const clientSignatureInputRef = useRef<HTMLInputElement>(null);
   const [selectedClient, setSelectedClient] = useState<ClientVendor | null>(
     null
   );
-  const { theme } = useTheme();
-  const penColor = theme === "dark" ? "white" : "black";
+  // const { theme } = useTheme();
+  // const penColor = theme === "dark" ? "white" : "black";
 
   // -------------------- Effects -------------------- //
 
@@ -479,63 +479,63 @@ const InvoiceComponent: FC = () => {
   /**
    * Signatures
    */
-  const handleClearSignature = useCallback((type: "business" | "client") => {
-    if (type === "business") {
-      sigCanvasBusinessRef.current?.clear();
-      setBusinessSignatureImage(null);
-      setInvoice((prev) => ({ ...prev, businessSignature: "" }));
-    } else {
-      sigCanvasClientRef.current?.clear();
-      setClientSignatureImage(null);
-      setInvoice((prev) => ({ ...prev, clientSignature: "" }));
-    }
-  }, []);
+  // const handleClearSignature = useCallback((type: "business" | "client") => {
+  //   if (type === "business") {
+  //     sigCanvasBusinessRef.current?.clear();
+  //     setBusinessSignatureImage(null);
+  //     setInvoice((prev) => ({ ...prev, businessSignature: "" }));
+  //   } else {
+  //     sigCanvasClientRef.current?.clear();
+  //     setClientSignatureImage(null);
+  //     setInvoice((prev) => ({ ...prev, clientSignature: "" }));
+  //   }
+  // }, []);
 
-  const handleSaveSignature = useCallback((type: "business" | "client") => {
-    const signatureDataUrl =
-      type === "business"
-        ? sigCanvasBusinessRef.current
-            ?.getTrimmedCanvas()
-            .toDataURL("image/png")
-        : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL("image/png");
+  // const handleSaveSignature = useCallback((type: "business" | "client") => {
+  //   const signatureDataUrl =
+  //     type === "business"
+  //       ? sigCanvasBusinessRef.current
+  //           ?.getTrimmedCanvas()
+  //           .toDataURL("image/png")
+  //       : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL("image/png");
 
-    if (signatureDataUrl) {
-      if (type === "business") {
-        setBusinessSignatureImage(signatureDataUrl);
-        setInvoice((prev) => ({
-          ...prev,
-          businessSignature: signatureDataUrl,
-        }));
-      } else {
-        setClientSignatureImage(signatureDataUrl);
-        setInvoice((prev) => ({ ...prev, clientSignature: signatureDataUrl }));
-      }
-    }
-  }, []);
+  //   if (signatureDataUrl) {
+  //     if (type === "business") {
+  //       setBusinessSignatureImage(signatureDataUrl);
+  //       setInvoice((prev) => ({
+  //         ...prev,
+  //         businessSignature: signatureDataUrl,
+  //       }));
+  //     } else {
+  //       setClientSignatureImage(signatureDataUrl);
+  //       setInvoice((prev) => ({ ...prev, clientSignature: signatureDataUrl }));
+  //     }
+  //   }
+  // }, []);
 
-  const handleSignatureUpload = useCallback(
-    (
-      event: React.ChangeEvent<HTMLInputElement>,
-      type: "business" | "client"
-    ) => {
-      const file = event.target.files?.[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const result = e.target?.result as string;
-          if (type === "business") {
-            setBusinessSignatureImage(result);
-            setInvoice((prev) => ({ ...prev, businessSignature: result }));
-          } else {
-            setClientSignatureImage(result);
-            setInvoice((prev) => ({ ...prev, clientSignature: result }));
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    },
-    []
-  );
+  // const handleSignatureUpload = useCallback(
+  //   (
+  //     event: React.ChangeEvent<HTMLInputElement>,
+  //     type: "business" | "client"
+  //   ) => {
+  //     const file = event.target.files?.[0];
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = (e) => {
+  //         const result = e.target?.result as string;
+  //         if (type === "business") {
+  //           setBusinessSignatureImage(result);
+  //           setInvoice((prev) => ({ ...prev, businessSignature: result }));
+  //         } else {
+  //           setClientSignatureImage(result);
+  //           setInvoice((prev) => ({ ...prev, clientSignature: result }));
+  //         }
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   },
+  //   []
+  // );
 
   // -------------------- Save Invoice -------------------- //
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -791,10 +791,10 @@ const InvoiceComponent: FC = () => {
             </Card>
           </motion.div>
 
-          <Separator className="bg-stone-200 dark:bg-stone-700" />
+          {/* <Separator className="bg-stone-200 dark:bg-stone-700" /> */}
 
           {/* Signatures */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
@@ -812,9 +812,9 @@ const InvoiceComponent: FC = () => {
               businessSignatureInputRef={businessSignatureInputRef}
               clientSignatureInputRef={clientSignatureInputRef}
             />
-          </motion.div>
+          </motion.div> */}
 
-          <Separator className="bg-stone-200 dark:bg-stone-700" />
+          {/* <Separator className="bg-stone-200 dark:bg-stone-700" /> */}
 
           {/* Attachments (commented out for brevity) */}
           {/* <motion.div

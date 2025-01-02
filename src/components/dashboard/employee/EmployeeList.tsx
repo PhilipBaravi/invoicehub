@@ -9,6 +9,7 @@ import SearchAndFilter from "./SearchAndFilter";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/lib/hooks/use-toast";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 export default function EmployeeList() {
   const { keycloak } = useKeycloak();
@@ -21,6 +22,7 @@ export default function EmployeeList() {
   const [isAddEmployeeOpen, setIsAddEmployeeOpen] = useState(false);
   const [isEditEmployeeOpen, setIsEditEmployeeOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [loading, setLoading] = useState(true);
   const [filterCategory, setFilterCategory] =
     useState<keyof Employee>("firstName");
   const { t } = useTranslation("employees");
@@ -37,6 +39,7 @@ export default function EmployeeList() {
 
   useEffect(() => {
     const fetchEmployees = async () => {
+      setLoading(true);
       try {
         const response = await fetch(`${API_BASE_URL}user/list`, {
           headers: {
@@ -61,6 +64,7 @@ export default function EmployeeList() {
 
     if (keycloak.token) {
       fetchEmployees();
+      setLoading(false);
     }
   }, [keycloak.token]);
 
@@ -76,6 +80,7 @@ export default function EmployeeList() {
 
   const deleteEmployee = async (id: string) => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_BASE_URL}user/delete/${id}`, {
         method: "DELETE",
         headers: {
@@ -101,6 +106,8 @@ export default function EmployeeList() {
       setEmployees(employees.filter((emp) => emp.id !== id));
     } catch (error) {
       console.error("Error deleting employee:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -127,6 +134,7 @@ export default function EmployeeList() {
 
   const refreshEmployees = async () => {
     try {
+      setLoading(true);
       const response = await fetch(`${API_BASE_URL}user/list`, {
         headers: {
           Authorization: `Bearer ${keycloak.token}`,
@@ -145,6 +153,8 @@ export default function EmployeeList() {
       setEmployees(users);
     } catch (error) {
       console.error("Error fetching employees:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -174,16 +184,24 @@ export default function EmployeeList() {
         filterOptions={filterOptions}
       />
       <div className="overflow-x-auto">
-        <EmployeeTable
-          paginatedEmployees={paginatedEmployees}
-          selectedEmployees={selectedEmployees}
-          handleSelectEmployee={handleSelectEmployee}
-          handleSelectAll={handleSelectAll}
-          deleteEmployee={deleteEmployee}
-          setEditingEmployee={setEditingEmployee}
-          setIsEditEmployeeOpen={setIsEditEmployeeOpen}
-          filteredEmployees={filteredEmployees}
-        />
+        {loading ? (
+          <div className="flex flex-col gap-y-4">
+            {[...Array(6)].map((_, index) => (
+              <StatCardSkeleton key={index} styles="h-[50px] w-full" />
+            ))}
+          </div>
+        ) : (
+          <EmployeeTable
+            paginatedEmployees={paginatedEmployees}
+            selectedEmployees={selectedEmployees}
+            handleSelectEmployee={handleSelectEmployee}
+            handleSelectAll={handleSelectAll}
+            deleteEmployee={deleteEmployee}
+            setEditingEmployee={setEditingEmployee}
+            setIsEditEmployeeOpen={setIsEditEmployeeOpen}
+            filteredEmployees={filteredEmployees}
+          />
+        )}
       </div>
       <Pagination
         currentPage={currentPage}

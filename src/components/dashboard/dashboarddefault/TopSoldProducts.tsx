@@ -8,6 +8,7 @@ import { NoDataDisplay } from "./charts/NoDataDisplay";
 import { YearMonthCurrencySelect } from "./charts/YearMonthCurrencySelect";
 import { API_BASE_URL } from "@/lib/utils/constants";
 import { Product } from "./charts/types";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 type ApiData = {
   [productName: string]: {
@@ -104,6 +105,9 @@ const TopSoldProducts: FC = () => {
     }
   };
 
+  if (loading) {
+    return <StatCardSkeleton styles="w-full h-[500px] max-w-[850px]" />;
+  }
   return (
     <Card className="w-full h-[500px] flex flex-col">
       <CardHeader className="pb-4 bg-gradient-to-r from-primary/10 to-primary/5">
@@ -134,9 +138,7 @@ const TopSoldProducts: FC = () => {
         </div>
       </CardHeader>
       <CardContent className="p-6 overflow-y-auto flex-grow">
-        {loading ? (
-          <div className="text-center">{t("topSoldProducts.loading")}</div>
-        ) : products.length === 0 ? (
+        {products.length === 0 ? (
           <NoDataDisplay />
         ) : (
           <div className="space-y-4">

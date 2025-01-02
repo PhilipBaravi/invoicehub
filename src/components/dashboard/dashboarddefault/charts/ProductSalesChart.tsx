@@ -3,6 +3,7 @@ import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { useKeycloak } from "@react-keycloak/web";
 import { useTranslation } from "react-i18next";
 import { TFunction } from "i18next";
+import StatCardSkeleton from "../../skeletons/StatCardSkeleton";
 
 import {
   Card,
@@ -59,7 +60,7 @@ const ProductSalesChart: React.FC = () => {
   const [endMonth, setEndMonth] = useState(new Date().getMonth() + 1);
   const [currency, setCurrency] = useState("USD");
   const [displayedData, setDisplayedData] = useState<ChartDataItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { keycloak, initialized } = useKeycloak();
   const { t, i18n } = useTranslation("charts");
@@ -145,24 +146,8 @@ const ProductSalesChart: React.FC = () => {
     });
   };
 
-  if (!initialized) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[400px]">
-          <p>{t("productSales.initializing")}</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (!keycloak.authenticated) {
-    return (
-      <Card>
-        <CardContent className="flex items-center justify-center h-[400px]">
-          <p>{t("productSales.authentication")}</p>
-        </CardContent>
-      </Card>
-    );
+  if (isLoading) {
+    return <StatCardSkeleton styles="h-[460px] w-full max-w-[1400px]" />;
   }
 
   return (

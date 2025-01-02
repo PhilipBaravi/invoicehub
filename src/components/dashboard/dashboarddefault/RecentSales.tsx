@@ -7,6 +7,7 @@ import { NoDataDisplay } from "./charts/NoDataDisplay";
 import { useKeycloak } from "@react-keycloak/web";
 import { Invoice } from "./charts/types";
 import { API_BASE_URL } from "@/lib/utils/constants";
+import StatCardSkeleton from "../skeletons/StatCardSkeleton";
 
 const RecentSales: FC = () => {
   const { t } = useTranslation("charts");
@@ -55,6 +56,10 @@ const RecentSales: FC = () => {
     }
   }, [keycloak.token]);
 
+  if (loading) {
+    return <StatCardSkeleton styles="w-full h-[500px] max-w-[850px]" />;
+  }
+
   return (
     <Card className="w-full h-[500px] flex flex-col">
       <CardHeader className="pb-4 bg-gradient-to-r from-primary/10 to-primary/5">
@@ -71,9 +76,7 @@ const RecentSales: FC = () => {
         </p>
       </CardHeader>
       <CardContent className="p-6 overflow-y-auto flex-grow">
-        {loading ? (
-          <div className="text-center">{t("recentSales.loading")}</div>
-        ) : invoices.length === 0 ? (
+        {invoices.length === 0 ? (
           <NoDataDisplay />
         ) : (
           <div className="space-y-4">
