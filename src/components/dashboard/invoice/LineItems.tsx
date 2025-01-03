@@ -52,9 +52,16 @@ const LineItems: FC<LineItemsProps> = ({
 }) => {
   const { t } = useTranslation("invoices");
 
-  // Utility function to round to two decimal places
-  const roundToTwo = (num: number) => {
-    return Math.round(num * 100) / 100;
+  const roundToDecimals = (value: number, decimals: number = 2): number => {
+    const multiplier = Math.pow(10, decimals);
+    return Math.round(value * multiplier) / multiplier;
+  };
+
+  const formatCurrency = (value: number, decimals: number = 2): string => {
+    const rounded = roundToDecimals(value, decimals);
+    const [whole, decimal = ""] = rounded.toString().split(".");
+    const paddedDecimal = decimal.padEnd(decimals, "0");
+    return `${whole}.${paddedDecimal}`;
   };
 
   return (
@@ -186,16 +193,17 @@ const LineItems: FC<LineItemsProps> = ({
                         const value = e.target.value;
                         const parsedValue = parseFloat(value);
                         if (!isNaN(parsedValue)) {
-                          const roundedValue = roundToTwo(parsedValue);
+                          const roundedValue = roundToDecimals(parsedValue);
                           handleLineItemChange(index, "price", roundedValue);
                         } else {
                           handleLineItemChange(index, "price", 0);
                         }
                       }}
-                      onBlur={() => {
-                        // Ensure the price is rounded to two decimal places on blur
-                        if (!isNaN(item.price)) {
-                          const roundedValue = roundToTwo(item.price);
+                      onBlur={(e) => {
+                        const value = e.target.value;
+                        const parsedValue = parseFloat(value);
+                        if (!isNaN(parsedValue)) {
+                          const roundedValue = roundToDecimals(parsedValue);
                           handleLineItemChange(index, "price", roundedValue);
                         }
                       }}
@@ -222,7 +230,7 @@ const LineItems: FC<LineItemsProps> = ({
                   <td className="p-4 text-center">
                     <span className="font-semibold text-stone-900 dark:text-stone-100">
                       {currencySymbol}
-                      {(item.price * item.quantity).toFixed(2)}
+                      {formatCurrency(item.price * item.quantity)}
                     </span>
                   </td>
                   <td className="p-4">
@@ -238,7 +246,6 @@ const LineItems: FC<LineItemsProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveLineItem(index)}
-                        disabled={isEditMode}
                         className="text-stone-600 hover:text-red-600 dark:text-stone-400 dark:hover:text-red-400"
                       >
                         <Trash2Icon className="h-4 w-4" />

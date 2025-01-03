@@ -7,12 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+// import { useTheme } from "../layout/ThemeProvider";
 import { useKeycloak } from "@react-keycloak/web";
 import LineItems from "./LineItems";
 import ClientSelector from "./ClientSelector";
 import InvoiceDetails from "./InvoiceDetails";
 import Totals from "./Totals";
+// import Signatures from "./Signatures";
+// import Attachments from "./Attachments";
 import TaxDialog from "./TaxDialog";
+// import LogoUploader from "./LogoUploader";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
@@ -35,8 +39,8 @@ import { useTranslation } from "react-i18next";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/lib/hooks/use-toast";
 import { motion } from "framer-motion";
-import { useCurrencyRates } from "@/lib/utils/useCurrencyRates";
-import { currencySymbols } from "@/lib/utils/constants";
+import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
+import { currencySymbols } from "@/lib/utils/constants"; // If you keep currency symbols in a constants file
 
 // -------- Services --------
 import {
@@ -80,6 +84,15 @@ const InvoiceComponent: FC = () => {
     name: "",
     number: "",
   });
+  // const [businessSignatureImage, setBusinessSignatureImage] = useState<
+  //   string | null
+  // >(null);
+  // const [clientSignatureImage, setClientSignatureImage] = useState<
+  //   string | null
+  // >(null);
+
+  // const [logo, setLogo] = useState<string | null>(null);
+  // const [attachments, setAttachments] = useState<File[]>([]);
 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
@@ -101,24 +114,27 @@ const InvoiceComponent: FC = () => {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const urlCurrency = queryParams.get("currency");
-  const [selectedCurrency, setSelectedCurrency] = useState<
-    "USD" | "EUR" | "GEL"
-  >(
-    isEditMode
-      ? "USD" // Default value, will be updated when invoice data loads
-      : urlCurrency === "USD" || urlCurrency === "EUR" || urlCurrency === "GEL"
-      ? urlCurrency
-      : "USD"
-  );
+  const selectedCurrencyParam = queryParams.get("currency");
+  const selectedCurrency =
+    selectedCurrencyParam === "USD" ||
+    selectedCurrencyParam === "EUR" ||
+    selectedCurrencyParam === "GEL"
+      ? selectedCurrencyParam
+      : "USD";
 
-  const { rates, converter } = useCurrencyRates(selectedCurrency);
+  const { rates } = useCurrencyRates(selectedCurrency);
   const symbol = currencySymbols[selectedCurrency] || "$";
   const rate = rates ? rates[selectedCurrency] : 1;
 
+  // const sigCanvasBusinessRef = useRef<any>(null);
+  // const sigCanvasClientRef = useRef<any>(null);
+  // const businessSignatureInputRef = useRef<HTMLInputElement>(null);
+  // const clientSignatureInputRef = useRef<HTMLInputElement>(null);
   const [selectedClient, setSelectedClient] = useState<ClientVendor | null>(
     null
   );
+  // const { theme } = useTheme();
+  // const penColor = theme === "dark" ? "white" : "black";
 
   // -------------------- Effects -------------------- //
 
@@ -180,15 +196,14 @@ const InvoiceComponent: FC = () => {
    */
   useEffect(() => {
     const fetchInvoiceDetails = async () => {
-      if (!keycloak?.token || !converter) return;
+      if (!keycloak?.token) return;
       try {
         if (isEditMode) {
+          // 1) Find existing invoice from the list
           const list = await getInvoiceList(keycloak.token);
           const fetchedInvoice = list.find((inv: any) => inv.id === Number(id));
           if (fetchedInvoice) {
-            setSelectedCurrency(fetchedInvoice.currency);
-
-            // Update invoice state with fetched data
+            // Populate invoice
             setInvoice({
               id: fetchedInvoice.id,
               invoiceNo: fetchedInvoice.invoiceNo,
@@ -213,59 +228,56 @@ const InvoiceComponent: FC = () => {
 
             setSelectedClient(fetchedInvoice.clientVendor);
 
-            // Fetch and update line items
+            // 2) Line items
             const lineItemsData = await getLineItems(
               keycloak.token,
               Number(id)
             );
             if (rates) {
-              const updatedLineItems = lineItemsData.map((item: any) => ({
-                itemId: item.product.id,
-                categoryId: item.product.category.id,
-                name: item.product.name,
-                description: item.product.description || "",
-                // Convert price from product currency to invoice currency
-                price: converter.convert(
-                  item.price,
-                  item.product.currency,
-                  fetchedInvoice.currency
-                ),
-                quantity: item.quantity,
-                tax: item.tax,
-                maxQuantity: item.product.quantityInStock,
-                error: "",
-                productUnit: item.product.productUnit,
-              }));
+              const updatedLineItems = lineItemsData.map((item: any) => {
+                const productRate = rates[item.product.currency];
+                const convertedPrice = productRate
+                  ? item.price * (rate / productRate)
+                  : item.price;
+                return {
+                  itemId: item.product.id,
+                  categoryId: item.product.category.id,
+                  name: item.product.name,
+                  description: item.product.description || "",
+                  price: convertedPrice,
+                  quantity: item.quantity,
+                  tax: item.tax,
+                  maxQuantity: item.product.quantityInStock,
+                  error: "",
+                  productUnit: item.product.productUnit,
+                };
+              });
               setLineItems(updatedLineItems);
               updateTotals(updatedLineItems);
+            } else {
+              console.error("Unexpected error for rates");
             }
+          } else {
+            console.error("Invoice not found");
           }
         } else {
-          // Create mode - generate invoice number
+          // Create mode
           const data = await generateInvoiceNumber(keycloak.token);
           setInvoice((prev) => ({
             ...prev,
             invoiceNo: data.invoiceNo,
             dateOfIssue: new Date(data.dateOfIssue),
-            currency: selectedCurrency, // Use the currency from URL
           }));
         }
       } catch (error: any) {
         console.error("Error fetching invoice details:", error);
+        // setErrorMessage(error.message);
       }
     };
 
     fetchInvoiceDetails();
-  }, [
-    keycloak?.token,
-    isEditMode,
-    id,
-    t,
-    rate,
-    rates,
-    selectedCurrency,
-    converter,
-  ]);
+    setShouldFetch(false);
+  }, [keycloak?.token, isEditMode, id, t, rate, rates]);
 
   // -------------------- Callbacks -------------------- //
 
@@ -370,13 +382,26 @@ const InvoiceComponent: FC = () => {
   /**
    * Remove a line item
    */
-  const handleRemoveLineItem = useCallback(
-    (index: number) => {
-      setLineItems((prev) => prev.filter((_, i) => i !== index));
-      updateTotals(lineItems.filter((_, i) => i !== index));
-    },
-    [lineItems, updateTotals]
-  );
+  const handleRemoveLineItem = async (lineItemId: number) => {
+    if (!keycloak?.token) return;
+    try {
+      await removeLineItem(keycloak.token, lineItemId);
+      // Update state to reflect removal
+      setLineItems((prev) => prev.filter((item) => item.id !== lineItemId));
+      toast({
+        title: "Success",
+        description: "Line item removed successfully.",
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error("Error removing line item:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to remove line item.",
+        variant: "destructive",
+      });
+    }
+  };
 
   /**
    * Show the tax dialog for a given line item
@@ -451,6 +476,67 @@ const InvoiceComponent: FC = () => {
     [products, t, toast, updateTotals]
   );
 
+  /**
+   * Signatures
+   */
+  // const handleClearSignature = useCallback((type: "business" | "client") => {
+  //   if (type === "business") {
+  //     sigCanvasBusinessRef.current?.clear();
+  //     setBusinessSignatureImage(null);
+  //     setInvoice((prev) => ({ ...prev, businessSignature: "" }));
+  //   } else {
+  //     sigCanvasClientRef.current?.clear();
+  //     setClientSignatureImage(null);
+  //     setInvoice((prev) => ({ ...prev, clientSignature: "" }));
+  //   }
+  // }, []);
+
+  // const handleSaveSignature = useCallback((type: "business" | "client") => {
+  //   const signatureDataUrl =
+  //     type === "business"
+  //       ? sigCanvasBusinessRef.current
+  //           ?.getTrimmedCanvas()
+  //           .toDataURL("image/png")
+  //       : sigCanvasClientRef.current?.getTrimmedCanvas().toDataURL("image/png");
+
+  //   if (signatureDataUrl) {
+  //     if (type === "business") {
+  //       setBusinessSignatureImage(signatureDataUrl);
+  //       setInvoice((prev) => ({
+  //         ...prev,
+  //         businessSignature: signatureDataUrl,
+  //       }));
+  //     } else {
+  //       setClientSignatureImage(signatureDataUrl);
+  //       setInvoice((prev) => ({ ...prev, clientSignature: signatureDataUrl }));
+  //     }
+  //   }
+  // }, []);
+
+  // const handleSignatureUpload = useCallback(
+  //   (
+  //     event: React.ChangeEvent<HTMLInputElement>,
+  //     type: "business" | "client"
+  //   ) => {
+  //     const file = event.target.files?.[0];
+  //     if (file) {
+  //       const reader = new FileReader();
+  //       reader.onload = (e) => {
+  //         const result = e.target?.result as string;
+  //         if (type === "business") {
+  //           setBusinessSignatureImage(result);
+  //           setInvoice((prev) => ({ ...prev, businessSignature: result }));
+  //         } else {
+  //           setClientSignatureImage(result);
+  //           setInvoice((prev) => ({ ...prev, clientSignature: result }));
+  //         }
+  //       };
+  //       reader.readAsDataURL(file);
+  //     }
+  //   },
+  //   []
+  // );
+
   // -------------------- Save Invoice -------------------- //
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
@@ -500,35 +586,10 @@ const InvoiceComponent: FC = () => {
       return;
     }
 
-    if (!converter) {
-      setErrorMessage("Currency converter is unavailable.");
-      toast({
-        title: "Error",
-        description: "Currency converter is required to save the invoice.",
-        variant: "destructive",
-        duration: 3000,
-      });
-      return;
-    }
-
     const token = keycloak.token;
 
     try {
-      // Convert line items back to their original currency before saving
-      const convertedLineItems = lineItems.map((item) => {
-        const product = products.find((p) => p.id === item.itemId);
-        if (!product) return item;
-
-        return {
-          ...item,
-          price: converter.revert(
-            item.price,
-            selectedCurrency,
-            product.currency
-          ),
-        };
-      });
-
+      // Build the request body for invoice
       const clientVendor = {
         id: selectedClient.id,
         name: selectedClient.name,
@@ -553,8 +614,10 @@ const InvoiceComponent: FC = () => {
       const invoiceData = {
         invoiceNo: invoice.invoiceNo,
         invoiceType: invoice.invoiceType,
-        dateOfIssue: invoice.dateOfIssue?.toISOString(),
-        dueDate: invoice.dueDate?.toISOString(),
+        dateOfIssue: invoice.dateOfIssue
+          ? invoice.dateOfIssue.toISOString()
+          : null,
+        dueDate: invoice.dueDate ? invoice.dueDate.toISOString() : null,
         paymentTerms: invoice.paymentTerms,
         notes: invoice.notes,
         clientVendor,
@@ -565,6 +628,7 @@ const InvoiceComponent: FC = () => {
         currency: selectedCurrency,
       };
 
+      // Create/update invoice
       const invoiceId = await createOrUpdateInvoice(
         token,
         invoiceData,
@@ -572,7 +636,7 @@ const InvoiceComponent: FC = () => {
         Number(id)
       );
 
-      // In edit mode, remove all existing line items first
+      // If editing, remove existing line items from DB
       if (isEditMode) {
         const existingItems = await getLineItems(token, Number(id));
         for (const item of existingItems) {
@@ -580,11 +644,13 @@ const InvoiceComponent: FC = () => {
         }
       }
 
-      // Add all current line items
-      for (const item of convertedLineItems) {
+      // Add new line items
+      for (const item of lineItems) {
         const product = products.find((p) => p.id === item.itemId);
-        if (!product) continue;
-
+        if (!product) {
+          setErrorMessage(`Product with ID ${item.itemId} not found.`);
+          throw new Error("Product not found");
+        }
         const taxAmount = (item.price * item.quantity * item.tax) / 100;
         const lineItemData = {
           description: item.description,
@@ -592,7 +658,7 @@ const InvoiceComponent: FC = () => {
           price: item.price,
           tax: item.tax,
           total: item.price * item.quantity + taxAmount,
-          product,
+          product: product,
         };
         await addProductToInvoice(token, invoiceId, lineItemData);
       }
@@ -614,6 +680,7 @@ const InvoiceComponent: FC = () => {
         duration: 3000,
       });
       console.error(error);
+      // setErrorMessage(error.message);
     }
   }, [
     selectedClient,
@@ -627,7 +694,7 @@ const InvoiceComponent: FC = () => {
     products,
     t,
     toast,
-    converter,
+    setErrorMessage,
   ]);
 
   // -------------------- Render -------------------- //
@@ -656,6 +723,9 @@ const InvoiceComponent: FC = () => {
                 isEditMode={isEditMode}
               />
             </div>
+            {/* <div className="w-full lg:w-1/2 flex justify-center lg:justify-end">
+              <LogoUploader logo={logo} handleLogoUpload={handleLogoUpload} />
+            </div> */}
           </motion.div>
 
           <Separator className="bg-stone-200 dark:bg-stone-700" />
@@ -720,6 +790,46 @@ const InvoiceComponent: FC = () => {
               </CardContent>
             </Card>
           </motion.div>
+
+          {/* <Separator className="bg-stone-200 dark:bg-stone-700" /> */}
+
+          {/* Signatures */}
+          {/* <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
+          >
+            <Signatures
+              invoice={invoice}
+              penColor={penColor}
+              sigCanvasBusinessRef={sigCanvasBusinessRef}
+              sigCanvasClientRef={sigCanvasClientRef}
+              businessSignatureImage={businessSignatureImage}
+              clientSignatureImage={clientSignatureImage}
+              handleClearSignature={handleClearSignature}
+              handleSaveSignature={handleSaveSignature}
+              handleSignatureUpload={handleSignatureUpload}
+              businessSignatureInputRef={businessSignatureInputRef}
+              clientSignatureInputRef={clientSignatureInputRef}
+            />
+          </motion.div> */}
+
+          {/* <Separator className="bg-stone-200 dark:bg-stone-700" /> */}
+
+          {/* Attachments (commented out for brevity) */}
+          {/* <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-stone-50 dark:bg-stone-900 rounded-lg p-4"
+          >
+            <Attachments
+              attachments={attachments}
+              handleAttachment={handleAttachment}
+              fileInputRef={fileInputRef}
+              handleFileUpload={handleFileUpload}
+              handleRemoveAttachment={handleRemoveAttachment}
+            />
+          </motion.div> */}
 
           {/* Error Alert */}
           {errorMessage && (
